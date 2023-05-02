@@ -18,10 +18,9 @@ public class MineButton extends JButton{
 	 * @param texture
 	 * @param actionListener
 	 */
-	public MineButton(Dimension size, Point location, ImageIcon texture, ActionListener actionListener) {
+	public MineButton(Dimension size, Point location, ActionListener actionListener) {
 		setSize(size);
 		setLocation(location);
-		setIcon(texture);
 		addActionListener(actionListener);
 	}
 	
@@ -34,6 +33,13 @@ public class MineButton extends JButton{
 	public MineButton setColors(Color foreGround, Color backGround){
 		setForeground(foreGround);
 		setBackground(backGround);
+		return this;
+	}
+	
+	public MineButton setInvisible(boolean state){
+		setOpaque(!state);
+		setContentAreaFilled(!state);
+		setBorderPainted(!state);
 		return this;
 	}
 }
