@@ -3,6 +3,7 @@ package de.minetrain.minechat.main.gui.buttons;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
@@ -18,10 +19,18 @@ public class MineButton extends JButton{
 	 * @param texture
 	 * @param actionListener
 	 */
-	public MineButton(Dimension size, Point location, ActionListener actionListener) {
+	public MineButton(Dimension size, Point location, ButtonType type) {
 		setSize(size);
 		setLocation(location);
-		addActionListener(actionListener);
+		addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(type != null){
+					System.out.println(type.toString());
+				}
+			}
+		});
 	}
 	
 	/**

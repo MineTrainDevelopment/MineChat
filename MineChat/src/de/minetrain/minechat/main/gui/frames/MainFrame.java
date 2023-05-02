@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.lang.reflect.Array;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -22,19 +23,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import de.minetrain.minechat.main.gui.buttons.ButtonType;
 import de.minetrain.minechat.main.gui.buttons.MineButton;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
 public class MainFrame extends JFrame{
     ImageIcon texture = new ImageIcon("MineChatTextur.png");
+    private boolean debug = false;
     
     public MainFrame() {
         // Deaktiviere den Layout-Manager
         setLayout(null);
         
      // Füge die Komponenten zum JFrame hinzu
- 		JLabel jLabel = new JLabel(texture);
+ 		JLabel jLabel = new JLabel(texture);//
 	    jLabel.setSize(500, 700);
 	    getContentPane().add(jLabel);
 
@@ -47,6 +50,7 @@ public class MainFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				jLabel.setIcon(jLabel.getIcon() == null ? texture : null);
+				debug = (debug == false) ? true : false;
 			}
 		});
         
@@ -57,17 +61,20 @@ public class MainFrame extends JFrame{
         getContentPane().add(new TitleBar(this));
         getContentPane().add(button);
 
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 55), null).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(112, 55), null).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 55), null).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 55), null).setInvisible(false));
+        //Macro row one
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 55), ButtonType.MACRO_1).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(112, 55), ButtonType.MACRO_2).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 55), ButtonType.MACRO_3).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 55), ButtonType.GREET).setInvisible(false));
         
-		getContentPane().add(new MineButton(new Dimension(80, 70), new Point(302, 55), null).setInvisible(false));
-        
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 95), null).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(112, 95), null).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 95), null).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), null).setInvisible(false));
+        //profile button.
+		getContentPane().add(new MineButton(new Dimension(80, 70), new Point(302, 55), ButtonType.TWITCH_PROFILE).setInvisible(false));
+
+        //Macro row tow.
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 95), ButtonType.MACRO_4).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(112, 95), ButtonType.MACRO_5).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 95), ButtonType.MACRO_6).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(false));
 		
 		
 		setSize(500, 700);
