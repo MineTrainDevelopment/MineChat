@@ -8,7 +8,10 @@ import javax.swing.JFrame;
 import de.minetrain.minechat.main.gui.frames.MainFrame;
 
 public class Main {
-
+//	sendMessage("minetrainlp", "", "test");
+//	try {Thread.sleep(1500);} catch (InterruptedException e) { }
+//	sendMessage("minetrainlp", "", "test "+ "ㅤ");
+	
 	public static void main(String[] args) {
 //		JFrame frame = new JFrame();
 //		frame.setSize(500, 700);
