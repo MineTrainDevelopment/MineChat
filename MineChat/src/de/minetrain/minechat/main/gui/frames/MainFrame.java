@@ -30,7 +30,7 @@ import kong.unirest.Unirest;
 
 public class MainFrame extends JFrame{
     ImageIcon texture = new ImageIcon("MineChatTextur.png");
-    private boolean debug = false;
+    public static boolean debug = false;
     
     public MainFrame() {
         // Deaktiviere den Layout-Manager
@@ -58,7 +58,7 @@ public class MainFrame extends JFrame{
         
         
        
-        getContentPane().add(new TitleBar(this));
+        getContentPane().add(new TitleBar(this, jLabel));
         getContentPane().add(button);
 
         //Macro row one

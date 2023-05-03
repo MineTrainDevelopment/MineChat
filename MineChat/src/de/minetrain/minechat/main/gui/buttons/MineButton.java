@@ -47,7 +47,7 @@ public class MineButton extends JButton{
 	
 	public MineButton setInvisible(boolean state){
 		setOpaque(!state);
-		setContentAreaFilled(!state);
+//		setContentAreaFilled(!state);
 		setBorderPainted(!state);
 		return this;
 	}
