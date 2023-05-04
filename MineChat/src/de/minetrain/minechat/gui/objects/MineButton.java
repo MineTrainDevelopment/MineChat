@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import de.minetrain.minechat.Twitch.MessageManager;
+
 public class MineButton extends JButton{
 	private static final long serialVersionUID = -8580714214977222615L;
 
@@ -27,6 +29,10 @@ public class MineButton extends JButton{
 			public void actionPerformed(ActionEvent e) {
 				if(type != null){
 					System.out.println(type.toString());
+				}
+				
+				if(type.name().toLowerCase().startsWith("macro")){
+					MessageManager.sendMessage(TitleBar.currentTab.getMacros().getMacro(type));
 				}
 			}
 		});

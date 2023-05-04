@@ -19,7 +19,7 @@ import de.minetrain.minechat.gui.MainFrame;
 public class TitleBar extends JPanel{
 	private static final long serialVersionUID = 2767970625570676160L;
 	public static final int tabButtonHight = 9;
-	public ChannelTab currentTab;
+	public static ChannelTab currentTab;
 	public final JFrame frame;
 	public final JLabel texture;
 	public final ChannelTab mainTab;
@@ -95,7 +95,7 @@ public class TitleBar extends JPanel{
 	}
 
 	public void changeTab(TabButtonType buttonType, ChannelTab tab) {
-		this.currentTab = tab;
+		currentTab = tab;
     	texture.setIcon(tab.getTexture());
     	mainTab.offsetButton(buttonType);
     	thirdTab.offsetButton(buttonType);
