@@ -1,4 +1,4 @@
-package de.minetrain.minechat.main.gui.objects;
+package de.minetrain.minechat.gui.objects;
 
 public enum ButtonType {
 	MACRO_1,

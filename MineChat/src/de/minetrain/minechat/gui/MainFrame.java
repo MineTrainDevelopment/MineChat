@@ -1,4 +1,4 @@
-package de.minetrain.minechat.main.gui;
+package de.minetrain.minechat.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,10 +8,10 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import de.minetrain.minechat.main.gui.objects.ButtonType;
-import de.minetrain.minechat.main.gui.objects.MineButton;
-import de.minetrain.minechat.main.gui.objects.TabButtonType;
-import de.minetrain.minechat.main.gui.objects.TitleBar;
+import de.minetrain.minechat.gui.objects.ButtonType;
+import de.minetrain.minechat.gui.objects.MineButton;
+import de.minetrain.minechat.gui.objects.TabButtonType;
+import de.minetrain.minechat.gui.objects.TitleBar;
 
 public class MainFrame extends JFrame{
     public static boolean debug = false;

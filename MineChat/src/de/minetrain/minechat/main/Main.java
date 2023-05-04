@@ -1,6 +1,6 @@
 package de.minetrain.minechat.main;
 
-import de.minetrain.minechat.main.gui.MainFrame;
+import de.minetrain.minechat.gui.MainFrame;
 
 public class Main {
 //	sendMessage("minetrainlp", "", "test");
