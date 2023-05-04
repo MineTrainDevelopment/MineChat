@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,7 +46,8 @@ public class TitleBar extends JPanel{
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
 
-        JLabel titleLabel = new JLabel("MineChat");
+//        JLabel titleLabel = new JLabel("MineChat");
+        JLabel titleLabel = new JLabel();
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         titleLabel.setBounds(0, 0, 440, 30);
@@ -118,13 +121,19 @@ public class TitleBar extends JPanel{
 		});
         
 
+//        frame.add(mainTab.getTabLabelWithData(tap1.getLocation(getLocation()), tap1.getSize()));
+//        frame.add(secondTab.getTabLabelWithData(tap2.getLocation(getLocation()), tap2.getSize()));
+//        frame.add(thirdTab.getTabLabelWithData(tap3.getLocation(getLocation()), tap3.getSize()));
+//        frame.setComponentZOrder(mainTab.getTabLabelWithData(tap1.getLocation(getLocation()), tap1.getSize()), 2);
+//        frame.setComponentZOrder(secondTab.getTabLabelWithData(tap2.getLocation(getLocation()), tap2.getSize()), 2);
+//        frame.setComponentZOrder(thirdTab.getTabLabelWithData(tap3.getLocation(getLocation()), tap3.getSize()), 2);
+
         add(tap1);
         add(tap2);
         add(tap3);
         add(minimizeButton);
         add(settingsButton);
         add(closeButton);
-        offsetButtons(TabButtonOffset.TAB_1);
 	}
 
 	
@@ -141,6 +150,14 @@ public class TitleBar extends JPanel{
 		location = tap3.getLocation();
 		location.setLocation(location.getX(), offset.getOffset(TabButtonOffset.TAB_3, location.y));
 		tap3.setLocation(location);
+	}
+	
+	public ArrayList<JLabel> getTabNames(){
+		ArrayList<JLabel> list = new ArrayList<JLabel>();
+		list.add(mainTab.getTabLabelWithData(tap1.getLocation(getLocation()), tap1.getSize()));
+		list.add(secondTab.getTabLabelWithData(tap2.getLocation(getLocation()), tap2.getSize()));
+		list.add(thirdTab.getTabLabelWithData(tap3.getLocation(getLocation()), tap3.getSize()));
+		return list;
 	}
 	
 	

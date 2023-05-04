@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 
 import de.minetrain.minechat.main.gui.buttons.ButtonType;
 import de.minetrain.minechat.main.gui.buttons.MineButton;
+import de.minetrain.minechat.main.gui.buttons.TabButtonOffset;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -37,9 +38,8 @@ public class MainFrame extends JFrame{
         setLayout(null);
         
      // Füge die Komponenten zum JFrame hinzu
- 		JLabel jLabel = new JLabel(texture);//
-	    jLabel.setSize(500, 700);
-	    getContentPane().add(jLabel);
+ 		JLabel textureLabel = new JLabel(texture);//
+	    textureLabel.setSize(500, 700);
 
         // Erstelle einen Test-Button
         MineButton button = new MineButton(new Dimension(60	, 30), new Point(200, 650), null);
@@ -49,7 +49,7 @@ public class MainFrame extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				jLabel.setIcon(jLabel.getIcon() == null ? texture : null);
+				textureLabel.setIcon(textureLabel.getIcon() == null ? texture : null);
 				debug = (debug == false) ? true : false;
 			}
 		});
@@ -58,8 +58,6 @@ public class MainFrame extends JFrame{
         
         
        
-        getContentPane().add(new TitleBar(this, jLabel));
-        getContentPane().add(button);
 
         //Macro row one
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 55), ButtonType.MACRO_1).setInvisible(false));
@@ -76,6 +74,15 @@ public class MainFrame extends JFrame{
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 95), ButtonType.MACRO_6).setInvisible(false));
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(false));
 		
+        TitleBar titleBar = new TitleBar(this, textureLabel);
+        titleBar.getTabNames().forEach(panal -> textureLabel.add(panal));
+        titleBar.offsetButtons(TabButtonOffset.TAB_1);
+        
+		getContentPane().add(titleBar);
+        getContentPane().add(button);
+        getContentPane().add(textureLabel);
+        
+        
 		
 		setSize(500, 700);
 		setUndecorated(true);
