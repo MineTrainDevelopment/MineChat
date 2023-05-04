@@ -19,8 +19,8 @@ public class MineButton extends JButton{
 	 * @param actionListener
 	 */
 	public MineButton(Dimension size, Point location, ButtonType type) {
-		setSize(size);
-		setLocation(location);
+		setSize((size != null) ? size : new Dimension(0, 0));
+		setLocation((location != null) ? location : new Point(0, 0));
 		addActionListener(new ActionListener() {
 			
 			@Override

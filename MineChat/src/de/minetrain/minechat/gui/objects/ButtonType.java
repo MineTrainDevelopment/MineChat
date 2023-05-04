@@ -12,6 +12,10 @@ public enum ButtonType {
 	TAB_2,
 	TAB_3,
 	
+	MINIMIZE,
+	SETTINGS,
+	CLOSE,
+	
 	SPAM,
 	GREET,
 	TWITCH_PROFILE;
