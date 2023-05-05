@@ -1,5 +1,7 @@
 package de.minetrain.minechat.main;
 
+import de.minetrain.minechat.Twitch.TwitchCredentials;
+import de.minetrain.minechat.Twitch.TwitchManager;
 import de.minetrain.minechat.gui.MainFrame;
 
 public class Main {
@@ -9,6 +11,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		new MainFrame();
+		new TwitchManager(new TwitchCredentials());
 	}
 
 }

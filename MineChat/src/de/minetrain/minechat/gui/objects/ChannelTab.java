@@ -29,6 +29,8 @@ public class ChannelTab {
 		this.macros = new ChannelMacros();
 		tabLabel.setVisible(true);
 		tabLabel.setForeground(Color.WHITE);
+		
+		System.out.println(macros.getMacro_1());
 	}
 	
 	

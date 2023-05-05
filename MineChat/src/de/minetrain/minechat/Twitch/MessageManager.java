@@ -5,6 +5,8 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.gui.objects.TitleBar;
+
 /**
  * Provides functionality to format messages and send them out to the Twitch API. 
  * And work around spamming protection by using a spam protector character and a cooldown timer.
@@ -34,7 +36,7 @@ public class MessageManager {
 	 * @param message the message to send to the Twitch API
 	 */
     public static void sendMessage(String message) {
-        Instant now = Instant.now(); // Get the current time.
+        Instant now = Instant.now(); //Get the current time.
         
         //If the same message has been sent recently, append the spam protector character.
         if(message.equals(lastMessage) && lastSentTime.plusSeconds(30).isAfter(now)) {
@@ -46,7 +48,7 @@ public class MessageManager {
         lastSentTime = now;
         
         System.out.println("Sending message {"+message+"}");
-        //Sending message to the Twitch API...
+//        TwitchManager.sendMessage(TitleBar.currentTab.getTabName(), null, message);
         try {Thread.sleep(1500);} catch (InterruptedException ex) {logger.error("Thread sleep faild!", ex);}
     }
 }

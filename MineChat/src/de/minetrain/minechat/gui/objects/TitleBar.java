@@ -75,9 +75,9 @@ public class TitleBar extends JPanel{
 			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_THIRD, thirdTab);}
 		});
         
-        this.mainTab = new ChannelTab(tab1, new ImageIcon("MineChatTextur.png"), "Sintica", TabButtonType.TAB_MAIN);
-		this.secondTab = new ChannelTab(tab2, new ImageIcon("MineChatTextur2.png"), "ThisEguy", TabButtonType.TAB_SECOND);
-		this.thirdTab = new ChannelTab(tab3 ,new ImageIcon("MineChatTextur3.png"), "Pferdchen", TabButtonType.TAB_THIRD);
+        this.mainTab = new ChannelTab(tab1, new ImageIcon("MineChatTextur.png"), "test1", TabButtonType.TAB_MAIN);
+		this.secondTab = new ChannelTab(tab2, new ImageIcon("MineChatTextur2.png"), "devlinbot_", TabButtonType.TAB_SECOND);
+		this.thirdTab = new ChannelTab(tab3 ,new ImageIcon("MineChatTextur3.png"), "minetrainlp", TabButtonType.TAB_THIRD);
 
         setLayout(null);
 		setOpaque(false);

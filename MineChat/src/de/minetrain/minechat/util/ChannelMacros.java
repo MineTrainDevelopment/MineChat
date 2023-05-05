@@ -8,13 +8,12 @@ public class ChannelMacros {
 	HashMap<String, String> macros = new HashMap<String, String>();
 	
 	public ChannelMacros() {
-		macros.put("macro_1", "macro_1");
-		macros.put("macro_2", "macro_2");
-		macros.put("macro_3", "macro_3");
+		macros.put("macro_1", "blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS blobHYPERS ");
+		macros.put("macro_2", "Pferdchen ist Fein!");
+		macros.put("macro_3", "SehrFein SehrFein!");
 		macros.put("macro_4", "macro_4");
 		macros.put("macro_5", "macro_5");
 		macros.put("macro_6", "macro_6");
-		macros.put("macro_1", "macro_1");
 	}
 	
 	public String getMacro(ButtonType button) {
