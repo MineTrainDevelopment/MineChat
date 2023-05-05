@@ -32,7 +32,7 @@ public class MineButton extends JButton{
 				}
 				
 				if(type.name().toLowerCase().startsWith("macro")){
-					MessageManager.sendMessage(TitleBar.currentTab.getMacros().getMacro(type));
+					MessageManager.sendMessage(TitleBar.currentTab.getMacros().getMacro(type).getMacroOutput());
 				}
 			}
 		});
