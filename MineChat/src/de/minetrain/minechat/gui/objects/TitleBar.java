@@ -14,7 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import de.minetrain.minechat.gui.InputFrame;
 import de.minetrain.minechat.gui.MainFrame;
+import de.minetrain.minechat.util.ChannelMacros;
 
 public class TitleBar extends JPanel{
 	private static final long serialVersionUID = 2767970625570676160L;
@@ -30,8 +32,8 @@ public class TitleBar extends JPanel{
 	public JButton tab3;
     private int mouseX, mouseY;
 
-	public TitleBar(JFrame frame, JLabel texture) {
-		this.frame = frame;
+	public TitleBar(MainFrame mainFrame, JLabel texture) {
+		this.frame = mainFrame;
 		this.texture = texture;
 
         // Erstelle den Minimieren-Button
@@ -39,7 +41,7 @@ public class TitleBar extends JPanel{
         minimizeButton.setBackground(Color.GREEN);
         minimizeButton.setBounds(410, 10, 30, 30);
         minimizeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {frame.setExtendedState(JFrame.ICONIFIED);}
+            public void actionPerformed(ActionEvent e) {mainFrame.setExtendedState(JFrame.ICONIFIED);}
         });
 
         // Erstelle den Schließen-Button
@@ -54,7 +56,10 @@ public class TitleBar extends JPanel{
         settingsButton.setBackground(Color.YELLOW);
         settingsButton.setBounds(15, 10, 30, 30);
         settingsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){System.err.println("TODO: Settings Menü.");}
+            public void actionPerformed(ActionEvent e){
+            	System.err.println("TODO: Settings Menü.");
+            	new InputFrame(mainFrame, "Macro name", "Output", TitleBar.currentTab.getMacros().getMacro_5());
+            }
         });
 
         tab1 = new MineButton(new Dimension(80, 30), null, ButtonType.TAB_1).setInvisible(!MainFrame.debug);

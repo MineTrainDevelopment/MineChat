@@ -48,7 +48,7 @@ public class MessageManager {
         lastSentTime = now;
         
         System.out.println("Sending message {"+message+"}");
-//        TwitchManager.sendMessage(TitleBar.currentTab.getTabName(), null, message);
+        TwitchManager.sendMessage(TitleBar.currentTab.getTabName(), null, message);
         try {Thread.sleep(1500);} catch (InterruptedException ex) {logger.error("Thread sleep faild!", ex);}
     }
 }

@@ -1,22 +1,33 @@
 package de.minetrain.minechat.gui.objects;
 
 public enum ButtonType {
-	MACRO_1,
-	MACRO_2,
-	MACRO_3,
-	MACRO_4,
-	MACRO_5,
-	MACRO_6,
+	MACRO_1("M1"),
+	MACRO_2("M2"),
+	MACRO_3("M3"),
+	MACRO_4("M4"),
+	MACRO_5("M5"),
+	MACRO_6("M6"),
 
-	TAB_1,
-	TAB_2,
-	TAB_3,
+	TAB_1(null),
+	TAB_2(null),
+	TAB_3(null),
 	
-	MINIMIZE,
-	SETTINGS,
-	CLOSE,
+	MINIMIZE(null),
+	SETTINGS(null),
+	CLOSE(null),
 	
-	SPAM,
-	GREET,
-	TWITCH_PROFILE;
+	SPAM(null),
+	GREET(null),
+	TWITCH_PROFILE(null);
+	
+	
+	private String configIndex;
+	public String getConfigIndex(){return configIndex;}
+	
+	
+	private ButtonType(String configIndex) {
+		this.configIndex = configIndex;
+	}
+	
+	
 }

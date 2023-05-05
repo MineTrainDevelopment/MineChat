@@ -14,6 +14,8 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 
+import de.minetrain.minechat.main.Main;
+
 /**
  * The TwitchManager class is responsible for creating and managing a Twitch client instance. 
  * It provides the functionality to join a Twitch chat and send messages to it.
@@ -32,6 +34,7 @@ public class TwitchManager {
 	 */
 	public TwitchManager(TwitchCredentials credentials) {
 		TwitchClientBuilder twitchBuilder = TwitchClientBuilder.builder();
+		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 20);	
 		
 		//Configure the TwitchClientBuilder with the provided credentials.
 		twitch=twitchBuilder
@@ -42,9 +45,10 @@ public class TwitchManager {
 	        .withEnableChat(true)
 			.build();
 		
-		
+		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
 		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListner()); //Register a listener for Twitch events.
 		logger.info("Connecting to channels: "+twitch.getChat().getChannels().toString()); //Print all the connected channels
+		Main.openMainFrame();
 	}
 	
 	

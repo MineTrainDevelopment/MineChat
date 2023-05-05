@@ -7,6 +7,7 @@ import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import de.minetrain.minechat.gui.objects.ButtonType;
 import de.minetrain.minechat.gui.objects.MineButton;
@@ -15,6 +16,7 @@ import de.minetrain.minechat.gui.objects.TitleBar;
 
 public class MainFrame extends JFrame{
     public static boolean debug = false;
+    public final TitleBar titleBar;
     
     public MainFrame() {
     	//Textrue label.
@@ -36,7 +38,7 @@ public class MainFrame extends JFrame{
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 95), ButtonType.MACRO_6).setInvisible(!debug));
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
 		
-        TitleBar titleBar = new TitleBar(this, textureLabel);
+        this.titleBar = new TitleBar(this, textureLabel);
         titleBar.getTabNames().forEach(panal -> textureLabel.add(panal)); //Add TabTexts
         titleBar.changeTab(TabButtonType.TAB_MAIN, titleBar.mainTab);
         

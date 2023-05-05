@@ -1,0 +1,756 @@
+[05.05.2023 | 13:00:10] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:00:10] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:00:10] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:00:13] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:00:13] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:00:13] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:00:13] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:00:13] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:00:47] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:00:47] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:00:47] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:00:50] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:00:50] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:00:50] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:00:50] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:00:50] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:02:14] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:02:14] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:02:14] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:02:16] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:02:16] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:02:16] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:02:16] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:02:16] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:03:02] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:03:02] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:03:02] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:03:05] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:03:05] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:03:05] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:03:05] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:03:05] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:03:15] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:03:15] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:03:15] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:03:18] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:03:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:03:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:03:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:03:18] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:03:24] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:03:24] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:03:24] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:03:27] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:03:27] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:03:27] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:03:27] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:03:27] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:03:43] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:03:43] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:03:43] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 13:03:45] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 13:03:45] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 13:03:45] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 13:03:45] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 13:03:45] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 13:03:48] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 13:03:48] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 13:03:48] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 16:25:50] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 16:25:50] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 16:25:50] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 16:25:52] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 16:25:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 16:25:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 16:25:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 16:25:52] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 19:51:55] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:51:55] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:51:55] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:56:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:56:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:56:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:56:40] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:56:40] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:56:40] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:58:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:58:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:58:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:58:30] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:58:30] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:58:30] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:59:09] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:59:09] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:59:09] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:59:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:59:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:59:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 19:59:22] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 19:59:22] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 19:59:22] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:00:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:00:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:00:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:00:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:00:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:00:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:03:45] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:03:45] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:03:45] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:03:45] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:03:45] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:03:45] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:03:48] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:03:48] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:03:48] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:03:48] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:03:48] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:07:33] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:07:33] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:07:33] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:07:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:07:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:07:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:07:53] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:07:53] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:07:53] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:08:56] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:08:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:08:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:08:57] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:08:57] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:08:57] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:12:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:12:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:12:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:12:50] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:12:50] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:12:50] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:12:52] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:12:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:12:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:12:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:12:52] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:14:51] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:14:51] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:14:51] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:14:52] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:14:52] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:14:52] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:14:54] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:14:54] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:14:54] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:14:54] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:14:54] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:15:10] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:15:10] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:15:10] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:15:11] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:15:11] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:15:11] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:15:14] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:15:14] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:15:14] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:15:14] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:15:14] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:16:43] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:16:43] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:16:43] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:16:44] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:16:44] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:16:44] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:16:47] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:16:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:16:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:16:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:16:47] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:16:56] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:16:56] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:16:56] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:16:56] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:16:56] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:16:56] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:16:59] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:16:59] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:16:59] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:16:59] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:16:59] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:17:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:17:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:17:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:17:33] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:17:33] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:17:33] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:17:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:17:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:17:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:17:59] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:17:59] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:17:59] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:18:01] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:18:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:18:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:18:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:18:01] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:18:13] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:18:13] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:18:13] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:18:13] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:18:13] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:18:13] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:18:16] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:18:16] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:18:16] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:18:16] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:18:16] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:18:34] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:18:34] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:18:34] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:18:35] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:18:35] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:18:35] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:19:54] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:19:54] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:19:54] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:19:54] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:19:54] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:19:54] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:19:57] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:19:57] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:19:57] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:19:57] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:19:57] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:21:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:21:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:21:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:21:39] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:21:39] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:21:39] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:21:41] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:21:41] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:21:41] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:21:41] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:21:41] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:21:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:21:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:21:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:21:49] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:21:49] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:21:49] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:22:06] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:22:06] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:22:06] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:22:07] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:22:07] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:22:07] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:22:10] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:22:10] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:22:10] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:22:10] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:22:10] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:22:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:22:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:22:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:22:50] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:22:50] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:22:50] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:22:52] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:22:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:22:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:22:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:22:52] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:24:24] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:24:24] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:24:24] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:24:25] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:24:25] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:24:25] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:24:28] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:24:28] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:24:28] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:24:28] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:24:28] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:25:54] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:25:54] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:25:54] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:25:55] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:25:55] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:25:55] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:26:17] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:26:17] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:26:17] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:26:17] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:26:17] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:26:17] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:26:33] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:26:33] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:26:33] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:26:34] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:26:34] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:26:34] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:26:39] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:26:39] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:26:39] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:26:40] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:26:40] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:26:40] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:26:42] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:26:42] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:26:42] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:26:42] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:26:42] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:27:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:27:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:27:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:27:57] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:27:57] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:27:57] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:28:00] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:28:00] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:28:00] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:28:00] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:28:00] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:28:09] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:28:10] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:28:10] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:28:10] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:28:10] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:28:10] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:28:13] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:28:13] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:28:13] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:28:13] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:28:13] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:29:45] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:29:45] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:29:45] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:29:46] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:29:46] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:29:46] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:30:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:30:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:30:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:30:05] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:30:05] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:30:05] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:30:08] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:30:08] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:30:08] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:30:08] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:30:08] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:30:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:30:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:30:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:30:17] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:30:17] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:30:17] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:30:20] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:30:20] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:30:20] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:30:20] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:30:20] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:31:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:31:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:31:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:31:14] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:31:14] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:31:14] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:33:13] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:33:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:33:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:33:14] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:33:14] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:33:14] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:33:17] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:33:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:33:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:33:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:33:17] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:33:50] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:33:50] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:33:50] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:33:51] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:33:51] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:33:51] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:34:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:34:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:34:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:34:14] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:34:14] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:34:14] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:34:17] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:34:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:34:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:34:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:34:17] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:37:18] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:37:18] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:37:18] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:37:19] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:37:19] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:37:19] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:38:42] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:38:42] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:38:42] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:38:43] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:38:43] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:38:43] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:39:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:39:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:39:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:39:39] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:39:39] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:39:39] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:41:17] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:41:17] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:41:17] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:41:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:41:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:41:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:43:11] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:43:11] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:43:11] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:43:27] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:43:27] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:43:27] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:44:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:44:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:44:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:46:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:46:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:46:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:46:08] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:46:08] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:46:08] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:47:12] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:47:12] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:47:12] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:47:18] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:47:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:47:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:47:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:47:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:47:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:48:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:48:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:48:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:48:35] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:48:35] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:48:35] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:49:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:49:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:49:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:50:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:50:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:50:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:52:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:52:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:52:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:53:07] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:53:07] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:53:07] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:53:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:53:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:53:16] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:53:24] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:53:24] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:53:24] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:53:47] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:53:47] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:53:47] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:53:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:53:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:53:52] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:54:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:54:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:54:04] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:54:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:54:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:54:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:54:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:54:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:54:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:55:28] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:55:28] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:55:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:55:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:55:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:55:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:55:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:55:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:55:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:56:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:56:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:56:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:58:26] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:58:26] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:58:26] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:58:27] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:58:27] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:58:27] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:58:29] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:58:29] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:58:29] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:58:29] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:58:29] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 20:59:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 20:59:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 20:59:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 20:59:24] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 20:59:24] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 20:59:24] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 20:59:26] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 20:59:26] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 20:59:26] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 20:59:26] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 20:59:26] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:01:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:01:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:01:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:01:15] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:01:15] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:01:15] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:01:18] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:01:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:01:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:01:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:01:18] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:02:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:02:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:02:14] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:02:14] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:02:14] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:02:14] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:02:17] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:02:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:02:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:02:17] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:02:17] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:02:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:02:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:02:32] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:02:32] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:02:32] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:02:32] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:02:35] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:02:35] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:02:35] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:02:35] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:02:35] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:04:47] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:04:47] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:04:47] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:04:47] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:04:47] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:04:47] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:04:50] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:04:50] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:04:50] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:04:50] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:04:50] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:05:01] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:05:01] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:05:01] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:05:02] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:05:02] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:05:02] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:05:04] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:05:04] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:05:04] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:05:04] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:05:04] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:05:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:05:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:05:15] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:05:16] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:05:16] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:05:16] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:05:18] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:05:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:05:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:05:18] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:05:18] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:05:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:05:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:05:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:05:44] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:05:44] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:05:44] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:05:47] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:05:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:05:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:05:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:05:47] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:07:34] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:07:34] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:07:34] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:07:34] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:07:34] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:07:34] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:07:37] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:07:37] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:07:37] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:07:37] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:07:37] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:07:43] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:07:43] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:07:43] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:07:43] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:07:43] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:07:43] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:07:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:07:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:07:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:07:49] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:07:49] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:07:49] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:07:51] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:07:51] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:07:51] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:07:51] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:07:51] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:07:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:07:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:07:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:07:59] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:07:59] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:07:59] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:08:01] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:08:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:08:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:08:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:08:01] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:08:08] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:08:08] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:08:08] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:08:08] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:08:08] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:08:08] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:08:11] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:08:11] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:08:11] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:08:11] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:08:11] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:08:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:08:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:08:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:08:58] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:08:58] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:08:58] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:09:00] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:09:00] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:09:00] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:09:00] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:09:00] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:09:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:09:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:09:57] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:09:57] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:09:57] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:09:57] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:10:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:10:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:10:29] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:10:29] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:10:29] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:10:29] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:10:32] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:10:32] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:10:32] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:10:32] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:10:32] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:10:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:10:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:10:49] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:10:50] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:10:50] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:10:50] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:10:52] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:10:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:10:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:10:52] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:10:52] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:13:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:13:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:13:19] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:13:20] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:13:20] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:13:20] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:13:22] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:13:22] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:13:22] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:13:22] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:13:22] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:13:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:13:38] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:14:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:14:23] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:14:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:14:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:14:58] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:14:58] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:14:58] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:14:58] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:15:01] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:15:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:15:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:15:01] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:15:01] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:16:28] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:16:28] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:16:28] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:16:29] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:16:29] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:16:29] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:16:31] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:16:31] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:16:31] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:16:31] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:16:31] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:16:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:16:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:16:44] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:16:45] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:16:45] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:16:45] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:16:47] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:16:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:16:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:16:47] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:16:47] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:16:59] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:17:00] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:18:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:18:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:18:48] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:18:48] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:18:48] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:18:48] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:18:51] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:18:51] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:18:51] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:18:51] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:18:51] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:19:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:19:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:19:02] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:19:03] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:19:03] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:19:03] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:19:05] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:19:05] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:19:05] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:19:05] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:19:05] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
+[05.05.2023 | 21:40:21] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reading config file...
+[05.05.2023 | 21:40:21] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Reload the ocnfig file!
+[05.05.2023 | 21:40:21] >> INFO  << [de.minetrain.minechat.config.ConfigManager] - Config reloadet...
+[05.05.2023 | 21:40:22] >> WARN  << [com.netflix.config.sources.URLConfigurationSource] - No URLs will be polled as dynamic configuration sources.
+[05.05.2023 | 21:40:22] >> INFO  << [com.netflix.config.sources.URLConfigurationSource] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[05.05.2023 | 21:40:22] >> INFO  << [io.github.xanthic.cache.core.CacheApiSettings] - Xanthic: Automatically set default cache provider to CaffeineProvider.
+[05.05.2023 | 21:40:24] >> INFO  << [com.github.twitch4j.chat.TwitchChat] - Connecting to Twitch IRC wss://irc-ws.chat.twitch.tv:443
+[05.05.2023 | 21:40:24] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamUp
+[05.05.2023 | 21:40:24] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onStreamDown
+[05.05.2023 | 21:40:24] >> INFO  << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Registered method listener TwitchListner#onChannelMessage
+[05.05.2023 | 21:40:24] >> INFO  << [de.minetrain.minechat.Twitch.TwitchManager] - Connecting to channels: [devlinbot_]
