@@ -39,13 +39,16 @@ public class MainFrame extends JFrame{
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
         
         //Emote row.
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(19, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(59, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(99, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(139, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(179, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(219, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(259, 136), ButtonType.TWITCH_PROFILE).setInvisible(false));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1).setInvisible(!debug));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(59, 136), ButtonType.EMOTE_2).setInvisible(!debug));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(99, 136), ButtonType.EMOTE_3).setInvisible(!debug));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(139, 136), ButtonType.EMOTE_4).setInvisible(!debug));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(179, 136), ButtonType.EMOTE_5).setInvisible(!debug));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(219, 136), ButtonType.EMOTE_6).setInvisible(!debug));
+        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(259, 136), ButtonType.EMOTE_7).setInvisible(!debug));
+        
+        //Stop QUEUE button.
+        getContentPane().add(new MineButton(new Dimension(175, 30), new Point(305, 135), ButtonType.STOP_QUEUE).setInvisible(!debug));
 		
         this.titleBar = new TitleBar(this, textureLabel);
         titleBar.getTabNames().forEach(panal -> textureLabel.add(panal)); //Add TabTexts

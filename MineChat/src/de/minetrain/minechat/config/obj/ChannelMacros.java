@@ -14,7 +14,7 @@ public class ChannelMacros {
 		macros.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, null, "Woah sinticaBooonk"));
 		macros.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, null, "blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble blobDance rooBobble "));
 		macros.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, null, "SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty"));
-		macros.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, null, "sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk sinticaParrot sinticaBooonk"));
+		macros.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, null, "SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk SinticaEskalation sinticaBooonk "));
 	}
 	
 	public MacroObject getMacro(ButtonType button) {

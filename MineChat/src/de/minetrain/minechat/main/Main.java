@@ -13,7 +13,6 @@ import de.minetrain.minechat.Twitch.TwitchManager;
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.MainFrame;
 import de.minetrain.minechat.gui.objects.StatusBar;
-import de.minetrain.minechat.util.MacroObject;
 
 public class Main {
 	public static StatusBar LOADINGBAR = new StatusBar();
