@@ -5,6 +5,7 @@ Tabs:
 
 5451451:
   Name: 'minetrainlp'
+  ChannelRole: DEFAULT #DEFAULT, VIP, MOD
   Macros:
     M1: 'null%-%macro_1'
     M2: 'null%-%macro_2'

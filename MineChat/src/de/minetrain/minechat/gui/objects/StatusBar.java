@@ -21,21 +21,33 @@ public class StatusBar extends JProgressBar {
         titledBorder.setTitleColor(Color.WHITE);
         titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
         
-        setStringPainted(false); //Don´t sow the text inside the bar.
+        setStringPainted(true); //Don´t sow the text inside the bar.
         setBackground(new Color(40, 40, 40));
         setForeground(Color.GREEN);
 		setBorder(titledBorder);
     }
     
-    public void setProgress(String message, int percent) {
+    public StatusBar setProgress(String message, int percent) {
         SwingUtilities.invokeLater(() -> {
-            setString(message);
+            setString("");
             titledBorder.setTitle(message);
             setValue(percent);
-            if (percent == 100) {
-                setString("Completed");
-            }
         });
+        
+        return this;
     }
+    
+    public StatusBar setError(String message) {
+        SwingUtilities.invokeLater(() -> {
+            setString("ERROR");
+            setForeground(Color.RED);
+            titledBorder.setTitle(message);
+            setValue(100);
+        });
+        
+        return this;
+    }
+    
+    
     
 }

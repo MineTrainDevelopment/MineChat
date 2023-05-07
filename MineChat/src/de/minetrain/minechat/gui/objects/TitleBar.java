@@ -14,9 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import de.minetrain.minechat.config.obj.ChannelMacros;
 import de.minetrain.minechat.gui.InputFrame;
 import de.minetrain.minechat.gui.MainFrame;
-import de.minetrain.minechat.util.ChannelMacros;
 
 public class TitleBar extends JPanel{
 	private static final long serialVersionUID = 2767970625570676160L;
@@ -80,9 +80,9 @@ public class TitleBar extends JPanel{
 			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_THIRD, thirdTab);}
 		});
         
-        this.mainTab = new ChannelTab(tab1, new ImageIcon("MineChatTextur.png"), "test1", TabButtonType.TAB_MAIN);
-		this.secondTab = new ChannelTab(tab2, new ImageIcon("MineChatTextur2.png"), "devlinbot_", TabButtonType.TAB_SECOND);
-		this.thirdTab = new ChannelTab(tab3 ,new ImageIcon("MineChatTextur3.png"), "minetrainlp", TabButtonType.TAB_THIRD);
+        this.mainTab = new ChannelTab(tab1, new ImageIcon("data/texture/MineChatTextur.png"), "minetrainlp", TabButtonType.TAB_MAIN);
+		this.secondTab = new ChannelTab(tab2, new ImageIcon("data/texture/MineChatTextur2.png"), "sintica", TabButtonType.TAB_SECOND);
+		this.thirdTab = new ChannelTab(tab3 ,new ImageIcon("data/texture/MineChatTextur3.png"), "shaakdj", TabButtonType.TAB_THIRD);
 
         setLayout(null);
 		setOpaque(false);

@@ -13,6 +13,7 @@ import de.minetrain.minechat.Twitch.TwitchManager;
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.MainFrame;
 import de.minetrain.minechat.gui.objects.StatusBar;
+import de.minetrain.minechat.util.MacroObject;
 
 public class Main {
 	public static StatusBar LOADINGBAR = new StatusBar();
@@ -22,12 +23,14 @@ public class Main {
 //	try {Thread.sleep(1500);} catch (InterruptedException e) { }
 //	sendMessage("minetrainlp", "", "test "+ "ㅤ");
 	
+	//TODO Cansel message queue.
+	
 	public static void main(String[] args) {
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
 		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));
 		
-		JLabel textureLabel = new JLabel(new ImageIcon("MineChatTexturOnboarding.png"));
+		JLabel textureLabel = new JLabel(new ImageIcon("data/texture/MineChatTexturOnboarding.png"));
 	    textureLabel.setSize(500, 700);
 	    textureLabel.add(LOADINGBAR);
 		

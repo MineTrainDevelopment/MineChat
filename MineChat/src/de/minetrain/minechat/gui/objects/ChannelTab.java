@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import de.minetrain.minechat.util.ChannelMacros;
+import de.minetrain.minechat.config.obj.ChannelMacros;
 
 public class ChannelTab {
 	private final TabButtonType tabType;

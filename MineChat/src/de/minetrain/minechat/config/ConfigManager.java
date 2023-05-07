@@ -31,7 +31,7 @@ public class ConfigManager {
      * @param configFileName Name of the configuration file to be loaded.
      */
     public ConfigManager(String configFileName){
-    	Main.LOADINGBAR.setProgress("Loading config", 5);
+    	Main.LOADINGBAR.setProgress("Reading config file", 5);
     	logger.info("Reading config file...");
     	this.configFileName = configFileName;
         yaml = new Yaml();
@@ -39,6 +39,7 @@ public class ConfigManager {
         try {
 			reloadConfig();
 		} catch (FileNotFoundException ex) {
+	    	Main.LOADINGBAR.setError(configFileName+" not found!");
 			throw new IllegalArgumentException("Canot initialize ConfigManager. File not found!", ex);
 		}
     }
