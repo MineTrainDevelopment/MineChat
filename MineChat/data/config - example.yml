@@ -1,0 +1,29 @@
+Tabs:
+  first: 5451451
+  second: 0
+  thrid: 0
+#
+Channel_5451451:
+  Name: 'minetrainlp'
+  DisplayName: 'MineTrain'
+  ChannelRole: USER #USER, MOD
+  Macros:
+    M1: 'null%-%macro_1'
+    M2: 'null%-%macro_2'
+    M3: 'null%-%macro_3'
+    M4: 'null%-%macro_4'
+    M5: 'null%-%macro_5'
+    M6: 'null%-%macro_6'
+    M7: 'null%-%macro_7'
+    M8: 'null%-%macro_8'
+    M9: 'null%-%macro_9'
+    M10: 'null%-%macro_10'
+    M11: 'null%-%macro_11'
+    M12: 'null%-%macro_12'
+    M13: 'null%-%macro_13'
+  GreetingText:
+    - 'Hajo {USER} jennyanWink jennyanHerz'
+    - 'Wilkommen {USER} sinticaVier sinticaLove'
+  SpamButton:
+    TriggerAmoundMessages: 4
+    DeprecateAfterSeconds: 5 #Seconds

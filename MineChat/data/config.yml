@@ -1,21 +1,88 @@
 Tabs:
-  one: 5451451
-  second: 0
-  thrid: 0
-
-5451451:
-  Name: 'minetrainlp'
-  ChannelRole: DEFAULT #DEFAULT, VIP, MOD
+  first: 177849882
+  second: 35884167
+  thrid: 12875057
+Channel_177849882:
+  Name: minetrainlp
+  DisplayName: Minetrainlp
+  ChannelRole: Viewer
   Macros:
-    M1: 'null%-%macro_1'
-    M2: 'null%-%macro_2'
-    M3: 'null%-%macro_3'
-    M4: 'null%-%macro_4'
-    M5: 'null%-%macro_5'
-    M6: 'null%-%macro_6'
+    M0: null%-%macro_0
+    M1: null%-%macro_1
+    M2: null%-%macro_2
+    M3: null%-%macro_3
+    M4: null%-%macro_4
+    M5: null%-%macro_5
+    M6: null%-%macro_6
+    M7: null%-%macro_7
+    M8: null%-%macro_8
+    M9: null%-%macro_9
+    M10: null%-%macro_10
+    M11: null%-%macro_11
+    M12: null%-%macro_12
+    M13: null%-%macro_13
   GreetingText:
-    - 'Hajo {USER} jennyanWink jennyanHerz'
-    - 'Wilkommen {USER} sinticaVier  sinticaLove'
+  - Hello {USER} HeyGuys
+  - Welcome {USER} HeyGuys
+  GoodbyText:
+  - By {USER}!
+  - Have a good one! {USER} <3
   SpamButton:
-    TriggerAmound: 4
-    DeprecateAfter: 5 #Seconds
+    TriggerAmoundMessages: 4
+    DeprecateAfterSeconds: 5
+Channel_35884167:
+  Name: sintica
+  DisplayName: Sintica
+  ChannelRole: Viewer
+  Macros:
+    M0: null%-%macro_0
+    M1: null%-%macro_1
+    M2: null%-%macro_2
+    M3: null%-%macro_3
+    M4: null%-%macro_4
+    M5: null%-%macro_5
+    M6: null%-%macro_6
+    M7: null%-%macro_7
+    M8: null%-%macro_8
+    M9: null%-%macro_9
+    M10: null%-%macro_10
+    M11: null%-%macro_11
+    M12: null%-%macro_12
+    M13: null%-%macro_13
+  GreetingText:
+  - Hello {USER} HeyGuys
+  - Welcome {USER} HeyGuys
+  GoodbyText:
+  - By {USER}!
+  - Have a good one! {USER} <3
+  SpamButton:
+    TriggerAmoundMessages: 4
+    DeprecateAfterSeconds: 5
+Channel_12875057:
+  Name: gronkh
+  DisplayName: gronkh
+  ChannelRole: Viewer
+  Macros:
+    M0: null%-%macro_0
+    M1: null%-%macro_1
+    M2: null%-%macro_2
+    M3: null%-%macro_3
+    M4: null%-%macro_4
+    M5: null%-%macro_5
+    M6: null%-%macro_6
+    M7: null%-%macro_7
+    M8: null%-%macro_8
+    M9: null%-%macro_9
+    M10: null%-%macro_10
+    M11: null%-%macro_11
+    M12: null%-%macro_12
+    M13: null%-%macro_13
+  GreetingText:
+  - Hello {USER} HeyGuys
+  - Welcome {USER} HeyGuys
+  GoodbyText:
+  - By {USER}!
+  - Have a good one! {USER} <3
+  SpamButton:
+    TriggerAmoundMessages: 4
+    DeprecateAfterSeconds: 5

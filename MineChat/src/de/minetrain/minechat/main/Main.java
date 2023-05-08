@@ -8,15 +8,19 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import de.minetrain.minechat.Twitch.TwitchCredentials;
-import de.minetrain.minechat.Twitch.TwitchManager;
 import de.minetrain.minechat.config.ConfigManager;
-import de.minetrain.minechat.gui.MainFrame;
-import de.minetrain.minechat.gui.objects.StatusBar;
+import de.minetrain.minechat.gui.frames.EditChannelFrame;
+import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.TwitchCredentials;
+import de.minetrain.minechat.utils.TextureManager;
 
 public class Main {
-	public static StatusBar LOADINGBAR = new StatusBar();
+	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
+	public static final StatusBar LOADINGBAR = new StatusBar();
 	public static ConfigManager CONFIG;
+	public static MainFrame mainFrame;
 	private static JFrame onboardingFrame;
 //	sendMessage("minetrainlp", "", "test");
 //	try {Thread.sleep(1500);} catch (InterruptedException e) { }
@@ -46,13 +50,16 @@ public class Main {
 	    onboardingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    onboardingFrame.setVisible(true);
 	    
-	    CONFIG = new ConfigManager("data/config.yml");
+	    CONFIG = new ConfigManager("data/config.yml", false);
 		new TwitchManager(new TwitchCredentials());
 	}
 	
 	public static void openMainFrame(){
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
-		new MainFrame();
+		mainFrame = new MainFrame();
+		if(!mainFrame.titleBar.mainTab.isOccupied()){
+			new EditChannelFrame(mainFrame, mainFrame.titleBar.mainTab);
+		}
 		onboardingFrame.dispose();
 	}
 

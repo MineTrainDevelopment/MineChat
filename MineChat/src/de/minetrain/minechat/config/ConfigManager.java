@@ -1,8 +1,16 @@
 package de.minetrain.minechat.config;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +18,7 @@ import javax.naming.ConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import de.minetrain.minechat.main.Main;
@@ -30,17 +39,29 @@ public class ConfigManager {
      * Constructor for the ConfigManager class.
      * @param configFileName Name of the configuration file to be loaded.
      */
-    public ConfigManager(String configFileName){
+    public ConfigManager(String configFileName, boolean createFile){
     	Main.LOADINGBAR.setProgress("Reading config file", 5);
     	logger.info("Reading config file...");
     	this.configFileName = configFileName;
         yaml = new Yaml();
         
         try {
+        	if(createFile){
+        		Files.createDirectories(Paths.get(configFileName.substring(0, configFileName.lastIndexOf("/"))));
+        		new File(configFileName).createNewFile();
+        	}
+        	
 			reloadConfig();
+			
+			if(config == null && createFile){
+				config = new HashMap<String, Object>();
+			}
+			
 		} catch (FileNotFoundException ex) {
 	    	Main.LOADINGBAR.setError(configFileName+" not found!");
 			throw new IllegalArgumentException("Canot initialize ConfigManager. File not found!", ex);
+		} catch (IOException ex) {
+			throw new IllegalArgumentException("Canot initialize ConfigManager. Can´t create file", ex);
 		}
     }
     
@@ -48,11 +69,28 @@ public class ConfigManager {
      * Method for reloading the configuration file.
      * @throws FileNotFoundException If the configuration file is not found.
      */
-    public final void reloadConfig() throws FileNotFoundException{
+    public void reloadConfig() throws FileNotFoundException{
     	logger.info("Reload the ocnfig file!");
         config = yaml.load(new FileInputStream(configFileName));
 //        Main.SETTINGS = new Settings(this); //Initialize settings using configuration values
         logger.info("Config reloadet...");
+    }
+    
+    /**
+     * Save the Config to the file.
+     */
+    public void saveConfigToFile() {
+    	DumperOptions options = new DumperOptions();
+    	options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    	
+        Yaml yaml = new Yaml(options);
+        try {
+            FileWriter writer = new FileWriter(configFileName);
+            yaml.dump(config, writer);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -290,5 +328,146 @@ public class ConfigManager {
 	 */
 	private void throwWarn(String path) {
 		logger.warn("Invalid config path!", new ConfigurationException("Cant find a value on this path: "+path));
+	}
+	
+	
+
+	/**
+	 * Sets the value of a String at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string.
+	 * @param value the String value to set.
+	 */
+	public void setString(String path, String value) {
+		setString(path, value, false);
+	}
+
+	/**
+	 * Sets the value of a boolean at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string
+	 * @param value the boolean value to set
+	 */
+	public void setBoolean(String path, Boolean value) {
+		setBoolean(path, value, false);
+	}
+
+	/**
+	 * Sets the value of a number at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string
+	 * @param value the number value to set
+	 */
+	public void setNumber(String path, Number value) {
+		setNumber(path, value, false);
+	}
+
+	/**
+	 * Sets the value of a String at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string.
+	 * @param value the String value to set.
+	 * @param saveFile Whether the file should be saved immediately.
+	 */
+	@SuppressWarnings("unchecked")
+	public void setString(String path, String value, boolean saveFile) {
+	    String[] keys = path.split("\\.");
+	    Map<String, Object> current = config;
+	    for (int i = 0; i < keys.length - 1; i++) {
+	        String key = keys[i];
+	        if (!current.containsKey(key)) {
+	            current.put(key, new LinkedHashMap<>());
+	        }
+	        Object valueObj = current.get(key);
+	        if (valueObj instanceof Map) {
+	            current = (Map<String, Object>) valueObj;
+	        } else {
+	            Map<String, Object> newMap = new LinkedHashMap<>();
+	            current.put(key, newMap);
+	            current = newMap;
+	        }
+	    }
+	    current.put(keys[keys.length - 1], value);
+	    if(saveFile){saveConfigToFile();}
+	}
+	
+	/**
+	 * Sets the value of a boolean at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string
+	 * @param value the boolean value to set
+	 * @param saveFile Whether the file should be saved immediately.
+	 */
+	@SuppressWarnings("unchecked")
+	public void setBoolean(String path, boolean value, boolean saveFile) {
+	    String[] keys = path.split("\\.");
+	    Map<String, Object> current = config;
+	    for (int i = 0; i < keys.length - 1; i++) {
+	        String key = keys[i];
+	        if (!current.containsKey(key)) {
+	            current.put(key, new LinkedHashMap<>());
+	        }
+	        Object valueObj = current.get(key);
+	        if (valueObj instanceof Map) {
+	            current = (Map<String, Object>) valueObj;
+	        } else {
+	            Map<String, Object> newMap = new LinkedHashMap<>();
+	            current.put(key, newMap);
+	            current = newMap;
+	        }
+	    }
+	    current.put(keys[keys.length - 1], value);
+	    if(saveFile){saveConfigToFile();}
+	}
+
+	/**
+	 * Sets the value of a number at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string
+	 * @param value the number value to set
+	 * @param saveFile Whether the file should be saved immediately.
+	 */
+	@SuppressWarnings("unchecked")
+	public void setNumber(String path, Number value, boolean saveFile) {
+	    String[] keys = path.split("\\.");
+	    Map<String, Object> current = config;
+	    for (int i = 0; i < keys.length - 1; i++) {
+	        String key = keys[i];
+	        if (!current.containsKey(key)) {
+	            current.put(key, new LinkedHashMap<>());
+	        }
+	        Object valueObj = current.get(key);
+	        if (valueObj instanceof Map) {
+	            current = (Map<String, Object>) valueObj;
+	        } else {
+	            Map<String, Object> newMap = new LinkedHashMap<>();
+	            current.put(key, newMap);
+	            current = newMap;
+	        }
+	    }
+	    current.put(keys[keys.length - 1], value);
+	    if(saveFile){saveConfigToFile();}
+	}
+	
+	/**
+	 * Sets the value of a String at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string.
+	 * @param value the String {@link List} value to set.
+	 * @param saveFile Whether the file should be saved immediately.
+	 */
+	@SuppressWarnings("unchecked")
+	public void setStringList(String path, List<String> values, boolean saveFile) {
+	    String[] keys = path.split("\\.");
+	    Map<String, Object> current = config;
+	    for (int i = 0; i < keys.length - 1; i++) {
+	        String key = keys[i];
+	        if (!current.containsKey(key)) {
+	            current.put(key, new LinkedHashMap<>());
+	        }
+	        Object valueObj = current.get(key);
+	        if (valueObj instanceof Map) {
+	            current = (Map<String, Object>) valueObj;
+	        } else {
+	            Map<String, Object> newMap = new LinkedHashMap<>();
+	            current.put(key, newMap);
+	            current = newMap;
+	        }
+	    }
+	    current.put(keys[keys.length - 1], values);
+	    if(saveFile){saveConfigToFile();}
 	}
 }
