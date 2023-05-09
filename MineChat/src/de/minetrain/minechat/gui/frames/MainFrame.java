@@ -12,6 +12,7 @@ import de.minetrain.minechat.gui.obj.ButtonType;
 import de.minetrain.minechat.gui.obj.MineButton;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.main.Main;
 
 public class MainFrame extends JFrame{
     public static boolean debug = false;
@@ -19,6 +20,7 @@ public class MainFrame extends JFrame{
     public final TitleBar titleBar;
     
     public MainFrame() {
+    	super("MineChat "+Main.VERSION);
     	//Textrue label.
  		textureLabel = new JLabel();
 	    textureLabel.setSize(500, 700);

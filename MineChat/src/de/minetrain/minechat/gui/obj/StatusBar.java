@@ -31,8 +31,14 @@ public class StatusBar extends JProgressBar {
 	}
     
     public StatusBar setProgress(String message, int percent) {
+        setProgress(message, percent, Color.ORANGE);
+        return this;
+    }
+    
+    public StatusBar setProgress(String message, int percent, Color color) {
         SwingUtilities.invokeLater(() -> {
             setString("");
+            setForeground(color);
             titledBorder.setTitle(message);
             setValue(percent);
         });
@@ -64,6 +70,7 @@ public class StatusBar extends JProgressBar {
     
     
     public static Integer getPercentage(long arraySize, long index) {
+    	arraySize++;
 	    if (arraySize <= 0 || index < 0 || index >= arraySize) {
 	        throw new IllegalArgumentException("Invalid array size or index.");
 	    }

@@ -19,6 +19,7 @@ import de.minetrain.minechat.utils.TextureManager;
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
+	public static final String VERSION = "V0.2";
 	public static ConfigManager CONFIG;
 	public static MainFrame mainFrame;
 	private static JFrame onboardingFrame;
@@ -33,11 +34,11 @@ public class Main {
 		LOADINGBAR.setLocation(50, 600);
 		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));
 		
-		JLabel textureLabel = new JLabel(new ImageIcon("data/texture/MineChatTexturOnboarding.png"));
+		JLabel textureLabel = new JLabel(TEXTURE_MANAGER.getOnboarding());
 	    textureLabel.setSize(500, 700);
 	    textureLabel.add(LOADINGBAR);
 		
-	    onboardingFrame = new JFrame();
+	    onboardingFrame = new JFrame("MineChat "+VERSION);
 	    onboardingFrame.setLayout(null);
 	    onboardingFrame.setSize(500, 700);
 	    onboardingFrame.setUndecorated(true);

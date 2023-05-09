@@ -1,5 +1,7 @@
 package de.minetrain.minechat.gui.obj;
 
+import de.minetrain.minechat.main.Main;
+
 public enum TabButtonType {
 	TAB_MAIN("Tabs.first"),
 	TAB_SECOND("Tabs.second"),

@@ -22,7 +22,7 @@ public class TitleBar extends JPanel{
 	private static final long serialVersionUID = 2767970625570676160L;
 	public static final int tabButtonHight = 9;
 	public static ChannelTab currentTab;
-	public final JFrame frame;
+	public final JFrame mainFrame;
 	public final JLabel texture;
 	public ChannelTab mainTab;
 	private ChannelTab secondTab;
@@ -33,7 +33,7 @@ public class TitleBar extends JPanel{
     private int mouseX, mouseY;
 
 	public TitleBar(MainFrame mainFrame, JLabel texture) {
-		this.frame = mainFrame;
+		this.mainFrame = mainFrame;
 		this.texture = texture;
 
         // Erstelle den Minimieren-Button
@@ -101,6 +101,7 @@ public class TitleBar extends JPanel{
 	}
 
 	public void changeTab(TabButtonType buttonType, ChannelTab tab) {
+		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
 		currentTab = tab;
     	texture.setIcon(tab.getTexture());
     	mainTab.offsetButton(buttonType);
@@ -131,7 +132,7 @@ public class TitleBar extends JPanel{
                 int newX = e.getXOnScreen() - mouseX;
                 int newY = e.getYOnScreen() - mouseY;
 
-                frame.setLocation(newX, newY);
+                mainFrame.setLocation(newX, newY);
             }
         };
 	}
