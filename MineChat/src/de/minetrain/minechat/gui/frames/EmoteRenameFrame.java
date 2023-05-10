@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import de.minetrain.minechat.gui.utils.ColorManager;
+
 public class EmoteRenameFrame extends JDialog{
 	private static final long serialVersionUID = -5007868617236311658L;
     private JTextField emoteName = new JTextField();
@@ -29,35 +31,36 @@ public class EmoteRenameFrame extends JDialog{
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
-        setBackground(new Color(40, 40, 40));
+        setBackground(ColorManager.BACKGROUND);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
         
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createLineBorder(new Color(14, 14, 14), 5));
-        panel.setBackground(new Color(40, 40, 40));
+        panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
+        panel.setBackground(ColorManager.BACKGROUND);
         panel.setLayout(new GridLayout(2, 1));
         
         JLabel description = new JLabel();
         description.setFont(new Font(null, Font.BOLD, fontSize));
-        description.setBackground(new Color(40, 40, 40));
+        description.setBackground(ColorManager.BACKGROUND);
         description.setForeground(Color.WHITE);
         description.setHorizontalAlignment(JTextField.CENTER);
         description.setText("Name ändern:");
         
-        emoteName.setBackground(new Color(90, 90, 90));
+        emoteName.setBackground(ColorManager.BACKGROUND_LIGHT);
         emoteName.setFont(new Font(null, Font.BOLD, fontSize));
         emoteName.setForeground(Color.WHITE);
         emoteName.setHorizontalAlignment(JTextField.CENTER);
         emoteName.setText(defaultName);
         
         JPanel textPannels = new JPanel(new GridLayout(1, 2, 8, 10));
-        textPannels.setBackground(new Color(40, 40, 40));
+        textPannels.setBackground(ColorManager.BACKGROUND);
         textPannels.setSize(okayButton.getSize());
         textPannels.add(description);
         textPannels.add(emoteName);
         
-        okayButton.setBackground(new Color(30, 30, 30));
+        okayButton.setBackground(ColorManager.BUTTON_BACKGROUND);
         okayButton.setFont(new Font(null, Font.BOLD, fontSize));
+//        okayButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 3));
         okayButton.setForeground(Color.WHITE);
         okayButton.setHorizontalAlignment(JTextField.CENTER);
         okayButton.addActionListener(buttonAction());

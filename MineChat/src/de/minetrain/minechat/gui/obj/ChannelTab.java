@@ -14,8 +14,8 @@ import javax.swing.SwingConstants;
 
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.utils.TextureManager;
 
 public class ChannelTab {
 	private ChannelTab thisObject;

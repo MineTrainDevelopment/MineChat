@@ -34,12 +34,13 @@ import com.google.gson.JsonObject;
 
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.TextureManager;
 import kong.unirest.Unirest;
 
 public class EmoteDownlodFrame extends JDialog{
@@ -74,12 +75,12 @@ public class EmoteDownlodFrame extends JDialog{
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
-        setBackground(new Color(40, 40, 40));
+        setBackground(ColorManager.BACKGROUND);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createLineBorder(new Color(14, 14, 14), 5));
-        panel.setBackground(new Color(40, 40, 40));
+        panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
+        panel.setBackground(ColorManager.BACKGROUND);
         panel.setLayout(new GridLayout(3, 2));
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
@@ -87,21 +88,21 @@ public class EmoteDownlodFrame extends JDialog{
         DefaultListCellRenderer listRenderer = new DefaultListCellRenderer();
         listRenderer.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
         platformSelector = new JComboBox<>(new String[]{"Twitch (Name)", "BTTV (URL)", "BTTV (ChannelName)"});
-        platformSelector.setBackground(new Color(90, 90, 90));
+        platformSelector.setBackground(ColorManager.BACKGROUND_LIGHT);
         platformSelector.setFont(new Font(null, Font.BOLD, fontSize));
         platformSelector.setForeground(Color.WHITE);
         platformSelector.setSelectedIndex(0);
         platformSelector.setAlignmentY(CENTER_ALIGNMENT);
         platformSelector.setRenderer(listRenderer);
         
-        channelName.setBackground(new Color(90, 90, 90));
+        channelName.setBackground(ColorManager.BACKGROUND_LIGHT);
         channelName.setFont(new Font(null, Font.BOLD, fontSize));
         channelName.setForeground(Color.WHITE);
         channelName.setHorizontalAlignment(JTextField.CENTER);
         
         JPanel inputPanel = new JPanel(new GridLayout(1, 2, 8, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 2, 3));
-        inputPanel.setBackground(new Color(14, 14, 14));
+        inputPanel.setBackground(ColorManager.BORDER);
         inputPanel.add(platformSelector);
         inputPanel.add(channelName);
         
@@ -111,21 +112,21 @@ public class EmoteDownlodFrame extends JDialog{
 		statusBar.setTitleFont(new Font(null, Font.BOLD, 15));
         
         JButton confirmButton = new JButton("Confirm");
-        confirmButton.setBackground(new Color(30, 30, 30));
+        confirmButton.setBackground(ColorManager.BUTTON_BACKGROUND);
         confirmButton.setForeground(Color.WHITE);
         confirmButton.setBorder(null);
         confirmButton.addActionListener(closeWindow(false));
 
 //        JButton cancelButton = new JButton("Cancel");
         JButton cancelButton = new JButton("Close");
-        cancelButton.setBackground(new Color(30, 30, 30));
+        cancelButton.setBackground(ColorManager.BUTTON_BACKGROUND);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(null);
         cancelButton.addActionListener(closeWindow(true));
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 8, 5));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(6, 3, 3, 3));
-        buttonPanel.setBackground(new Color(14, 14, 14));
+        buttonPanel.setBackground(ColorManager.BORDER);
         buttonPanel.add(cancelButton);
         buttonPanel.add(confirmButton);
         

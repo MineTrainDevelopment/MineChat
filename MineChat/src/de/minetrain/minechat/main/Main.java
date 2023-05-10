@@ -12,9 +12,9 @@ import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
-import de.minetrain.minechat.utils.TextureManager;
 
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();

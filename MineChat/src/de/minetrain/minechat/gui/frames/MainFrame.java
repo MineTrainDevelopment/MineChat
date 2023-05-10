@@ -13,8 +13,8 @@ import de.minetrain.minechat.gui.obj.ButtonType;
 import de.minetrain.minechat.gui.obj.MineButton;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.utils.TextureManager;
 
 public class MainFrame extends JFrame{
     public static boolean debug = false;
