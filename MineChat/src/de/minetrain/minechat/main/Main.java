@@ -21,6 +21,7 @@ public class Main {
 	public static final StatusBar LOADINGBAR = new StatusBar();
 	public static final String VERSION = "V0.2";
 	public static ConfigManager CONFIG;
+	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame mainFrame;
 	private static JFrame onboardingFrame;
 //	sendMessage("minetrainlp", "", "test");
@@ -52,6 +53,7 @@ public class Main {
 	    onboardingFrame.setVisible(true);
 	    
 	    CONFIG = new ConfigManager("data/config.yml", false);
+	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
 		new TwitchManager(new TwitchCredentials());
 	}
 	

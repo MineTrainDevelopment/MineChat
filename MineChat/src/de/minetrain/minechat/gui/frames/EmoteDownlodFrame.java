@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -207,6 +208,12 @@ public class EmoteDownlodFrame extends JDialog{
 		
 		System.out.println(fromJson.get("data"));
 		JsonArray jsonArray = fromJson.getAsJsonArray("data");
+		
+		if(jsonArray.size()>0){
+			List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
+			indexList.add("Channel_"+twitchUser.getUserId());
+			Main.EMOTE_INDEX.setStringList("index", indexList, true);
+		}
 		
 		for (int i=0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
