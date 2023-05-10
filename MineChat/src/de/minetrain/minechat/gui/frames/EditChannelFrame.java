@@ -194,37 +194,37 @@ public class EditChannelFrame extends JDialog {
 				ConfigManager config = Main.CONFIG;
 				String path = "Channel_"+twitchUser.getUserId()+".";
 				config.setNumber(editedTab.getTabType().getConfigPath(), Long.parseLong(twitchUser.getUserId()));
-				config.setString(path + "Name", twitchUser.getLoginName());
-				config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
-				config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
 				
-				for(int i=0; i<=13; i++){
-					config.setString(path + "Macros.M"+i, "null%-%macro_"+i);
+				if(config.getString(path+"Name").equalsIgnoreCase(">null<")){
+					config.setString(path + "Name", twitchUser.getLoginName());
+					config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
+					config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
+					
+					for(int i=0; i<=13; i++){
+						config.setString(path + "Macros.M"+i, "null%-%macro_"+i);
+					}
+	
+					List<String> greetingsList = new ArrayList<String>();
+					greetingsList.add("Hello {USER} HeyGuys");
+					greetingsList.add("Welcome {USER} HeyGuys");
+					config.setStringList(path + "GreetingText", greetingsList, false);
+					
+					List<String> goodbysList = new ArrayList<String>();
+					goodbysList.add("By {USER}!");
+					goodbysList.add("Have a good one! {USER} <3");
+					config.setStringList(path + "GoodbyText", goodbysList, false);
+					
+					config.setNumber(path + "SpamButton.TriggerAmoundMessages", Long.parseLong(triggerAmountField.getText()));
+					config.setNumber(path + "SpamButton.DeprecateAfterSeconds", Long.parseLong(deprecateAfterField.getText()));
+					
+					TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.parseLong(twitchUser.getUserId()));
+					new EmoteDownlodFrame(Main.mainFrame, twitchUser.getLoginName());
 				}
-
-				List<String> greetingsList = new ArrayList<String>();
-				greetingsList.add("Hello {USER} HeyGuys");
-				greetingsList.add("Welcome {USER} HeyGuys");
-				config.setStringList(path + "GreetingText", greetingsList, false);
 				
-				List<String> goodbysList = new ArrayList<String>();
-				goodbysList.add("By {USER}!");
-				goodbysList.add("Have a good one! {USER} <3");
-				config.setStringList(path + "GoodbyText", goodbysList, false);
-				
-				config.setNumber(path + "SpamButton.TriggerAmoundMessages", Long.parseLong(triggerAmountField.getText()));
-				config.setNumber(path + "SpamButton.DeprecateAfterSeconds", Long.parseLong(deprecateAfterField.getText()));
 				config.saveConfigToFile();
-				
-				TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.parseLong(twitchUser.getUserId()));
-				
 				editedTab.getTabButton().removeActionListener(editedTab.editWindowAction);
 				editedTab.reload(editedTab.getTabButton(), editedTab.getTabType(), Long.parseLong(twitchUser.getUserId()));
-				
-//				new TwitchChannelData(twitchUser);
-				new EmoteDownlodFrame(Main.mainFrame, twitchUser.getLoginName());
 				dispose();
-				
 			}
 		};
 	}
