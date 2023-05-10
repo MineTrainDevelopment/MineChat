@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.utils.TextureManager;
 
 public class ChannelTab {
 	private ChannelTab thisObject;
@@ -23,6 +24,7 @@ public class ChannelTab {
 	private ImageIcon texture;
 	private JButton tabButton;
 	private String displayName;
+	private String channelName;
 	private List<String> greetingTexts;
 	private Long spamTriggerAmound; //Messages
 	private Long spamDeprecateAfter; //Seconds
@@ -49,6 +51,7 @@ public class ChannelTab {
 			this.tabButton.addActionListener(editWindowAction);
 		}else{
 			String configPath = "Channel_"+configID+".";
+			channelName = config.getString(configPath+"Name");
 			displayName = config.getString(configPath+"DisplayName");
 			greetingTexts = config.getStringList(configPath+"GreetingText");
 			spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
@@ -64,6 +67,7 @@ public class ChannelTab {
 		this.configID = configID;
 		ConfigManager config = Main.CONFIG;
 		String configPath = "Channel_"+configID+".";
+		channelName = config.getString(configPath+"Name");
 		displayName = config.getString(configPath+"DisplayName");
 		greetingTexts = config.getStringList(configPath+"GreetingText");
 		spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
@@ -141,6 +145,14 @@ public class ChannelTab {
 
 	public JLabel getTabLabel() {
 		return tabLabel;
+	}
+
+	public String getProfileImagePath() {
+		return TextureManager.texturePath+"Icons/"+configID+"/profile_75.png";
+	}
+
+	public String getChannelName() {
+		return channelName;
 	}
 	
 	

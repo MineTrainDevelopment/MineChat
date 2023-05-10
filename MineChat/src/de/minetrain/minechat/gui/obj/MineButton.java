@@ -8,9 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import de.minetrain.minechat.gui.obj.ButtonType;
-import de.minetrain.minechat.twitch.MessageManager;
-
 public class MineButton extends JButton{
 	private static final long serialVersionUID = -8580714214977222615L;
 
@@ -52,6 +49,7 @@ public class MineButton extends JButton{
 	}
 	
 	public MineButton setInvisible(boolean state){
+		setFocusable(!state);
 		setOpaque(!state);
 		setContentAreaFilled(!state);
 		setBorderPainted(!state);

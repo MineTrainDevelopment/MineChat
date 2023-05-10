@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -13,11 +14,13 @@ import de.minetrain.minechat.gui.obj.MineButton;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.utils.TextureManager;
 
 public class MainFrame extends JFrame{
     public static boolean debug = false;
     private final JLabel textureLabel;
     public final TitleBar titleBar;
+    public MineButton profileButton;
     
     public MainFrame() {
     	super("MineChat "+Main.VERSION);
@@ -32,7 +35,8 @@ public class MainFrame extends JFrame{
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 55), ButtonType.GREET).setInvisible(!debug));
         
         //profile button.
-		getContentPane().add(new MineButton(new Dimension(80, 70), new Point(302, 55), ButtonType.TWITCH_PROFILE).setInvisible(!debug));
+		profileButton = new MineButton(new Dimension(80, 70), new Point(302, 55), ButtonType.TWITCH_PROFILE).setInvisible(!debug);
+		getContentPane().add(profileButton);
 
         //Macro row tow.
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 95), ButtonType.MACRO_4).setInvisible(!debug));

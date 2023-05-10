@@ -1,17 +1,27 @@
 package de.minetrain.minechat.gui.obj;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.EmoteDownlodFrame;
@@ -19,10 +29,11 @@ import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.main.Main;
 
 public class TitleBar extends JPanel{
+	private static final Logger logger = LoggerFactory.getLogger(TitleBar.class);
 	private static final long serialVersionUID = 2767970625570676160L;
 	public static final int tabButtonHight = 9;
 	public static ChannelTab currentTab;
-	public final JFrame mainFrame;
+	public final MainFrame mainFrame;
 	public final JLabel texture;
 	public ChannelTab mainTab;
 	private ChannelTab secondTab;
@@ -85,6 +96,20 @@ public class TitleBar extends JPanel{
 		this.secondTab = new ChannelTab(tab2, TabButtonType.TAB_SECOND);
 		this.thirdTab = new ChannelTab(tab3, TabButtonType.TAB_THIRD);
 		
+		mainFrame.profileButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					java.awt.Desktop.getDesktop().browse(new URI("https://twitch.tv/"+currentTab.getChannelName()));
+					Thread.sleep(250);
+					java.awt.Desktop.getDesktop().browse(new URI("https://www.twitch.tv/popout/"+currentTab.getChannelName()+"/chat?popout="));
+				} catch (IOException | URISyntaxException | InterruptedException ex) {
+					logger.error("Something went wrong, while opening a Website!", ex);
+				}
+			}
+		});
+		
         setLayout(null);
 		setOpaque(false);
 		setBackground(Color.BLUE);
@@ -101,8 +126,10 @@ public class TitleBar extends JPanel{
 	}
 
 	public void changeTab(TabButtonType buttonType, ChannelTab tab) {
-		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
 		currentTab = tab;
+		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
+		mainFrame.profileButton.setIcon(new ImageIcon(tab.getProfileImagePath()));
+		
     	texture.setIcon(tab.getTexture());
     	mainTab.offsetButton(buttonType);
     	thirdTab.offsetButton(buttonType);

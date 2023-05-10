@@ -229,9 +229,9 @@ public class EmoteDownlodFrame extends JDialog{
 			config.saveConfigToFile();
 			
 			try {
-				TextureManager.downloadImmage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name+"_1.gif");
-				TextureManager.downloadImmage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name+"_2.gif");
-				TextureManager.downloadImmage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name+"_3.gif");
+				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name+"_1.png");
+				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name+"_2.png");
+				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name+"_3.png");
 			} catch (IOException ex) {
 				logger.error("Error?", ex);
 			}
@@ -299,17 +299,17 @@ public class EmoteDownlodFrame extends JDialog{
 		String bttvEmotePath = "Icons/bttv/"+newEmoteName+"/";
 
 		statusBar.setProgress("Downloading: "+newEmoteName+"_1x", StatusBar.getPercentage(5, 2));
-		TextureManager.downloadImmage(url+"/1x", bttvEmotePath, newEmoteName+"_1.gif");
+		TextureManager.downloadImage(url+"/1x", bttvEmotePath, newEmoteName+"_1.gif");
 //		TextureManager.downloadImmage(url+"/1x", bttvEmotePath+"png/", newEmoteName+"_1.png");
 //		TextureManager.downloadImmage(url+"/1x", bttvEmotePath+"gif/", newEmoteName+"_1.gif");
 		
 		statusBar.setProgress("Downloading: "+newEmoteName+"_2x", StatusBar.getPercentage(5, 3));
-		TextureManager.downloadImmage(url+"/2x", bttvEmotePath, newEmoteName+"_2.gif");
+		TextureManager.downloadImage(url+"/2x", bttvEmotePath, newEmoteName+"_2.gif");
 //		TextureManager.downloadImmage(url+"/2x", bttvEmotePath+"png/", newEmoteName+"_2.png");
 //		TextureManager.downloadImmage(url+"/2x", bttvEmotePath+"gif/", newEmoteName+"_2.gif");
 		
 		statusBar.setProgress("Downloading: "+newEmoteName+"_3x", StatusBar.getPercentage(5, 4));
-		TextureManager.downloadImmage(url+"/3x", bttvEmotePath, newEmoteName+"_3.gif");
+		TextureManager.downloadImage(url+"/3x", bttvEmotePath, newEmoteName+"_3.gif");
 //		TextureManager.downloadImmage(url+"/3x", bttvEmotePath+"png/", newEmoteName+"_3.png");
 //		TextureManager.downloadImmage(url+"/3x", bttvEmotePath+"gif/", newEmoteName+"_3.gif");
 
