@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -208,12 +209,7 @@ public class EmoteDownlodFrame extends JDialog{
 		
 		System.out.println(fromJson.get("data"));
 		JsonArray jsonArray = fromJson.getAsJsonArray("data");
-		
-		if(jsonArray.size()>0){
-			List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
-			indexList.add("Channel_"+twitchUser.getUserId());
-			Main.EMOTE_INDEX.setStringList("index", indexList, true);
-		}
+		List<String> emoteList = new ArrayList<String>();
 		
 		for (int i=0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
@@ -225,6 +221,8 @@ public class EmoteDownlodFrame extends JDialog{
 		    statusBar.setProgress("Downloading: "+name, StatusBar.getPercentage(jsonArray.size(), i));
 			
 			ConfigManager config = new ConfigManager(TextureManager.texturePath+fileLocation+name+".yml", true);
+			emoteList.add(name);
+//			emoteList.add("/"+twitchUser.getUserId()+"/"+name);
 			config.setString("Name", name);
 			config.setString("ID", entry.get("id").getAsString());
 			config.setString("Tier",entry.get("tier").getAsString());
@@ -244,6 +242,14 @@ public class EmoteDownlodFrame extends JDialog{
 				logger.error("Error?", ex);
 			}
 			
+		}
+
+		statusBar.setProgress("Saving data...", 99);
+		if(jsonArray.size()>0){
+			List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
+			indexList.add("Channel_"+twitchUser.getUserId());
+			Main.EMOTE_INDEX.setStringList("index", indexList, false);
+			Main.EMOTE_INDEX.setStringList("Channel_"+twitchUser.getUserId(), emoteList, true);
 		}
 		statusBar.setDone("Download completed!");
 	}
