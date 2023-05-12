@@ -15,8 +15,7 @@ public class MineButton extends JButton{
 	 * 
 	 * @param size
 	 * @param location
-	 * @param texture
-	 * @param actionListener
+	 * @param type
 	 */
 	public MineButton(Dimension size, Point location, ButtonType type) {
 		setSize((size != null) ? size : new Dimension(0, 0));

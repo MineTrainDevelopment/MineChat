@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.RoundRectangle2D;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -13,18 +12,18 @@ import de.minetrain.minechat.gui.obj.ButtonType;
 import de.minetrain.minechat.gui.obj.MineButton;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 
 public class MainFrame extends JFrame{
-    public static boolean debug = false;
+	private static final long serialVersionUID = 1795247033275460890L;
+	public static boolean debug = false;
     private final JLabel textureLabel;
     public final TitleBar titleBar;
     public MineButton profileButton;
     
     public MainFrame() {
     	super("MineChat "+Main.VERSION);
-    	//Textrue label.
+    	setIconImage(Main.TEXTURE_MANAGER.getProgramIcon().getImage());
  		textureLabel = new JLabel();
 	    textureLabel.setSize(500, 700);
 

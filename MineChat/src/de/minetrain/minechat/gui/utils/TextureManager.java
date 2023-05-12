@@ -1,6 +1,7 @@
 package de.minetrain.minechat.gui.utils;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -32,6 +33,8 @@ public class TextureManager {
 	private final ImageIcon mainFrame_TAB_2;
 	private final ImageIcon mainFrame_TAB_3;
 	private final ImageIcon onboarding;
+	private final ImageIcon emoteBorder;
+	private final ImageIcon programIcon;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -39,6 +42,8 @@ public class TextureManager {
 		this.mainFrame_TAB_2 =new ImageIcon(texturePath + "MineChatTextur2.png");
 		this.mainFrame_TAB_3 = new ImageIcon(texturePath + "MineChatTextur3.png");
 		this.onboarding = new ImageIcon(texturePath + "MineChatTexturOnboarding.png");
+		this.emoteBorder = new ImageIcon(texturePath + "emoteBorder.png");
+		this.programIcon = new ImageIcon(texturePath + "programIcon.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -57,6 +62,14 @@ public class TextureManager {
 
 	public ImageIcon getOnboarding() {
 		return onboarding;
+	}
+	
+	public ImageIcon getEmoteBorder() {
+		return emoteBorder;
+	}
+	
+	public ImageIcon getProgramIcon() {
+		return programIcon;
 	}
 	
 	public ImageIcon getByTabButton(TabButtonType tab){
@@ -148,5 +161,37 @@ public class TextureManager {
         File output = new File(fileLocation, fileName);
         ImageIO.write(scaledImage, "png", output);
     }
+
+	public static void mergeEmoteImages(String fileLocation, String fileName, String background){
+		mergeEmoteImages(fileLocation, fileName, background, "png");
+	}
+	
+	public static void mergeEmoteImages(String fileLocation, String fileName, String background, String format){
+		try {
+			File path = new File(texturePath + fileLocation); // base path of the images
+			System.out.println(texturePath + fileLocation);
+	
+			// load source images
+			BufferedImage image = ImageIO.read(new File(TextureManager.texturePath, background));
+			BufferedImage overlay = ImageIO.read(new File(path, fileName));
+	
+			// create the new image, canvas size is the max. of both image sizes
+			int w = Math.max(image.getWidth(), overlay.getWidth());
+			int h = Math.max(image.getHeight(), overlay.getHeight());
+			BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	
+			// paint both images, preserving the alpha channels
+			Graphics g = combined.getGraphics();
+			g.drawImage(image, 0, 0, null);
+			g.drawImage(overlay, 4, 4, null);
+	
+			g.dispose();
+	
+			// Save as new image
+			ImageIO.write(combined, format.toUpperCase(), new File(path, fileName.replace("."+format, "_BG.png")));
+		} catch (IOException ex) {
+			logger.error("Merging images whent wrong.", ex);
+		}
+	}
 	
 }

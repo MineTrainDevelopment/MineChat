@@ -1,6 +1,8 @@
 package de.minetrain.minechat.gui.obj;
 
 public enum ButtonType {
+	NON(null),
+	
 	MACRO_1("M1"),
 	MACRO_2("M2"),
 	MACRO_3("M3"),

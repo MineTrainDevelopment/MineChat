@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -58,20 +59,25 @@ public class EmoteDownlodFrame extends JDialog{
     
 
 	public EmoteDownlodFrame(MainFrame mainFrame, String channelName) {
-		super(Main.mainFrame, "Emote downloader", ModalityType.MODELESS); //true
+		super(mainFrame, "Emote downloader", ModalityType.MODELESS); //true
 		this.channelName.setText(channelName);
 		this.statusBar.setProgress("Install emotes?", 0);
-		buildingGUI(mainFrame);
-		
+		buildingGUI(mainFrame.getLocation());
 	}
 	
 	public EmoteDownlodFrame(MainFrame mainFrame) {
-		super(Main.mainFrame, "Emote downloader", ModalityType.MODELESS); //true
+		super(mainFrame, "Emote downloader", ModalityType.MODELESS); //true
 		statusBar.setProgress("Waiting for input...", 0);
-		buildingGUI(mainFrame);
+		buildingGUI(mainFrame.getLocation());
+	}
+	
+	public EmoteDownlodFrame(JDialog dialog) {
+		super(dialog, "Emote downloader", ModalityType.MODELESS); //true
+		statusBar.setProgress("Waiting for input...", 0);
+		buildingGUI(dialog.getLocation());
 	}
 
-	private void buildingGUI(MainFrame mainFrame) {
+	private void buildingGUI(Point location) {
 		thisFrame = this;
         setSize(300, 150);
         setAlwaysOnTop(true);
@@ -132,7 +138,6 @@ public class EmoteDownlodFrame extends JDialog{
         buttonPanel.add(cancelButton);
         buttonPanel.add(confirmButton);
         
-        Point location = mainFrame.getLocation();
         location.setLocation(location.x+100, location.y+200);
         setLocation(location);
         
@@ -238,6 +243,7 @@ public class EmoteDownlodFrame extends JDialog{
 				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name+"_1.png");
 				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name+"_2.png");
 				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name+"_3.png");
+				TextureManager.mergeEmoteImages(fileLocation, name+"_1.png", "emoteBorder.png");
 			} catch (IOException ex) {
 				logger.error("Error?", ex);
 			}
@@ -245,9 +251,12 @@ public class EmoteDownlodFrame extends JDialog{
 		}
 
 		statusBar.setProgress("Saving data...", 99);
+		Collections.sort(emoteList);
 		if(jsonArray.size()>0){
 			List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
-			indexList.add("Channel_"+twitchUser.getUserId());
+			if(!indexList.contains("Channel_"+twitchUser.getUserId())){
+				indexList.add("Channel_"+twitchUser.getUserId());
+			}
 			Main.EMOTE_INDEX.setStringList("index", indexList, false);
 			Main.EMOTE_INDEX.setStringList("Channel_"+twitchUser.getUserId(), emoteList, true);
 		}
@@ -297,7 +306,7 @@ public class EmoteDownlodFrame extends JDialog{
 		}
 		
 		String url = channelName.getText().replace(BTTV_URL, BTTV_EMOTE_URL);
-		statusBar.setProgress("Waiting for Rename...", StatusBar.getPercentage(5, 1), Color.CYAN);
+		statusBar.setProgress("Waiting for Rename...", StatusBar.getPercentage(6, 1), Color.CYAN);
 		EmoteRenameFrame emoteRenameFrame = new EmoteRenameFrame(thisFrame, channelName.getText().replace(BTTV_URL, ""));
 		
 		while (!emoteRenameFrame.waitForInput()) {
@@ -312,20 +321,37 @@ public class EmoteDownlodFrame extends JDialog{
 		String newEmoteName = emoteRenameFrame.getNewEmoteName();
 		String bttvEmotePath = "Icons/bttv/"+newEmoteName+"/";
 
-		statusBar.setProgress("Downloading: "+newEmoteName+"_1x", StatusBar.getPercentage(5, 2));
+		statusBar.setProgress("Downloading: "+newEmoteName+"_1x", StatusBar.getPercentage(6, 2));
 		TextureManager.downloadImage(url+"/1x", bttvEmotePath, newEmoteName+"_1.gif");
+		TextureManager.mergeEmoteImages(bttvEmotePath, newEmoteName+"_1.gif", "emoteBorder.png", "gif");
 //		TextureManager.downloadImmage(url+"/1x", bttvEmotePath+"png/", newEmoteName+"_1.png");
 //		TextureManager.downloadImmage(url+"/1x", bttvEmotePath+"gif/", newEmoteName+"_1.gif");
 		
-		statusBar.setProgress("Downloading: "+newEmoteName+"_2x", StatusBar.getPercentage(5, 3));
+		statusBar.setProgress("Downloading: "+newEmoteName+"_2x", StatusBar.getPercentage(6, 3));
 		TextureManager.downloadImage(url+"/2x", bttvEmotePath, newEmoteName+"_2.gif");
 //		TextureManager.downloadImmage(url+"/2x", bttvEmotePath+"png/", newEmoteName+"_2.png");
 //		TextureManager.downloadImmage(url+"/2x", bttvEmotePath+"gif/", newEmoteName+"_2.gif");
 		
-		statusBar.setProgress("Downloading: "+newEmoteName+"_3x", StatusBar.getPercentage(5, 4));
+		statusBar.setProgress("Downloading: "+newEmoteName+"_3x", StatusBar.getPercentage(6, 4));
 		TextureManager.downloadImage(url+"/3x", bttvEmotePath, newEmoteName+"_3.gif");
 //		TextureManager.downloadImmage(url+"/3x", bttvEmotePath+"png/", newEmoteName+"_3.png");
 //		TextureManager.downloadImmage(url+"/3x", bttvEmotePath+"gif/", newEmoteName+"_3.gif");
+
+
+		statusBar.setProgress("Saving emote...", StatusBar.getPercentage(6, 5));
+		List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
+		if(!indexList.contains("Channel_bttv")){
+			indexList.add("Channel_bttv");
+		}
+		
+		List<String> emoteList = Main.EMOTE_INDEX.getStringList("Channel_bttv");
+		if(!emoteList.contains(newEmoteName)){
+			emoteList.add(newEmoteName);
+		}
+
+		Collections.sort(emoteList);
+		Main.EMOTE_INDEX.setStringList("index", indexList, false);
+		Main.EMOTE_INDEX.setStringList("Channel_bttv", emoteList, true);
 
 		statusBar.setDone("Download completed!");
 //		https://betterttv.com/emotes/5d7eefb7c0652668c9e4d394
