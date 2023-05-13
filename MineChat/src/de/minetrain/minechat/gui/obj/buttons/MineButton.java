@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.obj;
+package de.minetrain.minechat.gui.obj.buttons;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +24,7 @@ public class MineButton extends JButton{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(type != null){
+				if(type != null &&type != ButtonType.NON){
 					System.out.println(type.toString());
 				}
 				

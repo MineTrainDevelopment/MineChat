@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.main.Main;
 
 public class TitleBar extends JPanel{

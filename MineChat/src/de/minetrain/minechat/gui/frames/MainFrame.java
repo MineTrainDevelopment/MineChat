@@ -8,10 +8,12 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import de.minetrain.minechat.gui.obj.ButtonType;
-import de.minetrain.minechat.gui.obj.MineButton;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.gui.obj.buttons.MacroButton;
+import de.minetrain.minechat.gui.obj.buttons.MacroEmoteButton;
+import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.main.Main;
 
 public class MainFrame extends JFrame{
@@ -28,29 +30,29 @@ public class MainFrame extends JFrame{
 	    textureLabel.setSize(500, 700);
 
         //Macro row one
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 55), ButtonType.MACRO_1).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(112, 55), ButtonType.MACRO_2).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 55), ButtonType.MACRO_3).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 55), ButtonType.GREET).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(17, 55), ButtonType.MACRO_1).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(112, 55), ButtonType.MACRO_2).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(207, 55), ButtonType.MACRO_3).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(402, 55), ButtonType.GREET).setInvisible(!debug));
         
         //profile button.
 		profileButton = new MineButton(new Dimension(80, 70), new Point(302, 55), ButtonType.TWITCH_PROFILE).setInvisible(!debug);
 		getContentPane().add(profileButton);
 
         //Macro row tow.
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(17, 95), ButtonType.MACRO_4).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(112, 95), ButtonType.MACRO_5).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(207, 95), ButtonType.MACRO_6).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(17, 95), ButtonType.MACRO_4).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(112, 95), ButtonType.MACRO_5).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(207, 95), ButtonType.MACRO_6).setInvisible(!debug));
+        getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
         
         //Emote row.
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(59, 136), ButtonType.EMOTE_2).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(99, 136), ButtonType.EMOTE_3).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(139, 136), ButtonType.EMOTE_4).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(179, 136), ButtonType.EMOTE_5).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(219, 136), ButtonType.EMOTE_6).setInvisible(!debug));
-        getContentPane().add(new MineButton(new Dimension(28, 28), new Point(259, 136), ButtonType.EMOTE_7).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(59, 136), ButtonType.EMOTE_2).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(99, 136), ButtonType.EMOTE_3).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(139, 136), ButtonType.EMOTE_4).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(179, 136), ButtonType.EMOTE_5).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(219, 136), ButtonType.EMOTE_6).setInvisible(!debug));
+        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(259, 136), ButtonType.EMOTE_7).setInvisible(!debug));
         
         //Stop QUEUE button.
         getContentPane().add(new MineButton(new Dimension(175, 30), new Point(305, 135), ButtonType.STOP_QUEUE).setInvisible(!debug));

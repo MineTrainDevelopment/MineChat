@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.obj;
+package de.minetrain.minechat.gui.obj.buttons;
 
 public enum ButtonType {
 	NON(null),

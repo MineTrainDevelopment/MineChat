@@ -1,6 +1,6 @@
 package de.minetrain.minechat.utils;
 
-import de.minetrain.minechat.gui.obj.ButtonType;
+import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 
 public class MacroObject {
 	private final ButtonType buttonType;

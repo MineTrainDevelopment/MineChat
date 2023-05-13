@@ -27,8 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
-import de.minetrain.minechat.gui.obj.ButtonType;
-import de.minetrain.minechat.gui.obj.MineButton;
+import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
