@@ -215,6 +215,10 @@ public class EmoteDownlodFrame extends JDialog{
 		System.out.println(fromJson.get("data"));
 		JsonArray jsonArray = fromJson.getAsJsonArray("data");
 		List<String> emoteList = new ArrayList<String>();
+		List<String> emoteTier2List = new ArrayList<String>();
+		List<String> emoteTier3List = new ArrayList<String>();
+		List<String> emoteBitsList = new ArrayList<String>();
+		List<String> emoteFollowList = new ArrayList<String>();
 		
 		for (int i=0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
@@ -224,16 +228,27 @@ public class EmoteDownlodFrame extends JDialog{
 			String fileLocation = "Icons/"+userId+"/"+name+"/";
 			
 		    statusBar.setProgress("Downloading: "+name, StatusBar.getPercentage(jsonArray.size(), i));
-			
 			ConfigManager config = new ConfigManager(TextureManager.texturePath+fileLocation+name+".yml", true);
-			emoteList.add(name);
-//			emoteList.add("/"+twitchUser.getUserId()+"/"+name);
+			
+			String borderImageTyp = "";
+			switch (entry.get("tier").getAsString()) {
+				case "1000": emoteList.add(name); break;
+				case "2000": emoteTier2List.add(name); borderImageTyp="2"; break;
+				case "3000": emoteTier3List.add(name); borderImageTyp="3"; break;
+				default:
+					if(entry.get("emote_type").getAsString().equals("bitstier")){
+						 emoteBitsList.add(name); borderImageTyp="Bits";
+					}else{
+						emoteFollowList.add(name); borderImageTyp="Follow";
+					}
+					break;
+			}
+			
 			config.setString("Name", name);
 			config.setString("ID", entry.get("id").getAsString());
-			config.setString("Tier",entry.get("tier").getAsString());
-			config.setString("EmoteType",entry.get("emote_type").getAsString());
+			config.setString("Tier", entry.get("tier").getAsString());
+			config.setString("EmoteType", entry.get("emote_type").getAsString());
 			config.setString("EmoteSet_Id",entry.get("emote_set_id").getAsString());
-			config.setString("format",entry.get("tier").getAsString());
 			config.setString("Tier",entry.get("tier").getAsString());
 			config.setString("Format", "static");
 			config.setString("Theme", "dark");
@@ -243,7 +258,7 @@ public class EmoteDownlodFrame extends JDialog{
 				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name+"_1.png");
 				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name+"_2.png");
 				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name+"_3.png");
-				TextureManager.mergeEmoteImages(fileLocation, name+"_1.png", "emoteBorder.png");
+				TextureManager.mergeEmoteImages(fileLocation, name+"_1.png", "emoteBorder"+borderImageTyp+".png");
 			} catch (IOException ex) {
 				logger.error("Error?", ex);
 			}
@@ -252,6 +267,15 @@ public class EmoteDownlodFrame extends JDialog{
 
 		statusBar.setProgress("Saving data...", 99);
 		Collections.sort(emoteList);
+		Collections.sort(emoteTier2List);
+		Collections.sort(emoteTier2List);
+		Collections.sort(emoteBitsList);
+		Collections.sort(emoteFollowList);
+		emoteList.addAll(emoteTier2List);
+		emoteList.addAll(emoteTier3List);
+		emoteList.addAll(emoteBitsList);
+		emoteList.addAll(emoteFollowList);
+		
 		if(jsonArray.size()>0){
 			List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
 			if(!indexList.contains("Channel_"+twitchUser.getUserId())){
