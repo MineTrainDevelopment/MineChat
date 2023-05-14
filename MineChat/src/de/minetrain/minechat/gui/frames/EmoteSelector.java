@@ -34,7 +34,6 @@ public class EmoteSelector extends JDialog{
 	private static final long serialVersionUID = 8337999985260635877L;
 	private final EmoteSelector thisObect;
     private JPanel emotePanel;
-//    private MainFrame mainFrame;
     private JScrollPane scrollPane;
     private static final int MAX_EMOTES_PER_ROW = 10;
     private static final int BUTTON_SIZE = 36;
@@ -46,13 +45,11 @@ public class EmoteSelector extends JDialog{
 
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
 		super(mainFrame, "Emotes", true);
-//		this.mainFrame = mainFrame;
 		this.disposOnSelect = disposOnSelect;
 		thisObect = this;
 		emotes = TwitchEmote.getEmotes();
 		
         setResizable(false);
-//        setAlwaysOnTop(true);
         setUndecorated(true);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -152,8 +149,6 @@ public class EmoteSelector extends JDialog{
 			titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
 			buttonPanel.setBorder(titledBorder);
 			
-//            emotePanel.setSize(getPreferredSize());
-//            emotePanel.setLayout(new GridLayout(index/10, MAX_EMOTES_PER_ROW));
             buttonPanel.setSize((numRows*BUTTON_SIZE), (MAX_EMOTES_PER_ROW*BUTTON_SIZE));
             emotePanel.add(buttonPanel);
             emotePanel.add(Box.createVerticalStrut(5));

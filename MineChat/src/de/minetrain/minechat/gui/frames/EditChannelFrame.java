@@ -219,11 +219,11 @@ public class EditChannelFrame extends JDialog {
 					config.setNumber(path + "SpamButton.DeprecateAfterSeconds", Long.parseLong(deprecateAfterField.getText()));
 					
 					TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.parseLong(twitchUser.getUserId()));
-					new EmoteDownlodFrame(Main.mainFrame, twitchUser.getLoginName());
+					new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
 				}
 				
 				config.saveConfigToFile();
-				editedTab.getTabButton().removeActionListener(editedTab.editWindowAction);
+				editedTab.getTabButton().removeActionListener(editedTab.getEditWindowAction());
 				editedTab.reload(twitchUser.getUserId());
 				dispose();
 			}

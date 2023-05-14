@@ -2,7 +2,6 @@ package de.minetrain.minechat.gui.obj;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
-import de.minetrain.minechat.gui.obj.buttons.MacroEmoteButton;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.main.Main;
 
@@ -35,12 +33,44 @@ public class TitleBar extends JPanel{
 	public static ChannelTab currentTab;
 	public final MainFrame mainFrame;
 	public final JLabel texture;
-	public ChannelTab mainTab;
+	private ChannelTab mainTab;
+	public ChannelTab getMainTab() {
+		return mainTab;
+	}
+
+	public void setMainTab(ChannelTab mainTab) {
+		this.mainTab = mainTab;
+	}
+
+	public JButton getTab1() {
+		return tab1;
+	}
+
+	public void setTab1(JButton tab1) {
+		this.tab1 = tab1;
+	}
+
+	public JButton getTab2() {
+		return tab2;
+	}
+
+	public void setTab2(JButton tab2) {
+		this.tab2 = tab2;
+	}
+
+	public JButton getTab3() {
+		return tab3;
+	}
+
+	public void setTab3(JButton tab3) {
+		this.tab3 = tab3;
+	}
+
 	private ChannelTab secondTab;
 	private ChannelTab thirdTab;
-	public JButton tab1;
-	public JButton tab2;
-	public JButton tab3;
+	private JButton tab1;
+	private JButton tab2;
+	private JButton tab3;
     private int mouseX, mouseY;
 
 	public TitleBar(MainFrame mainFrame, JLabel texture) {

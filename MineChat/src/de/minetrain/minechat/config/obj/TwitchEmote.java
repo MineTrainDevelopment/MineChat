@@ -28,8 +28,8 @@ public class TwitchEmote {
 		
 		imageIcon = new ImageIcon(imagePath);
 		
-		if(imageIcon == null && Main.mainFrame != null){
-			Main.mainFrame.displayInfo("Can´t find the '"+imagePath+"' emote");
+		if(imageIcon == null && Main.MAIN_FRAME != null){
+			Main.MAIN_FRAME.displayInfo("Can´t find the '"+imagePath+"' emote");
 		}
 	}
 	

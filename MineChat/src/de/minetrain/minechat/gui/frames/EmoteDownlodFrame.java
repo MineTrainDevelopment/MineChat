@@ -55,7 +55,7 @@ public class EmoteDownlodFrame extends JDialog{
     private JComboBox<String> platformSelector;
     private JTextField channelName = new JTextField();
     private JTextField customEmoteName = new JTextField();
-    public EmoteDownlodFrame thisFrame;
+//    private EmoteDownlodFrame thisFrame;
     public StatusBar statusBar = new StatusBar();;
     private int mouseX, mouseY;
     
@@ -80,7 +80,7 @@ public class EmoteDownlodFrame extends JDialog{
 	}
 
 	private void buildingGUI(Point location) {
-		thisFrame = this;
+//		thisFrame = this;
         setSize(300, 180);
         setAlwaysOnTop(true);
         setUndecorated(true);

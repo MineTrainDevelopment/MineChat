@@ -21,7 +21,7 @@ public class Main {
 	public static final String VERSION = "V0.2";
 	public static ConfigManager CONFIG;
 	public static ConfigManager EMOTE_INDEX;
-	public static MainFrame mainFrame;
+	public static MainFrame MAIN_FRAME;
 	private static JFrame onboardingFrame;
 //	sendMessage("minetrainlp", "", "test");
 //	try {Thread.sleep(1500);} catch (InterruptedException e) { }
@@ -58,9 +58,9 @@ public class Main {
 	
 	public static void openMainFrame(){
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
-		mainFrame = new MainFrame();
-		if(!mainFrame.titleBar.mainTab.isOccupied()){
-			new EditChannelFrame(mainFrame, mainFrame.titleBar.mainTab);
+		MAIN_FRAME = new MainFrame();
+		if(!MAIN_FRAME.getTitleBar().getMainTab().isOccupied()){
+			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
 		}
 		onboardingFrame.dispose();
 	}

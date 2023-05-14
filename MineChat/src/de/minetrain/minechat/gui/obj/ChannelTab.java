@@ -29,7 +29,7 @@ public class ChannelTab {
 	private List<String> greetingTexts;
 	private Long spamTriggerAmound; //Messages
 	private Long spamDeprecateAfter; //Seconds
-	public ActionListener editWindowAction;
+	private ActionListener editWindowAction;
 	private ChannelMacros macros;
 	
 	private JLabel tabLabel;
@@ -49,8 +49,8 @@ public class ChannelTab {
 			greetingTexts = null;
 			spamTriggerAmound = 4l;
 			spamDeprecateAfter = 5l;
-			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){new EditChannelFrame(Main.mainFrame, thisObject);}};
-			this.tabButton.addActionListener(editWindowAction);
+			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){new EditChannelFrame(Main.MAIN_FRAME, thisObject);}};
+			this.tabButton.addActionListener(getEditWindowAction());
 			macros = new ChannelMacros(true);
 		}else{
 			loadData(configID);
@@ -164,6 +164,10 @@ public class ChannelTab {
 
 	public ChannelMacros getMacros() {
 		return macros;
+	}
+
+	public ActionListener getEditWindowAction() {
+		return editWindowAction;
 	}
 	
 	

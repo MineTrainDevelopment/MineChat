@@ -45,7 +45,7 @@ public class MacroEmoteButton extends MineButton{
 		    public void mouseClicked(MouseEvent e) {
 		        if (SwingUtilities.isRightMouseButton(e)) {
 		            System.out.println("rechts");
-		            EmoteSelector emoteSelector = new EmoteSelector(Main.mainFrame, true);
+		            EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
 		            
 		            new Thread(() -> {
 		            	String selectedEmote = emoteSelector.getSelectedEmote();
@@ -55,7 +55,7 @@ public class MacroEmoteButton extends MineButton{
 		            	
 		            	if(selectedEmote != null){
 		            		String selectedEmoteName = selectedEmote.split("/")[4];
-							InputFrame inputFrame = new InputFrame(Main.mainFrame, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
+							InputFrame inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
 		            		
 		            		while(!inputFrame.isDispose() && inputFrame.getOutputInput() == null){
 				            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
@@ -65,7 +65,7 @@ public class MacroEmoteButton extends MineButton{
 		            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : selectedEmoteName;
 		            			Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros."+type.getConfigIndex(), (selectedEmote.replace("_BG", ""))+"%-%"+output, true);
 		            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
-		            			Main.mainFrame.titleBar.changeTab(TitleBar.currentTab.getTabType(), TitleBar.currentTab);
+		            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab.getTabType(), TitleBar.currentTab);
 		            		}
 		            	}
 		            }).start();

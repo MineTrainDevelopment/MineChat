@@ -20,7 +20,7 @@ public class MainFrame extends JFrame{
 	private static final long serialVersionUID = 1795247033275460890L;
 	public static boolean debug = false;
     private final JLabel textureLabel;
-    public final TitleBar titleBar;
+    private final TitleBar titleBar;
     public MineButton profileButton;
     public MacroEmoteButton emoteButton0, emoteButton1, emoteButton2, emoteButton3, emoteButton4, emoteButton5, emoteButton6;
     
@@ -68,7 +68,7 @@ public class MainFrame extends JFrame{
 		
         this.titleBar = new TitleBar(this, textureLabel);
         titleBar.getTabNames().forEach(panal -> textureLabel.add(panal)); //Add TabTexts
-        titleBar.changeTab(TabButtonType.TAB_MAIN, titleBar.mainTab);
+        titleBar.changeTab(TabButtonType.TAB_MAIN, titleBar.getMainTab());
         
 		getContentPane().add(titleBar);
         getContentPane().add(textureLabel);
@@ -89,6 +89,10 @@ public class MainFrame extends JFrame{
     
     public void displayInfo(String s) {
 		System.err.println(s);
+	}
+
+	public TitleBar getTitleBar() {
+		return titleBar;
 	}
 
 }
