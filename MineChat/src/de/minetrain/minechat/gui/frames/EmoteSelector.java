@@ -127,16 +127,25 @@ public class EmoteSelector extends JDialog{
             }
 			
 			System.out.println(buttons.size() + " - " + MAX_EMOTES_PER_ROW);
-			if(buttons.size() < MAX_EMOTES_PER_ROW){
-				for(int i = buttons.size(); i < MAX_EMOTES_PER_ROW; i++){
-					MineButton dummyButtom = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
-					dummyButtom.setPreferredSize(dummyButtom.getSize());
-					dummyButtom.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
-					buttons.add(dummyButtom);
-					System.out.println("add - "+buttons.size());
-				}
-				
+			int numDummyButtons = MAX_EMOTES_PER_ROW - (buttons.size() % MAX_EMOTES_PER_ROW);
+			for(int i = 0; i < numDummyButtons; i++){
+			    MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
+			    dummyButton.setPreferredSize(dummyButton.getSize());
+			    dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
+			    buttons.add(dummyButton);
+			    System.out.println("add - "+buttons.size());
 			}
+
+//			if(buttons.size() < MAX_EMOTES_PER_ROW){
+//				for(int i = buttons.size(); i < MAX_EMOTES_PER_ROW; i++){
+//					MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
+//					dummyButton.setPreferredSize(dummyButton.getSize());
+//					dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
+//					buttons.add(dummyButton);
+//					System.out.println("add - "+buttons.size());
+//				}
+				
+//			}
 
 			int numRows = (int) Math.ceil((double) buttons.size() / MAX_EMOTES_PER_ROW);
 			JPanel buttonPanel = new JPanel(new GridLayout(numRows, MAX_EMOTES_PER_ROW));
