@@ -16,14 +16,14 @@ import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import de.minetrain.minechat.gui.utils.ColorManager;
 
-public class InputFrame extends JFrame {
+public class InputFrame extends JDialog {
 	private static final long serialVersionUID = 1728088408056991401L;
 	private final JTextField nameField;
 	private final JTextField outputField;
@@ -32,13 +32,13 @@ public class InputFrame extends JFrame {
     private int mouseX, mouseY;
 
 	public InputFrame(MainFrame mainFrame, String leftTitle, String leftValue, String rightTitle, String rightValue) {
-		setTitle("Mein JFrame");
+		super(mainFrame, "MineChat, input frame", true);
         setSize(264, 106);
         setLocationRelativeTo(null);
         setAlwaysOnTop(true);
 		setUndecorated(true);
 		setResizable(false);
-		setShape(new RoundRectangle2D.Double(0, 0, 264, 106, 25, 25));
+		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 25, 25));
 		
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 7));
@@ -88,7 +88,7 @@ public class InputFrame extends JFrame {
         okButton.setBorder(null);
         okButton.addActionListener(closeWindow(false));
         
-        JButton cancelButton = new JButton("reset");
+        JButton cancelButton = new JButton("Cancel");
         cancelButton.setBackground(ColorManager.BACKGROUND);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(null);
@@ -128,13 +128,24 @@ public class InputFrame extends JFrame {
 				if(!close){
 					System.out.println(nameField.getText());
 					nameInput = nameField.getText();
-					outputInput = outputField.getText();
+					
+					if(!outputField.getText().isEmpty() && !outputField.getText().equals("%-Enter text here...")){
+						outputInput = outputField.getText();
+						dispose();
+					}else{
+						outputField.setText("%-Enter text here...");
+					}
+				}else{
+					dispose();
 				}
-				
-				dispose = true;
-				dispose();
 			}
 		};
+	}
+	
+	@Override
+	public void dispose() {
+		dispose = true;
+		super.dispose();
 	}
 	
 	private MouseAdapter MoiseListner() {

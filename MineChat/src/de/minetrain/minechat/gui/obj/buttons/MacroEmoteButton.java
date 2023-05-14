@@ -7,8 +7,10 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
+import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
+import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
 
@@ -38,7 +40,7 @@ public class MacroEmoteButton extends MineButton{
 	 * @param location the location of the button on the frame.
 	 * @param type     the type of macro button this is.
 	 */
-	public MacroEmoteButton(Dimension size, Point location, ButtonType type) {
+	public MacroEmoteButton(Dimension size, Point location, ButtonType type, MainFrame mainFrame) {
 		super(size, location, type);
 		addMouseListener(new MouseAdapter() {
 		    @Override
@@ -54,8 +56,15 @@ public class MacroEmoteButton extends MineButton{
 			            }
 		            	
 		            	if(selectedEmote != null){
-		            		String selectedEmoteName = selectedEmote.split("/")[4];
-							InputFrame inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
+							MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type);
+							String selectedEmoteName = selectedEmote.split("/")[4];
+		            		InputFrame inputFrame;
+		            		
+		            		if(!macro.getButtonName().equalsIgnoreCase("null")){
+					            inputFrame = new InputFrame(mainFrame, "Button text:", selectedEmoteName, "Macro output:", macro.getMacroOutput());
+				            }else{
+				            	inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
+				            }
 		            		
 		            		while(!inputFrame.isDispose() && inputFrame.getOutputInput() == null){
 				            	try{Thread.sleep(250);}catch(InterruptedException ex){ }

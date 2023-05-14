@@ -8,20 +8,13 @@ public class MacroObject {
 	private final String macroOutput;
 	private final TwitchEmote twitchEmote;
 	
-	public MacroObject(ButtonType buttonType, String buttonName, String macroOutput) {
+	public MacroObject(ButtonType buttonType, TwitchEmote emote, String buttonName, String macroOutput) {
 		this.buttonType = buttonType;
 		this.buttonName = buttonName;
 		this.macroOutput = macroOutput;
-		this.twitchEmote = null;
-	}
-	
-	public MacroObject(ButtonType buttonType, TwitchEmote emote, String macroOutput) {
-		this.buttonType = buttonType;
-		this.buttonName = "";
-		this.macroOutput = macroOutput;
 		this.twitchEmote = emote;
 	}
-
+	
 	public ButtonType getButtonType() {
 		return buttonType;
 	}

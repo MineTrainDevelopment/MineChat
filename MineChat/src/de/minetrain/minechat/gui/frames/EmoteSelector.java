@@ -36,7 +36,7 @@ public class EmoteSelector extends JDialog{
     private JPanel emotePanel;
     private JScrollPane scrollPane;
     private static final int MAX_EMOTES_PER_ROW = 10;
-    private static final int BUTTON_SIZE = 36;
+    public static final int BUTTON_SIZE = 36;
     private int mouseX, mouseY;
     private String selectedEmote;
     private boolean disposed;

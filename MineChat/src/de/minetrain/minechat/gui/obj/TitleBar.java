@@ -167,6 +167,13 @@ public class TitleBar extends JPanel{
 		mainFrame.emoteButton4.setIcon(tab.getMacros().getEMOTE_5().getTwitchEmote().getImageIcon());
 		mainFrame.emoteButton5.setIcon(tab.getMacros().getEMOTE_6().getTwitchEmote().getImageIcon());
 		mainFrame.emoteButton6.setIcon(tab.getMacros().getEMOTE_7().getTwitchEmote().getImageIcon());
+
+		mainFrame.macroButton0.setData(tab.getMacros().getMacro(ButtonType.MACRO_1));
+		mainFrame.macroButton1.setData(tab.getMacros().getMacro(ButtonType.MACRO_2));
+		mainFrame.macroButton2.setData(tab.getMacros().getMacro(ButtonType.MACRO_3));
+		mainFrame.macroButton3.setData(tab.getMacros().getMacro(ButtonType.MACRO_4));
+		mainFrame.macroButton4.setData(tab.getMacros().getMacro(ButtonType.MACRO_5));
+		mainFrame.macroButton5.setData(tab.getMacros().getMacro(ButtonType.MACRO_6));
 		
     	texture.setIcon(tab.getTexture());
     	mainTab.offsetButton(buttonType);
