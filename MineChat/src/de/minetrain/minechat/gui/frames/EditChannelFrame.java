@@ -200,8 +200,8 @@ public class EditChannelFrame extends JDialog {
 					config.setString(path + "Name", twitchUser.getLoginName());
 					config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
 					config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
-					
-					for(int i=0; i<=13; i++){
+
+					for(int i=0; i<=12; i++){
 						config.setString(path + "Macros.M"+i, "null%-%macro_"+i);
 					}
 	
@@ -224,7 +224,7 @@ public class EditChannelFrame extends JDialog {
 				
 				config.saveConfigToFile();
 				editedTab.getTabButton().removeActionListener(editedTab.editWindowAction);
-				editedTab.reload(editedTab.getTabButton(), editedTab.getTabType(), Long.parseLong(twitchUser.getUserId()));
+				editedTab.reload(twitchUser.getUserId());
 				dispose();
 			}
 		};

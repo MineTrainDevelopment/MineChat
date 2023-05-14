@@ -22,6 +22,7 @@ public class MainFrame extends JFrame{
     private final JLabel textureLabel;
     public final TitleBar titleBar;
     public MineButton profileButton;
+    public MacroEmoteButton emoteButton0, emoteButton1, emoteButton2, emoteButton3, emoteButton4, emoteButton5, emoteButton6;
     
     public MainFrame() {
     	super("MineChat "+Main.VERSION);
@@ -46,13 +47,21 @@ public class MainFrame extends JFrame{
         getContentPane().add(new MacroButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
         
         //Emote row.
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1).setInvisible(!debug));
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(59, 136), ButtonType.EMOTE_2).setInvisible(!debug));
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(99, 136), ButtonType.EMOTE_3).setInvisible(!debug));
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(139, 136), ButtonType.EMOTE_4).setInvisible(!debug));
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(179, 136), ButtonType.EMOTE_5).setInvisible(!debug));
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(219, 136), ButtonType.EMOTE_6).setInvisible(!debug));
-        getContentPane().add(new MacroEmoteButton(new Dimension(28, 28), new Point(259, 136), ButtonType.EMOTE_7).setInvisible(!debug));
+        
+        emoteButton0 = new MacroEmoteButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1).setInvisible(!debug);
+        emoteButton1 = new MacroEmoteButton(new Dimension(28, 28), new Point(59, 136), ButtonType.EMOTE_2).setInvisible(!debug);
+        emoteButton2 = new MacroEmoteButton(new Dimension(28, 28), new Point(99, 136), ButtonType.EMOTE_3).setInvisible(!debug);
+        emoteButton3 = new MacroEmoteButton(new Dimension(28, 28), new Point(139, 136), ButtonType.EMOTE_4).setInvisible(!debug);
+        emoteButton4 = new MacroEmoteButton(new Dimension(28, 28), new Point(179, 136), ButtonType.EMOTE_5).setInvisible(!debug);
+        emoteButton5 = new MacroEmoteButton(new Dimension(28, 28), new Point(219, 136), ButtonType.EMOTE_6).setInvisible(!debug);
+        emoteButton6 = new MacroEmoteButton(new Dimension(28, 28), new Point(259, 136), ButtonType.EMOTE_7).setInvisible(!debug);
+        getContentPane().add(emoteButton0);
+        getContentPane().add(emoteButton1);
+        getContentPane().add(emoteButton2);
+        getContentPane().add(emoteButton3);
+        getContentPane().add(emoteButton4);
+        getContentPane().add(emoteButton5);
+        getContentPane().add(emoteButton6);
         
         //Stop QUEUE button.
         getContentPane().add(new MineButton(new Dimension(175, 30), new Point(305, 135), ButtonType.STOP_QUEUE).setInvisible(!debug));
@@ -77,5 +86,9 @@ public class MainFrame extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
     }
+    
+    public void displayInfo(String s) {
+		System.err.println(s);
+	}
 
 }

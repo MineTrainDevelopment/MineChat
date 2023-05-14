@@ -2,6 +2,7 @@ package de.minetrain.minechat.gui.obj;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.gui.obj.buttons.MacroEmoteButton;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.main.Main;
 
@@ -68,7 +70,7 @@ public class TitleBar extends JPanel{
             public void actionPerformed(ActionEvent e){
             	System.err.println("TODO: Settings Menü.");
 //            	new EmoteDownlodFrame(mainFrame);
-            	new EmoteSelector(mainFrame);
+            	new EmoteSelector(mainFrame, false);
             }
         });
 
@@ -127,6 +129,14 @@ public class TitleBar extends JPanel{
 		currentTab = tab;
 		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
 		mainFrame.profileButton.setIcon(new ImageIcon(tab.getProfileImagePath()));
+		
+		mainFrame.emoteButton0.setIcon(tab.getMacros().getEMOTE_1().getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton1.setIcon(tab.getMacros().getEMOTE_2().getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton2.setIcon(tab.getMacros().getEMOTE_3().getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton3.setIcon(tab.getMacros().getEMOTE_4().getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton4.setIcon(tab.getMacros().getEMOTE_5().getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton5.setIcon(tab.getMacros().getEMOTE_6().getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton6.setIcon(tab.getMacros().getEMOTE_7().getTwitchEmote().getImageIcon());
 		
     	texture.setIcon(tab.getTexture());
     	mainTab.offsetButton(buttonType);

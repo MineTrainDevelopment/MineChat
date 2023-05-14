@@ -3,21 +3,21 @@ package de.minetrain.minechat.gui.obj.buttons;
 public enum ButtonType {
 	NON(null),
 	
-	MACRO_1("M1"),
-	MACRO_2("M2"),
-	MACRO_3("M3"),
-	MACRO_4("M4"),
-	MACRO_5("M5"),
-	MACRO_6("M6"),
+	MACRO_1("M0"),
+	MACRO_2("M1"),
+	MACRO_3("M2"),
+	MACRO_4("M3"),
+	MACRO_5("M4"),
+	MACRO_6("M5"),
 	
 
-	EMOTE_1("M7"),
-	EMOTE_2("M8"),
-	EMOTE_3("M9"),
-	EMOTE_4("M10"),
-	EMOTE_5("M11"),
-	EMOTE_6("M12"),
-	EMOTE_7("M13"),
+	EMOTE_1("M6"),
+	EMOTE_2("M7"),
+	EMOTE_3("M8"),
+	EMOTE_4("M9"),
+	EMOTE_5("M10"),
+	EMOTE_6("M11"),
+	EMOTE_7("M12"),
 	
 
 	TAB_1(null),

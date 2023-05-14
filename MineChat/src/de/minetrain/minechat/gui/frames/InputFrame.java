@@ -22,15 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.utils.MacroObject;
 
 public class InputFrame extends JFrame {
 	private static final long serialVersionUID = 1728088408056991401L;
 	private final JTextField nameField;
 	private final JTextField outputField;
+	private String nameInput, outputInput;
+	private boolean dispose;
     private int mouseX, mouseY;
 
-	public InputFrame(MainFrame mainFrame, String leftTitle, String rightTitle, MacroObject macro) {
+	public InputFrame(MainFrame mainFrame, String leftTitle, String leftValue, String rightTitle, String rightValue) {
 		setTitle("Mein JFrame");
         setSize(264, 106);
         setLocationRelativeTo(null);
@@ -47,12 +48,14 @@ public class InputFrame extends JFrame {
 
         // Erstellen der Texteingabefelder
         nameField = new JTextField(10);
-        nameField.setText(macro.getButtonName());
+        nameField.setText(leftValue);
         nameField.setBorder(null);
+        nameField.setHorizontalAlignment(JTextField.CENTER);
         
         outputField = new JTextField(10);
-        outputField.setText(macro.getMacroOutput());
+        outputField.setText(rightValue);
         outputField.setBorder(null);
+        outputField.setHorizontalAlignment(JTextField.CENTER);
 
         // Erstellen der Labels für die Texteingabefelder
         JLabel nameLabel = new JLabel(leftTitle);
@@ -83,18 +86,18 @@ public class InputFrame extends JFrame {
         okButton.setBackground(ColorManager.BUTTON_BACKGROUND);
         okButton.setForeground(Color.WHITE);
         okButton.setBorder(null);
-        okButton.addActionListener(closeWindow());
+        okButton.addActionListener(closeWindow(false));
         
         JButton cancelButton = new JButton("reset");
         cancelButton.setBackground(ColorManager.BACKGROUND);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(null);
-        cancelButton.addActionListener(closeWindow());
+        cancelButton.addActionListener(closeWindow(true));
 
         // Hinzufügen der Buttons am unteren Rand des JFrame
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 5));
-        buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
+        buttonPanel.add(okButton);
         buttonPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
 
         constraints.gridx = 0;
@@ -117,12 +120,18 @@ public class InputFrame extends JFrame {
 		setVisible(true);
 	}
 	
-	private ActionListener closeWindow(){
+	private ActionListener closeWindow(boolean close){
 		return new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(nameField.getText());
+				if(!close){
+					System.out.println(nameField.getText());
+					nameInput = nameField.getText();
+					outputInput = outputField.getText();
+				}
+				
+				dispose = true;
 				dispose();
 			}
 		};
@@ -146,6 +155,18 @@ public class InputFrame extends JFrame {
                 setLocation(newX, newY);
             }
         };
+	}
+
+	public String getNameInput() {
+		return nameInput;
+	}
+
+	public String getOutputInput() {
+		return outputInput;
+	}
+
+	public boolean isDispose() {
+		return dispose;
 	}
 
 }

@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.obj.ChannelMacros;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
@@ -20,7 +21,7 @@ import de.minetrain.minechat.main.Main;
 public class ChannelTab {
 	private ChannelTab thisObject;
 	private TabButtonType tabType;
-	private Long configID;
+	private String configID;
 	private ImageIcon texture;
 	private JButton tabButton;
 	private String displayName;
@@ -29,6 +30,7 @@ public class ChannelTab {
 	private Long spamTriggerAmound; //Messages
 	private Long spamDeprecateAfter; //Seconds
 	public ActionListener editWindowAction;
+	private ChannelMacros macros;
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;
@@ -36,7 +38,7 @@ public class ChannelTab {
 	
 	public ChannelTab(JButton button, TabButtonType tab) {
 		ConfigManager config = Main.CONFIG;
-		configID = config.getLong(tab.getConfigPath());
+		configID = ""+config.getLong(tab.getConfigPath(), 0);
 		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
 		this.tabType = tab;
 		this.thisObject = this;
@@ -49,13 +51,9 @@ public class ChannelTab {
 			spamDeprecateAfter = 5l;
 			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){new EditChannelFrame(Main.mainFrame, thisObject);}};
 			this.tabButton.addActionListener(editWindowAction);
+			macros = new ChannelMacros(true);
 		}else{
-			String configPath = "Channel_"+configID+".";
-			channelName = config.getString(configPath+"Name");
-			displayName = config.getString(configPath+"DisplayName");
-			greetingTexts = config.getStringList(configPath+"GreetingText");
-			spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
-			spamDeprecateAfter = config.getLong(configPath+"SpamButton.DeprecateAfterSeconds", 5);
+			loadData(configID);
 		}
 	
 		tabLabel = new JLabel(getDisplayName(), SwingConstants.CENTER);
@@ -63,7 +61,12 @@ public class ChannelTab {
 		tabLabel.setForeground(Color.WHITE);
 	}
 
-	public void reload(JButton button, TabButtonType tab, Long configID) {
+	public void reload(String configID) {
+		loadData(configID);
+		tabLabel.setText(displayName);
+	}
+
+	private void loadData(String configID) {
 		this.configID = configID;
 		ConfigManager config = Main.CONFIG;
 		String configPath = "Channel_"+configID+".";
@@ -72,7 +75,11 @@ public class ChannelTab {
 		greetingTexts = config.getStringList(configPath+"GreetingText");
 		spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
 		spamDeprecateAfter = config.getLong(configPath+"SpamButton.DeprecateAfterSeconds", 5);
-		tabLabel.setText(displayName);
+		loadMacros(configID);
+	}
+
+	public void loadMacros(String configID) {
+		macros = new ChannelMacros(configID);
 	}
 	
 	
@@ -94,7 +101,7 @@ public class ChannelTab {
 //	}
 	
 	public boolean isOccupied(){
-		return configID != 0;
+		return !configID.equals("0");
 	}
 
 
@@ -108,7 +115,7 @@ public class ChannelTab {
 	}
 
 
-	public Long getConfigID() {
+	public String getConfigID() {
 		return configID;
 	}
 
@@ -153,6 +160,10 @@ public class ChannelTab {
 
 	public String getChannelName() {
 		return channelName;
+	}
+
+	public ChannelMacros getMacros() {
+		return macros;
 	}
 	
 	

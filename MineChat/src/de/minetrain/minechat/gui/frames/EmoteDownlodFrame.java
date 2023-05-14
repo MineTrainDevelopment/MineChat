@@ -23,6 +23,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -53,6 +54,7 @@ public class EmoteDownlodFrame extends JDialog{
     public enum EmotePlatform{TWITCH, BTTV}
     private JComboBox<String> platformSelector;
     private JTextField channelName = new JTextField();
+    private JTextField customEmoteName = new JTextField();
     public EmoteDownlodFrame thisFrame;
     public StatusBar statusBar = new StatusBar();;
     private int mouseX, mouseY;
@@ -79,7 +81,7 @@ public class EmoteDownlodFrame extends JDialog{
 
 	private void buildingGUI(Point location) {
 		thisFrame = this;
-        setSize(300, 150);
+        setSize(300, 180);
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
@@ -89,7 +91,7 @@ public class EmoteDownlodFrame extends JDialog{
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
         panel.setBackground(ColorManager.BACKGROUND);
-        panel.setLayout(new GridLayout(3, 2));
+        panel.setLayout(new GridLayout(4, 2));
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
         
@@ -118,6 +120,31 @@ public class EmoteDownlodFrame extends JDialog{
         statusBar.setForeground(Color.ORANGE);
 		statusBar.setFont(new Font(null, Font.BOLD, 10));
 		statusBar.setTitleFont(new Font(null, Font.BOLD, 15));
+		
+		
+		
+		
+		
+		JLabel description = new JLabel();
+        description.setFont(new Font(null, Font.BOLD, fontSize));
+        description.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
+        description.setBackground(ColorManager.BACKGROUND_LIGHT);
+        description.setForeground(Color.WHITE);
+        description.setHorizontalAlignment(JTextField.CENTER);
+        description.setText("Custom name:");
+        
+        customEmoteName.setBackground(ColorManager.BACKGROUND_LIGHT);
+        customEmoteName.setFont(new Font(null, Font.BOLD, fontSize));
+        customEmoteName.setForeground(Color.WHITE);
+        customEmoteName.setHorizontalAlignment(JTextField.CENTER);
+        
+        JPanel renamePannel = new JPanel(new GridLayout(1, 2, 8, 5));
+        renamePannel.setBorder(BorderFactory.createEmptyBorder(3, 3, 2, 3));
+        renamePannel.setBackground(ColorManager.BORDER);
+        renamePannel.add(description);
+        renamePannel.add(customEmoteName);
+        
+        
         
         JButton confirmButton = new JButton("Confirm");
         confirmButton.setBackground(ColorManager.BUTTON_BACKGROUND);
@@ -143,6 +170,7 @@ public class EmoteDownlodFrame extends JDialog{
         
         panel.add(statusBar);
         panel.add(inputPanel);
+        panel.add(renamePannel);
         panel.add(buttonPanel);
         getContentPane().add(panel);
         setVisible(true);
@@ -324,45 +352,36 @@ public class EmoteDownlodFrame extends JDialog{
 	private boolean getBTTVbyURL() throws InterruptedException, MalformedURLException, ProtocolException, FileNotFoundException, IOException{
 		String BTTV_URL = "https://betterttv.com/emotes/";
 		String BTTV_EMOTE_URL = "https://cdn.betterttv.net/emote/";
-		if(!channelName.getText().toLowerCase().startsWith(BTTV_URL)){
+		if(!channelName.getText().toLowerCase().startsWith(BTTV_URL) || channelName.getText().lastIndexOf("https")>0){
 			statusBar.setError("Invalid URL!");
 			return false;
 		}
 		
 		String url = channelName.getText().replace(BTTV_URL, BTTV_EMOTE_URL);
-		statusBar.setProgress("Waiting for Rename...", StatusBar.getPercentage(6, 1), Color.CYAN);
-		EmoteRenameFrame emoteRenameFrame = new EmoteRenameFrame(thisFrame, channelName.getText().replace(BTTV_URL, ""));
 		
-		while (!emoteRenameFrame.waitForInput()) {
-			Thread.sleep(250);
-		}
-		
-		if(emoteRenameFrame.getNewEmoteName() == null){
-			statusBar.setError("Invalid emote Name!");
-			return false;
-		}
-		
-		String newEmoteName = emoteRenameFrame.getNewEmoteName();
+		String newEmoteName = (customEmoteName.getText().length()>0) ? customEmoteName.getText() : url.replace(BTTV_EMOTE_URL, "");
 		String bttvEmotePath = "Icons/bttv/"+newEmoteName+"/";
+		
+		System.out.println(url);
 
-		statusBar.setProgress("Downloading: "+newEmoteName+"_1x", StatusBar.getPercentage(6, 2));
+		statusBar.setProgress("Downloading: "+newEmoteName+"_1x", StatusBar.getPercentage(5, 1));
 		TextureManager.downloadImage(url+"/1x", bttvEmotePath, newEmoteName+"_1.gif");
 		TextureManager.mergeEmoteImages(bttvEmotePath, newEmoteName+"_1.gif", "emoteBorder.png", "gif");
 //		TextureManager.downloadImmage(url+"/1x", bttvEmotePath+"png/", newEmoteName+"_1.png");
 //		TextureManager.downloadImmage(url+"/1x", bttvEmotePath+"gif/", newEmoteName+"_1.gif");
 		
-		statusBar.setProgress("Downloading: "+newEmoteName+"_2x", StatusBar.getPercentage(6, 3));
+		statusBar.setProgress("Downloading: "+newEmoteName+"_2x", StatusBar.getPercentage(5, 2));
 		TextureManager.downloadImage(url+"/2x", bttvEmotePath, newEmoteName+"_2.gif");
 //		TextureManager.downloadImmage(url+"/2x", bttvEmotePath+"png/", newEmoteName+"_2.png");
 //		TextureManager.downloadImmage(url+"/2x", bttvEmotePath+"gif/", newEmoteName+"_2.gif");
 		
-		statusBar.setProgress("Downloading: "+newEmoteName+"_3x", StatusBar.getPercentage(6, 4));
+		statusBar.setProgress("Downloading: "+newEmoteName+"_3x", StatusBar.getPercentage(5, 3));
 		TextureManager.downloadImage(url+"/3x", bttvEmotePath, newEmoteName+"_3.gif");
 //		TextureManager.downloadImmage(url+"/3x", bttvEmotePath+"png/", newEmoteName+"_3.png");
 //		TextureManager.downloadImmage(url+"/3x", bttvEmotePath+"gif/", newEmoteName+"_3.gif");
 
 
-		statusBar.setProgress("Saving emote...", StatusBar.getPercentage(6, 5));
+		statusBar.setProgress("Saving emote...", StatusBar.getPercentage(5, 4));
 		List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
 		if(!indexList.contains("Channel_bttv")){
 			indexList.add("Channel_bttv");

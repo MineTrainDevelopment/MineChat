@@ -2,7 +2,6 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -10,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,47 +20,37 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
+import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 
 public class EmoteSelector extends JDialog{
 	private static final long serialVersionUID = 8337999985260635877L;
-	private String folderPath = TextureManager.texturePath+"Icons/";
 	private final EmoteSelector thisObect;
     private JPanel emotePanel;
-    private MainFrame mainFrame;
+//    private MainFrame mainFrame;
     private JScrollPane scrollPane;
     private static final int MAX_EMOTES_PER_ROW = 10;
     private static final int BUTTON_SIZE = 36;
     private int mouseX, mouseY;
-    HashMap<String, List<String>> emotes = new HashMap<String, List<String>>();
+    private String selectedEmote;
+    private boolean disposed;
+    private boolean disposOnSelect;
+    HashMap<String, List<String>> emotes;
 
-	public EmoteSelector(MainFrame mainFrame) {
+	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
 		super(mainFrame, "Emotes", true);
-		this.mainFrame = mainFrame;
+//		this.mainFrame = mainFrame;
+		this.disposOnSelect = disposOnSelect;
 		thisObect = this;
+		emotes = TwitchEmote.getEmotes();
 		
-		Main.EMOTE_INDEX.getStringList("index").forEach(channel -> {
-			List<String> tempList = new ArrayList<String>();
-			Main.EMOTE_INDEX.getStringList(channel).forEach(emote -> {
-				tempList.add(folderPath + channel.replace("Channel_", "") +"/"+ emote+"/"+emote+"_1_BG.png");
-			});
-			
-			System.out.println(channel+" -- "+tempList);
-			emotes.put(channel, tempList);
-		});
-		
-		System.out.println(emotes);
-		
-
         setResizable(false);
 //        setAlwaysOnTop(true);
         setUndecorated(true);
@@ -99,7 +87,7 @@ public class EmoteSelector extends JDialog{
         refreshButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e){
         		dispose();
-        		new EmoteSelector(mainFrame);
+        		new EmoteSelector(mainFrame, disposOnSelect);
         	}
 		});
         
@@ -108,7 +96,7 @@ public class EmoteSelector extends JDialog{
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 3));
         cancelButton.addActionListener(new ActionListener(){
-        	public void actionPerformed(ActionEvent e){dispose();}
+        	public void actionPerformed(ActionEvent e){disposed = true; dispose();}
 		});
 
         // Hinzufügen der Buttons am unteren Rand des JFrame
@@ -131,6 +119,11 @@ public class EmoteSelector extends JDialog{
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         System.out.println("Emote selected: " + emote);
+                        selectedEmote = emote;
+                        if(disposOnSelect){
+                        	disposed = true;
+                        	dispose();
+                        }
                     }
                 });
                 buttons.add(mineButton);
@@ -196,6 +189,14 @@ public class EmoteSelector extends JDialog{
                 setLocation(newX, newY);
             }
         };
+	}
+
+	public boolean isDisposed() {
+		return disposed;
+	}
+
+	public String getSelectedEmote() {
+		return selectedEmote;
 	}
 	
 }
