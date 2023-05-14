@@ -46,12 +46,12 @@ public class ChannelMacros {
 	}
 	
 	public ChannelMacros(boolean dummy) {
-		macros.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, new TwitchEmote("null"), ">null<", ">null<"));
-		macros.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, new TwitchEmote("null"), ">null<", ">null<"));
-		macros.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, new TwitchEmote("null"), ">null<", ">null<"));
-		macros.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, new TwitchEmote("null"), ">null<", ">null<"));
-		macros.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, new TwitchEmote("null"), ">null<", ">null<"));
-		macros.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, new TwitchEmote("null"), ">null<", ">null<"));
+		macros.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, new TwitchEmote("null"), "null", ">null<"));
+		macros.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, new TwitchEmote("null"), "null", ">null<"));
+		macros.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, new TwitchEmote("null"), "null", ">null<"));
+		macros.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, new TwitchEmote("null"), "null", ">null<"));
+		macros.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, new TwitchEmote("null"), "null", ">null<"));
+		macros.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, new TwitchEmote("null"), "null", ">null<"));
 		
 		macros.put(ButtonType.EMOTE_1, new MacroObject(ButtonType.EMOTE_1, new TwitchEmote("null"), ">null<", ">null<"));
 		macros.put(ButtonType.EMOTE_2, new MacroObject(ButtonType.EMOTE_2, new TwitchEmote("null"), ">null<", ">null<"));

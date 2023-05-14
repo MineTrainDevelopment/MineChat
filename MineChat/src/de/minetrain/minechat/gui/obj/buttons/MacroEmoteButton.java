@@ -60,10 +60,10 @@ public class MacroEmoteButton extends MineButton{
 							String selectedEmoteName = selectedEmote.split("/")[4];
 		            		InputFrame inputFrame;
 		            		
-		            		if(!macro.getButtonName().equalsIgnoreCase("null")){
-					            inputFrame = new InputFrame(mainFrame, "Button text:", selectedEmoteName, "Macro output:", macro.getMacroOutput());
+		            		if(macro.getMacroOutput().equals(">null<")){
+		            			inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
 				            }else{
-				            	inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
+				            	inputFrame = new InputFrame(mainFrame, "Button text:", selectedEmoteName, "Macro output:", macro.getMacroOutput());
 				            }
 		            		
 		            		while(!inputFrame.isDispose() && inputFrame.getOutputInput() == null){

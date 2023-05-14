@@ -201,8 +201,12 @@ public class EditChannelFrame extends JDialog {
 					config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
 					config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
 
-					for(int i=0; i<=12; i++){
+					for(int i=0; i<=5; i++){
 						config.setString(path + "Macros.M"+i, "null%-%macro_"+i);
+					}
+					
+					for(int i=5; i<=12; i++){
+						config.setString(path + "Macros.M"+i, "null%-%>null<");
 					}
 	
 					List<String> greetingsList = new ArrayList<String>();
