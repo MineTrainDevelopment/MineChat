@@ -26,6 +26,7 @@ public class ChannelTab {
 	private JButton tabButton;
 	private String displayName;
 	private String channelName;
+	private boolean moderator;
 	private List<String> greetingTexts;
 	private Long spamTriggerAmound; //Messages
 	private Long spamDeprecateAfter; //Seconds
@@ -46,6 +47,7 @@ public class ChannelTab {
 		
 		if(!isOccupied()){
 			displayName = "";
+			moderator = false;
 			greetingTexts = null;
 			spamTriggerAmound = 4l;
 			spamDeprecateAfter = 5l;
@@ -72,6 +74,7 @@ public class ChannelTab {
 		String configPath = "Channel_"+configID+".";
 		channelName = config.getString(configPath+"Name");
 		displayName = config.getString(configPath+"DisplayName");
+		moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
 		greetingTexts = config.getStringList(configPath+"GreetingText");
 		spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
 		spamDeprecateAfter = config.getLong(configPath+"SpamButton.DeprecateAfterSeconds", 5);
@@ -168,6 +171,10 @@ public class ChannelTab {
 
 	public ActionListener getEditWindowAction() {
 		return editWindowAction;
+	}
+
+	public boolean isModerator() {
+		return moderator;
 	}
 	
 	

@@ -1,9 +1,13 @@
 package de.minetrain.minechat.twitch;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.minetrain.minechat.gui.obj.TitleBar;
 
 
 /**
@@ -14,27 +18,46 @@ import org.slf4j.LoggerFactory;
  * making it an effective way to prevent duplicate messages from being detected as spam.
  * 
  * @author MineTrain/Justin
- * @since 05.05.2023
- * @version 1.0
+ * @since 15.05.2023
+ * @version 2.0
  */
 public class MessageManager {
 	private static final Logger logger = LoggerFactory.getLogger(MessageManager.class);
 	private static final String spamProtector = "ㅤ"; //The spam protector character.
 	private static String lastMessage = ">null<"; //The last message sent by this manager.
     private static Instant lastSentTime; //The time when the last message was sent.
+    private static final int MAX_MESSAGE_LENGTH = 490; 
 
 	/**
 	 * Sends a message to the Twitch API.
-	 * 
+	 * <br>Split messages if they are longer then 500 messages.
 	 * <br>If the same message has been sent recently, the spam protector character is
 	 * appended to the message.
-	 * 
 	 * <br>Waits 1.5 Seconds befor sending the next one out. 
+	 * 
+	 * <p>NOTE: If the user says he is a channel moderator, the message gets send out without limits.
 	 * TODO: Make it Async.
 	 * 
 	 * @param message the message to send to the Twitch API
 	 */
     public static void sendMessage(String message) {
+    	if(message.length()>MAX_MESSAGE_LENGTH){
+    		splitString(message).forEach(newMessage -> {
+    			sendMessage(newMessage);
+    		});
+    		
+    		return;
+    	}
+    	
+    	if(TitleBar.currentTab.isModerator()){
+            TwitchManager.sendMessage(TitleBar.currentTab.getChannelName(), null, message);
+    	}else{
+    		sendDelayedMessage(message);
+    	}
+    }
+    
+    
+    private static void sendDelayedMessage(String message) {
         Instant now = Instant.now(); //Get the current time.
         
         //If the same message has been sent recently, append the spam protector character.
@@ -47,8 +70,60 @@ public class MessageManager {
         lastSentTime = now;
         
         System.out.println("Sending message {"+message+"}");
-//        TwitchManager.sendMessage(TitleBar.currentTab.getTabName(), null, message); TODO Send message
+        TwitchManager.sendMessage(TitleBar.currentTab.getChannelName(), null, message);
         try {Thread.sleep(1500);} catch (InterruptedException ex) {logger.error("Thread sleep faild!", ex);}
+    }
+    
+    public static List<String> splitString(String input) {
+        int chunkSize = 480;
+        List<String> chunks = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+
+        int wordBoundary = -1; // Index of the last space character within the chunk limit
+        int sentenceBoundary = -1; // Index of the last sentence-ending character within the last 50 characters
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            builder.append(c);
+
+            if (c == ' ') {
+                wordBoundary = builder.length() - 1;
+            }
+
+//            if (builder.length() >= chunkSize - 50 && (c == '.' || c == ',')) {
+            if (builder.length() >= chunkSize - 100 && (c == '.')) {
+                sentenceBoundary = builder.length() - 1;
+            }
+
+            if (builder.length() == chunkSize) {
+                if (sentenceBoundary != -1) {
+                    chunks.add(builder.substring(0, sentenceBoundary + 1));
+                    builder.delete(0, sentenceBoundary + 1);
+                    wordBoundary = -1;
+                    sentenceBoundary = -1;
+                } else if (wordBoundary != -1) {
+                    chunks.add(builder.substring(0, wordBoundary));
+                    builder.delete(0, wordBoundary + 1);
+                    wordBoundary = -1;
+                    sentenceBoundary = -1;
+                } else {
+                    chunks.add(builder.toString());
+                    builder.setLength(0);
+                    sentenceBoundary = -1;
+                }
+            }
+        }
+
+        // Add the remaining characters as the last chunk
+        if (builder.length() > 0) {
+            chunks.add(builder.toString());
+        }
+        
+        for(int i = 0; i < chunks.size(); i++){
+			chunks.set(i, "("+(i+1)+") "+chunks.get(i));
+		}
+
+        return chunks;
     }
 }
 

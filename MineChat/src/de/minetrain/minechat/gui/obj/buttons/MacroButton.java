@@ -20,10 +20,30 @@ import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
 
+/**
+ * A button used for message macros. 
+ * <br>Provides functionality to set the button text, macro output, and associated emote.
+ * <br>Extends the {@link MineButton} class.
+ * 
+ * @author MineTrain/Justin
+ * @since 14.05.23
+ * @version 1.0
+ */
+
 public class MacroButton extends MineButton{
 	private static final long serialVersionUID = 1144702595268749652L;
 	private JLabel icon = new JLabel();
 
+	/**
+	 * A button used for message macros. 
+	 * <br>Provides functionality to set the button text, macro output, and associated emote.
+	 * <br>Extends the {@link MineButton} class.
+	 * 
+	 * @param size 		the {@link Dimension} of the button.
+	 * @param location 	the location of the button on the frame. ({@link Point})
+	 * @param type 		the {@link ButtonType} of button this is.
+	 * @param mainFrame the {@link MainFrame} of the application.
+	 */
 	public MacroButton(Dimension size, Point location, ButtonType type, MainFrame mainFrame) {
 		super(size, location, type);
 		mainFrame.add(icon);
@@ -83,6 +103,12 @@ public class MacroButton extends MineButton{
 		});
 	}
 	
+	/**
+	 * Sets the button's focusability, opacity, content area filled, and border painting based on the given state.
+	 * 
+	 * @param state true to make the button invisible, false to make it visible.
+	 * @return this {@link MacroButton} object.
+	 */
 	@Override
 	public MacroButton setInvisible(boolean state) {
 		setFocusable(!state);
@@ -92,6 +118,11 @@ public class MacroButton extends MineButton{
 		return this;
 	}
 	
+	/**
+	 * Sets the icon for the button and adjusts its position and size.
+	 * 
+	 * @param iconImage the icon to set for the button.
+	 */
 	@Override
 	public void setIcon(Icon iconImage) {
 		icon.setIcon(iconImage);
@@ -99,6 +130,12 @@ public class MacroButton extends MineButton{
 		icon.setSize(EmoteSelector.BUTTON_SIZE, EmoteSelector.BUTTON_SIZE);
 	}
 	
+	/**
+	 * Sets the data for the {@link MacroButton} based on the given {@link MacroObject}.
+	 * <br>Sets the icon, button text, and adjusts the font size if needed to fit the button's width.
+	 * 
+	 * @param macro the {@link MacroObject} containing the data for the button.
+	 */
 	public void setData(MacroObject macro) {
 		setIcon(macro.getTwitchEmote().getImageIcon());
 		setText((macro.getButtonName().equalsIgnoreCase("null")) ? "" : macro.getButtonName());
