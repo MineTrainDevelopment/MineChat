@@ -2,6 +2,7 @@ package de.minetrain.minechat.gui.obj.buttons;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,16 +56,25 @@ public class MineButton extends JButton{
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(type != null && type != ButtonType.NON){
-					System.out.println(type.toString());
+				if(type == null || type == ButtonType.NON){
+					return;
 				}
 				
-				if(type != null && (type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
+				if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
 					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type);
 					if(!macro.getMacroOutput().equals(">null<")){
 						System.out.println("send message");
 						MessageManager.sendMessage(macro.getMacroOutput());
 					}
+				}
+				
+				switch (type) {
+				case STOP_QUEUE:
+					MessageManager.getMessageHandler().clearQueue();
+					break;
+
+				default:
+					break;
 				}
 			}
 		});
@@ -95,5 +105,23 @@ public class MineButton extends JButton{
 		setContentAreaFilled(!state);
 		setBorderPainted(!state);
 		return this;
+	}
+	
+	/**
+     * Sets the button's text.
+     * <br>Sets the icon, button text, and adjusts the font size if needed to fit the button's width.
+     * 
+     * @param text the string used to set the text
+     * @see #getText
+     */
+	@Override
+	public void setText(String text) {
+		super.setText(text);
+		
+		Font font = new Font(null, Font.BOLD, 15);
+		while(getPreferredSize().getWidth() > getWidth()) {
+		    font = new Font(font.getName(), font.getStyle(), font.getSize() - 1);
+		    setFont(font);
+		}
 	}
 }

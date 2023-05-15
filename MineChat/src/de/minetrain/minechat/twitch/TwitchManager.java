@@ -66,6 +66,7 @@ public class TwitchManager {
 		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
 		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListner()); //Register a listener for Twitch events.
 		logger.info("Connecting to channels: "+twitch.getChat().getChannels().toString()); //Print all the connected channels
+		new MessageManager();
 		Main.openMainFrame();
 	}
 	

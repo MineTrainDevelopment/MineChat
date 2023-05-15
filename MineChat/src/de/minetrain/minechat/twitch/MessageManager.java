@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
 
 
 /**
@@ -23,10 +24,16 @@ import de.minetrain.minechat.gui.obj.TitleBar;
  */
 public class MessageManager {
 	private static final Logger logger = LoggerFactory.getLogger(MessageManager.class);
+	private static AsyncMessageHandler messageHandler;
 	private static final String spamProtector = "ㅤ"; //The spam protector character.
 	private static String lastMessage = ">null<"; //The last message sent by this manager.
     private static Instant lastSentTime; //The time when the last message was sent.
     private static final int MAX_MESSAGE_LENGTH = 490; 
+    
+    public MessageManager() {
+    	messageHandler = new AsyncMessageHandler();
+    	messageHandler.start();
+	}
 
 	/**
 	 * Sends a message to the Twitch API.
@@ -36,7 +43,6 @@ public class MessageManager {
 	 * <br>Waits 1.5 Seconds befor sending the next one out. 
 	 * 
 	 * <p>NOTE: If the user says he is a channel moderator, the message gets send out without limits.
-	 * TODO: Make it Async.
 	 * 
 	 * @param message the message to send to the Twitch API
 	 */
@@ -69,9 +75,7 @@ public class MessageManager {
         lastMessage = message;
         lastSentTime = now;
         
-        System.out.println("Sending message {"+message+"}");
-        TwitchManager.sendMessage(TitleBar.currentTab.getChannelName(), null, message);
-        try {Thread.sleep(1500);} catch (InterruptedException ex) {logger.error("Thread sleep faild!", ex);}
+        getMessageHandler().addMessage(message);
     }
     
     public static List<String> splitString(String input) {
@@ -125,5 +129,9 @@ public class MessageManager {
 
         return chunks;
     }
+
+	public static AsyncMessageHandler getMessageHandler() {
+		return messageHandler;
+	}
 }
 

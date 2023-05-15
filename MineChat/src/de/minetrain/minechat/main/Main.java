@@ -12,13 +12,14 @@ import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
-	public static final String VERSION = "V0.2";
+	public static final String VERSION = "V0.3";
 	public static ConfigManager CONFIG;
 	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
@@ -63,6 +64,7 @@ public class Main {
 			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
 		}
 		onboardingFrame.dispose();
+		MessageManager.getMessageHandler().updateQueueButton();
 	}
 
 }

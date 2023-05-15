@@ -21,7 +21,7 @@ public class MainFrame extends JFrame{
 	public static boolean debug = false;
     private final JLabel textureLabel;
     private final TitleBar titleBar;
-    public MineButton profileButton;
+    public MineButton profileButton, queueButton;
     public MacroEmoteButton emoteButton0, emoteButton1, emoteButton2, emoteButton3, emoteButton4, emoteButton5, emoteButton6;
     public MacroButton macroButton0, macroButton1, macroButton2, macroButton3, macroButton4, macroButton5;
     
@@ -68,7 +68,9 @@ public class MainFrame extends JFrame{
         getContentPane().add(emoteButton6);
         
         //Stop QUEUE button.
-        getContentPane().add(new MineButton(new Dimension(175, 30), new Point(305, 135), ButtonType.STOP_QUEUE).setInvisible(!debug));
+        queueButton = new MineButton(new Dimension(175, 30), new Point(305, 135), ButtonType.STOP_QUEUE).setInvisible(!debug);
+        queueButton.setForeground(Color.WHITE);
+		getContentPane().add(queueButton);
 		
         this.titleBar = new TitleBar(this, textureLabel);
         titleBar.getTabNames().forEach(panal -> textureLabel.add(panal)); //Add TabTexts

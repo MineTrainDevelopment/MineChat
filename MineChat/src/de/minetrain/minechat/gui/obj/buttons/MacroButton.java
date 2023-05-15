@@ -2,7 +2,6 @@ package de.minetrain.minechat.gui.obj.buttons;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -132,19 +131,12 @@ public class MacroButton extends MineButton{
 	
 	/**
 	 * Sets the data for the {@link MacroButton} based on the given {@link MacroObject}.
-	 * <br>Sets the icon, button text, and adjusts the font size if needed to fit the button's width.
 	 * 
 	 * @param macro the {@link MacroObject} containing the data for the button.
 	 */
 	public void setData(MacroObject macro) {
 		setIcon(macro.getTwitchEmote().getImageIcon());
 		setText((macro.getButtonName().equalsIgnoreCase("null")) ? "" : macro.getButtonName());
-
-		Font font = new Font(null, Font.BOLD, 10);
-		while(getPreferredSize().getWidth() > getWidth()) {
-		    font = new Font(font.getName(), font.getStyle(), font.getSize() - 1);
-		    setFont(font);
-		}
 	}
 	
 }
