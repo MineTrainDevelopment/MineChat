@@ -42,7 +42,7 @@ public class AsyncMessageHandler {
      * Starts the message sending process by scheduling a task to send messages at a fixed rate.
      */
     public void start() {
-        executorService.scheduleAtFixedRate(this::sendMessage, 0, 1500, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(this::sendMessage, 0, 1, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -95,11 +95,15 @@ public class AsyncMessageHandler {
      */
     private void sendMessage() {
         if (!messageQueue.isEmpty()) {
-            String message = messageQueue.poll();
+            String[] rawMessage = messageQueue.poll().split("%-%");
+            String message = rawMessage[0];
+            String channel = (rawMessage.length>0) ? rawMessage[1] : TitleBar.currentTab.getChannelName();
             messageCount--;
             updateQueueButton();
            	logger.debug("Sending message: {" + message+"}");
-            TwitchManager.sendMessage(TitleBar.currentTab.getChannelName(), null, message);
+           	System.out.println("out-"+message+"-"+channel);
+            TwitchManager.sendMessage(channel, null, message);
+            try{Thread.sleep(1500);}catch(InterruptedException e){ }
         }
     }
 }

@@ -75,7 +75,7 @@ public class MessageManager {
         lastMessage = message;
         lastSentTime = now;
         
-        getMessageHandler().addMessage(message);
+        getMessageHandler().addMessage(message+"%-%"+TitleBar.currentTab.getChannelName());
     }
     
     public static List<String> splitString(String input) {
