@@ -23,6 +23,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -33,6 +36,7 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class EditChannelFrame extends JDialog {
+	private static final Logger logger = LoggerFactory.getLogger(EditChannelFrame.class);
 	private static final long serialVersionUID = 8773100712568642831L;
 	private JTextField twitchChannelNameField, channelDisplayNameField, triggerAmountField, deprecateAfterField;
     private JComboBox<String> userTypeComboBox;
@@ -91,6 +95,7 @@ public class EditChannelFrame extends JDialog {
         twitchChannelNameField.setBackground(ColorManager.BACKGROUND_LIGHT);
 		twitchChannelNameField.setFont(new Font(null, Font.BOLD, fontSize));
         twitchChannelNameField.setForeground(Color.WHITE);
+        twitchChannelNameField.setText(tab.getChannelName());
         panel.add(twitchChannelNameLabel);
         panel.add(twitchChannelNameField);
 
@@ -98,6 +103,7 @@ public class EditChannelFrame extends JDialog {
         channelDisplayNameField.setBackground(ColorManager.BACKGROUND_LIGHT);
         channelDisplayNameField.setFont(new Font(null, Font.BOLD, fontSize));
         channelDisplayNameField.setForeground(Color.WHITE);
+        channelDisplayNameField.setText(tab.getDisplayName());
         panel.add(channelDisplayNameLabel);
         panel.add(channelDisplayNameField);
 
@@ -105,7 +111,7 @@ public class EditChannelFrame extends JDialog {
         userTypeComboBox.setBackground(ColorManager.BACKGROUND_LIGHT);
         userTypeComboBox.setFont(new Font(null, Font.BOLD, fontSize));
         userTypeComboBox.setForeground(Color.WHITE);
-        userTypeComboBox.setSelectedIndex(0);
+        userTypeComboBox.setSelectedIndex((tab.isModerator()) ? 1 : 0);
         panel.add(userTypeComboNameLabel);
         panel.add(userTypeComboBox);
 
@@ -113,7 +119,7 @@ public class EditChannelFrame extends JDialog {
         triggerAmountField.setBackground(ColorManager.BACKGROUND_LIGHT);
         triggerAmountField.setFont(new Font(null, Font.BOLD, fontSize));
         triggerAmountField.setForeground(Color.WHITE);
-        triggerAmountField.setText("4");
+        triggerAmountField.setText(""+tab.getSpamTriggerAmound());
         panel.add(SpamButtonLabel1);
         panel.add(SpamButtonLabel2);
         panel.add(triggerAmountLabel);
@@ -123,7 +129,7 @@ public class EditChannelFrame extends JDialog {
         deprecateAfterField.setBackground(ColorManager.BACKGROUND_LIGHT);
         deprecateAfterField.setFont(new Font(null, Font.BOLD, fontSize));
         deprecateAfterField.setForeground(Color.WHITE);
-        deprecateAfterField.setText("5");
+        deprecateAfterField.setText(""+tab.getSpamDeprecateAfter());
         panel.add(deprecateAfterLabel);
         panel.add(deprecateAfterField);
 
@@ -196,11 +202,12 @@ public class EditChannelFrame extends JDialog {
 				String path = "Channel_"+twitchUser.getUserId()+".";
 				config.setNumber(editedTab.getTabType().getConfigPath(), Long.parseLong(twitchUser.getUserId()));
 				
-				if(config.getString(path+"Name").equalsIgnoreCase(">null<")){
-					config.setString(path + "Name", twitchUser.getLoginName());
-					config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
-					config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
+				String nameSavedInConfigName = config.getString(path+"Name");
+				config.setString(path + "Name", twitchUser.getLoginName());
+				config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
+				config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
 
+				if(nameSavedInConfigName.equalsIgnoreCase(">null<")){
 					for(int i=0; i<=12; i++){
 						config.setString(path + "Macros.M"+i, "null%-%>null<");
 					}
@@ -215,14 +222,26 @@ public class EditChannelFrame extends JDialog {
 					goodbysList.add("Have a good one! {USER} <3");
 					config.setStringList(path + "GoodbyText", goodbysList, false);
 					
-					config.setNumber(path + "SpamButton.TriggerAmoundMessages", Long.parseLong(triggerAmountField.getText()));
-					config.setNumber(path + "SpamButton.DeprecateAfterSeconds", Long.parseLong(deprecateAfterField.getText()));
-					
 					TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.parseLong(twitchUser.getUserId()));
 					new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
 				}
 				
+				
+				
+				long parseSpamTrigger = 4;
+				long parseDeprecateAfter = 5;
+				
+				try {
+					parseSpamTrigger = Long.parseLong(triggerAmountField.getText());
+					parseDeprecateAfter = Long.parseLong(deprecateAfterField.getText());
+				} catch (NumberFormatException ex) {
+					logger.warn("Can´t format user input into long", ex);
+				}
+				
+				config.setNumber(path + "SpamButton.TriggerAmoundMessages", parseSpamTrigger);
+				config.setNumber(path + "SpamButton.DeprecateAfterSeconds", parseDeprecateAfter);
 				config.saveConfigToFile();
+				
 				editedTab.getTabButton().removeActionListener(editedTab.getEditWindowAction());
 				editedTab.reload(twitchUser.getUserId());
 				dispose();

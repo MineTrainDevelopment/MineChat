@@ -5,12 +5,15 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.config.obj.ChannelMacros;
@@ -45,13 +48,41 @@ public class ChannelTab {
 		this.thisObject = this;
 		this.tabButton = button;
 		
+		tabButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (SwingUtilities.isRightMouseButton(e)) {
+					System.out.println("Right klick");
+					switch (tab) {
+					case TAB_MAIN:
+						ChannelTab mainTab = Main.MAIN_FRAME.getTitleBar().getMainTab();
+						if(mainTab.isOccupied()){mainTab.openEditFrame();}
+						break;
+						
+					case TAB_SECOND:
+						ChannelTab secondTab = Main.MAIN_FRAME.getTitleBar().getSecondTab();
+						if(secondTab.isOccupied()){secondTab.openEditFrame();}
+						break;
+						
+					case TAB_THIRD:
+						ChannelTab thirdTab = Main.MAIN_FRAME.getTitleBar().getThirdTab();
+						if(thirdTab.isOccupied()){thirdTab.openEditFrame();}
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+		});
+		
 		if(!isOccupied()){
 			displayName = "";
 			moderator = false;
 			greetingTexts = null;
 			spamTriggerAmound = 4l;
 			spamDeprecateAfter = 5l;
-			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){new EditChannelFrame(Main.MAIN_FRAME, thisObject);}};
+			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
 			this.tabButton.addActionListener(getEditWindowAction());
 			macros = new ChannelMacros(true);
 		}else{
@@ -85,6 +116,9 @@ public class ChannelTab {
 		macros = new ChannelMacros(configID);
 	}
 	
+	public void openEditFrame(){
+		new EditChannelFrame(Main.MAIN_FRAME, thisObject);
+	}
 	
 	public JLabel getTabLabelWithData(Point point, Dimension size) {
 		tabLabel.setLocation(point);

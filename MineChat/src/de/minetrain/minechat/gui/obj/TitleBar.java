@@ -34,38 +34,6 @@ public class TitleBar extends JPanel{
 	public final MainFrame mainFrame;
 	public final JLabel texture;
 	private ChannelTab mainTab;
-	public ChannelTab getMainTab() {
-		return mainTab;
-	}
-
-	public void setMainTab(ChannelTab mainTab) {
-		this.mainTab = mainTab;
-	}
-
-	public JButton getTab1() {
-		return tab1;
-	}
-
-	public void setTab1(JButton tab1) {
-		this.tab1 = tab1;
-	}
-
-	public JButton getTab2() {
-		return tab2;
-	}
-
-	public void setTab2(JButton tab2) {
-		this.tab2 = tab2;
-	}
-
-	public JButton getTab3() {
-		return tab3;
-	}
-
-	public void setTab3(JButton tab3) {
-		this.tab3 = tab3;
-	}
-
 	private ChannelTab secondTab;
 	private ChannelTab thirdTab;
 	private JButton tab1;
@@ -208,5 +176,28 @@ public class TitleBar extends JPanel{
             }
         };
 	}
-	
+
+	public ChannelTab getMainTab() {
+		return mainTab;
+	}
+
+	public ChannelTab getSecondTab() {
+		return secondTab;
+	}
+
+	public ChannelTab getThirdTab() {
+		return thirdTab;
+	}
+
+	public JButton getTab1() {
+		return tab1;
+	}
+
+	public JButton getTab2() {
+		return tab2;
+	}
+
+	public JButton getTab3() {
+		return tab3;
+	}
 }
