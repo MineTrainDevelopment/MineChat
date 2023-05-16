@@ -55,6 +55,12 @@ public class Main {
 	    CONFIG = new ConfigManager("data/config.yml", false);
 	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
 		new TwitchManager(new TwitchCredentials());
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		    	TwitchManager.leaveAllChannel();
+		    }
+		});
 	}
 	
 	public static void openMainFrame(){

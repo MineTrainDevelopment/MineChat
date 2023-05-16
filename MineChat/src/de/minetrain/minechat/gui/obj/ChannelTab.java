@@ -20,6 +20,7 @@ import de.minetrain.minechat.config.obj.ChannelMacros;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.TwitchManager;
 
 public class ChannelTab {
 	private ChannelTab thisObject;
@@ -109,6 +110,7 @@ public class ChannelTab {
 		greetingTexts = config.getStringList(configPath+"GreetingText");
 		spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
 		spamDeprecateAfter = config.getLong(configPath+"SpamButton.DeprecateAfterSeconds", 5);
+		TwitchManager.joinChannel(channelName);
 		loadMacros(configID);
 	}
 

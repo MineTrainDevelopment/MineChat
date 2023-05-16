@@ -71,10 +71,26 @@ public class TwitchManager {
 	}
 	
 	
-	public void joinChannel(String... names){
+	public static void joinChannel(String... names){
 		for(String name : names) {
-			twitch.getChat().joinChannel(name);
+			if(!twitch.getChat().getChannels().contains(name)){
+				logger.info("Joining channel: "+name);
+				twitch.getChat().joinChannel(name);
+			}
 		}
+	}
+	
+	
+	public static void leaveChannel(String... names){
+		for(String name : names) {
+			logger.info("Leaving channel: "+name);
+			twitch.getChat().leaveChannel(name);
+		}
+	}
+	
+	
+	public static void leaveAllChannel(){
+		twitch.getChat().getChannels().forEach(name -> leaveChannel(name));
 	}
 	
 	
