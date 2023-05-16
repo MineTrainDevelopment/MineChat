@@ -111,7 +111,8 @@ public class EditChannelFrame extends JDialog {
         userTypeComboBox.setBackground(ColorManager.BACKGROUND_LIGHT);
         userTypeComboBox.setFont(new Font(null, Font.BOLD, fontSize));
         userTypeComboBox.setForeground(Color.WHITE);
-        userTypeComboBox.setSelectedIndex((tab.isModerator()) ? 1 : 0);
+//        userTypeComboBox.setSelectedIndex((tab.isModerator()) ? 1 : 0);
+        userTypeComboBox.setSelectedIndex(0);
         panel.add(userTypeComboNameLabel);
         panel.add(userTypeComboBox);
 
