@@ -110,10 +110,7 @@ public class MacroButton extends MineButton{
 	 */
 	@Override
 	public MacroButton setInvisible(boolean state) {
-		setFocusable(!state);
-		setOpaque(!state);
-		setContentAreaFilled(!state);
-		setBorderPainted(!state);
+		super.setInvisible(state);
 		return this;
 	}
 	

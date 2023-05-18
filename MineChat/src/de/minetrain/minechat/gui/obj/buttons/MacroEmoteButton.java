@@ -91,10 +91,7 @@ public class MacroEmoteButton extends MineButton{
 	 */
 	@Override
 	public MacroEmoteButton setInvisible(boolean state) {
-		setFocusable(!state);
-		setOpaque(!state);
-		setContentAreaFilled(!state);
-		setBorderPainted(!state);
+		super.setInvisible(state);
 		return this;
 	}
 	

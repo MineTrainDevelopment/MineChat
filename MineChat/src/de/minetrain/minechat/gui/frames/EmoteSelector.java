@@ -47,7 +47,7 @@ public class EmoteSelector extends JDialog{
 		super(mainFrame, "Emotes", true);
 		this.disposOnSelect = disposOnSelect;
 		thisObect = this;
-		emotes = TwitchEmote.getEmotes();
+		emotes = TwitchEmote.getEmotes(true);
 		
         setResizable(false);
         setUndecorated(true);
@@ -112,6 +112,7 @@ public class EmoteSelector extends JDialog{
 				MineButton mineButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
 				mineButton.setPreferredSize(mineButton.getSize());
                 mineButton.setIcon(new ImageIcon(emote));
+                mineButton.setToolTipText(emote.split("/")[4]);
                 mineButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

@@ -3,6 +3,7 @@ package de.minetrain.minechat.twitch.obj;
 import com.google.gson.JsonObject;
 
 public class TwitchUserObj {
+	private static final String placeHolder = ">null<";
 	private final boolean dummy;
 	private final String userId;
 	private final String loginName;
@@ -30,7 +31,6 @@ public class TwitchUserObj {
 	}
 	
 	public TwitchUserObj(TwitchApiCallType type, String dummyNameId, boolean dummy) {
-		String placeHolder = ">null<";
 		this.dummy = true;
 		
 		this.userId = (type!=TwitchApiCallType.ID) ? placeHolder:dummyNameId;

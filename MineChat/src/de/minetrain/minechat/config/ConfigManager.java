@@ -52,7 +52,7 @@ public class ConfigManager {
         	
 			reloadConfig();
 			
-			if(config == null && createFile){
+			if(getRawConfig() == null && createFile){
 				config = new HashMap<String, Object>();
 			}
 			
@@ -85,7 +85,7 @@ public class ConfigManager {
         Yaml yaml = new Yaml(options);
         try {
             FileWriter writer = new FileWriter(configFileName);
-            yaml.dump(config, writer);
+            yaml.dump(getRawConfig(), writer);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -161,7 +161,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final boolean getBoolean(String path, boolean defaultValue) {
 		String[] keys = path.split("\\.");
-		Map<String, Object> current = config;
+		Map<String, Object> current = getRawConfig();
 		for (String key : keys) {
 			if (current.containsKey(key)) {
 				Object value = current.get(key);
@@ -188,7 +188,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public Long getLong(String path, long defaultValue) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (String key : keys) {
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -233,7 +233,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final String getString(String path, String defaultValue) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (String key : keys) {
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -259,7 +259,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final List<Long> getLongList(String path) {
 	    String[] keys = path.split("\\."); //Split the path into individual keys
-	    Map<String, Object> current = config; //Start at the root of the configuration map
+	    Map<String, Object> current = getRawConfig(); //Start at the root of the configuration map
 	    for (String key : keys) { //Traverse down the map to the requested key
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -295,7 +295,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final List<String> getStringList(String path) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (String key : keys) {
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -367,7 +367,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setString(String path, String value, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -395,7 +395,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setBoolean(String path, boolean value, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -423,7 +423,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setNumber(String path, Number value, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -451,7 +451,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setStringList(String path, List<String> values, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = config;
+	    Map<String, Object> current = getRawConfig();
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -468,5 +468,9 @@ public class ConfigManager {
 	    }
 	    current.put(keys[keys.length - 1], values);
 	    if(saveFile){saveConfigToFile();}
+	}
+
+	public Map<String, Object> getRawConfig() {
+		return config;
 	}
 }

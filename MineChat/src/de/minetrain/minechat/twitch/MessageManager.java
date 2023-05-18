@@ -7,8 +7,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
+
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
+import de.minetrain.minechat.twitch.obj.TwitchChatUser;
+import de.minetrain.minechat.utils.ChatMessage;
 
 
 /**
@@ -34,6 +38,7 @@ public class MessageManager {
     	messageHandler = new AsyncMessageHandler();
     	messageHandler.start();
 	}
+    
 
 	/**
 	 * Sends a message to the Twitch API.
@@ -56,12 +61,11 @@ public class MessageManager {
     	}
     	
     	if(TitleBar.currentTab.isModerator()){
-            TwitchManager.sendMessage(TitleBar.currentTab.getChannelName(), null, message);
+        	TwitchManager.sendMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
     	}else{
     		sendDelayedMessage(message);
     	}
     }
-    
     
     private static void sendDelayedMessage(String message) {
         Instant now = Instant.now(); //Get the current time.
@@ -74,14 +78,18 @@ public class MessageManager {
         //Update the last message and last sent time variables.
         lastMessage = message;
         lastSentTime = now;
+
+//        getMessageHandler().addMessage(message+"%-%"+TitleBar.currentTab.getChannelName());
         
-        getMessageHandler().addMessage(message+"%-%"+TitleBar.currentTab.getChannelName());
+        getMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
     }
     
+    
+    
     public static List<String> splitString(String input) {
-        int chunkSize = 480;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
+        int chunkSize = MAX_MESSAGE_LENGTH-10;
 
         int wordBoundary = -1; // Index of the last space character within the chunk limit
         int sentenceBoundary = -1; // Index of the last sentence-ending character within the last 50 characters
@@ -94,8 +102,8 @@ public class MessageManager {
                 wordBoundary = builder.length() - 1;
             }
 
-//            if (builder.length() >= chunkSize - 50 && (c == '.' || c == ',')) {
-            if (builder.length() >= chunkSize - 100 && (c == '.')) {
+//            if (builder.length() >= chunkSize - 100 && (c == '.')) {
+            if (builder.length() >= chunkSize - 100 && (c == '.' || c == '!' || c == '?')) {
                 sentenceBoundary = builder.length() - 1;
             }
 

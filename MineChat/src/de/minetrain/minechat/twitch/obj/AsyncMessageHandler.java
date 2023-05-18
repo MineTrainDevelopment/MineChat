@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.utils.ChatMessage;
 
 /**
  * The AsyncMessageHandler class handles asynchronous message processing.
@@ -24,7 +24,7 @@ import de.minetrain.minechat.twitch.TwitchManager;
  */
 public class AsyncMessageHandler {
 	private static final Logger logger = LoggerFactory.getLogger(AsyncMessageHandler.class); //system logger
-	private BlockingQueue<String> messageQueue; //The message queue to store the incoming messages.
+	private BlockingQueue<ChatMessage> messageQueue; //The message queue to store the incoming messages.
     private ScheduledExecutorService executorService; //The executor service responsible for scheduling and executing message sending tasks.
     private int messageCount; //The count of messages in the message queue.
 
@@ -56,7 +56,7 @@ public class AsyncMessageHandler {
      * Adds a new message to the message queue and updates the message count.
      * @param message The message to be added to the queue.
      */
-    public void addMessage(String message) {
+    public void addMessage(ChatMessage message) {
         messageQueue.offer(message);
         messageCount++;
         updateQueueButton();
@@ -95,14 +95,14 @@ public class AsyncMessageHandler {
      */
     private void sendMessage() {
         if (!messageQueue.isEmpty()) {
-            String[] rawMessage = messageQueue.poll().split("%-%");
-            String message = rawMessage[0];
-            String channel = (rawMessage.length>0) ? rawMessage[1] : TitleBar.currentTab.getChannelName();
+            ChatMessage chatMessage = messageQueue.poll();
+            String message = chatMessage.getMessage();
             messageCount--;
             updateQueueButton();
            	logger.debug("Sending message: {" + message+"}");
-           	System.out.println("out-"+message+"-"+channel);
-            TwitchManager.sendMessage(channel, null, message);
+           	
+        	TwitchManager.sendMessage(chatMessage);
+            
             try{Thread.sleep(1500);}catch(InterruptedException e){ }
         }
     }

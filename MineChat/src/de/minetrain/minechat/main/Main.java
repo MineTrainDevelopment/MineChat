@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
@@ -15,6 +16,7 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
+import de.minetrain.minechat.utils.Settings;
 
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
@@ -28,9 +30,9 @@ public class Main {
 //	try {Thread.sleep(1500);} catch (InterruptedException e) { }
 //	sendMessage("minetrainlp", "", "test "+ "ㅤ");
 	
-	//TODO Cansel message queue.
 	
 	public static void main(String[] args) {
+		new Settings();
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
 		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));
@@ -71,6 +73,10 @@ public class Main {
 		}
 		onboardingFrame.dispose();
 		MessageManager.getMessageHandler().updateQueueButton();
+		
+//		MAIN_FRAME.chatWindow.displayMessage("Werbung | Bei Holzkern findet ihr verschiedenste Accessoires aus natürlichem Material wie Holz und Stein! sinticaOha Klickt euch gerne mal durch die Schönheiten und nutzt meinen Rabattcode SINTICA15 für 15% Rabatt auf deine Bestellung! Hier gehts zum Shop: https://www.holzkern.com/de/sintica sinticaSerious", "nightbot", Color.WHITE);
+//		MAIN_FRAME.chatWindow.displayMessage("Test jennyanKluk");
+//		MAIN_FRAME.chatWindow.displayMessage("ist Amazon dein zweites Zuhause? Dann tue der netten Dame im Bild den Gefallen, und shoppe über ihren Partnerlink! Es entstehen dir keine Mehrkosten. https://amzn.to/2Ih8Ur5");
 	}
 
 }

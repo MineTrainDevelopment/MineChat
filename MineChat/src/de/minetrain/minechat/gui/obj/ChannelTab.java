@@ -12,12 +12,15 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JScrollBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.config.obj.ChannelMacros;
+import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
+import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -36,14 +39,19 @@ public class ChannelTab {
 	private Long spamDeprecateAfter; //Seconds
 	private ActionListener editWindowAction;
 	private ChannelMacros macros;
+	private ChatWindow chatWindow = new ChatWindow();
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;
 	
 	
-	public ChannelTab(JButton button, TabButtonType tab) {
+	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab) {
 		ConfigManager config = Main.CONFIG;
 		configID = ""+config.getLong(tab.getConfigPath(), 0);
+		chatWindow.setLocation(8, 186);
+		chatWindow.setVisible(false);
+		mainFrame.getContentPane().add(chatWindow);
+		
 		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
 		this.tabType = tab;
 		this.thisObject = this;
@@ -99,7 +107,8 @@ public class ChannelTab {
 		loadData(configID);
 		tabLabel.setText(displayName);
 	}
-
+	
+	
 	private void loadData(String configID) {
 		this.configID = configID;
 		ConfigManager config = Main.CONFIG;
@@ -132,6 +141,7 @@ public class ChannelTab {
 		Point location = tabButton.getLocation();
 		location.setLocation(location.getX(), offset.getOffset(tabType, location.y));
 		tabButton.setLocation(location);
+		chatWindow.setVisible((tabType.equals(offset)) ? true : false);
 		return this;
 	}
 
@@ -211,6 +221,10 @@ public class ChannelTab {
 
 	public boolean isModerator() {
 		return moderator;
+	}
+
+	public ChatWindow getChatWindow() {
+		return chatWindow;
 	}
 	
 	

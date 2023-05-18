@@ -35,6 +35,8 @@ public class TextureManager {
 	private final ImageIcon onboarding;
 	private final ImageIcon emoteBorder;
 	private final ImageIcon programIcon;
+	private final ImageIcon replyButton;
+	private final ImageIcon markReadButton;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -44,6 +46,8 @@ public class TextureManager {
 		this.onboarding = new ImageIcon(texturePath + "MineChatTexturOnboarding.png");
 		this.emoteBorder = new ImageIcon(texturePath + "emoteBorder.png");
 		this.programIcon = new ImageIcon(texturePath + "programIcon.png");
+		this.replyButton = new ImageIcon(texturePath + "replyButton.png");
+		this.markReadButton = new ImageIcon(texturePath + "markReadButton.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -70,6 +74,15 @@ public class TextureManager {
 	
 	public ImageIcon getProgramIcon() {
 		return programIcon;
+	}
+	
+	public ImageIcon getReplyButton() {
+		return replyButton;
+	}
+
+
+	public ImageIcon getMarkReadButton() {
+		return markReadButton;
 	}
 	
 	public ImageIcon getByTabButton(TabButtonType tab){

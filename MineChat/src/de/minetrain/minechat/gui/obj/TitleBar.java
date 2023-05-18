@@ -90,9 +90,9 @@ public class TitleBar extends JPanel{
 			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_THIRD, thirdTab);}
 		});
         
-        this.mainTab = new ChannelTab(tab1, TabButtonType.TAB_MAIN);
-		this.secondTab = new ChannelTab(tab2, TabButtonType.TAB_SECOND);
-		this.thirdTab = new ChannelTab(tab3, TabButtonType.TAB_THIRD);
+        this.mainTab = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN);
+		this.secondTab = new ChannelTab(mainFrame, tab2, TabButtonType.TAB_SECOND);
+		this.thirdTab = new ChannelTab(mainFrame, tab3, TabButtonType.TAB_THIRD);
 		
 		mainFrame.profileButton.addActionListener(new ActionListener() {
 			

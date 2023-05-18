@@ -1,5 +1,6 @@
 package de.minetrain.minechat.twitch;
 
+import java.awt.Color;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,14 +17,18 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
+import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
+import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -40,6 +45,7 @@ public class TwitchManager {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchManager.class);
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
+	public static String ownerChannelName;
 	protected static TwitchCredentials credentials;
 	protected static TwitchAccesToken accesToken;
 	
@@ -50,9 +56,12 @@ public class TwitchManager {
 	public TwitchManager(TwitchCredentials credentials) {
 		TwitchManager.credentials = credentials;
 		TwitchClientBuilder twitchBuilder = TwitchClientBuilder.builder();
-		Main.LOADINGBAR.setProgress("Requesting new API AccesToken", 15);
+
+		Main.LOADINGBAR.setProgress("Loading Twitch user data.", 15);
+		new TwitchUserStatistics();
+		Main.LOADINGBAR.setProgress("Requesting new API AccesToken", 20);
 		accesToken = getAccesToken();
-		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 20);
+		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 25);
 		
 		//Configure the TwitchClientBuilder with the provided credentials.
 		twitch=twitchBuilder
@@ -66,6 +75,7 @@ public class TwitchManager {
 		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
 		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListner()); //Register a listener for Twitch events.
 		logger.info("Connecting to channels: "+twitch.getChat().getChannels().toString()); //Print all the connected channels
+		twitch.getChat().getChannels().forEach(s -> ownerChannelName = s);
 		new MessageManager();
 		Main.openMainFrame();
 	}
@@ -93,25 +103,39 @@ public class TwitchManager {
 		twitch.getChat().getChannels().forEach(name -> leaveChannel(name));
 	}
 	
+
+
+
+	/**
+	 * Sends a message to the specified Twitch chat.
+	 * 
+	 * @param channel The name of the Twitch channel to send the message to.
+	 * @param message The message to be sent to the Twitch chat channel.
+	 */
+	public static void sendMessage(ChatMessage message) {
+		message.getChannelTab().getChatWindow().displayMessage(message.getMessage(), message.getSenderNamem(), Color.WHITE);
+		
+		if(message.getChannelTab().getChatWindow().messageEvent == null){
+			sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
+			return;
+		}
+		replyMessage(message);
+	}
+	
 	
 	/**
 	 * Sends a message to the specified Twitch chat.
 	 * 
 	 * @param channel The name of the Twitch channel to send the message to.
-	 * @param user The name of the user sending the message.
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
-	public static void sendMessage(String channel, String user, String message) {
+	private static void sendMessage(String channel, String message) {
 		logger.debug("Sending message -> message"); //Log the sent message.
 		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
 		
 		//Send the message to the specified Twitch chat.
-		twitch.getChat().sendMessage(channel, message 
-			.replace("{USER}", (user == null) ? "" : "@"+user)
-			.replace("{STREAMER}", (channel == null) ? "" : "@"+channel)
-			.replace("{TIME}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm", Locale.GERMAN))));
+		twitch.getChat().sendMessage(channel, message.replace("{TIME}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm", Locale.GERMAN))));
 	}
-	
 	
 	/**
 	 * Sends a message to the specified Twitch chat channel using the information from the provided {@link ChannelMessageEvent}.
@@ -119,8 +143,13 @@ public class TwitchManager {
 	 * @param event The {@link ChannelMessageEvent} containing information about the chat channel and user.
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
-	public static void sendMessage(ChannelMessageEvent event, String message) {
-		TwitchManager.sendMessage(event.getChannel().getName(), event.getUser().getName(), message);
+	private static void replyMessage(ChatMessage message) {
+		if(message.getMessageEvent() != null){
+			message.getMessageEvent().reply(twitch.getChat(), message.getMessage());
+			message.getChannelTab().getChatWindow().setMessageToReply(null);
+			return;
+		}
+		sendMessage(message);
 	}
 	
 	

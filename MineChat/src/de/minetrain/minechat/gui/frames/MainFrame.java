@@ -24,6 +24,7 @@ public class MainFrame extends JFrame{
     public MineButton profileButton, queueButton;
     public MacroEmoteButton emoteButton0, emoteButton1, emoteButton2, emoteButton3, emoteButton4, emoteButton5, emoteButton6;
     public MacroButton macroButton0, macroButton1, macroButton2, macroButton3, macroButton4, macroButton5;
+    public ChatWindow chatWindow;
     
     public MainFrame() {
     	super("MineChat "+Main.VERSION);
@@ -66,6 +67,7 @@ public class MainFrame extends JFrame{
         getContentPane().add(emoteButton4);
         getContentPane().add(emoteButton5);
         getContentPane().add(emoteButton6);
+        
         
         //Stop QUEUE button.
         queueButton = new MineButton(new Dimension(175, 30), new Point(305, 135), ButtonType.STOP_QUEUE).setInvisible(!debug);
