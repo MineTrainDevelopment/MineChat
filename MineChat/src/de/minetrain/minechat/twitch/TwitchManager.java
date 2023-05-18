@@ -113,9 +113,12 @@ public class TwitchManager {
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
 	public static void sendMessage(ChatMessage message) {
-		message.getChannelTab().getChatWindow().displayMessage(message.getMessage(), message.getSenderNamem(), Color.WHITE);
+		AbstractChannelMessageEvent messageEvent = message.getMessageEvent();
+		message.getChannelTab().getChatWindow().displayMessage(
+					(messageEvent != null) ? "@"+messageEvent.getUser().getName()+" "+message.getMessage() : message.getMessage(),
+					message.getSenderNamem(), Color.WHITE);
 		
-		if(message.getChannelTab().getChatWindow().messageEvent == null){
+		if(messageEvent == null){
 			sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
 			return;
 		}

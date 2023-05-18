@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +31,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -51,7 +48,7 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
-import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.utils.CallCounter;
 import de.minetrain.minechat.utils.Settings;
 
 public class ChatWindow extends JLabel {
@@ -59,6 +56,8 @@ public class ChatWindow extends JLabel {
 	private static final long serialVersionUID = -8392586696866883591L;
 	private static Map<String, String> emoteReplacements = new HashMap<>();
 	public AbstractChannelMessageEvent messageEvent = null;
+	private CallCounter messagesPerMin = new CallCounter();
+	private Integer messagesPerDay = 0;
     private JPanel chatPanel;
     private JTextField inputField;
     private JScrollPane scrollPane;
@@ -71,7 +70,7 @@ public class ChatWindow extends JLabel {
         setBackground(ColorManager.BACKGROUND);
 
 //        inputInfo = new JLabel("Reply: @Kuchenhopper: Guten Morgen eguyLurk sinticaHuhu sinticaLove");
-        inputInfo = new JLabel("Messages: 12645 | PerMin: 115");
+        inputInfo = new JLabel(gerMessageInfoText());
         inputInfo.setForeground(Color.WHITE);
         inputInfo.setHorizontalAlignment(CENTER);
         inputInfo.setFont(new Font(null, Font.BOLD, 20));
@@ -113,14 +112,6 @@ public class ChatWindow extends JLabel {
             	String message = inputField.getText();
             	if(message.isEmpty()){return;}
                 inputField.setText("");
-                
-                
-                if(messageEvent != null){
-                	displayMessage("@"+messageEvent.getUser().getName()+" "+message, "", Color.WHITE);
-                	setMessageToReply(null);
-                }else{
-                	displayMessage(message, "", Color.WHITE);
-                }
                 
                 MessageManager.sendMessage(message);
             }
@@ -190,9 +181,12 @@ public class ChatWindow extends JLabel {
         System.out.println("---- "+messageLabel.getText()+" ----");
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
+        messagesPerDay++;
+        messagesPerMin.recordCallTime();
         chatPanel.add(messagePanel);
         chatPanel.revalidate();
         chatPanel.repaint();
+        setNessageInfoText();
         
         JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
@@ -219,10 +213,18 @@ public class ChatWindow extends JLabel {
     	replyButtonMouseAdapter(button2);
     }
     
+    public String gerMessageInfoText(){
+    	return "Messages: "+messagesPerDay+" | PerMin: "+messagesPerMin.getCallCount();
+    }
+    
     public void setMessageToReply(AbstractChannelMessageEvent messageEvent) {
 		this.messageEvent = messageEvent;
-		inputInfo.setText((messageEvent == null) ? "Messages: 12645 | PerMin: 115" : "Reply: "+messageEvent.getUser().getName()+": "+messageEvent.getMessage());
-		
+		setNessageInfoText();
+	}
+
+
+	private void setNessageInfoText() {
+		inputInfo.setText((messageEvent == null) ? gerMessageInfoText() : "Reply: "+messageEvent.getUser().getName()+": "+messageEvent.getMessage());
 	}
 
 
