@@ -89,6 +89,9 @@ public class ChatWindow extends JLabel {
         
         cancelReplyButton = createNewButton(Main.TEXTURE_MANAGER.getCancelButton(), "Cancel reply", new Dimension(26, 26), ColorManager.BACKGROUND);
         cancelReplyButton.setVisible(false);
+        cancelReplyButton.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e){setMessageToReply(null);}
+		});
 		inputInfo.add(cancelReplyButton, BorderLayout.WEST);
         
         // Chat Panel
@@ -253,7 +256,7 @@ public class ChatWindow extends JLabel {
 
 
 	private void setNessageInfoText() {
-		inputInfo.setText((messageEvent == null) ? getMessageInfoText() : "Reply: "+messageEvent.getUser().getName()+": "+messageEvent.getMessage());
+		inputInfo.setText((messageEvent == null) ? getMessageInfoText() : "     Reply: "+messageEvent.getUser().getName()+": "+messageEvent.getMessage());
 		cancelReplyButton.setVisible((messageEvent == null) ? false : true);
 	}
 
