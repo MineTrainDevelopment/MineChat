@@ -37,6 +37,9 @@ public class TextureManager {
 	private final ImageIcon programIcon;
 	private final ImageIcon replyButton;
 	private final ImageIcon markReadButton;
+	private final ImageIcon cancelButton;
+	private final ImageIcon enterButton;
+	private final ImageIcon emoteButton;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -48,6 +51,9 @@ public class TextureManager {
 		this.programIcon = new ImageIcon(texturePath + "programIcon.png");
 		this.replyButton = new ImageIcon(texturePath + "replyButton.png");
 		this.markReadButton = new ImageIcon(texturePath + "markReadButton.png");
+		this.cancelButton = new ImageIcon(texturePath + "cancelButton.png");
+		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
+		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -85,6 +91,18 @@ public class TextureManager {
 		return markReadButton;
 	}
 	
+	public ImageIcon getCancelButton() {
+		return cancelButton;
+	}
+
+	public ImageIcon getEnterButton() {
+		return enterButton;
+	}
+
+	public ImageIcon getEmoteButton() {
+		return emoteButton;
+	}
+
 	public ImageIcon getByTabButton(TabButtonType tab){
 		switch (tab) {
 		case TAB_MAIN:

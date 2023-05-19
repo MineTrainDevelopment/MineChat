@@ -22,7 +22,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.BadLocationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -32,6 +37,7 @@ import de.minetrain.minechat.main.Main;
 
 public class EmoteSelector extends JDialog{
 	private static final long serialVersionUID = 8337999985260635877L;
+	private static final Logger logger = LoggerFactory.getLogger(EmoteSelector.class);
 	private final EmoteSelector thisObect;
     private JPanel emotePanel;
     private JScrollPane scrollPane;
@@ -41,6 +47,7 @@ public class EmoteSelector extends JDialog{
     private String selectedEmote;
     private boolean disposed;
     private boolean disposOnSelect;
+    private JTextField textFieldToEdit;
     HashMap<String, List<String>> emotes;
 
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
@@ -120,6 +127,7 @@ public class EmoteSelector extends JDialog{
                         selectedEmote = emote;
                         if(disposOnSelect){
                         	disposed = true;
+                        	addSelectetEmoteToText(null);
                         	dispose();
                         }
                     }
@@ -176,6 +184,20 @@ public class EmoteSelector extends JDialog{
         scrollPane.addMouseMotionListener(mouseMotionListner());
     }
 	
+	public void addSelectetEmoteToText(JTextField text){
+		if(text != null){textFieldToEdit = text;}
+		if(textFieldToEdit == null){return;}
+		
+		System.out.println("-- ADD --");
+		
+		try {
+			int position = text.getCaretPosition();
+			text.getDocument().insertString(position, " "+selectedEmote.split("/")[4]+" ", null);
+		} catch (BadLocationException ex) {
+			logger.error("Can´t add emote to text. ",ex);
+		}
+	}
+	
 	private MouseAdapter MoiseListner() {
 		return new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -205,63 +227,3 @@ public class EmoteSelector extends JDialog{
 	}
 	
 }
-
-
-
-//
-//        JPanel panel = new JPanel(new GridBagLayout());
-//        GridBagConstraints constraints = new GridBagConstraints();
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//        constraints.gridx = 0;
-//        constraints.gridy = 0;
-//        constraints.insets = new Insets(5, 5, 5, 5);
-//
-//		File folder = new File(folderPath);
-//
-//        // Überprüfen, ob der Ordner existiert und ob es Channel-Ordner gibt
-//        if (!folder.exists() || !folder.isDirectory()) {
-//            JOptionPane.showMessageDialog(this, "Der Ordner existiert nicht oder ist kein Ordner: " + folderPath);
-//            return;
-//        }
-//
-//        File[] channelFolders = folder.listFiles(File::isDirectory);
-//
-//        if (channelFolders == null) {
-//            JOptionPane.showMessageDialog(this, "Es gibt keine Channel-Ordner im Ordner: " + folderPath);
-//            return;
-//        }
-//
-//        for (File channelFolder : channelFolders) {
-//            JLabel channelLabel = new JLabel(channelFolder.getName());
-//            panel.add(channelLabel, constraints);
-//            constraints.gridy++;
-//
-//            File[] emotes = channelFolder.listFiles();
-//            int count = 0;
-//
-//            for (File emote : emotes) {
-//                if (!emote.isFile()) {
-//                    continue;
-//                }
-//
-//                JLabel emoteLabel = new JLabel(new ImageIcon(emote.getAbsolutePath()));
-//                panel.add(emoteLabel, constraints);
-//                constraints.gridx++;
-//                count++;
-//
-//                if (count == 10) {
-//                    count = 0;
-//                    constraints.gridy++;
-//                    constraints.gridx = 0;
-//                }
-//            }
-//
-//            if (count > 0) {
-//                constraints.gridy++;
-//                constraints.gridx = 0;
-//            }
-//        }
-//
-//        add(panel);
-//        pack();
-//        setLocationRelativeTo(mainFrame);

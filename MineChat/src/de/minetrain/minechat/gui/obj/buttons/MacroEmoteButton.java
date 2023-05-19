@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
-import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;

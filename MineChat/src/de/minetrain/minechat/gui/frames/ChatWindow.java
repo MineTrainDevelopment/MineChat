@@ -2,8 +2,12 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -52,29 +59,37 @@ import de.minetrain.minechat.utils.CallCounter;
 import de.minetrain.minechat.utils.Settings;
 
 public class ChatWindow extends JLabel {
-	private static final Logger logger = LoggerFactory.getLogger(ChatWindow.class);
 	private static final long serialVersionUID = -8392586696866883591L;
+	private static final Logger logger = LoggerFactory.getLogger(ChatWindow.class);
+	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
 	public AbstractChannelMessageEvent messageEvent = null;
 	private CallCounter messagesPerMin = new CallCounter();
+	private MineButton sendButton, cancelReplyButton;
 	private Integer messagesPerDay = 0;
     private JPanel chatPanel;
     private JTextField inputField;
     private JScrollPane scrollPane;
-    private JButton sendButton;
     private JLabel inputInfo;
-
+    
     public ChatWindow() {
         setSize(482, 504);
         setLayout(new BorderLayout());
         setBackground(ColorManager.BACKGROUND);
 
 //        inputInfo = new JLabel("Reply: @Kuchenhopper: Guten Morgen eguyLurk sinticaHuhu sinticaLove");
-        inputInfo = new JLabel(gerMessageInfoText());
+        inputInfo = new JLabel(getMessageInfoText());
+        inputInfo.setBackground(ColorManager.BACKGROUND);
         inputInfo.setForeground(Color.WHITE);
+        inputInfo.setLayout(new BorderLayout());
         inputInfo.setHorizontalAlignment(CENTER);
         inputInfo.setFont(new Font(null, Font.BOLD, 20));
-//        add(stats, BorderLayout.NORTH);
+//        inputInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+//        inputInfo.add(Box.createHorizontalStrut(2), BorderLayout.SOUTH);
+        
+        cancelReplyButton = createNewButton(Main.TEXTURE_MANAGER.getCancelButton(), "Cancel reply", new Dimension(26, 26), ColorManager.BACKGROUND);
+        cancelReplyButton.setVisible(false);
+		inputInfo.add(cancelReplyButton, BorderLayout.WEST);
         
         // Chat Panel
         chatPanel = new JPanel();
@@ -84,11 +99,25 @@ public class ChatWindow extends JLabel {
 
         // Input Field and Send Button
         inputField = new JTextField();
-        sendButton = new JButton("Send");
-        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputField.setFont(MESSAGE_FONT);
+        inputField.setForeground(Color.WHITE);
+        inputField.setBackground(ColorManager.BACKGROUND_LIGHT);
+        
+        sendButton = createNewButton(Main.TEXTURE_MANAGER.getEnterButton(), "Send message", new Dimension(62, 28), ColorManager.BACKGROUND_LIGHT);
+        MineButton emoteButton = createNewButton(Main.TEXTURE_MANAGER.getEmoteButton(), "Send message", new Dimension(28, 28), ColorManager.BACKGROUND_LIGHT);
+        emoteButton.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e){
+				EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
+				emoteSelector.addSelectetEmoteToText(inputField);
+			}
+		});
+        
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        buttonPanel.add(new JButton("Emotes"), BorderLayout.WEST);
+        buttonPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
+		buttonPanel.add(emoteButton, BorderLayout.WEST);
         buttonPanel.add(sendButton, BorderLayout.EAST);
+        
+        JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(inputInfo, BorderLayout.NORTH);
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(buttonPanel, BorderLayout.EAST);
@@ -174,7 +203,7 @@ public class ChatWindow extends JLabel {
 
         JTextPane messageLabel = new JTextPane();
         messageLabel.setEditable(false);
-        messageLabel.setFont(new Font("SansSerif", Font.BOLD, 17));
+		messageLabel.setFont(MESSAGE_FONT);
         messageLabel.setBackground(ColorManager.BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(button2));
         setEmoteText(message, messageLabel.getStyledDocument());
@@ -213,7 +242,7 @@ public class ChatWindow extends JLabel {
     	replyButtonMouseAdapter(button2);
     }
     
-    public String gerMessageInfoText(){
+    public String getMessageInfoText(){
     	return "Messages: "+messagesPerDay+" | PerMin: "+messagesPerMin.getCallCount();
     }
     
@@ -224,7 +253,8 @@ public class ChatWindow extends JLabel {
 
 
 	private void setNessageInfoText() {
-		inputInfo.setText((messageEvent == null) ? gerMessageInfoText() : "Reply: "+messageEvent.getUser().getName()+": "+messageEvent.getMessage());
+		inputInfo.setText((messageEvent == null) ? getMessageInfoText() : "Reply: "+messageEvent.getUser().getName()+": "+messageEvent.getMessage());
+		cancelReplyButton.setVisible((messageEvent == null) ? false : true);
 	}
 
 
@@ -371,6 +401,16 @@ public class ChatWindow extends JLabel {
         }
         
         return builder.toString();
+    }
+    
+    private MineButton createNewButton(ImageIcon icon, String toolTip, Dimension dimension, Color backgroundColor){
+    	MineButton button = new MineButton(dimension, null, ButtonType.NON);
+    	button.setIcon(icon);
+    	button.setColors(Color.WHITE, backgroundColor);
+    	button.setPreferredSize(button.getSize());
+    	button.setBorderPainted(false);
+    	button.setToolTipText(toolTip);
+    	return button;
     }
     
 
