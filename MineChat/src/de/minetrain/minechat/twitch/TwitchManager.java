@@ -86,6 +86,7 @@ public class TwitchManager {
 			if(!twitch.getChat().getChannels().contains(name)){
 				logger.info("Joining channel: "+name);
 				twitch.getChat().joinChannel(name);
+				twitch.getClientHelper().enableFollowEventListener(name);
 			}
 		}
 	}
@@ -95,6 +96,7 @@ public class TwitchManager {
 		for(String name : names) {
 			logger.info("Leaving channel: "+name);
 			twitch.getChat().leaveChannel(name);
+			twitch.getClientHelper().disableFollowEventListener(name);
 		}
 	}
 	

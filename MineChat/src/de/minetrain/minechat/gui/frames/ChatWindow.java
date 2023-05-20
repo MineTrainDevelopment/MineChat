@@ -2,12 +2,8 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,7 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -150,7 +144,6 @@ public class ChatWindow extends JLabel {
         });
     }
     
-    
     public void displayMessage(String message, String userName, Color userColor) {
     	displayMessage(message, userName, userColor, null);
     }
@@ -195,7 +188,6 @@ public class ChatWindow extends JLabel {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("reply");
 					setMessageToReply(event);
-					//When the reply button was pressed, the message input should recolor itself and the send button should go into reply mode.
 				}
 			});
 		}
@@ -209,8 +201,7 @@ public class ChatWindow extends JLabel {
 		messageLabel.setFont(MESSAGE_FONT);
         messageLabel.setBackground(ColorManager.BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(button2));
-        setEmoteText(message, messageLabel.getStyledDocument());
-        System.out.println("---- "+messageLabel.getText()+" ----");
+		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
         messagesPerDay++;
@@ -225,7 +216,6 @@ public class ChatWindow extends JLabel {
     	int currentValue = verticalScrollBar.getValue();
     	
     	if (currentValue == maxValue) {
-    		System.out.println("scroll");
     		SwingUtilities.invokeLater(() -> {
     			Rectangle bounds = messagePanel.getBounds();
     			scrollPane.getViewport().scrollRectToVisible(bounds);
@@ -237,12 +227,60 @@ public class ChatWindow extends JLabel {
             Matcher matcher = pattern.matcher(message);
             
             if (matcher.find()) {
-    			System.out.println("change color");
     			titledBorder.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
             }
     	});
     	
     	replyButtonMouseAdapter(button2);
+    }
+    
+    public void displaySystemInfo(String topic, String message, Color borderColor){
+    	JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.setMinimumSize(new Dimension(400, 25));
+        messagePanel.setBackground(ColorManager.BACKGROUND);
+
+        JTextPane textLabel = new JTextPane();
+        textLabel.setEditable(false);
+    	textLabel.setBackground(ColorManager.BACKGROUND_LIGHT);
+    	textLabel.setFont(MESSAGE_FONT);
+    	formatText(message, textLabel.getStyledDocument(), new Color(30, 30, 30));
+    	
+		JPanel messageContentPanel = new JPanel(new BorderLayout());
+	    messageContentPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
+	    messageContentPanel.add(textLabel, BorderLayout.CENTER);
+	    messagePanel.add(messageContentPanel, BorderLayout.CENTER);
+        
+        TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(borderColor, 2, true), "  "+topic+"  ");
+		titledBorder.setTitleJustification(TitledBorder.CENTER);
+		titledBorder.setTitleColor(borderColor); //Color.CYAN
+		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
+		messagePanel.setBorder(titledBorder);
+		
+		JButton button1 = new MineButton(new Dimension(28, 28), null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
+		button1.setPreferredSize(button1.getSize());
+		button1.setBackground(ColorManager.BACKGROUND_LIGHT);
+		button1.setBorderPainted(false);
+		button1.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
+		button1.setToolTipText("Mark this message as read.");
+		button1.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e){chatPanel.remove(messagePanel); chatPanel.revalidate(); chatPanel.repaint();}
+		});
+
+		messagePanel.add(button1, BorderLayout.WEST);
+        chatPanel.add(messagePanel);
+        chatPanel.revalidate();
+        chatPanel.repaint();
+        
+        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+    	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
+    	int currentValue = verticalScrollBar.getValue();
+    	
+    	if (currentValue == maxValue) {
+    		SwingUtilities.invokeLater(() -> {
+    			Rectangle bounds = messagePanel.getBounds();
+    			scrollPane.getViewport().scrollRectToVisible(bounds);
+    		});
+    	}
     }
     
     public String getMessageInfoText(){
@@ -271,7 +309,7 @@ public class ChatWindow extends JLabel {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                // Wenn die Maus das Panel verlässt, blende den Knopf aus
+                // Wenn die Maus das Panel verlÃ¤sst, blende den Knopf aus
             	button.setVisible(false);
             }
         };
@@ -279,9 +317,12 @@ public class ChatWindow extends JLabel {
     
 
     
-    private void setEmoteText(String input, StyledDocument document) {
-    	TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
-    	String newInput = "["+LocalTime.now().format(DateTimeFormatter.ofPattern(Settings.timeFormat, Locale.GERMAN))+"] ";
+    private void formatText(String input, StyledDocument document, Color fontColor) {
+    	String newInput="";
+    	if(fontColor == Color.WHITE){
+    		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
+    		newInput += "["+LocalTime.now().format(DateTimeFormatter.ofPattern(Settings.timeFormat, Locale.GERMAN))+"] ";
+    	}
         
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}
         input = (newInput.contains("\n") ? newInput.substring(0, newInput.lastIndexOf("\n")).trim() : newInput.trim());
@@ -289,13 +330,12 @@ public class ChatWindow extends JLabel {
 		for (String word : input.split(" ")) {
 			SimpleAttributeSet attributeSet = new SimpleAttributeSet();
 			StyleConstants.setAlignment(attributeSet, StyleConstants.ALIGN_CENTER);
-			StyleConstants.setForeground(attributeSet, Color.WHITE);
+			StyleConstants.setForeground(attributeSet, fontColor);
 			boolean isEmote = false;
 
 			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
 			
 			Settings.highlightStrings.forEach(string -> {
-    			System.out.println(string +" - "+word);
 	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
 	            Matcher matcher = pattern.matcher(word);
 	            if (matcher.find()) {
@@ -315,7 +355,7 @@ public class ChatWindow extends JLabel {
 					document.insertString(document.getLength(), " ", null);
 				}
 			} catch (BadLocationException ex) {
-				logger.error("Can´t modify styledDocument! ", ex);
+				logger.error("CanÂ´t modify styledDocument! ", ex);
 			}
 		}
     }
@@ -323,28 +363,37 @@ public class ChatWindow extends JLabel {
     
     //TODO Replace emotes with 3 Chars for filtering.
     public static List<String> splitString(String input) {
-        int chunkSize = 40;
+    	input = input.replace("\\n", "ï¿½");
+        int chunkSize = 45;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
         input = encryptEmotes(input);
 
         int wordBoundary = -1; // Index of the last space character within the chunk limit
-
+        System.out.println(input);
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            builder.append(c);
 
-            if (c == ' ') {
-                wordBoundary = builder.length() - 1;
-            }
-
-            if (builder.length() == chunkSize) {
-                if (wordBoundary != -1) {
-                    chunks.add(builder.substring(0, wordBoundary));
-                    builder.delete(0, wordBoundary + 1);
-                    wordBoundary = -1;
-                } else {
-                    chunks.add(builder.toString());
+            if (c != 'ï¿½') {
+                builder.append(c);
+	            if (c == ' ') {
+	                wordBoundary = builder.length() - 1;
+	            }
+	
+	            if (builder.length() == chunkSize) {
+	                if (wordBoundary != -1) {
+	                    chunks.add(builder.substring(0, wordBoundary).trim());
+	                    builder.delete(0, wordBoundary + 1);
+	                    wordBoundary = -1;
+	                } else {
+	                    chunks.add(builder.toString().trim());
+	                    builder.setLength(0);
+	                }
+	            }
+            } else {
+                if (builder.length() > 0) {
+                	System.out.println("Split!");
+                    chunks.add(builder.toString().trim());
                     builder.setLength(0);
                 }
             }
@@ -352,13 +401,14 @@ public class ChatWindow extends JLabel {
 
         // Add the remaining characters as the last chunk
         if (builder.length() > 0) {
-            chunks.add(builder.toString());
+            chunks.add(builder.toString().trim());
         }
         
         for (int i=0; i<chunks.size(); i++) {
 			chunks.set(i, decryptEmotes(chunks.get(i)));
 		}
         
+        chunks.forEach(s -> System.out.println(s));
         return chunks;
     }
     
@@ -382,7 +432,6 @@ public class ChatWindow extends JLabel {
 
     public static String decryptEmotes(String input) {
         for (Entry<String, String> entry : emoteReplacements.entrySet()) {
-        	System.out.println(entry.getKey()+" - "+entry.getValue());
             input = input.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue());
         }
         return input;
@@ -390,7 +439,6 @@ public class ChatWindow extends JLabel {
 
 
     private static String generateReplacement(String input) {
-        // Generiere eine zufällige Zeichenfolge mit drei Großbuchstaben
         String alphabet = "abcdefghijklmnopqrstuvwABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 3; i++) {
