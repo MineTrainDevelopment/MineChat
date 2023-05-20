@@ -1,5 +1,7 @@
 package de.minetrain.minechat.twitch.obj;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -97,6 +99,15 @@ public class AsyncMessageHandler {
         if (!messageQueue.isEmpty()) {
             ChatMessage chatMessage = messageQueue.poll();
             String message = chatMessage.getMessage();
+            
+            String[] splitMessage = message.split(" ");
+    		List<String> words = Arrays.asList(splitMessage);
+    		words.forEach(word -> {
+    			if(word.startsWith("@")){
+    				chatMessage.getChannelTab().getChatWindow().chatterNames.add(word.replace("@", "")+"%-&-%");
+    			}
+    		});
+    		
             messageCount--;
             updateQueueButton();
            	logger.debug("Sending message: {" + message+"}");

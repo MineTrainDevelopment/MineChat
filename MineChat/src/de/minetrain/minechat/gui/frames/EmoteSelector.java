@@ -73,21 +73,21 @@ public class EmoteSelector extends JDialog{
         emotePanel.setSize(new Dimension(400, 400));
         emotePanel.setLayout(new BoxLayout(emotePanel, BoxLayout.Y_AXIS)); 
         emotePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        emotePanel.setBackground(ColorManager.BORDER);
+        emotePanel.setBackground(ColorManager.GUI_BORDER);
         
         // Erstellen der Buttons
         JButton installButton = new JButton("Install more.");
-        installButton.setBackground(ColorManager.BACKGROUND_LIGHT);
+        installButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         installButton.setForeground(Color.WHITE);
-        installButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 3));
+        installButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
         installButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){new EmoteDownlodFrame(thisObect);}
 		});
 
         JButton refreshButton = new JButton("refresh");
-        refreshButton.setBackground(ColorManager.BACKGROUND_LIGHT);
+        refreshButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         refreshButton.setForeground(Color.WHITE);
-        refreshButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 3));
+        refreshButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
         refreshButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e){
         		dispose();
@@ -96,9 +96,9 @@ public class EmoteSelector extends JDialog{
 		});
         
         JButton cancelButton = new JButton("Close");
-        cancelButton.setBackground(ColorManager.BACKGROUND_LIGHT);
+        cancelButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         cancelButton.setForeground(Color.WHITE);
-        cancelButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 3));
+        cancelButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
         cancelButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e){disposed = true; dispose();}
 		});
@@ -109,7 +109,7 @@ public class EmoteSelector extends JDialog{
         optionPanel.add(installButton);
         optionPanel.add(refreshButton);
         optionPanel.add(cancelButton);
-        optionPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
+        optionPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         emotePanel.add(optionPanel);
         
         
@@ -158,7 +158,7 @@ public class EmoteSelector extends JDialog{
 
 			int numRows = (int) Math.ceil((double) buttons.size() / MAX_EMOTES_PER_ROW);
 			JPanel buttonPanel = new JPanel(new GridLayout(numRows, MAX_EMOTES_PER_ROW));
-			buttonPanel.setBackground(ColorManager.BACKGROUND);
+			buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
 			buttons.forEach(button -> buttonPanel.add(button));
 			
 			TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(80, 80, 80), 2), entry.getKey());
@@ -176,8 +176,8 @@ public class EmoteSelector extends JDialog{
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.getVerticalScrollBar().setBackground(ColorManager.BORDER);
-        scrollPane.getVerticalScrollBar().setForeground(ColorManager.BUTTON_BACKGROUND);
+        scrollPane.getVerticalScrollBar().setBackground(ColorManager.GUI_BORDER);
+        scrollPane.getVerticalScrollBar().setForeground(ColorManager.GUI_BUTTON_BACKGROUND);
         scrollPane.getVerticalScrollBar().setBorder(null);
         scrollPane.setPreferredSize(emotePanel.getSize());
         scrollPane.addMouseListener(MoiseListner());

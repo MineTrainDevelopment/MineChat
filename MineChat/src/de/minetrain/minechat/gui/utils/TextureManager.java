@@ -40,6 +40,7 @@ public class TextureManager {
 	private final ImageIcon cancelButton;
 	private final ImageIcon enterButton;
 	private final ImageIcon emoteButton;
+	private final ImageIcon waveButton;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -54,6 +55,7 @@ public class TextureManager {
 		this.cancelButton = new ImageIcon(texturePath + "cancelButton.png");
 		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
 		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
+		this.waveButton = new ImageIcon(texturePath + "waveButton.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -101,6 +103,10 @@ public class TextureManager {
 
 	public ImageIcon getEmoteButton() {
 		return emoteButton;
+	}
+
+	public ImageIcon getWaveButton() {
+		return waveButton;
 	}
 
 	public ImageIcon getByTabButton(TabButtonType tab){

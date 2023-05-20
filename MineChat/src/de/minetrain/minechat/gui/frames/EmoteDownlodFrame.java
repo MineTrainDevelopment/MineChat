@@ -85,12 +85,12 @@ public class EmoteDownlodFrame extends JDialog{
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
-        setBackground(ColorManager.BACKGROUND);
+        setBackground(ColorManager.GUI_BACKGROUND);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
-        panel.setBackground(ColorManager.BACKGROUND);
+        panel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5));
+        panel.setBackground(ColorManager.GUI_BACKGROUND);
         panel.setLayout(new GridLayout(4, 2));
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
@@ -98,21 +98,21 @@ public class EmoteDownlodFrame extends JDialog{
         DefaultListCellRenderer listRenderer = new DefaultListCellRenderer();
         listRenderer.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
         platformSelector = new JComboBox<>(new String[]{"Twitch (Name)", "BTTV (URL)", "BTTV (ChannelName)"});
-        platformSelector.setBackground(ColorManager.BACKGROUND_LIGHT);
+        platformSelector.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         platformSelector.setFont(new Font(null, Font.BOLD, fontSize));
         platformSelector.setForeground(Color.WHITE);
         platformSelector.setSelectedIndex(0);
         platformSelector.setAlignmentY(CENTER_ALIGNMENT);
         platformSelector.setRenderer(listRenderer);
         
-        channelName.setBackground(ColorManager.BACKGROUND_LIGHT);
+        channelName.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         channelName.setFont(new Font(null, Font.BOLD, fontSize));
         channelName.setForeground(Color.WHITE);
         channelName.setHorizontalAlignment(JTextField.CENTER);
         
         JPanel inputPanel = new JPanel(new GridLayout(1, 2, 8, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 2, 3));
-        inputPanel.setBackground(ColorManager.BORDER);
+        inputPanel.setBackground(ColorManager.GUI_BORDER);
         inputPanel.add(platformSelector);
         inputPanel.add(channelName);
         
@@ -127,41 +127,41 @@ public class EmoteDownlodFrame extends JDialog{
 		
 		JLabel description = new JLabel();
         description.setFont(new Font(null, Font.BOLD, fontSize));
-        description.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
-        description.setBackground(ColorManager.BACKGROUND_LIGHT);
+        description.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5));
+        description.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         description.setForeground(Color.WHITE);
         description.setHorizontalAlignment(JTextField.CENTER);
         description.setText("Custom name:");
         
-        customEmoteName.setBackground(ColorManager.BACKGROUND_LIGHT);
+        customEmoteName.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         customEmoteName.setFont(new Font(null, Font.BOLD, fontSize));
         customEmoteName.setForeground(Color.WHITE);
         customEmoteName.setHorizontalAlignment(JTextField.CENTER);
         
         JPanel renamePannel = new JPanel(new GridLayout(1, 2, 8, 5));
         renamePannel.setBorder(BorderFactory.createEmptyBorder(3, 3, 2, 3));
-        renamePannel.setBackground(ColorManager.BORDER);
+        renamePannel.setBackground(ColorManager.GUI_BORDER);
         renamePannel.add(description);
         renamePannel.add(customEmoteName);
         
         
         
         JButton confirmButton = new JButton("Confirm");
-        confirmButton.setBackground(ColorManager.BUTTON_BACKGROUND);
+        confirmButton.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
         confirmButton.setForeground(Color.WHITE);
         confirmButton.setBorder(null);
         confirmButton.addActionListener(closeWindow(false));
 
 //        JButton cancelButton = new JButton("Cancel");
         JButton cancelButton = new JButton("Close");
-        cancelButton.setBackground(ColorManager.BUTTON_BACKGROUND);
+        cancelButton.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(null);
         cancelButton.addActionListener(closeWindow(true));
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 8, 5));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(6, 3, 3, 3));
-        buttonPanel.setBackground(ColorManager.BORDER);
+        buttonPanel.setBackground(ColorManager.GUI_BORDER);
         buttonPanel.add(cancelButton);
         buttonPanel.add(confirmButton);
         

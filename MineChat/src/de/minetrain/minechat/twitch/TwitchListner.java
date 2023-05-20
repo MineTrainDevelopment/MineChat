@@ -1,6 +1,12 @@
 package de.minetrain.minechat.twitch;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.sound.midi.SysexMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +33,7 @@ import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchChatUser;
 import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
@@ -73,6 +80,17 @@ public class TwitchListner {
 		if(channelTab == null){
 			return;
 		}
+		
+		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
+			String[] splitMessage = event.getMessage().split(" ");
+			List<String> words = Arrays.asList(splitMessage);
+			words.forEach(word -> {
+				System.out.println("Word -> "+word);
+				if(word.startsWith("@")){
+					channelTab.getChatWindow().chatterNames.add(word.toLowerCase().replace("@", "")+"%-&-%");
+				}
+			});
+		}
 
 		TwitchChatUser twitchUser = TwitchUserStatistics.getTwitchUser(event.getUser().getId());
 		if(twitchUser == null){
@@ -81,30 +99,12 @@ public class TwitchListner {
 			channelTab.getChatWindow().displayMessage(event.getMessage(), twitchUser.getUserName(), twitchUser.getColor(), event);
 		}
 	}
-
-	private ChannelTab getCurrentChannelTab(EventChannel eventChannel) {
-		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
-		ChannelTab channelTab = null;
-		if(titleBar.getMainTab().getConfigID().equals(eventChannel.getId())){
-			channelTab = titleBar.getMainTab();
-		}
-		
-		if(titleBar.getSecondTab().getConfigID().equals(eventChannel.getId())){
-			channelTab = titleBar.getSecondTab();
-		}
-		
-		if(titleBar.getThirdTab().getConfigID().equals(eventChannel.getId())){
-			channelTab = titleBar.getThirdTab();
-		}
-		
-		return channelTab;
-	}
 	
     @EventSubscriber
     public void onFollow(FollowEvent event) {
     	if(!Settings.displaySubs_Follows){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", unimportant);
+			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", ColorManager.CHAT_UNIMPORTANT);
     	
     }
 
@@ -112,7 +112,7 @@ public class TwitchListner {
     public void onCheer(CheerEvent event) {
     	if(!Settings.displayBitsCheerd){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", unimportant);
+			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", ColorManager.CHAT_UNIMPORTANT);
     }
 
     @EventSubscriber
@@ -120,12 +120,12 @@ public class TwitchListner {
         if(!event.getGifted() && Settings.displaySubs_Follows) {
         	getCurrentChannelTab(event.getChannel()).getChatWindow()
     			.displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed!",
-    					(event.getMonths()>12) ? spendingSmall : unimportant);
+    					(event.getMonths()>12) ? ColorManager.CHAT_SPENDING_SMALL : ColorManager.CHAT_UNIMPORTANT);
         }else if(!Settings.displayGiftedSubscriptions){
         	getCurrentChannelTab(event.getChannel()).getChatWindow()
     			.displaySystemInfo("New subscription", "@"+event.getGiftedBy().getName()
     					+" just gifted a sub to @"+event.getUser().getName()
-    					+"! ("+event.getGiftMonths()+".months)", unimportant);
+    					+"! ("+event.getGiftMonths()+".months)", ColorManager.CHAT_UNIMPORTANT);
         }
     }
 
@@ -138,7 +138,7 @@ public class TwitchListner {
 				+" \nTier: "+event.getSubscriptionPlan()
 				+" \nAmound: "+event.getCount()
 				+" \nThis user gifted "+event.getTotalCount()+" subs on this Channel!"
-				, (event.getCount() > 5) ? spendingBig : spendingSmall);
+				, (event.getCount() > 5) ? ColorManager.CHAT_SPENDING_BIG : ColorManager.CHAT_SPENDING_SMALL);
     }
     
 //    @EventSubscriber
@@ -167,7 +167,7 @@ public class TwitchListner {
     public void onModAnnouncement(ModAnnouncementEvent event){
     	if(!Settings.displayAnnouncement){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Announcement", "From: "+event.getAnnouncer().getName()+" \nMessage: "+event.getMessage(), announcement);
+			.displaySystemInfo("Announcement", "From: "+event.getAnnouncer().getName()+" \nMessage: "+event.getMessage(), ColorManager.CHAT_ANNOUNCEMENT);
     }
 
     @EventSubscriber
@@ -177,14 +177,14 @@ public class TwitchListner {
 //			.displaySystemInfo("Incuming raid", "@"+event.getRaider().getName()+" is raiding with "+event.getViewers()+" raiders!", announcement);
     	
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Incuming raid", "Frome: "+event.getRaider().getName()+" \nViewers: "+event.getViewers(), announcement);
+			.displaySystemInfo("Incuming raid", "Frome: "+event.getRaider().getName()+" \nViewers: "+event.getViewers(), ColorManager.CHAT_ANNOUNCEMENT);
     }
     
     @EventSubscriber
     public void onRewardGift(RewardGiftEvent event){ //Someone got a reward
     	if(!Settings.displayUserRewards){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Reward granted ", event.getUser().getName()+" got a "+event.getTriggerType()+ " reward", userReward);
+			.displaySystemInfo("Reward granted ", event.getUser().getName()+" got a "+event.getTriggerType()+ " reward", ColorManager.CHAT_USER_REWARD);
     	
     }
     
@@ -192,46 +192,68 @@ public class TwitchListner {
     public void onBitsBadgeEarned(BitsBadgeEarnedEvent event){
     	if(!Settings.displayUserRewards){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("BitBadge Earned ", event.getUser().getName()+" got a new bit badge! -> "+event.getBitsThreshold(), userReward);
+			.displaySystemInfo("BitBadge Earned ", event.getUser().getName()+" got a new bit badge! -> "+event.getBitsThreshold(), ColorManager.CHAT_USER_REWARD);
     }
 
     @EventSubscriber
     public void onClearChat(ClearChatEvent event){
     	if(!Settings.displayModActions){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Chat cleared", "All chat-messages got cleared!", moderationColor);
+			.displaySystemInfo("Chat cleared", "All chat-messages got cleared!", ColorManager.CHAT_MODERATION);
     }
 
     @EventSubscriber
     public void onDeleteMessage(DeleteMessageEvent event){
     	if(!Settings.displayModActions){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-    		.displaySystemInfo("Message deleted", "@"+event.getUserName()+": "+event.getMessage(), moderationColor);
+    		.displaySystemInfo("Message deleted", "@"+event.getUserName()+": "+event.getMessage(), ColorManager.CHAT_MODERATION);
     }
 
     @EventSubscriber
     public void onRaidCancellation(RaidCancellationEvent event){
     	if(!Settings.displayModActions){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Raid cancelled", "The current raid got cancelled!", moderationColor);
+			.displaySystemInfo("Raid cancelled", "The current raid got cancelled!", ColorManager.CHAT_MODERATION);
     }
 
     @EventSubscriber
     public void onUserBan(UserBanEvent event){
     	if(!Settings.displayModActions){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-    		.displaySystemInfo("User banned", "@"+event.getUser().getName()+" got banned!", moderationColor);
+    		.displaySystemInfo("User banned", "@"+event.getUser().getName()+" got banned!", ColorManager.CHAT_MODERATION);
     }
 
     @EventSubscriber
     public void onUserTimeout(UserTimeoutEvent event){
+    	if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
+    		
+    	}
+    	
     	if(!Settings.displayModActions){return;}
 //    	getCurrentChannelTab(event.getChannel()).getChatWindow()
 //			.displaySystemInfo("User Timeout", "@"+event.getUser().getName()+" got a timeout for "+event.getDuration()+".sec! Reason: "+event.getReason(), moderationColor);
     	
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" g\nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), moderationColor);
+			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" \nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), ColorManager.CHAT_MODERATION);
     }
+
+	private ChannelTab getCurrentChannelTab(EventChannel eventChannel) {
+		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
+		ChannelTab channelTab = null;
+		if(titleBar.getMainTab().getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.getMainTab();
+		}
+		
+		if(titleBar.getSecondTab().getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.getSecondTab();
+		}
+		
+		if(titleBar.getThirdTab().getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.getThirdTab();
+		}
+		
+		return channelTab;
+	}
 
 
 //    @EventSubscriber
@@ -239,12 +261,6 @@ public class TwitchListner {
 //    	
 //    }
 
-    private static final Color unimportant = Color.GRAY;
-    private static final Color moderationColor = Color.CYAN;
-    private static final Color spendingSmall = Color.ORANGE;
-    private static final Color spendingBig = Color.YELLOW;
-    private static final Color announcement = Color.GREEN;
-    private static final Color userReward = Color.BLUE;
 }
 
 //Moderator actions - Cyan

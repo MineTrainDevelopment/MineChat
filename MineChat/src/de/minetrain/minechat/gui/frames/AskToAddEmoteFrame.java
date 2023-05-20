@@ -30,20 +30,20 @@ public class AskToAddEmoteFrame extends JDialog{
 		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 25, 25));
 		
         JPanel panel = new JPanel(new GridLayout(2, 1));
-        panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
-        panel.setBackground(ColorManager.BACKGROUND);
+        panel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5));
+        panel.setBackground(ColorManager.GUI_BACKGROUND);
         
         
         JLabel description = new JLabel("Do you wanna add an emote?");
         description.setHorizontalAlignment(JTextField.CENTER);
         description.setForeground(Color.WHITE);
-        description.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
+        description.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5));
         
 
         JButton noButton = new JButton("No.");
         noButton.setBackground(Color.RED);
         noButton.setForeground(Color.WHITE);
-        noButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
+        noButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5));
 //        noButton.setBorder(null);
         noButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e){dispose();}
@@ -52,7 +52,7 @@ public class AskToAddEmoteFrame extends JDialog{
         JButton yesButton = new JButton("Yes");
         yesButton.setBackground(Color.GREEN);
         yesButton.setForeground(Color.WHITE);
-        yesButton.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 5));
+        yesButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5));
 //        yesButton.setBorder(null);
         yesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -62,7 +62,7 @@ public class AskToAddEmoteFrame extends JDialog{
 		});
         
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-        buttonPanel.setBackground(ColorManager.BORDER);
+        buttonPanel.setBackground(ColorManager.GUI_BORDER);
         buttonPanel.add(noButton);
         buttonPanel.add(yesButton);
         

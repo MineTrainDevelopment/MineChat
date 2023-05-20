@@ -41,8 +41,8 @@ public class InputFrame extends JDialog {
 		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 25, 25));
 		
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 7));
-        panel.setBackground(ColorManager.BACKGROUND_LIGHT);
+        panel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
+        panel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
 
@@ -83,13 +83,13 @@ public class InputFrame extends JDialog {
 
         // Erstellen der Buttons
         JButton okButton = new JButton("OK");
-        okButton.setBackground(ColorManager.BUTTON_BACKGROUND);
+        okButton.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
         okButton.setForeground(Color.WHITE);
         okButton.setBorder(null);
         okButton.addActionListener(closeWindow(false));
         
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.setBackground(ColorManager.BACKGROUND);
+        cancelButton.setBackground(ColorManager.GUI_BACKGROUND);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(null);
         cancelButton.addActionListener(closeWindow(true));
@@ -98,7 +98,7 @@ public class InputFrame extends JDialog {
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 5));
         buttonPanel.add(cancelButton);
         buttonPanel.add(okButton);
-        buttonPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
+        buttonPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 
         constraints.gridx = 0;
         constraints.gridy = 2;

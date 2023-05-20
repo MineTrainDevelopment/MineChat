@@ -57,9 +57,11 @@ public class ChatWindow extends JLabel {
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindow.class);
 	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
+	public List<String> chatterNames = new ArrayList<String>();
 	public AbstractChannelMessageEvent messageEvent = null;
 	private CallCounter messagesPerMin = new CallCounter();
 	private MineButton sendButton, cancelReplyButton;
+	private String currentlyWritingString = "";
 	private Integer messagesPerDay = 0;
     private JPanel chatPanel;
     private JTextField inputField;
@@ -69,11 +71,11 @@ public class ChatWindow extends JLabel {
     public ChatWindow() {
         setSize(482, 504);
         setLayout(new BorderLayout());
-        setBackground(ColorManager.BACKGROUND);
+        setBackground(ColorManager.GUI_BACKGROUND);
 
 //        inputInfo = new JLabel("Reply: @Kuchenhopper: Guten Morgen eguyLurk sinticaHuhu sinticaLove");
         inputInfo = new JLabel(getMessageInfoText());
-        inputInfo.setBackground(ColorManager.BACKGROUND);
+        inputInfo.setBackground(ColorManager.GUI_BACKGROUND);
         inputInfo.setForeground(Color.WHITE);
         inputInfo.setLayout(new BorderLayout());
         inputInfo.setHorizontalAlignment(CENTER);
@@ -81,10 +83,15 @@ public class ChatWindow extends JLabel {
 //        inputInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
 //        inputInfo.add(Box.createHorizontalStrut(2), BorderLayout.SOUTH);
         
-        cancelReplyButton = createNewButton(Main.TEXTURE_MANAGER.getCancelButton(), "Cancel reply", new Dimension(26, 26), ColorManager.BACKGROUND);
+        cancelReplyButton = createNewButton(Main.TEXTURE_MANAGER.getCancelButton(), "Cancel reply", new Dimension(26, 26), ColorManager.GUI_BACKGROUND);
         cancelReplyButton.setVisible(false);
         cancelReplyButton.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e){setMessageToReply(null);}
+			@Override public void actionPerformed(ActionEvent e){
+				if(!currentlyWritingString.isEmpty()){
+					inputField.setText(currentlyWritingString);
+				}
+				setMessageToReply(null);
+			}
 		});
 		inputInfo.add(cancelReplyButton, BorderLayout.WEST);
         
@@ -98,10 +105,10 @@ public class ChatWindow extends JLabel {
         inputField = new JTextField();
         inputField.setFont(MESSAGE_FONT);
         inputField.setForeground(Color.WHITE);
-        inputField.setBackground(ColorManager.BACKGROUND_LIGHT);
+        inputField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         
-        sendButton = createNewButton(Main.TEXTURE_MANAGER.getEnterButton(), "Send message", new Dimension(62, 28), ColorManager.BACKGROUND_LIGHT);
-        MineButton emoteButton = createNewButton(Main.TEXTURE_MANAGER.getEmoteButton(), "Send message", new Dimension(28, 28), ColorManager.BACKGROUND_LIGHT);
+        sendButton = createNewButton(Main.TEXTURE_MANAGER.getEnterButton(), "Send message", new Dimension(62, 28), ColorManager.GUI_BACKGROUND_LIGHT);
+        MineButton emoteButton = createNewButton(Main.TEXTURE_MANAGER.getEmoteButton(), "Send message", new Dimension(28, 28), ColorManager.GUI_BACKGROUND_LIGHT);
         emoteButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e){
 				EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
@@ -110,7 +117,7 @@ public class ChatWindow extends JLabel {
 		});
         
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        buttonPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
+        buttonPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		buttonPanel.add(emoteButton, BorderLayout.WEST);
         buttonPanel.add(sendButton, BorderLayout.EAST);
         
@@ -118,26 +125,35 @@ public class ChatWindow extends JLabel {
         inputPanel.add(inputInfo, BorderLayout.NORTH);
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(buttonPanel, BorderLayout.EAST);
-        inputPanel.setBackground(ColorManager.BACKGROUND);
-		inputPanel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 4, true));
+        inputPanel.setBackground(ColorManager.GUI_BACKGROUND);
+		inputPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 4, true));
         add(inputPanel, BorderLayout.SOUTH);
         
         scrollPane.setBorder(null);
 //		scrollPane.setBorder(BorderFactory.createLineBorder(ColorManager.BACKGROUND_LIGHT, 2));
-		scrollPane.setBackground(ColorManager.BACKGROUND);
+		scrollPane.setBackground(ColorManager.GUI_BACKGROUND);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.getVerticalScrollBar().setBackground(ColorManager.BORDER);
-        scrollPane.getVerticalScrollBar().setForeground(ColorManager.BUTTON_BACKGROUND);
+        scrollPane.getVerticalScrollBar().setBackground(ColorManager.GUI_BORDER);
+        scrollPane.getVerticalScrollBar().setForeground(ColorManager.GUI_BUTTON_BACKGROUND);
         scrollPane.getVerticalScrollBar().setBorder(null);
         
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+//            	displaySystemInfo("unimportant", "This is a test", ColorManager.CHAT_UNIMPORTANT);
+//            	displaySystemInfo("moderationColor", "This is a test", ColorManager.CHAT_MODERATION);
+//            	displaySystemInfo("spendingSmall", "This is a test", ColorManager.CHAT_SPENDING_SMALL);
+//            	displaySystemInfo("spendingBig", "This is a test", ColorManager.CHAT_SPENDING_BIG);
+//            	displaySystemInfo("announcement", "This is a test", ColorManager.CHAT_ANNOUNCEMENT);
+//            	displaySystemInfo("userReward", "This is a test", ColorManager.CHAT_USER_REWARD);
+//            	displaySystemInfo("userping", "This is a test", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+//            	displaySystemInfo("greeding", "This is a test", ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT);
             	String message = inputField.getText();
             	if(message.isEmpty()){return;}
-                inputField.setText("");
+                inputField.setText(currentlyWritingString);
+                currentlyWritingString = "";
                 
                 MessageManager.sendMessage(message);
             }
@@ -152,18 +168,23 @@ public class ChatWindow extends JLabel {
     	JPanel messagePanel = new JPanel(new BorderLayout());
 //        messagePanel.setPreferredSize(new Dimension(400, 25)); // Set the height of each message panel to 25 pixels
         messagePanel.setMinimumSize(new Dimension(400, 25));
-        messagePanel.setBackground(ColorManager.BACKGROUND);
+        messagePanel.setBackground(ColorManager.GUI_BACKGROUND);
         
-        TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.BACKGROUND_LIGHT, 2, true), userName+":");
+        TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), userName+":");
 		titledBorder.setTitleJustification(TitledBorder.LEFT);
 		titledBorder.setTitleColor(userColor);
 		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
 		messagePanel.setBorder(titledBorder);
+		
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
+		buttonPanel.setMinimumSize(new Dimension(26, 26));
+		messagePanel.add(buttonPanel, BorderLayout.WEST);
         
 		Dimension buttonSize = new Dimension(28, 28);
 		JButton button1 = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 		button1.setPreferredSize(buttonSize);
-		button1.setBackground(ColorManager.BACKGROUND_LIGHT);
+		button1.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		button1.setBorderPainted(false);
 		button1.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
 		button1.setToolTipText("Mark this message as read.");
@@ -173,14 +194,15 @@ public class ChatWindow extends JLabel {
 
 		JButton button2 = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 		button2.setPreferredSize(buttonSize);
-		button2.setBackground(ColorManager.BACKGROUND_LIGHT);
+		button2.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		button2.setBorderPainted(false);
 		button2.setToolTipText("Replay to this message.");
 		button2.setIcon(Main.TEXTURE_MANAGER.getReplyButton());
 		button2.addMouseListener(replyButtonMouseAdapter(button2));
 		button2.setVisible(false);
 
-		messagePanel.add(button1, BorderLayout.WEST);
+		buttonPanel.add(button1, BorderLayout.EAST);
+		
 		if(event != null){
 			messagePanel.add(button2, BorderLayout.EAST);
 			button2.addActionListener(new ActionListener() {
@@ -199,7 +221,7 @@ public class ChatWindow extends JLabel {
         JTextPane messageLabel = new JTextPane();
         messageLabel.setEditable(false);
 		messageLabel.setFont(MESSAGE_FONT);
-        messageLabel.setBackground(ColorManager.BACKGROUND_LIGHT);
+        messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(button2));
 		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
@@ -222,14 +244,40 @@ public class ChatWindow extends JLabel {
     		});
     	}
     	
-    	Settings.highlightStrings.forEach(string -> {
-    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(message);
-            
-            if (matcher.find()) {
-    			titledBorder.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-            }
-    	});
+    	if(chatterNames.contains(userName.toLowerCase())){
+	    	Settings.highlightStrings.forEach(string -> {
+	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
+	            Matcher matcher = pattern.matcher(message);
+	            
+	            if (matcher.find()) {
+	    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
+	            }
+	    	});
+    	}else{
+    		chatterNames.add(userName.toLowerCase());
+			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT, 2));
+    	}
+    	
+    	if(!chatterNames.contains(userName.toLowerCase()+"%-&-%")){
+	    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
+			waveButton.setPreferredSize(buttonSize);
+			waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+			waveButton.setBorderPainted(false);
+			waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
+			waveButton.setToolTipText("Wellcome this user!");
+			waveButton.addActionListener(new ActionListener() {
+				@Override public void actionPerformed(ActionEvent e){
+		    		chatterNames.add(userName.toLowerCase()+"%-&-%");
+					currentlyWritingString = inputField.getText();
+					inputField.setText("Hajo jennyanWink jennyanHerz sinticaLove");
+					setMessageToReply(event);
+				}
+			});
+			
+			buttonPanel.add(waveButton, BorderLayout.WEST);
+			buttonPanel.setMinimumSize(new Dimension(52, 26));
+    	}
+    	
     	
     	replyButtonMouseAdapter(button2);
     }
@@ -237,16 +285,16 @@ public class ChatWindow extends JLabel {
     public void displaySystemInfo(String topic, String message, Color borderColor){
     	JPanel messagePanel = new JPanel(new BorderLayout());
         messagePanel.setMinimumSize(new Dimension(400, 25));
-        messagePanel.setBackground(ColorManager.BACKGROUND);
+        messagePanel.setBackground(ColorManager.GUI_BACKGROUND);
 
         JTextPane textLabel = new JTextPane();
         textLabel.setEditable(false);
-    	textLabel.setBackground(ColorManager.BACKGROUND_LIGHT);
+    	textLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
     	textLabel.setFont(MESSAGE_FONT);
     	formatText(message, textLabel.getStyledDocument(), new Color(30, 30, 30));
     	
 		JPanel messageContentPanel = new JPanel(new BorderLayout());
-	    messageContentPanel.setBackground(ColorManager.BACKGROUND_LIGHT);
+	    messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 	    messageContentPanel.add(textLabel, BorderLayout.CENTER);
 	    messagePanel.add(messageContentPanel, BorderLayout.CENTER);
         
@@ -258,7 +306,7 @@ public class ChatWindow extends JLabel {
 		
 		JButton button1 = new MineButton(new Dimension(28, 28), null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 		button1.setPreferredSize(button1.getSize());
-		button1.setBackground(ColorManager.BACKGROUND_LIGHT);
+		button1.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		button1.setBorderPainted(false);
 		button1.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
 		button1.setToolTipText("Mark this message as read.");

@@ -8,16 +8,15 @@ public class TwitchChatUser {
     private final String userName;
     private final Color color;
     private final String colorCode;
-    private final long totalMessages;
+    private long totalMessages;
 
     public TwitchChatUser(String userId, String userLogin, String userName, String color, Long totalMessages) {
-    	System.out.println(color);
         this.userId = userId;
         this.userLogin = userLogin;
         this.userName = userName;
         this.color = (color.isEmpty()) ? Color.WHITE : Color.decode(color);
         this.colorCode = color;
-        this.totalMessages = totalMessages;
+        this.setTotalMessages(totalMessages);
     }
 
     // Getter-Methoden
@@ -43,5 +42,13 @@ public class TwitchChatUser {
 
 	public long getTotalMessages() {
 		return totalMessages;
+	}
+	
+	public void increaseMessageCound() {
+		this.totalMessages++;
+	}
+
+	public void setTotalMessages(long totalMessages) {
+		this.totalMessages = totalMessages;
 	}
 }

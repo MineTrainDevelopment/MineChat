@@ -16,7 +16,6 @@ import de.minetrain.minechat.twitch.TwitchManager;
 import kong.unirest.Unirest;
 
 public class TwitchUserStatistics {
-	private static Map<String, Map<String, Long>> test = new HashMap<String, Map<String,Long>>();
 	private static Map<String, TwitchChatUser> chatUsers = new HashMap<String, TwitchChatUser>();
 	private static final ConfigManager userIndex = new ConfigManager("data/UserIndex.yml", false);
 	private static String usersToCall = "";
@@ -81,8 +80,7 @@ public class TwitchUserStatistics {
             String userName = jsonObject.get("user_name").getAsString();
             String color = jsonObject.get("color").getAsString();
 
-            TwitchChatUser user = new TwitchChatUser(userId, userLogin, userName, color, 0l);
-            users.add(user);
+            users.add(new TwitchChatUser(userId, userLogin, userName, color, 0l));
         }
 
         return users;

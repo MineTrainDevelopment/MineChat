@@ -51,12 +51,12 @@ public class EditChannelFrame extends JDialog {
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
-        setBackground(ColorManager.BACKGROUND);
+        setBackground(ColorManager.GUI_BACKGROUND);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 2));
-        panel.setBackground(ColorManager.BACKGROUND);
+        panel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
+        panel.setBackground(ColorManager.GUI_BACKGROUND);
         panel.setLayout(new GridLayout(6, 2));
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
@@ -92,7 +92,7 @@ public class EditChannelFrame extends JDialog {
         deprecateAfterLabel.setForeground(Color.WHITE);
 
         twitchChannelNameField = new JTextField();
-        twitchChannelNameField.setBackground(ColorManager.BACKGROUND_LIGHT);
+        twitchChannelNameField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		twitchChannelNameField.setFont(new Font(null, Font.BOLD, fontSize));
         twitchChannelNameField.setForeground(Color.WHITE);
         twitchChannelNameField.setText(tab.getChannelName());
@@ -100,7 +100,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(twitchChannelNameField);
 
         channelDisplayNameField = new JTextField();
-        channelDisplayNameField.setBackground(ColorManager.BACKGROUND_LIGHT);
+        channelDisplayNameField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         channelDisplayNameField.setFont(new Font(null, Font.BOLD, fontSize));
         channelDisplayNameField.setForeground(Color.WHITE);
         channelDisplayNameField.setText(tab.getDisplayName());
@@ -108,7 +108,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(channelDisplayNameField);
 
         userTypeComboBox = new JComboBox<>(new String[]{"Viewer", "Moderator"});
-        userTypeComboBox.setBackground(ColorManager.BACKGROUND_LIGHT);
+        userTypeComboBox.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         userTypeComboBox.setFont(new Font(null, Font.BOLD, fontSize));
         userTypeComboBox.setForeground(Color.WHITE);
 //        userTypeComboBox.setSelectedIndex((tab.isModerator()) ? 1 : 0);
@@ -117,7 +117,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(userTypeComboBox);
 
         triggerAmountField = new JTextField();
-        triggerAmountField.setBackground(ColorManager.BACKGROUND_LIGHT);
+        triggerAmountField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         triggerAmountField.setFont(new Font(null, Font.BOLD, fontSize));
         triggerAmountField.setForeground(Color.WHITE);
         triggerAmountField.setText(""+tab.getSpamTriggerAmound());
@@ -127,7 +127,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(triggerAmountField);
         
         deprecateAfterField = new JTextField();
-        deprecateAfterField.setBackground(ColorManager.BACKGROUND_LIGHT);
+        deprecateAfterField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         deprecateAfterField.setFont(new Font(null, Font.BOLD, fontSize));
         deprecateAfterField.setForeground(Color.WHITE);
         deprecateAfterField.setText(""+tab.getSpamDeprecateAfter());
@@ -136,13 +136,13 @@ public class EditChannelFrame extends JDialog {
 
         // Erstellen der Buttons
         JButton confirmButton = new JButton("Confirm");
-        confirmButton.setBackground(ColorManager.BACKGROUND);
+        confirmButton.setBackground(ColorManager.GUI_BACKGROUND);
         confirmButton.setForeground(Color.WHITE);
         confirmButton.setBorder(null);
         confirmButton.addActionListener(closeWindow(false));
 
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.setBackground(ColorManager.BACKGROUND);
+        cancelButton.setBackground(ColorManager.GUI_BACKGROUND);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(null);
         cancelButton.addActionListener(closeWindow(true));
@@ -150,7 +150,7 @@ public class EditChannelFrame extends JDialog {
         // Hinzufügen der Buttons am unteren Rand des JFrame
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 9, 5));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(7, 2, 2, 2));
-        buttonPanel.setBackground(ColorManager.BORDER);
+        buttonPanel.setBackground(ColorManager.GUI_BORDER);
         buttonPanel.add(cancelButton);
         buttonPanel.add(confirmButton);
         panel.add(buttonPanel);
@@ -162,8 +162,8 @@ public class EditChannelFrame extends JDialog {
 
         // Erstellen des Haupt-Panels und Hinzufügen der Elemente
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.BORDER, 7));
-        mainPanel.setBackground(ColorManager.BACKGROUND);
+        mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
+        mainPanel.setBackground(ColorManager.GUI_BACKGROUND);
         mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
