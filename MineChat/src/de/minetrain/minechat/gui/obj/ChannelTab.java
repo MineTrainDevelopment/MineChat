@@ -39,7 +39,7 @@ public class ChannelTab {
 	private Long spamDeprecateAfter; //Seconds
 	private ActionListener editWindowAction;
 	private ChannelMacros macros;
-	private ChatWindow chatWindow = new ChatWindow();
+	private ChatWindow chatWindow = new ChatWindow(this);
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;

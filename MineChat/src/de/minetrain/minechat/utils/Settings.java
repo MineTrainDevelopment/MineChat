@@ -6,6 +6,7 @@ import java.util.List;
 public class Settings {
 	public static final String timeFormat = "HH:mm";
 	public static final List<String> highlightStrings = new ArrayList<String>();
+	
 	public static final boolean highlightChatMessages = true;
 	public static final boolean dhighlightUserFirstMessages = true;
 	public static final boolean highlightUserGoodbyeMessages = true;

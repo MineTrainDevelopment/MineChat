@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 
 import de.minetrain.minechat.config.obj.TwitchEmote;
+import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -67,8 +68,10 @@ public class ChatWindow extends JLabel {
     private JTextField inputField;
     private JScrollPane scrollPane;
     private JLabel inputInfo;
+    private final ChannelTab parrentTab;
     
-    public ChatWindow() {
+    public ChatWindow(ChannelTab parrentTab) {
+    	this.parrentTab = parrentTab;
         setSize(482, 504);
         setLayout(new BorderLayout());
         setBackground(ColorManager.GUI_BACKGROUND);
@@ -269,7 +272,7 @@ public class ChatWindow extends JLabel {
 				@Override public void actionPerformed(ActionEvent e){
 		    		chatterNames.add(userName.toLowerCase()+"%-&-%");
 					currentlyWritingString = inputField.getText();
-					inputField.setText("Hajo jennyanWink jennyanHerz sinticaLove");
+					inputField.setText(parrentTab.getGreetingTexts().get(0));
 					setMessageToReply(event);
 				}
 			});
