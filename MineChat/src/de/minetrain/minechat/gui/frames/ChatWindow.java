@@ -270,7 +270,6 @@ public class ChatWindow extends JLabel {
 			waveButton.setToolTipText("Wellcome this user!");
 			waveButton.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent e){
-		    		chatterNames.add(userName.toLowerCase()+"%-&-%");
 					currentlyWritingString = inputField.getText();
 					inputField.setText(parrentTab.getGreetingTexts().get(0));
 					setMessageToReply(event);
