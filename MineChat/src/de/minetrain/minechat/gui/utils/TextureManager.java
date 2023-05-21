@@ -17,6 +17,11 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -24,11 +29,27 @@ import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
+import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.TwitchCredentials;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONObject;
 
 public class TextureManager {
 	private static final Logger logger = LoggerFactory.getLogger(TextureManager.class);
 	public static final String texturePath = "data/texture/";
+	public static final String badgePath = texturePath + "badges/";
+	
 	private final ImageIcon mainFrame_TAB_1;
 	private final ImageIcon mainFrame_TAB_2;
 	private final ImageIcon mainFrame_TAB_3;
@@ -109,6 +130,7 @@ public class TextureManager {
 		return waveButton;
 	}
 
+
 	public ImageIcon getByTabButton(TabButtonType tab){
 		switch (tab) {
 		case TAB_MAIN:
@@ -127,12 +149,14 @@ public class TextureManager {
 	}
 	
 	
-	public static void downloadProfileImage(String uri, Long channelId) {
+	public static void downloadProfileImage(String uri, String channelId) {
 		try {
-			logger.info("Downloading image...");
+			logger.info("Downloading profile image...");
 			downloadImage(uri, "Icons/"+channelId, "/profile.png");
 			downloadImage(uri, "Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
 //			resizeImage("Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
+			logger.info("Downloading channel badges...");
+			downloadChannelBadges(channelId);
 			logger.info("Image downloaded successfully.");
 		} catch (IOException ex) {
 			logger.warn("Can´t download profile image. \n URL: " + uri, ex);
@@ -145,6 +169,7 @@ public class TextureManager {
 	
 	public static void downloadImage(String uri, String fileLocation, String fileName, Dimension dimension) throws MalformedURLException, IOException, ProtocolException, FileNotFoundException {
 		try {
+			System.out.println(fileLocation+fileName);
 	         URL url = new URL(uri);
 	         HttpURLConnection httpVerbindung = (HttpURLConnection) url.openConnection();
 	         httpVerbindung.setRequestMethod("GET");
@@ -231,4 +256,95 @@ public class TextureManager {
 		}
 	}
 	
+	
+	public static void downloadChannelBadges(String userId){
+		String url = "https://badges.twitch.tv/v1/badges/channels/{USER}/display";
+        String savePath = "badges/subscriber/"+userId+"/{NAME}/";
+
+		JsonObject fromJson = new Gson().fromJson(Unirest.get(url.replace("{USER}", userId))
+				.asString()
+				.getBody(), JsonObject.class);
+
+		JsonObject jsonObject = fromJson.getAsJsonObject("badge_sets").getAsJsonObject("subscriber").getAsJsonObject("versions");
+		System.out.println(jsonObject);
+		
+		Arrays.asList(jsonObject.toString().split("},")).forEach(version -> {
+//			logger.debug(version);
+			System.out.println(version);
+			String[] versionArgs = version.replace("{", "").replace("}", "").replace("\"", "").split(":");
+			String name = versionArgs[0];
+			String textruePath = versionArgs[2]+":"+versionArgs[3].split(",")[0];
+			String x1 = textruePath;
+			String x2 = textruePath.substring(0, textruePath.length()-1)+"2";
+			String x3 = textruePath.substring(0, textruePath.length()-1)+"3";
+
+			try {
+				downloadImage(x1, savePath.replace("{NAME}", name), "1.png");
+				downloadImage(x2, savePath.replace("{NAME}", name), "2.png");
+				downloadImage(x3, savePath.replace("{NAME}", name), "3.png");
+			} catch (IOException ex) {
+				logger.error("Downloading channel badge faild!", ex);
+			}
+		});
+	}
+	
+	public static void downloadPublicBadges(){
+        String savePath = "badges/{TYPE}/{NAME}/";
+		if(Files.exists(Paths.get(badgePath+"vip/"))){return;}
+        
+
+		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://badges.twitch.tv/v1/badges/global/display")
+				.asString()
+				.getBody(), JsonObject.class);
+
+		JsonObject jsonObject = fromJson.getAsJsonObject("badge_sets");
+		System.out.println(jsonObject);
+
+		downloadBadge(jsonObject, "bits", savePath);
+		downloadBadge(jsonObject, "bits-charity", savePath);
+		downloadBadge(jsonObject, "bits-leader", savePath);
+		downloadBadge(jsonObject, "sub-gift-leader", savePath);
+		downloadBadge(jsonObject, "sub-gifter", savePath);
+		downloadBadge(jsonObject, "subscriber", savePath);
+		downloadBadge(jsonObject, "moderator", savePath);
+		downloadBadge(jsonObject, "vip", savePath);
+		downloadBadge(jsonObject, "broadcaster", savePath);
+		downloadBadge(jsonObject, "twitchbot", savePath);
+		downloadBadge(jsonObject, "partner", savePath);
+		downloadBadge(jsonObject, "premium", savePath);
+		downloadBadge(jsonObject, "ambassador", savePath);
+		downloadBadge(jsonObject, "anonymous-cheerer", savePath);
+		downloadBadge(jsonObject, "artist-badge", savePath);
+		downloadBadge(jsonObject, "founder", savePath);
+		downloadBadge(jsonObject, "game-developer", savePath);
+		downloadBadge(jsonObject, "global_mod", savePath);
+		downloadBadge(jsonObject, "hype-train", savePath);
+		downloadBadge(jsonObject, "moments", savePath);
+		downloadBadge(jsonObject, "no_audio", savePath);
+		downloadBadge(jsonObject, "no_video", savePath);
+		downloadBadge(jsonObject, "predictions", savePath);
+		downloadBadge(jsonObject, "staff", savePath);
+		downloadBadge(jsonObject, "turbo", savePath);
+	}
+
+
+	private static void downloadBadge(JsonObject jsonObject, String memberName, String savePath) {
+		Arrays.asList(jsonObject.getAsJsonObject(memberName).getAsJsonObject("versions").toString().split("},")).forEach(version -> {
+			System.out.println(version);
+			String[] versionArgs = version.replace("{", "").replace("}", "").replace("\"", "").split(":");
+			String name = versionArgs[0];
+			String textruePath = versionArgs[2]+":"+versionArgs[3].split(",")[0];
+			String x1 = textruePath;
+			String x2 = textruePath.substring(0, textruePath.length()-1)+"2";
+			String x3 = textruePath.substring(0, textruePath.length()-1)+"3";
+
+			try {
+				downloadImage(x1, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "1.png");
+				downloadImage(x2, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "2.png");
+				downloadImage(x3, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "3.png");
+			} catch (IOException ex) {
+				logger.error("Downloading channel badge faild!", ex);
+			}
+		});
+	}
 }

@@ -1,12 +1,8 @@
 package de.minetrain.minechat.twitch;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.sound.midi.SysexMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,10 +68,18 @@ public class TwitchListner {
 	 * Handles the event when a message is sent in the channel and executes the command if the cooldown time has elapsed.
 	 * @param event The {@link ChannelMessageEvent} object containing information about the message.
 	 */
+	@SuppressWarnings("unchecked")
 	@EventSubscriber
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
 		logger.info("User: "+event.getUser().getName()+" | Message --> "+event.getMessage());
 		ChannelTab channelTab = getCurrentChannelTab(event.getChannel());
+		
+//		System.out.println(event.getMessageEvent().getTagValue("badges"));
+//		System.out.println(event.getPermissions());
+//		BROADCASTER
+//		MODERATOR
+//		VIP
+//		FOUNDER		frist sub on channel
 		
 		if(channelTab == null){
 			return;
@@ -85,7 +89,7 @@ public class TwitchListner {
 			String[] splitMessage = event.getMessage().split(" ");
 			List<String> words = Arrays.asList(splitMessage);
 			words.forEach(word -> {
-				System.out.println("Word -> "+word);
+//				System.out.println("Word -> "+word);
 				if(word.startsWith("@")){
 					channelTab.getChatWindow().chatterNames.add(word.toLowerCase().replace("@", "")+"%-&-%");
 				}
@@ -96,7 +100,8 @@ public class TwitchListner {
 		if(twitchUser == null){
 			channelTab.getChatWindow().displayMessage(event.getMessage(), event.getUser().getName(), Color.WHITE, event);
 		}else{
-			channelTab.getChatWindow().displayMessage(event.getMessage(), twitchUser.getUserName(), twitchUser.getColor(), event);
+			twitchUser.setBadges(event);
+			channelTab.getChatWindow().displayMessage(event.getMessage(), twitchUser.getUserName(), twitchUser.getColor(), event, twitchUser.getBadges());
 		}
 	}
 	

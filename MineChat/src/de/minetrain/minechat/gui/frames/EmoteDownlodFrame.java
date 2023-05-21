@@ -237,9 +237,6 @@ public class EmoteDownlodFrame extends JDialog{
 	    statusBar.setProgress("Get the UserID", 40);
 		String userId = twitchUser.getUserId();
 		
-	    statusBar.setProgress("Downloading profile image", 40);
-		TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.valueOf(userId));
-		
 	    statusBar.setProgress("Get the emote set", 60);
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+userId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
 				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())

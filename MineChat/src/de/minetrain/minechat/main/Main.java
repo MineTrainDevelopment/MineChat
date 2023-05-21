@@ -58,6 +58,8 @@ public class Main {
 	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
 		new TwitchManager(new TwitchCredentials());
 		
+		TextureManager.downloadPublicBadges();
+		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	TwitchManager.leaveAllChannel();

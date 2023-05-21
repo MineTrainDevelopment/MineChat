@@ -223,7 +223,7 @@ public class EditChannelFrame extends JDialog {
 					goodbysList.add("Have a good one! {USER} <3");
 					config.setStringList(path + "GoodbyText", goodbysList, false);
 					
-					TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.parseLong(twitchUser.getUserId()));
+					TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
 					new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
 				}
 				

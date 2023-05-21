@@ -50,7 +50,9 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
+import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.utils.CallCounter;
+import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
 
 public class ChatWindow extends JLabel {
@@ -72,6 +74,9 @@ public class ChatWindow extends JLabel {
     
     public ChatWindow(ChannelTab parrentTab) {
     	this.parrentTab = parrentTab;
+		chatterNames.add(TwitchManager.ownerChannelName.toLowerCase());
+		chatterNames.add(TwitchManager.ownerChannelName.toLowerCase()+"%-&-%");
+		
         setSize(482, 504);
         setLayout(new BorderLayout());
         setBackground(ColorManager.GUI_BACKGROUND);
@@ -163,11 +168,12 @@ public class ChatWindow extends JLabel {
         });
     }
     
-    public void displayMessage(String message, String userName, Color userColor) {
+    @SuppressWarnings("unchecked")
+	public void displayMessage(String message, String userName, Color userColor) {
     	displayMessage(message, userName, userColor, null);
     }
 
-    public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event) {
+	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event, @SuppressWarnings("unchecked") List<String>... badges) {
     	JPanel messagePanel = new JPanel(new BorderLayout());
 //        messagePanel.setPreferredSize(new Dimension(400, 25)); // Set the height of each message panel to 25 pixels
         messagePanel.setMinimumSize(new Dimension(400, 25));
@@ -178,6 +184,16 @@ public class ChatWindow extends JLabel {
 		titledBorder.setTitleColor(userColor);
 		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
 		messagePanel.setBorder(titledBorder);
+		
+		
+		if (badges.length>0) {
+			IconStringBuilder stringBuilder = new IconStringBuilder().setSuffix(userName+":");
+			badges[0].forEach(badge -> {
+				stringBuilder.appendIcon(badge, true);
+			});
+			
+        	titledBorder.setTitle(stringBuilder.toString());
+        }
 		
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
@@ -211,7 +227,6 @@ public class ChatWindow extends JLabel {
 			button2.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("reply");
 					setMessageToReply(event);
 				}
 			});
@@ -240,7 +255,7 @@ public class ChatWindow extends JLabel {
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
     	int currentValue = verticalScrollBar.getValue();
     	
-    	if (currentValue == maxValue) {
+    	if (currentValue >= maxValue-200) {
     		SwingUtilities.invokeLater(() -> {
     			Rectangle bounds = messagePanel.getBounds();
     			scrollPane.getViewport().scrollRectToVisible(bounds);
@@ -324,8 +339,10 @@ public class ChatWindow extends JLabel {
         JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
     	int currentValue = verticalScrollBar.getValue();
-    	
-    	if (currentValue == maxValue) {
+
+    	System.out.println(currentValue + " - " + (maxValue-200));
+    	    	
+    	if (currentValue >= maxValue-200) {
     		SwingUtilities.invokeLater(() -> {
     			Rectangle bounds = messagePanel.getBounds();
     			scrollPane.getViewport().scrollRectToVisible(bounds);
@@ -420,7 +437,6 @@ public class ChatWindow extends JLabel {
         input = encryptEmotes(input);
 
         int wordBoundary = -1; // Index of the last space character within the chunk limit
-        System.out.println(input);
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
 
@@ -442,7 +458,6 @@ public class ChatWindow extends JLabel {
 	            }
             } else {
                 if (builder.length() > 0) {
-                	System.out.println("Split!");
                     chunks.add(builder.toString().trim());
                     builder.setLength(0);
                 }
@@ -458,7 +473,6 @@ public class ChatWindow extends JLabel {
 			chunks.set(i, decryptEmotes(chunks.get(i)));
 		}
         
-        chunks.forEach(s -> System.out.println(s));
         return chunks;
     }
     
