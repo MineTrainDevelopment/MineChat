@@ -183,6 +183,7 @@ public class EmoteDownlodFrame extends JDialog{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				logger.warn("Press button");
 				if(isCanselt){dispose(); return;}
 	    		SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>(){
 					@Override
@@ -190,6 +191,7 @@ public class EmoteDownlodFrame extends JDialog{
 						
 						switch (platformSelector.getSelectedItem().toString()) {
 						case "Twitch (Name)":
+							logger.warn("GetTwitchEmotes");
 							getTwitchEmotes(getTwitchUser());
 							break;
 
@@ -232,8 +234,13 @@ public class EmoteDownlodFrame extends JDialog{
 	
 	
 	private void getTwitchEmotes(TwitchUserObj twitchUser) {
+	    statusBar.setProgress("Get the UserID", 40);
 		String userId = twitchUser.getUserId();
+		
+	    statusBar.setProgress("Downloading profile image", 40);
 		TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), Long.valueOf(userId));
+		
+	    statusBar.setProgress("Get the emote set", 60);
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+userId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
 				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
 				.header("Client-Id", new TwitchCredentials().getClientID())
