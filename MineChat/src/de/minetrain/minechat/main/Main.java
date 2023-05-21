@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.minetrain.minechat.config.ConfigManager;
-import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
@@ -58,7 +57,7 @@ public class Main {
 	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
 		new TwitchManager(new TwitchCredentials());
 		
-		TextureManager.downloadPublicBadges();
+		TextureManager.downloadPublicData();
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
@@ -75,10 +74,6 @@ public class Main {
 		}
 		onboardingFrame.dispose();
 		MessageManager.getMessageHandler().updateQueueButton();
-		
-//		MAIN_FRAME.chatWindow.displayMessage("Werbung | Bei Holzkern findet ihr verschiedenste Accessoires aus natürlichem Material wie Holz und Stein! sinticaOha Klickt euch gerne mal durch die Schönheiten und nutzt meinen Rabattcode SINTICA15 für 15% Rabatt auf deine Bestellung! Hier gehts zum Shop: https://www.holzkern.com/de/sintica sinticaSerious", "nightbot", Color.WHITE);
-//		MAIN_FRAME.chatWindow.displayMessage("Test jennyanKluk");
-//		MAIN_FRAME.chatWindow.displayMessage("ist Amazon dein zweites Zuhause? Dann tue der netten Dame im Bild den Gefallen, und shoppe über ihren Partnerlink! Es entstehen dir keine Mehrkosten. https://amzn.to/2Ih8Ur5");
 	}
 
 }

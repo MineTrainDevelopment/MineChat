@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,33 +18,22 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.twitch.obj.TwitchCredentials;
-import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import kong.unirest.json.JSONObject;
 
 public class TextureManager {
 	private static final Logger logger = LoggerFactory.getLogger(TextureManager.class);
@@ -265,31 +255,11 @@ public class TextureManager {
 				.asString()
 				.getBody(), JsonObject.class);
 
-		JsonObject jsonObject = fromJson.getAsJsonObject("badge_sets").getAsJsonObject("subscriber").getAsJsonObject("versions");
-		System.out.println(jsonObject);
-		
-		Arrays.asList(jsonObject.toString().split("},")).forEach(version -> {
-//			logger.debug(version);
-			System.out.println(version);
-			String[] versionArgs = version.replace("{", "").replace("}", "").replace("\"", "").split(":");
-			String name = versionArgs[0];
-			String textruePath = versionArgs[2]+":"+versionArgs[3].split(",")[0];
-			String x1 = textruePath;
-			String x2 = textruePath.substring(0, textruePath.length()-1)+"2";
-			String x3 = textruePath.substring(0, textruePath.length()-1)+"3";
-
-			try {
-				downloadImage(x1, savePath.replace("{NAME}", name), "1.png");
-				downloadImage(x2, savePath.replace("{NAME}", name), "2.png");
-				downloadImage(x3, savePath.replace("{NAME}", name), "3.png");
-			} catch (IOException ex) {
-				logger.error("Downloading channel badge faild!", ex);
-			}
-		});
+		downloadBadge(fromJson.getAsJsonObject("badge_sets"), "subscriber", savePath);
 	}
 	
-	public static void downloadPublicBadges(){
-        String savePath = "badges/{TYPE}/{NAME}/";
+	public static void downloadPublicData(){
+        String badgesPath = "badges/{TYPE}/{NAME}/";
 		if(Files.exists(Paths.get(badgePath+"vip/"))){return;}
         
 
@@ -298,53 +268,77 @@ public class TextureManager {
 				.getBody(), JsonObject.class);
 
 		JsonObject jsonObject = fromJson.getAsJsonObject("badge_sets");
-		System.out.println(jsonObject);
-
-		downloadBadge(jsonObject, "bits", savePath);
-		downloadBadge(jsonObject, "bits-charity", savePath);
-		downloadBadge(jsonObject, "bits-leader", savePath);
-		downloadBadge(jsonObject, "sub-gift-leader", savePath);
-		downloadBadge(jsonObject, "sub-gifter", savePath);
-		downloadBadge(jsonObject, "subscriber", savePath);
-		downloadBadge(jsonObject, "moderator", savePath);
-		downloadBadge(jsonObject, "vip", savePath);
-		downloadBadge(jsonObject, "broadcaster", savePath);
-		downloadBadge(jsonObject, "twitchbot", savePath);
-		downloadBadge(jsonObject, "partner", savePath);
-		downloadBadge(jsonObject, "premium", savePath);
-		downloadBadge(jsonObject, "ambassador", savePath);
-		downloadBadge(jsonObject, "anonymous-cheerer", savePath);
-		downloadBadge(jsonObject, "artist-badge", savePath);
-		downloadBadge(jsonObject, "founder", savePath);
-		downloadBadge(jsonObject, "game-developer", savePath);
-		downloadBadge(jsonObject, "global_mod", savePath);
-		downloadBadge(jsonObject, "hype-train", savePath);
-		downloadBadge(jsonObject, "moments", savePath);
-		downloadBadge(jsonObject, "no_audio", savePath);
-		downloadBadge(jsonObject, "no_video", savePath);
-		downloadBadge(jsonObject, "predictions", savePath);
-		downloadBadge(jsonObject, "staff", savePath);
-		downloadBadge(jsonObject, "turbo", savePath);
+		downloadBadge(jsonObject, "bits", badgesPath);
+		downloadBadge(jsonObject, "bits-charity", badgesPath);
+		downloadBadge(jsonObject, "bits-leader", badgesPath);
+		downloadBadge(jsonObject, "sub-gift-leader", badgesPath);
+		downloadBadge(jsonObject, "sub-gifter", badgesPath);
+		downloadBadge(jsonObject, "subscriber", badgesPath);
+		downloadBadge(jsonObject, "moderator", badgesPath);
+		downloadBadge(jsonObject, "vip", badgesPath);
+		downloadBadge(jsonObject, "broadcaster", badgesPath);
+		downloadBadge(jsonObject, "twitchbot", badgesPath);
+		downloadBadge(jsonObject, "partner", badgesPath);
+		downloadBadge(jsonObject, "premium", badgesPath);
+		downloadBadge(jsonObject, "ambassador", badgesPath);
+		downloadBadge(jsonObject, "anonymous-cheerer", badgesPath);
+		downloadBadge(jsonObject, "artist-badge", badgesPath);
+		downloadBadge(jsonObject, "founder", badgesPath);
+		downloadBadge(jsonObject, "game-developer", badgesPath);
+		downloadBadge(jsonObject, "global_mod", badgesPath);
+		downloadBadge(jsonObject, "hype-train", badgesPath);
+		downloadBadge(jsonObject, "moments", badgesPath);
+		downloadBadge(jsonObject, "no_audio", badgesPath);
+		downloadBadge(jsonObject, "no_video", badgesPath);
+		downloadBadge(jsonObject, "predictions", badgesPath);
+		downloadBadge(jsonObject, "staff", badgesPath);
+		downloadBadge(jsonObject, "turbo", badgesPath);
 	}
 
 
-	private static void downloadBadge(JsonObject jsonObject, String memberName, String savePath) {
-		Arrays.asList(jsonObject.getAsJsonObject(memberName).getAsJsonObject("versions").toString().split("},")).forEach(version -> {
-			System.out.println(version);
-			String[] versionArgs = version.replace("{", "").replace("}", "").replace("\"", "").split(":");
-			String name = versionArgs[0];
-			String textruePath = versionArgs[2]+":"+versionArgs[3].split(",")[0];
-			String x1 = textruePath;
-			String x2 = textruePath.substring(0, textruePath.length()-1)+"2";
-			String x3 = textruePath.substring(0, textruePath.length()-1)+"3";
-
+	public static void downloadBadge(JsonObject jsonObject, String memberName, String savePath) {
+		if(jsonObject.toString().length()<5){return;}
+		
+		new Thread(() -> {
+			JFrame dialog = new JFrame("badge downloading...");
 			try {
-				downloadImage(x1, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "1.png");
-				downloadImage(x2, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "2.png");
-				downloadImage(x3, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "3.png");
-			} catch (IOException ex) {
-				logger.error("Downloading channel badge faild!", ex);
+				dialog.setSize(300, 75);
+				dialog.setLocation(Main.MAIN_FRAME.getLocation().x+100, Main.MAIN_FRAME.getLocation().y+400);
+				dialog.setAlwaysOnTop(true);
+				dialog.setUndecorated(true);
+				dialog.setResizable(false);
+				dialog.setShape(new RoundRectangle2D.Double(0, 0, dialog.getWidth(), dialog.getHeight(), 25, 25));
+				
+				StatusBar statusBar = new StatusBar();
+				dialog.add(statusBar);
+				dialog.setVisible(true);
+				
+				String[] jsonArray = jsonObject.getAsJsonObject(memberName).getAsJsonObject("versions").toString().split("},");
+				Arrays.asList(jsonArray).forEach(version -> {
+					String[] versionArgs = version.replace("{", "").replace("}", "").replace("\"", "").split(":");
+					String name = versionArgs[0];
+					String textruePath = versionArgs[2]+":"+versionArgs[3].split(",")[0];
+					String x1 = textruePath;
+					String x2 = textruePath.substring(0, textruePath.length()-1)+"2";
+					String x3 = textruePath.substring(0, textruePath.length()-1)+"3";
+
+					try {
+						statusBar.setProgress("Downloading badge: "+name+"1.png", StatusBar.getPercentage(3, 1));
+						downloadImage(x1, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "1.png");
+
+						statusBar.setProgress("Downloading badge: "+name+"1.png", StatusBar.getPercentage(3, 2));
+						downloadImage(x2, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "2.png");
+
+						statusBar.setProgress("Downloading badge: "+name+"1.png", StatusBar.getPercentage(3, 3));
+						downloadImage(x3, savePath.replace("{TYPE}", memberName).replace("{NAME}", name), "3.png");
+					} catch (IOException ex) {
+						logger.error("Downloading channel badge faild!", ex);
+					}
+				});
+				dialog.dispose();
+			} catch (Exception e) {
+				dialog.dispose();
 			}
-		});
+		}).start();
 	}
 }
