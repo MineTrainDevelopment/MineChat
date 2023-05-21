@@ -3,7 +3,9 @@ package de.minetrain.minechat.gui.frames;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,8 +31,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
@@ -58,6 +62,7 @@ import de.minetrain.minechat.utils.Settings;
 public class ChatWindow extends JLabel {
 	private static final long serialVersionUID = -8392586696866883591L;
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindow.class);
+	private Dimension preferredScrollBarSize = new JScrollBar().getPreferredSize();
 	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
 	public List<String> chatterNames = new ArrayList<String>();
@@ -77,7 +82,7 @@ public class ChatWindow extends JLabel {
 		chatterNames.add(TwitchManager.ownerChannelName.toLowerCase());
 		chatterNames.add(TwitchManager.ownerChannelName.toLowerCase()+"%-&-%");
 		
-        setSize(482, 504);
+        setSize(485, 504);
         setLayout(new BorderLayout());
         setBackground(ColorManager.GUI_BACKGROUND);
 
@@ -176,7 +181,7 @@ public class ChatWindow extends JLabel {
 	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event, @SuppressWarnings("unchecked") List<String>... badges) {
     	JPanel messagePanel = new JPanel(new BorderLayout());
 //        messagePanel.setPreferredSize(new Dimension(400, 25)); // Set the height of each message panel to 25 pixels
-        messagePanel.setMinimumSize(new Dimension(400, 25));
+//        messagePanel.setMinimumSize(new Dimension(400, 25));
         messagePanel.setBackground(ColorManager.GUI_BACKGROUND);
         
         TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), userName+":");
@@ -232,8 +237,9 @@ public class ChatWindow extends JLabel {
 			});
 		}
 		
-        // Right panel with message label
+        //Right panel with message label
         JPanel messageContentPanel = new JPanel(new BorderLayout());
+        messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         messagePanel.add(messageContentPanel, BorderLayout.CENTER);
 
         JTextPane messageLabel = new JTextPane();
@@ -243,6 +249,7 @@ public class ChatWindow extends JLabel {
 		messageLabel.addMouseListener(replyButtonMouseAdapter(button2));
 		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
+
         
         messagesPerDay++;
         messagesPerMin.recordCallTime();
@@ -259,7 +266,10 @@ public class ChatWindow extends JLabel {
     		SwingUtilities.invokeLater(() -> {
     			Rectangle bounds = messagePanel.getBounds();
     			scrollPane.getViewport().scrollRectToVisible(bounds);
+    			scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
     		});
+    	}else{
+			scrollPane.getVerticalScrollBar().setPreferredSize(preferredScrollBarSize);
     	}
     	
     	if(chatterNames.contains(userName.toLowerCase())){
@@ -297,6 +307,7 @@ public class ChatWindow extends JLabel {
     	
     	
     	replyButtonMouseAdapter(button2);
+    	messagePanel.setPreferredSize(new Dimension(485, messagePanel.getPreferredSize().height));
     }
     
     public void displaySystemInfo(String topic, String message, Color borderColor){
@@ -340,8 +351,6 @@ public class ChatWindow extends JLabel {
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
     	int currentValue = verticalScrollBar.getValue();
 
-    	System.out.println(currentValue + " - " + (maxValue-200));
-    	    	
     	if (currentValue >= maxValue-200) {
     		SwingUtilities.invokeLater(() -> {
     			Rectangle bounds = messagePanel.getBounds();
@@ -388,7 +397,7 @@ public class ChatWindow extends JLabel {
     	String newInput="";
     	if(fontColor == Color.WHITE){
     		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
-    		newInput += "["+LocalTime.now().format(DateTimeFormatter.ofPattern(Settings.timeFormat, Locale.GERMAN))+"] ";
+    		input = "["+LocalTime.now().format(DateTimeFormatter.ofPattern(Settings.timeFormat, Locale.GERMAN))+"] "+input;
     	}
         
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}
