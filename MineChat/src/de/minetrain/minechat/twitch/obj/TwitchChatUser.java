@@ -9,10 +9,10 @@ import java.util.List;
 
 import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 
+import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class TwitchChatUser {
-	private final List<String> badges = new ArrayList<>();
 	private final String userId;
     private final String userLogin;
     private final String userName;
@@ -29,8 +29,9 @@ public class TwitchChatUser {
         this.setTotalMessages(totalMessages);
     }
     
-    public void setBadges(AbstractChannelMessageEvent event){
-    	if(!badges.isEmpty()){return;}
+    public void setBadges(AbstractChannelMessageEvent event, ChannelTab tab){
+    	if(tab.getChatWindow().badges.containsKey(event.getUser().getName().toLowerCase())){return;}
+    	List<String> list = new ArrayList<String>();
     	String[] badgeTags = event.getMessageEvent().getTagValue("badges").toString().replace("Optional[", "").replace("]", "").split(",");
 		Arrays.asList(badgeTags).forEach(badge -> {
 			String path = TextureManager.badgePath+badge+"/1.png";
@@ -42,11 +43,12 @@ public class TwitchChatUser {
 				}
 			}
 			
-//			System.out.println(path);
 			if (Files.exists(Paths.get(path))) {
-				badges.add(path);
+				list.add(path);
 			}
 		});
+		
+		tab.getChatWindow().badges.put(event.getUser().getName().toLowerCase(), list);
     }
 
     public String getUserId() {
@@ -79,9 +81,5 @@ public class TwitchChatUser {
 
 	public void setTotalMessages(long totalMessages) {
 		this.totalMessages = totalMessages;
-	}
-
-	public List<String> getBadges() {
-		return badges;
 	}
 }

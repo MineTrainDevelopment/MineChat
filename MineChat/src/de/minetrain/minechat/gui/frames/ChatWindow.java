@@ -3,9 +3,7 @@ package de.minetrain.minechat.gui.frames;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,10 +29,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
@@ -65,7 +61,8 @@ public class ChatWindow extends JLabel {
 	private Dimension preferredScrollBarSize = new JScrollBar().getPreferredSize();
 	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
-	public List<String> chatterNames = new ArrayList<String>();
+	public  List<String> chatterNames = new ArrayList<String>();
+	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
 	public AbstractChannelMessageEvent messageEvent = null;
 	private CallCounter messagesPerMin = new CallCounter();
 	private MineButton sendButton, cancelReplyButton;
@@ -173,12 +170,11 @@ public class ChatWindow extends JLabel {
         });
     }
     
-    @SuppressWarnings("unchecked")
 	public void displayMessage(String message, String userName, Color userColor) {
     	displayMessage(message, userName, userColor, null);
     }
 
-	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event, @SuppressWarnings("unchecked") List<String>... badges) {
+	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event) {
     	JPanel messagePanel = new JPanel(new BorderLayout());
 //        messagePanel.setPreferredSize(new Dimension(400, 25)); // Set the height of each message panel to 25 pixels
 //        messagePanel.setMinimumSize(new Dimension(400, 25));
@@ -191,9 +187,9 @@ public class ChatWindow extends JLabel {
 		messagePanel.setBorder(titledBorder);
 		
 		
-		if (badges.length>0) {
+		if (badges.containsKey(userName.toLowerCase())) {
 			IconStringBuilder stringBuilder = new IconStringBuilder().setSuffix(userName+":");
-			badges[0].forEach(badge -> {
+			badges.get(userName.toLowerCase()).forEach(badge -> {
 				stringBuilder.appendIcon(badge, true);
 			});
 			

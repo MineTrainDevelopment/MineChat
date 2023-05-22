@@ -68,7 +68,6 @@ public class TwitchListner {
 	 * Handles the event when a message is sent in the channel and executes the command if the cooldown time has elapsed.
 	 * @param event The {@link ChannelMessageEvent} object containing information about the message.
 	 */
-	@SuppressWarnings("unchecked")
 	@EventSubscriber
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
 		logger.info("User: "+event.getUser().getName()+" | Message --> "+event.getMessage());
@@ -100,8 +99,8 @@ public class TwitchListner {
 		if(twitchUser == null){
 			channelTab.getChatWindow().displayMessage(event.getMessage(), event.getUser().getName(), Color.WHITE, event);
 		}else{
-			twitchUser.setBadges(event);
-			channelTab.getChatWindow().displayMessage(event.getMessage(), twitchUser.getUserName(), twitchUser.getColor(), event, twitchUser.getBadges());
+			twitchUser.setBadges(event, channelTab);
+			channelTab.getChatWindow().displayMessage(event.getMessage(), twitchUser.getUserName(), twitchUser.getColor(), event);
 		}
 	}
 	
@@ -124,7 +123,7 @@ public class TwitchListner {
     public void onSub(SubscriptionEvent event) {
         if(!event.getGifted() && Settings.displaySubs_Follows) {
         	getCurrentChannelTab(event.getChannel()).getChatWindow()
-    			.displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed!",
+    			.displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed! \n"+event.getMessage(),
     					(event.getMonths()>12) ? ColorManager.CHAT_SPENDING_SMALL : ColorManager.CHAT_UNIMPORTANT);
         }else if(!Settings.displayGiftedSubscriptions){
         	getCurrentChannelTab(event.getChannel()).getChatWindow()

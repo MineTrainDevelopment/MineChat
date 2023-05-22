@@ -14,7 +14,7 @@ public class IconStringBuilder {
 	private String prefix="";
 	private String suffix="";
 	//"<html><body>Username: <img src='file:data/texture/badges/Broadcaster/1.png'></body></html>"
-	
+
 	/**
      * Appends the specified string to the output string.
      *
@@ -23,6 +23,18 @@ public class IconStringBuilder {
      */
 	public IconStringBuilder appendString(String string){
 		output += string;
+		return this;
+	}
+	
+	/**
+     * Appends the specified string to the output string.
+     *
+     * @param string the string to be appended
+     * @param color {@link htmlColors}
+     * @return the IconStringBuilder object for method chaining
+     */
+	public IconStringBuilder appendString(String string, htmlColors color){
+		output += "<font color="+color.toString().toLowerCase()+">"+string+"</font>";
 		return this;
 	}
 	
@@ -37,7 +49,16 @@ public class IconStringBuilder {
 		output += "<img src='file:"+iconPath+"'>" + (withPlaceholder ? "&nbsp;" : "");
 		return this;
 	}
-
+	
+	/**
+     * Appends the space to the output string.
+     * @return the IconStringBuilder object for method chaining
+     */
+	public IconStringBuilder appendSpace(){
+		output += " ";
+		return this;
+	}
+	
 	/**
      * @param prefix the prefix string to be set
      * @return the IconStringBuilder object for method chaining
@@ -65,5 +86,12 @@ public class IconStringBuilder {
 	@Override
 	public String toString() {
 		return "<html><body>"+prefix+output+suffix+"</body></html>";
+	}
+	
+	/**
+	 * 
+	 */
+	public enum htmlColors{
+		AQUA, BLACK, BLUE, FUCHSIA, GRAY, GREEN, LIME, MAROON, NAVY, OLIVE, PURPLE, RED, SILVER, TEAL, WHITE, YELLOW;
 	}
 }

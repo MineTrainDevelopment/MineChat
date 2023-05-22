@@ -195,7 +195,7 @@ public class EmoteSelector extends JDialog{
 			text.getDocument().insertString(position, " "+selectedEmote.split("/")[4]+" ", null);
 		} catch (BadLocationException ex) {
 			logger.error("Can´t add emote to text. ",ex);
-		}
+		} catch (NullPointerException ex) { }
 	}
 	
 	private MouseAdapter MoiseListner() {
