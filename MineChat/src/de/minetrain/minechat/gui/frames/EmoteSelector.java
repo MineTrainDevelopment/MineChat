@@ -188,8 +188,6 @@ public class EmoteSelector extends JDialog{
 		if(text != null){textFieldToEdit = text;}
 		if(textFieldToEdit == null){return;}
 		
-		System.out.println("-- ADD --");
-		
 		try {
 			int position = text.getCaretPosition();
 			text.getDocument().insertString(position, " "+selectedEmote.split("/")[4]+" ", null);

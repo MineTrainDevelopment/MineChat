@@ -13,9 +13,11 @@ public class TwitchEmote {
 	private static final String folderPath = TextureManager.texturePath+"Icons/";
 	private static HashMap<String, TwitchEmote> emotesByName = new HashMap<String, TwitchEmote>();
 	private ImageIcon imageIcon;
+	private String emotePath;
 	
-	public TwitchEmote(ImageIcon imageIcon) {
+	public TwitchEmote(ImageIcon imageIcon, String emotePath) {
 		this.imageIcon = imageIcon;
+		this.emotePath = emotePath;
 	}
 
 	public TwitchEmote(String imagePath) {
@@ -28,6 +30,7 @@ public class TwitchEmote {
 		}
 		
 		imageIcon = new ImageIcon(imagePath);
+		emotePath = imagePath;
 		
 		if(imageIcon == null && Main.MAIN_FRAME != null){
 			Main.MAIN_FRAME.displayInfo("Can´t find the '"+imagePath+"' emote");
@@ -36,7 +39,6 @@ public class TwitchEmote {
 	
 	public static HashMap<String, List<String>> getEmotes(boolean withBorder){
 		emotesByName.clear();
-		System.out.println("Emote list -> "+emotesByName);
 	    HashMap<String, List<String>> emotes = new HashMap<String, List<String>>();
 		Main.EMOTE_INDEX.getStringList("index").forEach(channel -> {
 			List<String> tempList = new ArrayList<String>();
@@ -48,7 +50,6 @@ public class TwitchEmote {
 			
 			emotes.put(channel, tempList);
 		});
-		System.out.println("Emote list -> "+emotesByName);
 		return emotes;
 	}
 
@@ -58,11 +59,12 @@ public class TwitchEmote {
 		}
 		return emotesByName;
 	}
-	
-
 
 	public ImageIcon getImageIcon() {
 		return imageIcon;
 	}
-
+	
+	public String getEmotePath() {
+		return emotePath;
+	}
 }

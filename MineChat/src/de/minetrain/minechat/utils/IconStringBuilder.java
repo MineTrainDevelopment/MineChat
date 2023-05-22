@@ -10,6 +10,7 @@ package de.minetrain.minechat.utils;
  * @version 1.0
  */
 public class IconStringBuilder {
+	private int wordCount = 0;
 	private String output="";
 	private String prefix="";
 	private String suffix="";
@@ -23,6 +24,7 @@ public class IconStringBuilder {
      */
 	public IconStringBuilder appendString(String string){
 		output += string;
+		wordCount++;
 		return this;
 	}
 	
@@ -35,6 +37,7 @@ public class IconStringBuilder {
      */
 	public IconStringBuilder appendString(String string, htmlColors color){
 		output += "<font color="+color.toString().toLowerCase()+">"+string+"</font>";
+		wordCount++;
 		return this;
 	}
 	
@@ -47,6 +50,7 @@ public class IconStringBuilder {
      */
 	public IconStringBuilder appendIcon(String iconPath, boolean withPlaceholder){
 		output += "<img src='file:"+iconPath+"'>" + (withPlaceholder ? "&nbsp;" : "");
+		wordCount++;
 		return this;
 	}
 	
@@ -88,6 +92,14 @@ public class IconStringBuilder {
 		return "<html><body>"+prefix+output+suffix+"</body></html>";
 	}
 	
+	/**
+	 * Get the word cound
+	 * @return
+	 */
+	public int getWordCount() {
+		return wordCount;
+	}
+
 	/**
 	 * 
 	 */
