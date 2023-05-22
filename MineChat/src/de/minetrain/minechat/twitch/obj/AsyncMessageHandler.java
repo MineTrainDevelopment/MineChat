@@ -99,12 +99,16 @@ public class AsyncMessageHandler {
         if (!messageQueue.isEmpty()) {
             ChatMessage chatMessage = messageQueue.poll();
             String message = chatMessage.getMessage();
+            List<String> chatterNames = chatMessage.getChannelTab().getChatWindow().chatterNames;
             
-            String[] splitMessage = message.split(" ");
-    		List<String> words = Arrays.asList(splitMessage);
+            if(chatMessage.getMessageEvent() != null){
+            	chatterNames.add(chatMessage.getMessageEvent().getUser().getName()+"%-&-%");
+            }
+            
+    		List<String> words = Arrays.asList(message.split(" "));
     		words.forEach(word -> {
     			if(word.startsWith("@")){
-    				chatMessage.getChannelTab().getChatWindow().chatterNames.add(word.replace("@", "")+"%-&-%");
+					chatterNames.add(word.replace("@", "")+"%-&-%");
     			}
     		});
     		
