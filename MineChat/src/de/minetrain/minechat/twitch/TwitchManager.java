@@ -22,14 +22,13 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
 import de.minetrain.minechat.utils.ChatMessage;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -120,6 +119,13 @@ public class TwitchManager {
 					(messageEvent != null) ? "@"+messageEvent.getUser().getName()+" "+message.getMessage() : message.getMessage(),
 					message.getSenderNamem(), Color.WHITE);
 		
+		//Check if a chatter is was mentioned
+		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {
+			if(word.startsWith("@")){
+				message.getChannelTab().getChatWindow().greetingsManager.setMentioned(word.replace("@", ""));
+			}
+		});
+		
 		if(messageEvent == null){
 			sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
 			return;
@@ -150,6 +156,7 @@ public class TwitchManager {
 	 */
 	private static void replyMessage(ChatMessage message) {
 		if(message.getMessageEvent() != null){
+			message.getChannelTab().getChatWindow().greetingsManager.setMentioned(message.getMessageEvent().getUser().getName());
 			message.getMessageEvent().reply(twitch.getChat(), message.getMessage());
 			message.getChannelTab().getChatWindow().setMessageToReply(null);
 			return;

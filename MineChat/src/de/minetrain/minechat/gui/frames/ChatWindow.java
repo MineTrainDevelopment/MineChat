@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +52,7 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.utils.CallCounter;
 import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
@@ -61,10 +63,12 @@ public class ChatWindow extends JLabel {
 	private Dimension preferredScrollBarSize = new JScrollBar().getPreferredSize();
 	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
-	public  List<String> chatterNames = new ArrayList<String>();
+//	public  List<String> chatterNames = new ArrayList<String>();
+	public final GreetingsManager greetingsManager;
 	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
 	public AbstractChannelMessageEvent messageEvent = null;
 	private CallCounter messagesPerMin = new CallCounter();
+	private static final Random random = new Random();
 	private MineButton sendButton, cancelReplyButton;
 	private String currentlyWritingString = "";
 	private Integer messagesPerDay = 0;
@@ -72,12 +76,12 @@ public class ChatWindow extends JLabel {
     private JTextField inputField;
     private JScrollPane scrollPane;
     private JLabel inputInfo;
-    private final ChannelTab parrentTab;
+    private final ChannelTab parentTab;
     
-    public ChatWindow(ChannelTab parrentTab) {
-    	this.parrentTab = parrentTab;
-		chatterNames.add(TwitchManager.ownerChannelName.toLowerCase());
-		chatterNames.add(TwitchManager.ownerChannelName.toLowerCase()+"%-&-%");
+    public ChatWindow(ChannelTab parentTab) {
+    	this.parentTab = parentTab;
+    	greetingsManager = new GreetingsManager(parentTab);
+    	greetingsManager.setMentioned(TwitchManager.ownerChannelName);
 		
         setSize(485, 504);
         setLayout(new BorderLayout());
@@ -160,6 +164,7 @@ public class ChatWindow extends JLabel {
 //            	displaySystemInfo("userReward", "This is a test", ColorManager.CHAT_USER_REWARD);
 //            	displaySystemInfo("userping", "This is a test", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
 //            	displaySystemInfo("greeding", "This is a test", ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT);
+            	
             	String message = inputField.getText();
             	if(message.isEmpty()){return;}
                 inputField.setText(currentlyWritingString);
@@ -268,21 +273,22 @@ public class ChatWindow extends JLabel {
 			scrollPane.getVerticalScrollBar().setPreferredSize(preferredScrollBarSize);
     	}
     	
-    	if(chatterNames.contains(userName.toLowerCase())){
+    	if(greetingsManager.contains(userName)){
 	    	Settings.highlightStrings.forEach(string -> {
 	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
 	            Matcher matcher = pattern.matcher(message);
+//	            /add all names to a new greetings text class
 	            
 	            if (matcher.find()) {
 	    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
 	            }
 	    	});
     	}else{
-    		chatterNames.add(userName.toLowerCase());
+    		greetingsManager.add(userName);
 			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT, 2));
     	}
     	
-    	if(!chatterNames.contains(userName.toLowerCase()+"%-&-%")){
+    	if(!greetingsManager.isMentioned(userName)){
 	    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 			waveButton.setPreferredSize(buttonSize);
 			waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
@@ -292,7 +298,7 @@ public class ChatWindow extends JLabel {
 			waveButton.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent e){
 					currentlyWritingString = inputField.getText();
-					inputField.setText(parrentTab.getGreetingTexts().get(0));
+					inputField.setText(parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size())));
 					setMessageToReply(event);
 				}
 			});

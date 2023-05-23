@@ -90,7 +90,7 @@ public class TwitchListner {
 			words.forEach(word -> {
 //				System.out.println("Word -> "+word);
 				if(word.startsWith("@")){
-					channelTab.getChatWindow().chatterNames.add(word.toLowerCase().replace("@", "")+"%-&-%");
+					channelTab.getChatWindow().greetingsManager.setMentioned(word.toLowerCase().replace("@", ""));
 				}
 			});
 		}
