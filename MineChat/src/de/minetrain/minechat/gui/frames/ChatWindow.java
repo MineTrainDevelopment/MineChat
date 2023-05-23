@@ -277,7 +277,6 @@ public class ChatWindow extends JLabel {
 	    	Settings.highlightStrings.forEach(string -> {
 	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
 	            Matcher matcher = pattern.matcher(message);
-//	            /add all names to a new greetings text class
 	            
 	            if (matcher.find()) {
 	    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
@@ -301,6 +300,19 @@ public class ChatWindow extends JLabel {
 					inputField.setText(parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size())));
 					setMessageToReply(event);
 				}
+			});
+			
+			waveButton.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(MouseEvent event) {
+			        if (SwingUtilities.isRightMouseButton(event)) {
+			        	greetingsManager.setMentioned(userName);
+			        	buttonPanel.remove(waveButton);
+						buttonPanel.setMinimumSize(new Dimension(26, 26));
+			        	chatPanel.revalidate();
+			        	chatPanel.repaint();
+			        }
+			    }
 			});
 			
 			buttonPanel.add(waveButton, BorderLayout.WEST);
