@@ -6,18 +6,11 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.obj.MacroObject;
-import de.minetrain.minechat.gui.obj.ChannelTab;
-import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 
 /**
@@ -65,6 +58,10 @@ public class MineButton extends JButton{
 			public void actionPerformed(ActionEvent e) {
 				if(type == null || type == ButtonType.NON){
 					return;
+				}
+				
+				if(type == ButtonType.GREET){
+					TitleBar.currentTab.getChatWindow().greetingsManager.sendGreetingToAll();
 				}
 				
 				if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){

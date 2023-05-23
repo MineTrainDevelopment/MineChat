@@ -61,7 +61,7 @@ public class ChatWindow extends JLabel {
 	private static final long serialVersionUID = -8392586696866883591L;
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindow.class);
 	private Dimension preferredScrollBarSize = new JScrollBar().getPreferredSize();
-	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
+	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
 //	public  List<String> chatterNames = new ArrayList<String>();
 	public final GreetingsManager greetingsManager;
@@ -72,7 +72,7 @@ public class ChatWindow extends JLabel {
 	private MineButton sendButton, cancelReplyButton;
 	private String currentlyWritingString = "";
 	private Integer messagesPerDay = 0;
-    private JPanel chatPanel;
+    public JPanel chatPanel;
     private JTextField inputField;
     private JScrollPane scrollPane;
     private JLabel inputInfo;
@@ -181,8 +181,6 @@ public class ChatWindow extends JLabel {
 
 	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event) {
     	JPanel messagePanel = new JPanel(new BorderLayout());
-//        messagePanel.setPreferredSize(new Dimension(400, 25)); // Set the height of each message panel to 25 pixels
-//        messagePanel.setMinimumSize(new Dimension(400, 25));
         messagePanel.setBackground(ColorManager.GUI_BACKGROUND);
         
         TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), userName+":");
@@ -297,7 +295,9 @@ public class ChatWindow extends JLabel {
 			waveButton.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent e){
 					currentlyWritingString = inputField.getText();
-					inputField.setText(parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size())));
+					
+					String greeting = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
+					inputField.setText(greeting = greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
 					setMessageToReply(event);
 				}
 			});
@@ -407,7 +407,7 @@ public class ChatWindow extends JLabel {
     
 
     
-    private void formatText(String input, StyledDocument document, Color fontColor) {
+    public void formatText(String input, StyledDocument document, Color fontColor) {
     	String newInput="";
     	if(fontColor == Color.WHITE){
     		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.

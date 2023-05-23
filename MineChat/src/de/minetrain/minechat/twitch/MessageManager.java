@@ -7,11 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
-
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
-import de.minetrain.minechat.twitch.obj.TwitchChatUser;
 import de.minetrain.minechat.utils.ChatMessage;
 
 

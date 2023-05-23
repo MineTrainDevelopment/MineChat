@@ -117,20 +117,23 @@ public class GreetingsManager extends ArrayList<String>{
      * Sends greetings to all useres that warned mentioned befor.
      * <br>If the list is empty, no greetings will be sent.
      * 
-     * <p>A random greeting message suffix is appended to each username.
+     * <p>A random greeting message gets chosen.
      * The greetings message is sent using the TwitchManager.
      */
 	public void sendGreetingToAll(){
 		if(isEmpty()){return;}
-		String messageSuffix = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
+		String greeting = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
 		
 		forEach(name -> {
-			if(greetingsText.length() + messageSuffix.length() + name.length() < 490){
+			if(greetingsText.length() + greeting.length() + name.length() < 490){
 				greetingsText += "@"+name+", ";
 			}
 		});
-		
-		TwitchManager.sendMessage(new ChatMessage(parentTab, TwitchManager.ownerChannelName, greetingsText.substring(0, greetingsText.lastIndexOf(","))+" - "+messageSuffix));
+
+		String greetingsTextSubstring = greetingsText.substring(0, greetingsText.lastIndexOf(","));
+		String message = (greeting.contains("{USER}") ? greeting.replace("{USER}", greetingsTextSubstring) : greetingsTextSubstring+" - "+greeting);
+		TwitchManager.sendMessage(new ChatMessage(parentTab, TwitchManager.ownerChannelName, message));
+		greetingsText = "";
 	}
 	
 	/**
