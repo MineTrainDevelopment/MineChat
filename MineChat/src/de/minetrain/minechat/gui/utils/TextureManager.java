@@ -52,6 +52,7 @@ public class TextureManager {
 	private final ImageIcon enterButton;
 	private final ImageIcon emoteButton;
 	private final ImageIcon waveButton;
+	private final ImageIcon loveButton;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -67,6 +68,7 @@ public class TextureManager {
 		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
 		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
 		this.waveButton = new ImageIcon(texturePath + "waveButton.png");
+		this.loveButton = new ImageIcon(texturePath + "loveButton.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -118,6 +120,10 @@ public class TextureManager {
 
 	public ImageIcon getWaveButton() {
 		return waveButton;
+	}
+
+	public ImageIcon getLoveButton() {
+		return loveButton;
 	}
 
 
