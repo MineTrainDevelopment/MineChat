@@ -2,6 +2,7 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -46,15 +48,16 @@ import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.ChannelTab;
+import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.utils.CallCounter;
-import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
 
 public class ChatWindow extends JLabel {
@@ -63,20 +66,23 @@ public class ChatWindow extends JLabel {
 	private Dimension preferredScrollBarSize = new JScrollBar().getPreferredSize();
 	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static Map<String, String> emoteReplacements = new HashMap<>();
+    private static final int MAX_MESSAGE_SICE = 500;
 //	public  List<String> chatterNames = new ArrayList<String>();
 	public final GreetingsManager greetingsManager;
 	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
 	public AbstractChannelMessageEvent messageEvent = null;
 	private CallCounter messagesPerMin = new CallCounter();
-	private static final Random random = new Random();
-	private MineButton sendButton, cancelReplyButton;
-	private String currentlyWritingString = "";
+	private MineButton sendButton;
+	public MineButton cancelReplyButton;
+	public String currentlyWritingString = "";
 	private Integer messagesPerDay = 0;
     public JPanel chatPanel;
-    private JTextField inputField;
+    public JTextField inputField;
     private JScrollPane scrollPane;
     private JLabel inputInfo;
-    private final ChannelTab parentTab;
+    public final ChannelTab parentTab;
+    
+//    public JPanel simpleMessagePanel = new JPanel();
     
     public ChatWindow(ChannelTab parentTab) {
     	this.parentTab = parentTab;
@@ -109,11 +115,15 @@ public class ChatWindow extends JLabel {
 		});
 		inputInfo.add(cancelReplyButton, BorderLayout.WEST);
         
+		
         // Chat Panel
         chatPanel = new JPanel();
         chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
         scrollPane = new JScrollPane(chatPanel);
         add(scrollPane, BorderLayout.CENTER);
+        
+//        simpleMessagePanel.setLayout(new BoxLayout(simpleMessagePanel, BoxLayout.Y_AXIS));
+//        chatPanel.add(simpleMessagePanel);
 
         // Input Field and Send Button
         inputField = new JTextField();
@@ -179,80 +189,30 @@ public class ChatWindow extends JLabel {
     	displayMessage(message, userName, userColor, null);
     }
 
+//	private List<ChatWindowMessageComponent> list = new ArrayList<ChatWindowMessageComponent>();
 	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event) {
-    	JPanel messagePanel = new JPanel(new BorderLayout());
-        messagePanel.setBackground(ColorManager.GUI_BACKGROUND);
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(message, userName, userColor, event, this);
+//		int minimisedPanelHight = 0;
+		
+        chatPanel.add(messagePanel);
+//		list.add(messagePanel);
+		
+//		if(list.size()==MAX_MESSAGE_OBJ){
+//			JPanel minimised = list.remove(0).getMinimised();
+//			minimisedPanelHight = minimised.getHeight();
+//			simpleMessagePanel.add(minimised);
+//			chatPanel.remove((chatPanel.getComponentCount()+1) - MAX_MESSAGE_SICE);
+//		}
         
-        TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), userName+":");
-		titledBorder.setTitleJustification(TitledBorder.LEFT);
-		titledBorder.setTitleColor(userColor);
-		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
-		messagePanel.setBorder(titledBorder);
-		
-		
-		if (badges.containsKey(userName.toLowerCase())) {
-			IconStringBuilder stringBuilder = new IconStringBuilder().setSuffix(userName+":");
-			badges.get(userName.toLowerCase()).forEach(badge -> {
-				stringBuilder.appendIcon(badge, true);
-			});
-			
-        	titledBorder.setTitle(stringBuilder.toString());
+        if(chatPanel.getComponentCount() >= MAX_MESSAGE_SICE) {
+        	ChatWindowMessageComponent component = (ChatWindowMessageComponent) chatPanel.getComponent(chatPanel.getComponentCount() - (MAX_MESSAGE_SICE-1));
+        	if(!component.isHighlighted()){
+        		chatPanel.remove(component);
+        	}
         }
-		
-		JPanel buttonPanel = new JPanel(new BorderLayout());
-		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
-		buttonPanel.setMinimumSize(new Dimension(26, 26));
-		messagePanel.add(buttonPanel, BorderLayout.WEST);
-        
-		Dimension buttonSize = new Dimension(28, 28);
-		JButton button1 = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-		button1.setPreferredSize(buttonSize);
-		button1.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		button1.setBorderPainted(false);
-		button1.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
-		button1.setToolTipText("Mark this message as read.");
-		button1.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e){chatPanel.remove(messagePanel); chatPanel.revalidate(); chatPanel.repaint();}
-		});
-
-		JButton button2 = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-		button2.setPreferredSize(buttonSize);
-		button2.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		button2.setBorderPainted(false);
-		button2.setToolTipText("Replay to this message.");
-		button2.setIcon(Main.TEXTURE_MANAGER.getReplyButton());
-		button2.addMouseListener(replyButtonMouseAdapter(button2));
-		button2.setVisible(false);
-
-		buttonPanel.add(button1, BorderLayout.EAST);
-		
-		if(event != null){
-			messagePanel.add(button2, BorderLayout.EAST);
-			button2.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					setMessageToReply(event);
-				}
-			});
-		}
-		
-        //Right panel with message label
-        JPanel messageContentPanel = new JPanel(new BorderLayout());
-        messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        messagePanel.add(messageContentPanel, BorderLayout.CENTER);
-
-        JTextPane messageLabel = new JTextPane();
-        messageLabel.setEditable(false);
-		messageLabel.setFont(MESSAGE_FONT);
-        messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		messageLabel.addMouseListener(replyButtonMouseAdapter(button2));
-		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
-        messageContentPanel.add(messageLabel, BorderLayout.CENTER);
-
-        
+    	
         messagesPerDay++;
         messagesPerMin.recordCallTime();
-        chatPanel.add(messagePanel);
         chatPanel.revalidate();
         chatPanel.repaint();
         setNessageInfoText();
@@ -260,103 +220,31 @@ public class ChatWindow extends JLabel {
         JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
     	int currentValue = verticalScrollBar.getValue();
+//    	int newMinimisedPanelHight = minimisedPanelHight;
+
+        // Update the simpleMessagePanel height here
+
+        scrollPane.revalidate();
+        scrollPane.repaint();
     	
-    	if (currentValue >= maxValue-200) {
-    		SwingUtilities.invokeLater(() -> {
-    			Rectangle bounds = messagePanel.getBounds();
-    			scrollPane.getViewport().scrollRectToVisible(bounds);
-    			scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
-    		});
-    	}else{
-			scrollPane.getVerticalScrollBar().setPreferredSize(preferredScrollBarSize);
-    	}
-    	
-    	if(greetingsManager.contains(userName)){
-	    	Settings.highlightStrings.forEach(string -> {
-	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
-	            Matcher matcher = pattern.matcher(message);
-	            
-	            if (matcher.find()) {
-	    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
-	            }
-	    	});
-    	}else{
-    		greetingsManager.add(userName);
-			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT, 2));
-    	}
-    	
-    	if(!greetingsManager.isMentioned(userName)){
-	    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-			waveButton.setPreferredSize(buttonSize);
-			waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-			waveButton.setBorderPainted(false);
-			waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
-			waveButton.setToolTipText("Wellcome this user!");
-			waveButton.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(ActionEvent e){
-					currentlyWritingString = inputField.getText();
-					
-					String greeting = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
-					inputField.setText(greeting = greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
-					setMessageToReply(event);
-				}
-			});
-			
-			waveButton.addMouseListener(new MouseAdapter() {
-			    @Override
-			    public void mouseClicked(MouseEvent event) {
-			        if (SwingUtilities.isRightMouseButton(event)) {
-			        	greetingsManager.setMentioned(userName);
-			        	buttonPanel.remove(waveButton);
-						buttonPanel.setMinimumSize(new Dimension(26, 26));
-			        	chatPanel.revalidate();
-			        	chatPanel.repaint();
-			        }
-			    }
-			});
-			
-			buttonPanel.add(waveButton, BorderLayout.WEST);
-			buttonPanel.setMinimumSize(new Dimension(52, 26));
-    	}
-    	
-    	
-    	replyButtonMouseAdapter(button2);
-    	messagePanel.setPreferredSize(new Dimension(485, messagePanel.getPreferredSize().height));
+    	SwingUtilities.invokeLater(() -> {
+//            verticalScrollBar.setValue(currentValue-newMinimisedPanelHight);
+            
+	    	if (currentValue >= maxValue-200) {
+	    			Rectangle bounds = messagePanel.getBounds();
+//	    	        bounds.setLocation(bounds.width, bounds.height + simpleMessagePanel.getHeight());
+//	    	        System.out.println(messagePanel.getHeight()+" -- "+bounds.getHeight() +" -- "+(simpleMessagePanel.getHeight()));
+	    			scrollPane.getViewport().scrollRectToVisible(bounds);
+	    			scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
+	    	}else{
+				scrollPane.getVerticalScrollBar().setPreferredSize(preferredScrollBarSize);
+	    	}
+    	});
     }
     
-    public void displaySystemInfo(String topic, String message, Color borderColor){
-    	JPanel messagePanel = new JPanel(new BorderLayout());
-        messagePanel.setMinimumSize(new Dimension(400, 25));
-        messagePanel.setBackground(ColorManager.GUI_BACKGROUND);
-
-        JTextPane textLabel = new JTextPane();
-        textLabel.setEditable(false);
-    	textLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-    	textLabel.setFont(MESSAGE_FONT);
-    	formatText(message, textLabel.getStyledDocument(), new Color(30, 30, 30));
-    	
-		JPanel messageContentPanel = new JPanel(new BorderLayout());
-	    messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-	    messageContentPanel.add(textLabel, BorderLayout.CENTER);
-	    messagePanel.add(messageContentPanel, BorderLayout.CENTER);
-        
-        TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(borderColor, 2, true), "  "+topic+"  ");
-		titledBorder.setTitleJustification(TitledBorder.CENTER);
-		titledBorder.setTitleColor(borderColor); //Color.CYAN
-		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
-		messagePanel.setBorder(titledBorder);
+    public void displaySystemInfo(String topic, String message, Color borderColor, MineButton button){
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this);
 		
-		JButton button1 = new MineButton(new Dimension(28, 28), null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-		button1.setPreferredSize(button1.getSize());
-		button1.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		button1.setBorderPainted(false);
-		button1.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
-		button1.setToolTipText("Mark this message as read.");
-		button1.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e){chatPanel.remove(messagePanel); chatPanel.revalidate(); chatPanel.repaint();}
-		});
-
-		messagePanel.add(button1, BorderLayout.WEST);
         chatPanel.add(messagePanel);
         chatPanel.revalidate();
         chatPanel.repaint();
@@ -389,158 +277,6 @@ public class ChatWindow extends JLabel {
 	}
 
 
-	private MouseAdapter replyButtonMouseAdapter(JButton button) {
-		return new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Wenn die Maus ins Panel eintritt, zeige den Knopf an
-            	button.setVisible(true);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Wenn die Maus das Panel verlässt, blende den Knopf aus
-            	button.setVisible(false);
-            }
-        };
-	}
-    
-
-    
-    public void formatText(String input, StyledDocument document, Color fontColor) {
-    	String newInput="";
-    	if(fontColor == Color.WHITE){
-    		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
-    		input = "["+LocalTime.now().format(DateTimeFormatter.ofPattern(Settings.timeFormat, Locale.GERMAN))+"] "+input;
-    	}
-        
-        for(String string : splitString(input)){newInput += string.trim()+" \n ";}
-        input = (newInput.contains("\n") ? newInput.substring(0, newInput.lastIndexOf("\n")).trim() : newInput.trim());
-
-		for (String word : input.split(" ")) {
-			SimpleAttributeSet attributeSet = new SimpleAttributeSet();
-			StyleConstants.setAlignment(attributeSet, StyleConstants.ALIGN_CENTER);
-			StyleConstants.setForeground(attributeSet, fontColor);
-			boolean isEmote = false;
-
-			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
-			
-			Settings.highlightStrings.forEach(string -> {
-	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
-	            Matcher matcher = pattern.matcher(word);
-	            if (matcher.find()) {
-	    			StyleConstants.setForeground(attributeSet, new Color(255, 40, 40));
-	    		}
-	    	});
-			
-			if (emotesByName.get(word) != null) {
-				StyleConstants.setIcon(attributeSet, emotesByName.get(word).getImageIcon());
-				isEmote = true;
-			}
-
-			try {
-				document.insertString(document.getLength(), word + " ", attributeSet);
-
-				if (isEmote) {
-					document.insertString(document.getLength(), " ", null);
-				}
-			} catch (BadLocationException ex) {
-				logger.error("Can´t modify styledDocument! ", ex);
-			}
-		}
-    }
-    
-    
-    //TODO Replace emotes with 3 Chars for filtering.
-    public static List<String> splitString(String input) {
-    	input = input.replace("\\n", "�");
-        int chunkSize = 45;
-        List<String> chunks = new ArrayList<>();
-        StringBuilder builder = new StringBuilder();
-        input = encryptEmotes(input);
-
-        int wordBoundary = -1; // Index of the last space character within the chunk limit
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-
-            if (c != '�') {
-                builder.append(c);
-	            if (c == ' ') {
-	                wordBoundary = builder.length() - 1;
-	            }
-	
-	            if (builder.length() == chunkSize) {
-	                if (wordBoundary != -1) {
-	                    chunks.add(builder.substring(0, wordBoundary).trim());
-	                    builder.delete(0, wordBoundary + 1);
-	                    wordBoundary = -1;
-	                } else {
-	                    chunks.add(builder.toString().trim());
-	                    builder.setLength(0);
-	                }
-	            }
-            } else {
-                if (builder.length() > 0) {
-                    chunks.add(builder.toString().trim());
-                    builder.setLength(0);
-                }
-            }
-        }
-
-        // Add the remaining characters as the last chunk
-        if (builder.length() > 0) {
-            chunks.add(builder.toString().trim());
-        }
-        
-        for (int i=0; i<chunks.size(); i++) {
-			chunks.set(i, decryptEmotes(chunks.get(i)));
-		}
-        
-        return chunks;
-    }
-    
-    public static String encryptEmotes(String input) {
-    	HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
-    	String[] split = input.split(" ");
-    	String output = "";
-    	emoteReplacements.clear();
-    	
-    	for (int i=0; i<split.length; i++) {
-			if(emotesByName.containsKey(split[i])){
-	            String replacement = generateReplacement(split[i]);
-	            emoteReplacements.put(replacement, split[i]);
-	            split[i] = split[i].replaceAll("\\b" + split[i] + "\\b", replacement);
-			}
-			output += split[i]+" ";
-		}
-    	
-        return output.trim();
-    }
-
-    public static String decryptEmotes(String input) {
-        for (Entry<String, String> entry : emoteReplacements.entrySet()) {
-            input = input.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue());
-        }
-        return input;
-    }
-
-
-    private static String generateReplacement(String input) {
-        String alphabet = "abcdefghijklmnopqrstuvwABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 3; i++) {
-            int index = (int) (Math.random() * alphabet.length());
-            builder.append(alphabet.charAt(index));
-        }
-        
-        //Check if the replacement is alrady taken.
-        if(emoteReplacements.containsKey(builder.toString())){
-        	return generateReplacement(input);
-        }
-        
-        return builder.toString();
-    }
-    
     private MineButton createNewButton(ImageIcon icon, String toolTip, Dimension dimension, Color backgroundColor){
     	MineButton button = new MineButton(dimension, null, ButtonType.NON);
     	button.setIcon(icon);

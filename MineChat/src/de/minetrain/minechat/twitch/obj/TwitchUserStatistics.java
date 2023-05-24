@@ -71,6 +71,7 @@ public class TwitchUserStatistics {
     }
 	
 	public static List<TwitchChatUser> getUsersFromJsonArray(JsonArray jsonArray) {
+		if(jsonArray == null){return new ArrayList<>();}
         List<TwitchChatUser> users = new ArrayList<>();
 
         for (JsonElement jsonElement : jsonArray) {

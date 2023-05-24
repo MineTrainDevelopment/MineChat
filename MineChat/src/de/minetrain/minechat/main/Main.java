@@ -11,6 +11,7 @@ import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -74,6 +75,16 @@ public class Main {
 		}
 		onboardingFrame.dispose();
 		MessageManager.getMessageHandler().updateQueueButton();
+		
+//		for (int i=0; i<20; i++) {
+//			TitleBar.currentTab.getChatWindow().displayMessage("Message "+i, "test", Color.PINK);
+//		}
+//		
+//		TitleBar.currentTab.getChatWindow().displayMessage("Message mine", "test", Color.PINK);
+//		
+//		for (int i=21; i<1000; i++) {
+//			TitleBar.currentTab.getChatWindow().displayMessage("Message "+i, "test", Color.PINK);
+//		}
 	}
 
 }
