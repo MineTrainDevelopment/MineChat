@@ -61,7 +61,7 @@ public class MineButton extends JButton{
 				}
 				
 				if(type == ButtonType.GREET){
-					TitleBar.currentTab.getChatWindow().greetingsManager.sendGreetingToAll();
+//					TitleBar.currentTab.getChatWindow().greetingsManager.sendGreetingToAll();
 				}
 				
 				if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){

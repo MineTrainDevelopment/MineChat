@@ -113,28 +113,28 @@ public class GreetingsManager extends ArrayList<String>{
 		return mentionedUsers.contains(formatUserName(name));
 	}
 	
-	/**
-     * Sends greetings to all useres that warned mentioned befor.
-     * <br>If the list is empty, no greetings will be sent.
-     * 
-     * <p>A random greeting message gets chosen.
-     * The greetings message is sent using the TwitchManager.
-     */
-	public void sendGreetingToAll(){
-		if(isEmpty()){return;}
-		String greeting = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
-		
-		forEach(name -> {
-			if(greetingsText.length() + greeting.length() + name.length() < 490){
-				greetingsText += "@"+name+", ";
-			}
-		});
-
-		String greetingsTextSubstring = greetingsText.substring(0, greetingsText.lastIndexOf(","));
-		String message = (greeting.contains("{USER}") ? greeting.replace("{USER}", greetingsTextSubstring) : greetingsTextSubstring+" - "+greeting);
-		TwitchManager.sendMessage(new ChatMessage(parentTab, TwitchManager.ownerChannelName, message));
-		greetingsText = "";
-	}
+//	/**
+//     * Sends greetings to all useres that warned mentioned befor.
+//     * <br>If the list is empty, no greetings will be sent.
+//     * 
+//     * <p>A random greeting message gets chosen.
+//     * The greetings message is sent using the TwitchManager.
+//     */
+//	public void sendGreetingToAll(){
+//		if(isEmpty()){return;}
+//		String greeting = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
+//		
+//		forEach(name -> {
+//			if(greetingsText.length() + greeting.length() + name.length() < 490){
+//				greetingsText += "@"+name+", ";
+//			}
+//		});
+//
+//		String greetingsTextSubstring = greetingsText.substring(0, greetingsText.lastIndexOf(","));
+//		String message = (greeting.contains("{USER}") ? greeting.replace("{USER}", greetingsTextSubstring) : greetingsTextSubstring+" - "+greeting);
+//		TwitchManager.sendMessage(new ChatMessage(parentTab, TwitchManager.ownerChannelName, message));
+//		greetingsText = "";
+//	}
 	
 	/**
      * Formats the specified name by converting it to lowercase and removing certain characters.
