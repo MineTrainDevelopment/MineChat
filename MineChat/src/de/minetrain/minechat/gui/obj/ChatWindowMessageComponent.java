@@ -203,10 +203,10 @@ public class ChatWindowMessageComponent extends JPanel{
 			waveButton.setToolTipText("Wellcome this user!");
 			waveButton.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(ActionEvent e){
-					chatWindow.currentlyWritingString = chatWindow.inputField.getText();
+					chatWindow.chatStatusPanel.overrideCurrentInputCache();
 					
 					String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
-					chatWindow.inputField.setText(greeting = greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
+					chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
 					chatWindow.setMessageToReply(event);
 				}
 			});

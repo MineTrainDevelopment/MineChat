@@ -39,7 +39,7 @@ public class GreetingsManager extends ArrayList<String>{
 	}
 	
 	/**
-     * Adds the specified name to the list of greeted users.
+     * Adds the specified name to the list of users to greet.
      * <br>The name will be formatted before adding to remove special chars.
      * 
      * @param name the name to be added

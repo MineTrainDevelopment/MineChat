@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.swing.ImageIcon;
 
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
 import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
+import com.github.twitch4j.chat.events.ChatConnectionStateEvent;
 import com.github.twitch4j.chat.events.channel.BitsBadgeEarnedEvent;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.chat.events.channel.CheerEvent;
@@ -33,8 +33,8 @@ import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
-import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.ChannelTab;
+import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -132,7 +132,7 @@ public class TwitchListner {
     	
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
-			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", ColorManager.CHAT_UNIMPORTANT,
+			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!", ColorManager.CHAT_UNIMPORTANT,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%LOVE%", "Send some love!"));
     }
 
@@ -272,6 +272,15 @@ public class TwitchListner {
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
 			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" \nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), ColorManager.CHAT_MODERATION, null);
     }
+    
+    @EventSubscriber
+    public void onChatConnectionState(ChatConnectionStateEvent event){
+    	if(Main.MAIN_FRAME == null){return;}
+    	System.err.println(event.getPreviousState()+" -> "+event.getState());
+    	Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setConectionStatus(event.getState());
+    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setConectionStatus(event.getState());
+    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setConectionStatus(event.getState());
+    }
 
 	private ChannelTab getCurrentChannelTab(EventChannel eventChannel) {
 		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
@@ -301,30 +310,34 @@ public class TwitchListner {
 		actionButton.setToolTipText(toolTip);
 		actionButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e){
-				ChatWindow chatWindow = tab.getChatWindow();
+				ChatStatusPanel statusPanel = tab.getChatWindow().chatStatusPanel;
 				
-				if(chatWindow.currentlyWritingString.isEmpty()){
-					chatWindow.currentlyWritingString = chatWindow.inputField.getText();
+				if(statusPanel.getCurrentInputCache().isEmpty()){
+					statusPanel.overrideCurrentInputCache();
 				}
 				
 				if(outputMessage.startsWith("%GREET%")){
+			    	if(tab.getChatWindow().greetingsManager.isMentioned("")){
+			    		return;
+			    	}
+			    	
+			    	String userName = outputMessage.replace("%GREET%", "");
+			    	tab.getChatWindow().greetingsManager.add(userName);
 					String greeting = tab.getGreetingTexts().get(ChatWindowMessageComponent.random.nextInt(tab.getGreetingTexts().size()));
-					chatWindow.inputField.setText(greeting.replace("{USER}", "@"+outputMessage.replace("%GREET%", "")).trim().replaceAll(" +", " "));
+					statusPanel.overrideUserInput(greeting.replace("{USER}", "@"+userName).trim().replaceAll(" +", " "));
 				}
 
 				if(outputMessage.startsWith("%REPLY%")){
-					chatWindow.inputField.setText("@"+outputMessage.replace("%REPLY%", "")+" ");
+					statusPanel.overrideUserInput("@"+outputMessage.replace("%REPLY%", "")+" ");
 				}
 
 				if(outputMessage.startsWith("%RAID%")){
-					chatWindow.inputField.setText("%RAID% - [TODO]");
+					statusPanel.overrideUserInput("%RAID% - [TODO]");
 				}
 
 				if(outputMessage.startsWith("%LOVE%")){
-					chatWindow.inputField.setText("%LOVE% - [TODO]");
+					statusPanel.overrideUserInput("%LOVE% - [TODO]");
 				}
-				
-				
 			}
 		});
 		

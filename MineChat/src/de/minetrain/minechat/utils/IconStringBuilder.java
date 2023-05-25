@@ -23,7 +23,7 @@ public class IconStringBuilder {
      * @return the IconStringBuilder object for method chaining
      */
 	public IconStringBuilder appendString(String string){
-		output += string;
+		output += string.replace("<", "&lt;").replace(">", "&gt;");
 		wordCount++;
 		return this;
 	}
@@ -35,8 +35,8 @@ public class IconStringBuilder {
      * @param color {@link htmlColors}
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendString(String string, htmlColors color){
-		output += "<font color="+color.toString().toLowerCase()+">"+string+"</font>";
+	public IconStringBuilder appendString(String string, HTMLColors color){
+		output += "<font color="+color.getColorCode()+">"+string.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
 		wordCount++;
 		return this;
 	}
@@ -80,6 +80,18 @@ public class IconStringBuilder {
 		this.suffix = suffix;
 		return this;
 	}
+
+	/**
+     * Clear all texts.
+     * @return the IconStringBuilder object for method chaining
+     */
+	public IconStringBuilder clear(){
+		this.wordCount = 0;
+		this.suffix = "";
+		this.prefix = "";
+		this.output = "";
+		return this;
+	}
 	
 	/**
      * Returns the HTML representation of the constructed string.
@@ -98,12 +110,5 @@ public class IconStringBuilder {
 	 */
 	public int getWordCount() {
 		return wordCount;
-	}
-
-	/**
-	 * 
-	 */
-	public enum htmlColors{
-		AQUA, BLACK, BLUE, FUCHSIA, GRAY, GREEN, LIME, MAROON, NAVY, OLIVE, PURPLE, RED, SILVER, TEAL, WHITE, YELLOW;
 	}
 }
