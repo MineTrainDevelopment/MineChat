@@ -177,7 +177,6 @@ public class ChatWindowMessageComponent extends JPanel{
 		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
-    	
     	if(chatWindow.greetingsManager.contains(userName)){
 	    	Settings.highlightStrings.forEach(string -> {
 	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);

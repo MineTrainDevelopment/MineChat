@@ -2,9 +2,11 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -21,9 +23,10 @@ public class MainFrame extends JFrame{
 	public static boolean debug = false;
     private final JLabel textureLabel;
     private final TitleBar titleBar;
-    public MineButton profileButton, queueButton;
+    public MineButton profileButton, queueButton, statusButton;
     public MacroEmoteButton emoteButton0, emoteButton1, emoteButton2, emoteButton3, emoteButton4, emoteButton5, emoteButton6;
     public MacroButton macroButton0, macroButton1, macroButton2, macroButton3, macroButton4, macroButton5;
+    public JLabel statusButtonText;
     public ChatWindow chatWindow;
     
     public MainFrame() {
@@ -46,10 +49,23 @@ public class MainFrame extends JFrame{
         getContentPane().add(macroButton0);
         getContentPane().add(macroButton1);
         getContentPane().add(macroButton2);
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 55), ButtonType.GREET).setInvisible(!debug));
         getContentPane().add(macroButton3);
         getContentPane().add(macroButton4);
         getContentPane().add(macroButton5);
+        
+        
+        statusButton = new MineButton(new Dimension(85, 35), new Point(400, 53), ButtonType.STATUS).setInvisible(!debug);
+        statusButton.setIcon(Main.TEXTURE_MANAGER.getStatusButton_1());
+		getContentPane().add(statusButton);
+
+		statusButtonText = new JLabel();
+		statusButtonText.setSize(new Dimension(85, 35));
+		statusButtonText.setLocation(new Point(400, 53));
+		statusButtonText.setForeground(Color.WHITE);
+		statusButtonText.setHorizontalAlignment(JLabel.CENTER);
+		statusButtonText.setFont(new Font("Arial", Font.BOLD, 17));
+		statusButtonText.setText("Online");
+		getContentPane().add(statusButtonText);
         getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
         
         //Emote row.

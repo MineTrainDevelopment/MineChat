@@ -7,6 +7,8 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import com.github.twitch4j.chat.events.ChatConnectionStateEvent;
+
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -86,5 +88,5 @@ public class Main {
 //			TitleBar.currentTab.getChatWindow().displayMessage("Message "+i, "test", Color.PINK);
 //		}
 	}
-
+	
 }

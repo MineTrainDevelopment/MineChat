@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.MessageManager;
+import de.minetrain.minechat.twitch.TwitchManager;
 
 /**
  * A custom button used in the application.
@@ -60,8 +61,8 @@ public class MineButton extends JButton{
 					return;
 				}
 				
-				if(type == ButtonType.GREET){
-//					TitleBar.currentTab.getChatWindow().greetingsManager.sendGreetingToAll();
+				if(type == ButtonType.STATUS){
+					TwitchManager.twitch.getChat().reconnect();
 				}
 				
 				if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){

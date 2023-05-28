@@ -29,7 +29,7 @@ public enum ButtonType {
 	CLOSE(null),
 	
 	SPAM(null),
-	GREET(null),
+	STATUS(null),
 	STOP_QUEUE(null),
 	TWITCH_PROFILE(null);
 	

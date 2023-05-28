@@ -115,7 +115,7 @@ public class ChatStatusPanel extends JPanel {
     
     public static final IconStringBuilder getMineChatStatusText() {
 		IconStringBuilder stringBuilder = new IconStringBuilder();
-		stringBuilder.appendString("Wellcome to ", HTMLColors.WHITE);
+		stringBuilder.appendString("Welcome to ", HTMLColors.WHITE);
 		stringBuilder.appendString("MineChat ", HTMLColors.AQUA);
 		stringBuilder.appendString("<3", HTMLColors.RED);
 		stringBuilder.appendSpace();

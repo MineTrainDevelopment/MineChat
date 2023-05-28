@@ -52,8 +52,6 @@ public class ChatWindow extends JLabel {
     public final ChannelTab parentTab;
     public ChatStatusPanel chatStatusPanel;
     
-//    public JPanel simpleMessagePanel = new JPanel();
-    
     public ChatWindow(ChannelTab parentTab) {
     	this.parentTab = parentTab;
     	greetingsManager = new GreetingsManager(parentTab);

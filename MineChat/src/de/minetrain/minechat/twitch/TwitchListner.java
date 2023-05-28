@@ -33,6 +33,7 @@ import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
+import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -40,9 +41,11 @@ import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchChatUser;
 import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
+import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
 
 /**
@@ -277,6 +280,28 @@ public class TwitchListner {
     public void onChatConnectionState(ChatConnectionStateEvent event){
     	if(Main.MAIN_FRAME == null){return;}
     	System.err.println(event.getPreviousState()+" -> "+event.getState());
+    	
+    	new Thread(() -> {
+	    	switch (event.getState()) {
+			case CONNECTED: 
+				Main.MAIN_FRAME.statusButtonText.setText("Online");
+				Main.MAIN_FRAME.statusButton.setIcon(Main.TEXTURE_MANAGER.getStatusButton_1());
+				break;
+	
+			case CONNECTING: case DISCONNECTING: case RECONNECTING:
+				Main.MAIN_FRAME.statusButtonText.setText("Loading");
+				Main.MAIN_FRAME.statusButton.setIcon(Main.TEXTURE_MANAGER.getStatusButton_2());
+				break;
+				
+			case DISCONNECTED: case LOST:
+				Main.MAIN_FRAME.statusButtonText.setText("Offline");
+				Main.MAIN_FRAME.statusButton.setIcon(Main.TEXTURE_MANAGER.getStatusButton_3());
+				break;
+	
+			default: break;
+	    	}
+    	}).start();
+    	
     	Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setConectionStatus(event.getState());
     	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setConectionStatus(event.getState());
     	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setConectionStatus(event.getState());
