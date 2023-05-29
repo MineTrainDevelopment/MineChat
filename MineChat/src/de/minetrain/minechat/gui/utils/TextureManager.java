@@ -56,6 +56,8 @@ public class TextureManager {
 	private final ImageIcon statusButton_1;
 	private final ImageIcon statusButton_2;
 	private final ImageIcon statusButton_3;
+	private final ImageIcon rowArrowRight;
+	private final ImageIcon rowArrowLeft;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -75,6 +77,8 @@ public class TextureManager {
 		this.statusButton_1 = new ImageIcon(texturePath + "statusButton_1.png");
 		this.statusButton_2 = new ImageIcon(texturePath + "statusButton_2.png");
 		this.statusButton_3 = new ImageIcon(texturePath + "statusButton_3.png");
+		this.rowArrowLeft = new ImageIcon(texturePath + "rowArrowLeft.png");
+		this.rowArrowRight = new ImageIcon(texturePath + "rowArrowRight.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -144,6 +148,15 @@ public class TextureManager {
 
 	public ImageIcon getStatusButton_3() {
 		return statusButton_3;
+	}
+
+	public ImageIcon getRowArrowRight() {
+		return rowArrowRight;
+	}
+
+
+	public ImageIcon getRowArrowLeft() {
+		return rowArrowLeft;
 	}
 
 

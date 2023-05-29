@@ -27,8 +27,10 @@ public enum ButtonType {
 	MINIMIZE(null),
 	SETTINGS(null),
 	CLOSE(null),
+
+	CHANGE_ROW_LEFT(null),
+	CHANGE_ROW_RIGHT(null),
 	
-	SPAM(null),
 	STATUS(null),
 	STOP_QUEUE(null),
 	TWITCH_PROFILE(null);

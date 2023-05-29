@@ -12,15 +12,16 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JScrollBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.config.obj.ChannelMacros;
+import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -34,6 +35,7 @@ public class ChannelTab {
 	private String displayName;
 	private String channelName;
 	private boolean moderator;
+	private MainFrame mainFrame;
 	private List<String> greetingTexts;
 	private Long spamTriggerAmound; //Messages
 	private Long spamDeprecateAfter; //Seconds
@@ -51,6 +53,7 @@ public class ChannelTab {
 		chatWindow.setLocation(8, 186);
 		chatWindow.setVisible(false);
 		mainFrame.getContentPane().add(chatWindow);
+		this.mainFrame = mainFrame;
 		
 		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
 		this.tabType = tab;
@@ -93,7 +96,7 @@ public class ChannelTab {
 			spamDeprecateAfter = 5l;
 			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
 			this.tabButton.addActionListener(getEditWindowAction());
-			macros = new ChannelMacros(true);
+			macros = new ChannelMacros(null);
 		}else{
 			loadData(configID);
 		}
@@ -124,7 +127,12 @@ public class ChannelTab {
 	}
 
 	public void loadMacros(String configID) {
-		macros = new ChannelMacros(configID);
+		if(macros == null){
+			macros = new ChannelMacros(configID);
+			return;
+		}
+		
+		macros.reloadMacros(configID);
 	}
 	
 	public void openEditFrame(){
@@ -144,11 +152,29 @@ public class ChannelTab {
 		chatWindow.setVisible((tabType.equals(offset)) ? true : false);
 		return this;
 	}
-
-//	public ChannelMacros getMacros() {
-//		return macros;
-//	}
 	
+	public void loadMacroRow(MacroRow row){
+		if(row == null){row = getMacros().getCurrentMacroRow();}
+		getMacros().setCurrentMacroRow(row);
+		mainFrame.emoteButton0.setIcon(getMacros().getEmote_1(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton1.setIcon(getMacros().getEmote_2(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton2.setIcon(getMacros().getEmote_3(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton3.setIcon(getMacros().getEmote_4(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton4.setIcon(getMacros().getEmote_5(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton5.setIcon(getMacros().getEmote_6(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton6.setIcon(getMacros().getEmote_7(row).getTwitchEmote().getImageIcon());
+
+		mainFrame.macroButton0.setData(getMacros().getMacro(ButtonType.MACRO_1, row));
+		mainFrame.macroButton1.setData(getMacros().getMacro(ButtonType.MACRO_2, row));
+		mainFrame.macroButton2.setData(getMacros().getMacro(ButtonType.MACRO_3, row));
+		mainFrame.macroButton3.setData(getMacros().getMacro(ButtonType.MACRO_4, row));
+		mainFrame.macroButton4.setData(getMacros().getMacro(ButtonType.MACRO_5, row));
+		mainFrame.macroButton5.setData(getMacros().getMacro(ButtonType.MACRO_6, row));
+		
+		mainFrame.leftRowButton.setIcon((row == MacroRow.ROW_0) ? null : Main.TEXTURE_MANAGER.getRowArrowLeft());
+		mainFrame.rightRowButton.setIcon((row == MacroRow.ROW_2) ? null : Main.TEXTURE_MANAGER.getRowArrowRight());
+	}
+
 	public boolean isOccupied(){
 		return !configID.equals("0");
 	}
@@ -226,8 +252,5 @@ public class ChannelTab {
 	public ChatWindow getChatWindow() {
 		return chatWindow;
 	}
-	
-	
-
 	
 }

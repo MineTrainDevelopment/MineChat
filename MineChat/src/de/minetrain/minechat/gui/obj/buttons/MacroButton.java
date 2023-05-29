@@ -56,7 +56,7 @@ public class MacroButton extends MineButton{
 		            System.out.println("rechts");
 		            
 		            InputFrame inputFrame;
-					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type);
+					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
 					if(!macro.getButtonName().equalsIgnoreCase("null")){
 			            inputFrame = new InputFrame(mainFrame, "Button text:", macro.getButtonName(), "Macro output:", macro.getMacroOutput());
 		            }else{
@@ -90,7 +90,8 @@ public class MacroButton extends MineButton{
 
 	            			String input = (inputFrame.getNameInput().length()>0) ? inputFrame.getNameInput() : "Unknown";
 	            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : "Unknown macro... - "+type.name();
-	            			Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros."+type.getConfigIndex(), input+emotePath+"%-%"+output, true);
+	            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
+							Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros"+macroRow+"."+type.getConfigIndex(), input+emotePath+"%-%"+output, true);
 	            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
 	            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab.getTabType(), TitleBar.currentTab);
 	            		}

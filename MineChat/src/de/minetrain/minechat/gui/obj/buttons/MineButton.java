@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -65,8 +66,17 @@ public class MineButton extends JButton{
 					TwitchManager.twitch.getChat().reconnect();
 				}
 				
+				MacroRow currentRow = TitleBar.currentTab.getMacros().getCurrentMacroRow();
+				if(type == ButtonType.CHANGE_ROW_LEFT){
+					TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_2) ? MacroRow.ROW_1 : MacroRow.ROW_0);
+				}
+				
+				if(type == ButtonType.CHANGE_ROW_RIGHT){
+					TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_0) ? MacroRow.ROW_1 : MacroRow.ROW_2);
+				}
+				
 				if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
-					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type);
+					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
 					if(!macro.getMacroOutput().equals(">null<")){
 						System.out.println("send message");
 						MessageManager.sendMessage(macro.getMacroOutput());

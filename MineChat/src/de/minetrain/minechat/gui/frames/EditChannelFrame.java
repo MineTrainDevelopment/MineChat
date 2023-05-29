@@ -210,7 +210,15 @@ public class EditChannelFrame extends JDialog {
 
 				if(nameSavedInConfigName.equalsIgnoreCase(">null<")){
 					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros.M"+i, "null%-%>null<");
+						config.setString(path + "Macros_0.M"+i, "null%-%>null<");
+					}
+
+					for(int i=0; i<=12; i++){
+						config.setString(path + "Macros_1.M"+i, "null%-%>null<");
+					}
+
+					for(int i=0; i<=12; i++){
+						config.setString(path + "Macros_2.M"+i, "null%-%>null<");
 					}
 	
 					List<String> greetingsList = new ArrayList<String>();

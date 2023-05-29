@@ -23,7 +23,7 @@ public class MainFrame extends JFrame{
 	public static boolean debug = false;
     private final JLabel textureLabel;
     private final TitleBar titleBar;
-    public MineButton profileButton, queueButton, statusButton;
+    public MineButton profileButton, queueButton, statusButton, leftRowButton, rightRowButton;
     public MacroEmoteButton emoteButton0, emoteButton1, emoteButton2, emoteButton3, emoteButton4, emoteButton5, emoteButton6;
     public MacroButton macroButton0, macroButton1, macroButton2, macroButton3, macroButton4, macroButton5;
     public JLabel statusButtonText;
@@ -66,7 +66,12 @@ public class MainFrame extends JFrame{
 		statusButtonText.setFont(new Font("Arial", Font.BOLD, 17));
 		statusButtonText.setText("Online");
 		getContentPane().add(statusButtonText);
-        getContentPane().add(new MineButton(new Dimension(80, 30), new Point(402, 95), ButtonType.SPAM).setInvisible(!debug));
+		
+
+		leftRowButton = new MineButton(new Dimension(35, 35), new Point(400, 93), ButtonType.CHANGE_ROW_LEFT).setInvisible(!debug);
+		rightRowButton = new MineButton(new Dimension(35, 35), new Point(450, 93), ButtonType.CHANGE_ROW_RIGHT).setInvisible(!debug);
+		getContentPane().add(leftRowButton);
+		getContentPane().add(rightRowButton);
         
         //Emote row.
         emoteButton0 = new MacroEmoteButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1, this).setInvisible(!debug);

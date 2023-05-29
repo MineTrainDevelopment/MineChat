@@ -126,8 +126,34 @@ public class TwitchListner {
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", ColorManager.CHAT_UNIMPORTANT,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
-    	
     }
+    
+//    [00:32:03] >> ERROR<< | Unhandled exception caught dispatching event FollowEvent
+//    java.lang.reflect.InvocationTargetException
+//    	at jdk.internal.reflect.GeneratedMethodAccessor22.invoke(Unknown Source)
+//    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+//    	at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:130)
+//    	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
+//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:127)
+//    	at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
+//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:126)
+//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
+//    	at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
+//    	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+//    	at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
+//    	at com.github.twitch4j.TwitchClientHelper.lambda$new$7(TwitchClientHelper.java:314)
+//    	at com.github.twitch4j.TwitchClientHelper$ListenerRunnable.run(TwitchClientHelper.java:651)
+//    	at com.github.twitch4j.TwitchClientHelper$ListenerRunnable.lambda$run$0(TwitchClientHelper.java:659)
+//    	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+//    	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+//    	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+//    	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+//    	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
+//    	at java.base/java.lang.Thread.run(Thread.java:832)
+//    Caused by: java.lang.NullPointerException: Cannot invoke "de.minetrain.minechat.gui.obj.ChannelTab.getChatWindow()" because "currentChannelTab" is null
+//    	at de.minetrain.minechat.twitch.TwitchListner.onFollow(TwitchListner.java:126)
+//    	... 21 more
 
     @EventSubscriber
     public void onCheer(CheerEvent event) {
@@ -167,7 +193,7 @@ public class TwitchListner {
 				+" \nTier: "+event.getSubscriptionPlan()
 				+" \nAmound: "+event.getCount()
 				+" \nThis user gifted "+event.getTotalCount()+" subs on this Channel!"
-				,(event.getCount() > 5) ? ColorManager.CHAT_SPENDING_BIG : ColorManager.CHAT_SPENDING_SMALL,
+				,(event.getCount() >= 5) ? ColorManager.CHAT_SPENDING_BIG : ColorManager.CHAT_SPENDING_SMALL,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "%LOVE%", "Send some love!"));
     }
     
@@ -308,6 +334,8 @@ public class TwitchListner {
     }
 
 	private ChannelTab getCurrentChannelTab(EventChannel eventChannel) {
+		if(Main.MAIN_FRAME == null){return null;}
+		
 		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
 		ChannelTab channelTab = null;
 		if(titleBar.getMainTab().getConfigID().equals(eventChannel.getId())){
