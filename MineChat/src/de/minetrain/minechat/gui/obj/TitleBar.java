@@ -128,7 +128,6 @@ public class TitleBar extends JPanel{
 		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
 		mainFrame.profileButton.setIcon(new ImageIcon(tab.getProfileImagePath()));
 		
-//		MacroRow currentMacroRow = tab.getMacros().getCurrentMacroRow();
 		tab.loadMacroRow(null);
 		
     	texture.setIcon(tab.getTexture());

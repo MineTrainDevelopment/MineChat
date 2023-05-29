@@ -72,6 +72,8 @@ public class ChatWindow extends JLabel {
 		placeholder.setBorder(BorderFactory.createEmptyBorder(205, 200, 205, 200));
 //		placeholder.setMinimumSize(new Dimension(480, 500));
 		chatPanel.add(placeholder);
+		chatPanel.revalidate();
+        chatPanel.repaint();
         
         chatStatusPanel = new ChatStatusPanel(this);
         add(chatStatusPanel, BorderLayout.SOUTH);

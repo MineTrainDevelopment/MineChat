@@ -23,7 +23,7 @@ import de.minetrain.minechat.utils.Settings;
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
-	public static final String VERSION = "V0.4";
+	public static final String VERSION = "V0.5";
 	public static ConfigManager CONFIG;
 	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
