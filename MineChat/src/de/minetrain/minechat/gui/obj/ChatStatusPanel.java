@@ -23,12 +23,15 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.TwitchChatUser;
+import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.IconStringBuilder;
 
 public class ChatStatusPanel extends JPanel {
 	private static final long serialVersionUID = -1247943509194239246L;
 	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
+	private static final String lineSeparator =  System.getProperty("line.separator");
 	private IconStringBuilder stringBuilder = new IconStringBuilder();
 	private String currentlyCachedInput = "";
 	private boolean lockedState = false;
@@ -120,6 +123,7 @@ public class ChatStatusPanel extends JPanel {
 		stringBuilder.appendString("<3", HTMLColors.RED);
 		stringBuilder.appendSpace();
 		stringBuilder.appendString("  -  Version: "+Main.VERSION, HTMLColors.GRAY);
+		System.out.println(stringBuilder.toString());
 		return stringBuilder;
 	}
 
@@ -135,12 +139,16 @@ public class ChatStatusPanel extends JPanel {
             inputInfo.setHorizontalAlignment(SwingConstants.CENTER);
     		return this;
     	}
-		
+    	
+    	TwitchChatUser twitchUser = TwitchUserStatistics.getTwitchUser(event.getUser().getId());
+    	String userName = (twitchUser != null) ? twitchUser.getUserName() : event.getUser().getName();
+    	String userColor = (twitchUser != null) ? twitchUser.getColorCode(): HTMLColors.LIME.getColorCode();
+    	
     	cancelReplyButton.setVisible(true);
     	stringBuilder.appendSpace();
-    	stringBuilder.appendString("Reply ", HTMLColors.AQUA);
-    	stringBuilder.appendString(event.getUser().getName()+": ", HTMLColors.LIME);
-    	stringBuilder.appendString(event.getMessage(), HTMLColors.WHITE);
+    	stringBuilder.appendString("Reply: ", HTMLColors.AQUA);
+    	stringBuilder.appendString(userName, userColor);
+    	stringBuilder.appendString(" --> "+event.getMessage());
     	
         inputInfo.setHorizontalAlignment(SwingConstants.LEFT);
 		setText(stringBuilder.toString(), true);

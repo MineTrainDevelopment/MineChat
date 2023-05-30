@@ -32,12 +32,24 @@ public class IconStringBuilder {
      * Appends the specified string to the output string.
      *
      * @param string the string to be appended
+     * @param color hex color code.
+     * @return the IconStringBuilder object for method chaining
+     */
+	public IconStringBuilder appendString(String string, String hexColorCode){
+		output += "<font color="+hexColorCode+">"+string.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
+		wordCount++;
+		return this;
+	}
+	
+	/**
+     * Appends the specified string to the output string.
+     *
+     * @param string the string to be appended
      * @param color {@link htmlColors}
      * @return the IconStringBuilder object for method chaining
      */
 	public IconStringBuilder appendString(String string, HTMLColors color){
-		output += "<font color="+color.getColorCode()+">"+string.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
-		wordCount++;
+		appendString(string, color.getColorCode());
 		return this;
 	}
 	
@@ -55,11 +67,20 @@ public class IconStringBuilder {
 	}
 	
 	/**
-     * Appends the space to the output string.
+     * Appends a space to the output string.
      * @return the IconStringBuilder object for method chaining
      */
 	public IconStringBuilder appendSpace(){
 		output += " ";
+		return this;
+	}
+	
+	/**
+     * Appends line split to the output string.
+     * @return the IconStringBuilder object for method chaining
+     */
+	public IconStringBuilder appendLineSplit(){
+		output += "<br>";
 		return this;
 	}
 	
