@@ -18,7 +18,11 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -28,11 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.TwitchCredentials;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import kong.unirest.Unirest;
 
 public class TextureManager {
@@ -293,7 +303,6 @@ public class TextureManager {
 				.asString()
 				.getBody(), JsonObject.class);
 
-		System.out.println(fromJson);
 		downloadBadge(fromJson.getAsJsonObject("badge_sets"), "subscriber", "badges/subscriber/["+userId+"]/{NAME}/");
 		downloadBadge(fromJson.getAsJsonObject("badge_sets"), "bits", "badges/bits/["+userId+"]/{NAME}/");
 	}
@@ -333,6 +342,7 @@ public class TextureManager {
 		downloadBadge(jsonObject, "predictions", badgesPath);
 		downloadBadge(jsonObject, "staff", badgesPath);
 		downloadBadge(jsonObject, "turbo", badgesPath);
+		getDefaultEmotes();
 	}
 
 
@@ -376,9 +386,82 @@ public class TextureManager {
 					}
 				});
 				dialog.dispose();
-			} catch (Exception e) {
+			} catch (Exception ex) {
+				logger.error("Something went wrong while downloading an badge!", ex);
 				dialog.dispose();
 			}
 		}).start();
+	}
+	
+	private static void getDefaultEmotes() {
+		JFrame dialog = new JFrame("emote downloading...");
+		try {
+			dialog.setSize(300, 75);
+			dialog.setLocation(Main.MAIN_FRAME.getLocation().x + 100, Main.MAIN_FRAME.getLocation().y + 400);
+			dialog.setAlwaysOnTop(true);
+			dialog.setUndecorated(true);
+			dialog.setResizable(false);
+			dialog.setShape(new RoundRectangle2D.Double(0, 0, dialog.getWidth(), dialog.getHeight(), 25, 25));
+
+			StatusBar statusBar = new StatusBar();
+			dialog.add(statusBar);
+			dialog.setVisible(true);
+
+			statusBar.setProgress("Get the emote set", 80);
+			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes/global")
+					.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
+					.header("Client-Id", new TwitchCredentials().getClientID()).asString().getBody(),
+					JsonObject.class);
+
+			JsonArray jsonArray = fromJson.getAsJsonArray("data");
+			List<String> emoteList = new ArrayList<String>();
+
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JsonElement jsonElement = jsonArray.get(i);
+				JsonObject entry = jsonElement.getAsJsonObject();
+
+				String name = entry.get("name").getAsString().replaceAll("[" + Pattern.quote("<>:\"/\\|?*") + "]", "_");;
+				System.out.println("emote --> "+entry.get("name").getAsString()+" -- "+name);
+				String fileLocation = "Icons/default/" + name + "/";
+
+				statusBar.setProgress("Downloading: " + name, StatusBar.getPercentage(jsonArray.size(), i));
+				ConfigManager config = new ConfigManager(TextureManager.texturePath + fileLocation + name + ".yml", true);
+				config.setString("Name", name);
+				config.setString("ID", entry.get("id").getAsString());
+				config.setString("Format", "static");
+				config.setString("Theme", "dark");
+				config.saveConfigToFile();
+				
+				emoteList.add(name);
+
+				try {
+					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name + "_1.png");
+					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name + "_2.png");
+					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name + "_3.png");
+					TextureManager.mergeEmoteImages(fileLocation, name + "_1.png", "emoteBorder.png");
+				} catch (IOException ex) {
+					logger.error("Error?", ex);
+				}
+
+			}
+
+			statusBar.setProgress("Saving data...", 99);
+			Collections.sort(emoteList);
+			System.out.println("Emote list --> "+emoteList.toArray());
+
+			if (jsonArray.size() > 0) {
+				List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
+				if (!indexList.contains("Channel_default")) {
+					indexList.add("Channel_default");
+				}
+				Main.EMOTE_INDEX.setStringList("index", indexList, false);
+				Main.EMOTE_INDEX.setStringList("Channel_default", emoteList, true);
+			}
+			statusBar.setDone("Download completed!");
+			dialog.dispose();
+		} catch (Exception ex) {
+			logger.error("Something went wrong while downloading an emote!", ex);
+			dialog.dispose();
+		}
 	}
 }
