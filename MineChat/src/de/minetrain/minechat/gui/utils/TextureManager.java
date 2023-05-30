@@ -288,13 +288,14 @@ public class TextureManager {
 	
 	public static void downloadChannelBadges(String userId){
 		String url = "https://badges.twitch.tv/v1/badges/channels/{USER}/display";
-        String savePath = "badges/subscriber/"+userId+"/{NAME}/";
 
 		JsonObject fromJson = new Gson().fromJson(Unirest.get(url.replace("{USER}", userId))
 				.asString()
 				.getBody(), JsonObject.class);
 
-		downloadBadge(fromJson.getAsJsonObject("badge_sets"), "subscriber", savePath);
+		System.out.println(fromJson);
+		downloadBadge(fromJson.getAsJsonObject("badge_sets"), "subscriber", "badges/subscriber/["+userId+"]/{NAME}/");
+		downloadBadge(fromJson.getAsJsonObject("badge_sets"), "bits", "badges/bits/["+userId+"]/{NAME}/");
 	}
 	
 	public static void downloadPublicData(){

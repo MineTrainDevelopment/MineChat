@@ -128,6 +128,7 @@ public class TwitchListner {
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
     }
     
+//    Runntime error
 //    [00:32:03] >> ERROR<< | Unhandled exception caught dispatching event FollowEvent
 //    java.lang.reflect.InvocationTargetException
 //    	at jdk.internal.reflect.GeneratedMethodAccessor22.invoke(Unknown Source)

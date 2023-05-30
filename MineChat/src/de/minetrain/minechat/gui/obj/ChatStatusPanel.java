@@ -239,6 +239,10 @@ public class ChatStatusPanel extends JPanel {
 		return currentlyCachedInput;
 	}
 
+	public static String getLineseparator() {
+		return lineSeparator;
+	}
+
 
 
 }

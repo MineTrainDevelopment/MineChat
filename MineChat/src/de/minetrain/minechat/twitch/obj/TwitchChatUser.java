@@ -36,8 +36,8 @@ public class TwitchChatUser {
 		Arrays.asList(badgeTags).forEach(badge -> {
 			String path = TextureManager.badgePath+badge+"/1.png";
 			
-			if(badge.startsWith("subscriber")){
-				String channelSubBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/"+event.getChannel().getId();
+			if(badge.startsWith("subscriber") || badge.startsWith("bits")){
+				String channelSubBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/["+event.getChannel().getId()+"]";
 				if (Files.exists(Paths.get(channelSubBadgePath))) {
 					path = channelSubBadgePath+badge.substring(badge.indexOf("/"))+"/1.png";
 				}
