@@ -35,8 +35,6 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
-
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -45,6 +43,7 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
+import de.minetrain.minechat.utils.TwitchMessage;
 
 public class ChatWindowMessageComponent extends JPanel{
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindowMessageComponent.class);
@@ -106,7 +105,7 @@ public class ChatWindowMessageComponent extends JPanel{
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
 	}
 	
-	public ChatWindowMessageComponent(String message, String userName, Color userColor, AbstractChannelMessageEvent event, ChatWindow chatWindow) {
+	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
 		super(new BorderLayout());
 		this.userName = userName;
 		JPanel messagePanel = this;
@@ -148,18 +147,18 @@ public class ChatWindowMessageComponent extends JPanel{
 		replyButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		replyButton.setBorderPainted(false);
 		replyButton.setToolTipText("Replay to this message.");
-		replyButton.setIcon(Main.TEXTURE_MANAGER.getReplyButton());
+		replyButton.setIcon((twitchMessage != null && twitchMessage.isReply()) ? Main.TEXTURE_MANAGER.getReplyChainButton() : Main.TEXTURE_MANAGER.getReplyButton());
 		replyButton.addMouseListener(replyButtonMouseAdapter(replyButton));
 		replyButton.setVisible(false);
 
 		buttonPanel.add(markReadButton, BorderLayout.EAST);
 		
-		if(event != null){
+		if(twitchMessage != null && !twitchMessage.isNull()){
 			add(replyButton, BorderLayout.EAST);
 			replyButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					chatWindow.setMessageToReply(event);
+					chatWindow.setMessageToReply(twitchMessage);
 				}
 			});
 		}
@@ -206,7 +205,7 @@ public class ChatWindowMessageComponent extends JPanel{
 					
 					String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
 					chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
-					chatWindow.setMessageToReply(event);
+					chatWindow.setMessageToReply(twitchMessage);
 				}
 			});
 			

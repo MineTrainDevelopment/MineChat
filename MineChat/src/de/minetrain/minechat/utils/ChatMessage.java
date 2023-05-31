@@ -1,24 +1,22 @@
 package de.minetrain.minechat.utils;
 
-import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
-
 import de.minetrain.minechat.gui.obj.ChannelTab;
 
 public class ChatMessage {
-	private final AbstractChannelMessageEvent messageEvent;
+	private final TwitchMessage replyMessage;
 	private final String message;
 	private final String senderNamem;
 	private final ChannelTab channelTab;
 	
 	public ChatMessage(ChannelTab tab, String senderNamem, String message) {
-		this.messageEvent = tab.getChatWindow().messageEvent;
+		this.replyMessage = tab.getChatWindow().replyMessage;
 		this.senderNamem = senderNamem;
 		this.message = message;
 		this.channelTab = tab;
 	}
 	
-	public AbstractChannelMessageEvent getMessageEvent() {
-		return messageEvent;
+	public TwitchMessage getReplyMessage() {
+		return replyMessage;
 	}
 
 	public String getMessage() {

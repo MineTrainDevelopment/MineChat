@@ -17,7 +17,6 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -27,8 +26,8 @@ import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
 import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.TwitchMessage;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -57,7 +56,6 @@ public class TwitchManager {
 		TwitchClientBuilder twitchBuilder = TwitchClientBuilder.builder();
 
 		Main.LOADINGBAR.setProgress("Loading Twitch user data.", 15);
-		new TwitchUserStatistics();
 		Main.LOADINGBAR.setProgress("Requesting new API AccesToken", 20);
 		accesToken = getAccesToken();
 		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 25);
@@ -115,11 +113,9 @@ public class TwitchManager {
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
 	public static void sendMessage(ChatMessage message) {
-		AbstractChannelMessageEvent messageEvent = message.getMessageEvent();
-		message.getChannelTab().getChatWindow().displayMessage(
-					(messageEvent != null) ? "@"+messageEvent.getUser().getName()+" "+message.getMessage() : message.getMessage(),
-					message.getSenderNamem(), Color.WHITE);
-		
+		TwitchMessage replyMessage = message.getReplyMessage();
+		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderNamem(), Color.WHITE);
+				
 		//Check if a chatter is was mentioned
 		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {
 			if(word.startsWith("@")){
@@ -127,11 +123,12 @@ public class TwitchManager {
 			}
 		});
 		
-		if(messageEvent == null){
-			sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
+		if(replyMessage != null){
+			replyMessage(message);
 			return;
 		}
-		replyMessage(message);
+		
+		sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
 	}
 	
 	
@@ -156,10 +153,11 @@ public class TwitchManager {
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
 	private static void replyMessage(ChatMessage message) {
-		if(message.getMessageEvent() != null){
-			message.getChannelTab().getChatWindow().greetingsManager.setMentioned(message.getMessageEvent().getUser().getName());
-			message.getMessageEvent().reply(twitch.getChat(), message.getMessage());
-			message.getChannelTab().getChatWindow().setMessageToReply(null);
+		TwitchMessage replyMessage = message.getReplyMessage();
+		if(!replyMessage.isNull()){
+			replyMessage.getParentTab().getChatWindow().greetingsManager.setMentioned(replyMessage.getUserName().toLowerCase());
+			twitch.getChat().sendMessage(message.getChannelTab().getChannelName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
+			replyMessage.getParentTab().getChatWindow().setMessageToReply(null);
 			return;
 		}
 		sendMessage(message);

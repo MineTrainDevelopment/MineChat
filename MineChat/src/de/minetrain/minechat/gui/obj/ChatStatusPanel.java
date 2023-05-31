@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 import com.github.twitch4j.client.websocket.domain.WebsocketConnectionState;
 
 import de.minetrain.minechat.gui.frames.ChatWindow;
@@ -23,10 +22,9 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.TwitchChatUser;
-import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.IconStringBuilder;
+import de.minetrain.minechat.utils.TwitchMessage;
 
 public class ChatStatusPanel extends JPanel {
 	private static final long serialVersionUID = -1247943509194239246L;
@@ -128,32 +126,34 @@ public class ChatStatusPanel extends JPanel {
 	}
 
 
-    public ChatStatusPanel setReply(AbstractChannelMessageEvent event){
-    	System.out.println("reply -> "+(event != null ? event.getMessage() : "null"));
+    public ChatStatusPanel setReply(TwitchMessage twitchMessage){
+//    	System.out.println("reply -> "+(event != null ? event.getMessage() : "null"));
     	if(forceLockedState){return this;}
     	
-    	if(event == null){
-    		setLockedState(false);
-    		setText(getDefaultText(), false);
-    		cancelReplyButton.setVisible(false);
-            inputInfo.setHorizontalAlignment(SwingConstants.CENTER);
+    	if(twitchMessage == null){
+    		setDefault();
     		return this;
     	}
     	
-    	TwitchChatUser twitchUser = TwitchUserStatistics.getTwitchUser(event.getUser().getId());
-    	String userName = (twitchUser != null) ? twitchUser.getUserName() : event.getUser().getName();
-    	String userColor = (twitchUser != null) ? twitchUser.getColorCode(): HTMLColors.LIME.getColorCode();
     	
     	cancelReplyButton.setVisible(true);
     	stringBuilder.appendSpace();
     	stringBuilder.appendString("Reply: ", HTMLColors.AQUA);
-    	stringBuilder.appendString(userName, userColor);
-    	stringBuilder.appendString(" --> "+event.getMessage());
+    	stringBuilder.appendString(twitchMessage.getUserName(), twitchMessage.getUserColorCode());
+    	stringBuilder.appendString(" --> "+twitchMessage.getMessage());
     	
         inputInfo.setHorizontalAlignment(SwingConstants.LEFT);
 		setText(stringBuilder.toString(), true);
 		stringBuilder.clear();
     	return this;
+	}
+
+	public ChatStatusPanel setDefault() {
+		setLockedState(false);
+		setText(getDefaultText(), false);
+		cancelReplyButton.setVisible(false);
+		inputInfo.setHorizontalAlignment(SwingConstants.CENTER);
+		return this;
 	}
     
     private ChatStatusPanel setText(String message, boolean locked){

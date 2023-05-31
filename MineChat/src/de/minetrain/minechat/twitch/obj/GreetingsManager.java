@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.obj.ChannelTab;
-import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.utils.ChatMessage;
 
 /**
  * The GreetingsManager class is a specialized String list class that stores

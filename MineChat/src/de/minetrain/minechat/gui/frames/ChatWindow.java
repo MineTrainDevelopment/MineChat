@@ -22,8 +22,6 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
-
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -33,6 +31,7 @@ import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.utils.CallCounter;
+import de.minetrain.minechat.utils.TwitchMessage;
 
 public class ChatWindow extends JLabel {
 	private static final long serialVersionUID = -8392586696866883591L;
@@ -44,9 +43,9 @@ public class ChatWindow extends JLabel {
 //	public  List<String> chatterNames = new ArrayList<String>();
 	public final GreetingsManager greetingsManager;
 	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
-	public AbstractChannelMessageEvent messageEvent = null;
 	public CallCounter messagesPerMin = new CallCounter();
 	public Integer messagesPerDay = 0;
+	public TwitchMessage replyMessage = null;
     public JPanel chatPanel;
     private JScrollPane scrollPane;
     public final ChannelTab parentTab;
@@ -112,13 +111,17 @@ public class ChatWindow extends JLabel {
         });
     }
     
+    public void displayMessage(TwitchMessage message) {
+    	displayMessage(message.getMessage(), message.getUserName(), Color.decode(message.getUserColorCode()), message);
+    }
+    
 	public void displayMessage(String message, String userName, Color userColor) {
     	displayMessage(message, userName, userColor, null);
     }
 
 //	private List<ChatWindowMessageComponent> list = new ArrayList<ChatWindowMessageComponent>();
-	public void displayMessage(String message, String userName, Color userColor, AbstractChannelMessageEvent event) {
-		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(message, userName, userColor, event, this);
+	public void displayMessage(String message, String userName, Color userColor, TwitchMessage twitchMessage) {
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(message, userName, userColor, twitchMessage, this);
 //		int minimisedPanelHight = 0;
 		
         chatPanel.add(messagePanel);
@@ -142,7 +145,7 @@ public class ChatWindow extends JLabel {
         messagesPerMin.recordCallTime();
         chatPanel.revalidate();
         chatPanel.repaint();
-        chatStatusPanel.setReply(messageEvent);
+        chatStatusPanel.setDefault();
         
         JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();
@@ -192,9 +195,9 @@ public class ChatWindow extends JLabel {
     	return "Messages: "+messagesPerDay+" | PerMin: "+messagesPerMin.getCallCount();
     }
     
-    public void setMessageToReply(AbstractChannelMessageEvent messageEvent) {
-		this.messageEvent = messageEvent;
-		chatStatusPanel.setReply(messageEvent);
+    public void setMessageToReply(TwitchMessage twitchMessage) {
+		this.replyMessage = twitchMessage;
+		chatStatusPanel.setReply(twitchMessage);
 	}
 
 

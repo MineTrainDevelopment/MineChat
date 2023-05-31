@@ -1,9 +1,11 @@
 package de.minetrain.minechat.twitch;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +35,6 @@ import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
-import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -43,10 +44,8 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.TwitchChatUser;
-import de.minetrain.minechat.twitch.obj.TwitchUserStatistics;
-import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
+import de.minetrain.minechat.utils.TwitchMessage;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
@@ -98,6 +97,8 @@ public class TwitchListner {
 			return;
 		}
 		
+		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent().getTags(), event.getMessage());
+		
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
 			String[] splitMessage = event.getMessage().split(" ");
 			List<String> words = Arrays.asList(splitMessage);
@@ -109,13 +110,8 @@ public class TwitchListner {
 			});
 		}
 
-		TwitchChatUser twitchUser = TwitchUserStatistics.getTwitchUser(event.getUser().getId());
-		if(twitchUser == null){
-			channelTab.getChatWindow().displayMessage(event.getMessage(), event.getUser().getName(), Color.WHITE, event);
-		}else{
-			twitchUser.setBadges(event, channelTab);
-			channelTab.getChatWindow().displayMessage(event.getMessage(), twitchUser.getUserName(), twitchUser.getColor(), event);
-		}
+		setBadges(event, channelTab);
+		channelTab.getChatWindow().displayMessage(twitchMessage);
 	}
 	
     @EventSubscriber
@@ -397,6 +393,28 @@ public class TwitchListner {
 		
 		return actionButton;
 	}
+	
+	private void setBadges(AbstractChannelMessageEvent event, ChannelTab tab){
+    	if(tab.getChatWindow().badges.containsKey(event.getUser().getName().toLowerCase())){return;}
+    	List<String> list = new ArrayList<String>();
+    	String[] badgeTags = event.getMessageEvent().getTagValue("badges").toString().replace("Optional[", "").replace("]", "").split(",");
+		Arrays.asList(badgeTags).forEach(badge -> {
+			String path = TextureManager.badgePath+badge+"/1.png";
+			
+			if(badge.startsWith("subscriber") || badge.startsWith("bits")){
+				String channelSubBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/["+event.getChannel().getId()+"]";
+				if (Files.exists(Paths.get(channelSubBadgePath))) {
+					path = channelSubBadgePath+badge.substring(badge.indexOf("/"))+"/1.png";
+				}
+			}
+			
+			if (Files.exists(Paths.get(path))) {
+				list.add(path);
+			}
+		});
+		
+		tab.getChatWindow().badges.put(event.getUser().getName().toLowerCase(), list);
+    }
 
 
 //    @EventSubscriber

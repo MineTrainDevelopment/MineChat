@@ -42,7 +42,6 @@ import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import kong.unirest.Unirest;
 
 public class TextureManager {
@@ -68,6 +67,7 @@ public class TextureManager {
 	private final ImageIcon statusButton_3;
 	private final ImageIcon rowArrowRight;
 	private final ImageIcon rowArrowLeft;
+	private final ImageIcon replyChainButton;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -89,6 +89,7 @@ public class TextureManager {
 		this.statusButton_3 = new ImageIcon(texturePath + "statusButton_3.png");
 		this.rowArrowLeft = new ImageIcon(texturePath + "rowArrowLeft.png");
 		this.rowArrowRight = new ImageIcon(texturePath + "rowArrowRight.png");
+		this.replyChainButton = new ImageIcon(texturePath + "replyChainButton.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -168,8 +169,12 @@ public class TextureManager {
 	public ImageIcon getRowArrowLeft() {
 		return rowArrowLeft;
 	}
+	
+	public ImageIcon getReplyChainButton() {
+		return replyChainButton;
+	}
 
-
+	
 	public ImageIcon getByTabButton(TabButtonType tab){
 		switch (tab) {
 		case TAB_MAIN:
@@ -464,4 +469,5 @@ public class TextureManager {
 			dialog.dispose();
 		}
 	}
+
 }
