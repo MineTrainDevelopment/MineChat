@@ -168,7 +168,7 @@ public class TwitchListner {
     	
         if(!event.getGifted() && Settings.displaySubs_Follows) {
         	String message = (event.getMessage().isEmpty()) ? "" : event.getMessage().get();
-			currentChannelTab.getChatWindow().displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed! \n"+message,
+			currentChannelTab.getChatWindow().displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed! \n "+message,
     			(event.getMonths()>12) ? ColorManager.CHAT_SPENDING_SMALL : ColorManager.CHAT_UNIMPORTANT,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
         }else if(Settings.displayGiftedSubscriptions){
