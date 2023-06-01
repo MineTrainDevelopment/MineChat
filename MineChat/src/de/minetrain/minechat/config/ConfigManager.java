@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class ConfigManager {
     	
         Yaml yaml = new Yaml(options);
         try {
-            FileWriter writer = new FileWriter(configFileName);
+            FileWriter writer = new FileWriter(configFileName, StandardCharsets.UTF_8);
             yaml.dump(getRawConfig(), writer);
             writer.close();
         } catch (IOException e) {
