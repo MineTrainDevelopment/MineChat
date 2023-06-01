@@ -49,7 +49,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindowMessageComponent.class);
 	private static final long serialVersionUID = -3116239050269500823L;
 	
-	private static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
+	private static final Font MESSAGE_FONT = new Font("Arial Unicode MS", Font.BOLD, 17);
 	private static final Map<String, String> emoteReplacements = new HashMap<>();
 	private static final Dimension buttonSize = new Dimension(28, 28);
 	public static final Random random = new Random();
