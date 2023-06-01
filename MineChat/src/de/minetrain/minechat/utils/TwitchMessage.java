@@ -4,9 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.minetrain.minechat.gui.obj.ChannelTab;
 
 public class TwitchMessage {
+	private static final Logger logger = LoggerFactory.getLogger(TwitchMessage.class); //TEMP
 	private final String message;
 	private final String messageId;
 	private final String channelId;
@@ -36,6 +40,7 @@ public class TwitchMessage {
 		this.replyId = (data.containsKey("reply-parent-msg-id") ? data.get("reply-parent-msg-id") : null);
 		this.replyUser = (data.containsKey("reply-parent-display-name") ? data.get("reply-parent-display-name") : null);
 		this.dummy = false;
+		logger.info("Name: "+userName+" -- [Color: "+userColorCode+"]"); //TEMP
 	}
 	
 	public TwitchMessage(ChannelTab parentTab, String userName, String message) {
