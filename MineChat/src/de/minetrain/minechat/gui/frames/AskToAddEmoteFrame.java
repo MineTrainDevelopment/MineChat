@@ -23,7 +23,7 @@ public class AskToAddEmoteFrame extends JDialog{
 	public AskToAddEmoteFrame(MainFrame mainFrame) {
 		super(mainFrame, "MineChat, question frame", true);
         setSize(250, 100);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(mainFrame);
         setAlwaysOnTop(true);
 		setUndecorated(true);
 		setResizable(false);
