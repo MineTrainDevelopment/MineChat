@@ -19,6 +19,7 @@ import com.github.twitch4j.chat.events.AbstractChannelMessageEvent;
 import com.github.twitch4j.chat.events.ChatConnectionStateEvent;
 import com.github.twitch4j.chat.events.channel.BitsBadgeEarnedEvent;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.chat.events.channel.ChannelModEvent;
 import com.github.twitch4j.chat.events.channel.CheerEvent;
 import com.github.twitch4j.chat.events.channel.ClearChatEvent;
 import com.github.twitch4j.chat.events.channel.DeleteMessageEvent;
@@ -114,94 +115,6 @@ public class TwitchListner {
 		channelTab.getChatWindow().displayMessage(twitchMessage);
 	}
 	
-//	[01.06.2023 | 14:27:44] >> ERROR << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Unhandled exception caught dispatching event ChannelMessageEvent
-//	java.lang.reflect.InvocationTargetException
-//		at jdk.internal.reflect.GeneratedMethodAccessor17.invoke(Unknown Source)
-//		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-//		at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:130)
-//		at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:127)
-//		at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:126)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
-//		at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//		at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//		at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//		at com.github.twitch4j.chat.events.IRCEventHandler.onChannelMessage(IRCEventHandler.java:124)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$3(SimpleEventHandler.java:112)
-//		at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$4(SimpleEventHandler.java:112)
-//		at java.base/java.lang.Iterable.forEach(Iterable.java:75)
-//		at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleConsumerHandlers(SimpleEventHandler.java:109)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:99)
-//		at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//		at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//		at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//		at com.github.twitch4j.chat.TwitchChat.lambda$onTextMessage$16(TwitchChat.java:572)
-//		at java.base/java.util.Arrays$ArrayList.forEach(Arrays.java:4204)
-//		at com.github.twitch4j.chat.TwitchChat.onTextMessage(TwitchChat.java:544)
-//		at com.github.twitch4j.client.websocket.WebsocketConnection$1.onTextMessage(WebsocketConnection.java:123)
-//		at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
-//		at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
-//		at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
-//		at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
-//		at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
-//		at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
-//		at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
-//		at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
-//	Caused by: java.lang.NullPointerException: Cannot invoke "String.isEmpty()" because "nm" is null
-//		at java.base/java.lang.Integer.decode(Integer.java:1422)
-//		at java.desktop/java.awt.Color.decode(Color.java:731)
-//		at de.minetrain.minechat.gui.frames.ChatWindow.displayMessage(ChatWindow.java:115)
-//		at de.minetrain.minechat.twitch.TwitchListner.onAbstractChannelMessage(TwitchListner.java:114)
-//		... 35 more
-//	[01.06.2023 | 14:28:02] >> INFO  << [de.minetrain.minechat.twitch.TwitchListner] - User: minetrainlp | Message --> @lonelykatelp jennyanWink
-//	[01.06.2023 | 14:28:17] >> INFO  << [de.minetrain.minechat.twitch.TwitchListner] - User: lonelykatelp | Message --> Alles gut bei dir ?
-//	[01.06.2023 | 14:28:17] >> ERROR << [com.github.philippheuer.events4j.simple.SimpleEventHandler] - Unhandled exception caught dispatching event ChannelMessageEvent
-//	java.lang.reflect.InvocationTargetException
-//		at jdk.internal.reflect.GeneratedMethodAccessor17.invoke(Unknown Source)
-//		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-//		at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:130)
-//		at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:127)
-//		at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:126)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
-//		at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//		at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//		at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//		at com.github.twitch4j.chat.events.IRCEventHandler.onChannelMessage(IRCEventHandler.java:124)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$3(SimpleEventHandler.java:112)
-//		at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$4(SimpleEventHandler.java:112)
-//		at java.base/java.lang.Iterable.forEach(Iterable.java:75)
-//		at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleConsumerHandlers(SimpleEventHandler.java:109)
-//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:99)
-//		at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//		at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//		at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//		at com.github.twitch4j.chat.TwitchChat.lambda$onTextMessage$16(TwitchChat.java:572)
-//		at java.base/java.util.Arrays$ArrayList.forEach(Arrays.java:4204)
-//		at com.github.twitch4j.chat.TwitchChat.onTextMessage(TwitchChat.java:544)
-//		at com.github.twitch4j.client.websocket.WebsocketConnection$1.onTextMessage(WebsocketConnection.java:123)
-//		at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
-//		at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
-//		at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
-//		at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
-//		at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
-//		at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
-//		at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
-//		at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
-//	Caused by: java.lang.NullPointerException: Cannot invoke "String.isEmpty()" because "nm" is null
-//		at java.base/java.lang.Integer.decode(Integer.java:1422)
-//		at java.desktop/java.awt.Color.decode(Color.java:731)
-//		at de.minetrain.minechat.gui.frames.ChatWindow.displayMessage(ChatWindow.java:115)
-//		at de.minetrain.minechat.twitch.TwitchListner.onAbstractChannelMessage(TwitchListner.java:114)
-//		... 35 more
 	
     @EventSubscriber
     public void onFollow(FollowEvent event) {
@@ -213,34 +126,6 @@ public class TwitchListner {
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
     }
     
-//    Runntime error
-//    [00:32:03] >> ERROR<< | Unhandled exception caught dispatching event FollowEvent
-//    java.lang.reflect.InvocationTargetException
-//    	at jdk.internal.reflect.GeneratedMethodAccessor22.invoke(Unknown Source)
-//    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-//    	at java.base/java.lang.reflect.Method.invoke(Method.java:564)
-//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:130)
-//    	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:127)
-//    	at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
-//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:126)
-//    	at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
-//    	at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//    	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//    	at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//    	at com.github.twitch4j.TwitchClientHelper.lambda$new$7(TwitchClientHelper.java:314)
-//    	at com.github.twitch4j.TwitchClientHelper$ListenerRunnable.run(TwitchClientHelper.java:651)
-//    	at com.github.twitch4j.TwitchClientHelper$ListenerRunnable.lambda$run$0(TwitchClientHelper.java:659)
-//    	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
-//    	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
-//    	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
-//    	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
-//    	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
-//    	at java.base/java.lang.Thread.run(Thread.java:832)
-//    Caused by: java.lang.NullPointerException: Cannot invoke "de.minetrain.minechat.gui.obj.ChannelTab.getChatWindow()" because "currentChannelTab" is null
-//    	at de.minetrain.minechat.twitch.TwitchListner.onFollow(TwitchListner.java:126)
-//    	... 21 more
-
     @EventSubscriber
     public void onCheer(CheerEvent event) {
     	if(!Settings.displayBitsCheerd){return;}
@@ -365,6 +250,13 @@ public class TwitchListner {
     	if(!Settings.displayModActions){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
 			.displaySystemInfo("Raid cancelled", "The current raid got cancelled!", ColorManager.CHAT_MODERATION, null);
+    }
+    
+    @EventSubscriber
+    public void onChannelMod(ChannelModEvent event){
+    	if(!Settings.displayModActions){return;}
+    	getCurrentChannelTab(event.getChannel()).getChatWindow()
+			.displaySystemInfo("Mod status changed", event.getUser().getName()+" The current raid got cancelled!", ColorManager.CHAT_MODERATION, null);
     }
 
     @EventSubscriber
