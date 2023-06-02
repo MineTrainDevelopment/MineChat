@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -40,6 +41,8 @@ import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.utils.FlippedImageIcon;
+import de.minetrain.minechat.gui.utils.MirroredImageIcon;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
@@ -256,12 +259,18 @@ public class ChatWindowMessageComponent extends JPanel{
         
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}
         input = (newInput.contains("\n") ? newInput.substring(0, newInput.lastIndexOf("\n")).trim() : newInput.trim());
-
+        
+        String previousWord = "";
+        System.out.println("-- Format? --");
 		for (String word : input.split(" ")) {
 			SimpleAttributeSet attributeSet = new SimpleAttributeSet();
 			StyleConstants.setAlignment(attributeSet, StyleConstants.ALIGN_CENTER);
 			StyleConstants.setForeground(attributeSet, fontColor);
+			
 			boolean isEmote = false;
+			int emoteStyle = (previousWord.equals("h!") ? 1 : (previousWord.equals("v!") ? 2 : 0 ));
+			previousWord = word;
+			System.out.println("EMOTE STLYE -- "+emoteStyle+" -- "+word);
 
 			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
 			
@@ -274,12 +283,20 @@ public class ChatWindowMessageComponent extends JPanel{
 	    	});
 			
 			if (emotesByName.get(word) != null) {
-				StyleConstants.setIcon(attributeSet, emotesByName.get(word).getImageIcon());
+				ImageIcon emote = emotesByName.get(word).getImageIcon();
+				
+				switch (emoteStyle) {
+				case 1: StyleConstants.setIcon(attributeSet, new MirroredImageIcon(emote.getImage())); break;
+				case 2: StyleConstants.setIcon(attributeSet, new FlippedImageIcon(emote.getImage())); break;
+				default: StyleConstants.setIcon(attributeSet, emote); break;}
+				
 				isEmote = true;
 			}
 
 			try {
-				document.insertString(document.getLength(), word + " ", attributeSet);
+				if(!previousWord.equals("h!") && !previousWord.equals("v!")){
+					document.insertString(document.getLength(), word + " ", attributeSet);
+				}
 
 				if (isEmote) {
 					document.insertString(document.getLength(), " ", null);
