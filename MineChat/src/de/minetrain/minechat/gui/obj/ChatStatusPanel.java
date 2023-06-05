@@ -149,17 +149,19 @@ public class ChatStatusPanel extends JPanel {
 	}
 
 	public ChatStatusPanel setDefault() {
-		setLockedState(false);
-		setText(getDefaultText(), false);
-		cancelReplyButton.setVisible(false);
-		inputInfo.setHorizontalAlignment(SwingConstants.CENTER);
+		if(!isLocked()){
+			setText(getDefaultText(), false);
+			cancelReplyButton.setVisible(false);
+			inputInfo.setHorizontalAlignment(SwingConstants.CENTER);
+		}
 		return this;
 	}
     
     private ChatStatusPanel setText(String message, boolean locked){
-    	if(isLocked()){return this;}
-    	setLockedState(locked);
-		this.inputInfo.setText((message.length()>200) ? message.substring(0, (200-1))+"..." : message);
+    	if(!isLocked()){
+    		setLockedState(locked);
+    		this.inputInfo.setText((message.length()>200) ? message.substring(0, (200-1))+"..." : message);
+    	}
     	return this;
 	}
     
