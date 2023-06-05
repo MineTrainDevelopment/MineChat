@@ -46,9 +46,8 @@ public class TwitchEmote {
 				String format = emote.split("%&%")[1];
 				emote = emote.split("%&%")[0];
 				String newEmote = folderPath + channel.replace("Channel_", "") +"/"+ emote+"/"+emote+"_1"+((withBorder) ? "_BG.png%&%"+format : format);
-				System.out.println(newEmote);
 				tempList.add(newEmote);
-				emotesByName.put(emote, new TwitchEmote(newEmote.replace("_BG.png", format)));
+				emotesByName.put(emote, new TwitchEmote(newEmote.replace("_BG.png%&%", "")));
 			});
 			
 			emotes.put(channel, tempList);
