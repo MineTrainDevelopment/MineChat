@@ -244,8 +244,8 @@ public class EmoteDownlodFrame extends JDialog{
 				.asString()
 				.getBody(), JsonObject.class);
 		
-		System.out.println(fromJson.get("data"));
 		JsonArray jsonArray = fromJson.getAsJsonArray("data");
+		String downloadURL = fromJson.get("template").getAsString();
 		List<String> emoteList = new ArrayList<String>();
 		List<String> emoteTier2List = new ArrayList<String>();
 		List<String> emoteTier3List = new ArrayList<String>();
@@ -257,40 +257,48 @@ public class EmoteDownlodFrame extends JDialog{
 			JsonObject entry = jsonElement.getAsJsonObject();
 			
 			String name = entry.get("name").getAsString();
+			String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
+			String fileFormat = ((format.length()>6) ? ".gif" : ".png");
+			String emoteID = entry.get("id").getAsString();
 			String fileLocation = "Icons/"+userId+"/"+name+"/";
 			
 		    statusBar.setProgress("Downloading: "+name, StatusBar.getPercentage(jsonArray.size(), i));
 			ConfigManager config = new ConfigManager(TextureManager.texturePath+fileLocation+name+".yml", true);
 			
 			String borderImageTyp = "";
+			String indexName = name+"%&%"+fileFormat;
 			switch (entry.get("tier").getAsString()) {
-				case "1000": emoteList.add(name); break;
-				case "2000": emoteTier2List.add(name); borderImageTyp="2"; break;
-				case "3000": emoteTier3List.add(name); borderImageTyp="3"; break;
+				case "1000": emoteList.add(indexName); break;
+				case "2000": emoteTier2List.add(indexName); borderImageTyp="2"; break;
+				case "3000": emoteTier3List.add(indexName); borderImageTyp="3"; break;
 				default:
 					if(entry.get("emote_type").getAsString().equals("bitstier")){
-						 emoteBitsList.add(name); borderImageTyp="Bits";
+						 emoteBitsList.add(indexName); borderImageTyp="Bits";
 					}else{
-						emoteFollowList.add(name); borderImageTyp="Follow";
+						emoteFollowList.add(indexName); borderImageTyp="Follow";
 					}
 					break;
 			}
 			
 			config.setString("Name", name);
-			config.setString("ID", entry.get("id").getAsString());
+			config.setString("ID", emoteID);
 			config.setString("Tier", entry.get("tier").getAsString());
 			config.setString("EmoteType", entry.get("emote_type").getAsString());
 			config.setString("EmoteSet_Id",entry.get("emote_set_id").getAsString());
 			config.setString("Tier",entry.get("tier").getAsString());
-			config.setString("Format", "static");
+			config.setString("Format", format);
 			config.setString("Theme", "dark");
 			config.saveConfigToFile();
 			
 			try {
-				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name+"_1.png");
-				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name+"_2.png");
-				TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name+"_3.png");
-				TextureManager.mergeEmoteImages(fileLocation, name+"_1.png", "emoteBorder"+borderImageTyp+".png");
+//				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
+//				downloadURL = downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark");
+				System.out.println("Emote -> "+name+" --- "+downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark"));
+				for (int index = 1; index < 4; index++) {
+					TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, name+"_"+index+fileFormat);
+				}
+				
+				TextureManager.mergeEmoteImages(fileLocation, name+"_1"+fileFormat, "emoteBorder"+borderImageTyp+".png", fileFormat);
 			} catch (IOException ex) {
 				logger.error("Error?", ex);
 			}
@@ -366,8 +374,6 @@ public class EmoteDownlodFrame extends JDialog{
 		String newEmoteName = (customEmoteName.getText().length()>0) ? customEmoteName.getText() : url.replace(BTTV_EMOTE_URL, "");
 		String bttvEmotePath = "Icons/bttv/"+newEmoteName+"/";
 		
-		System.out.println(url);
-
 		statusBar.setProgress("Downloading: "+newEmoteName+"_1x", StatusBar.getPercentage(5, 1));
 		TextureManager.downloadImage(url+"/1x", bttvEmotePath, newEmoteName+"_1.gif");
 		TextureManager.mergeEmoteImages(bttvEmotePath, newEmoteName+"_1.gif", "emoteBorder.png", "gif");
@@ -392,8 +398,8 @@ public class EmoteDownlodFrame extends JDialog{
 		}
 		
 		List<String> emoteList = Main.EMOTE_INDEX.getStringList("Channel_bttv");
-		if(!emoteList.contains(newEmoteName)){
-			emoteList.add(newEmoteName);
+		if(!emoteList.contains(newEmoteName+"%&%.gif")){
+			emoteList.add(newEmoteName+"%&%.gif");
 		}
 
 		Collections.sort(emoteList);

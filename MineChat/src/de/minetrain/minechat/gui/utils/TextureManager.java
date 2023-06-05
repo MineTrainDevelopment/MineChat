@@ -31,6 +31,8 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fmsware.gif.GifDecoder;
+import com.fmsware.gif.GifEncoder;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -82,6 +84,7 @@ public class TextureManager {
 		this.cancelButton = new ImageIcon(texturePath + "cancelButton.png");
 		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
 		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
+//		this.emoteButton = new ImageIcon("data/texture/Icons/99351845/jennyanPopcorn/jennyanPopcorn_1.gif");
 		this.waveButton = new ImageIcon(texturePath + "waveButton.png");
 		this.loveButton = new ImageIcon(texturePath + "loveButton.png");
 		this.statusButton_1 = new ImageIcon(texturePath + "statusButton_1.png");
@@ -236,6 +239,10 @@ public class TextureManager {
 	        	 resizeImage(fileLocation, fileName, dimension);
 	         }
 	         
+	         if(fileName.contains(".gif")){
+	        	 reformatGif(texturePath + fileLocation + fileName, texturePath + fileLocation + fileName);
+	         }
+	         
 	         System.out.println("Bild erfolgreich heruntergeladen.");
 	      } catch (IOException e) {
 	         e.printStackTrace();
@@ -273,6 +280,8 @@ public class TextureManager {
 	}
 	
 	public static void mergeEmoteImages(String fileLocation, String fileName, String background, String format){
+		format = format.replace(".", "");
+		System.out.println("merge -- "+fileLocation+fileName+" ---> "+background+"  <---> "+format);
 		try {
 			File path = new File(texturePath + fileLocation); // base path of the images
 			System.out.println(texturePath + fileLocation);
@@ -297,6 +306,27 @@ public class TextureManager {
 			ImageIO.write(combined, format.toUpperCase(), new File(path, fileName.replace("."+format, "_BG.png")));
 		} catch (IOException ex) {
 			logger.error("Merging images whent wrong.", ex);
+		}
+	}
+	
+	private static void reformatGif(String origin, String destination) {
+		try {
+			GifDecoder decoder = new GifDecoder();
+			decoder.read(origin);
+			
+			GifEncoder encoder = new GifEncoder();
+			encoder.setRepeat(true);
+			encoder.setTransparent(true);
+			encoder.start(destination);
+
+			encoder.setSize(decoder.getFrameSize());
+			for (int i = 0; i < decoder.getFrameCount(); i++) {
+				encoder.addFrame(decoder.getFrame(i), decoder.getDelay(i));
+			}
+	
+			encoder.finish();
+		} catch (Exception ex) {
+			logger.warn("Unable to reformat gif! \nOrigin: "+origin+"\nDestination: "+destination, ex);
 		}
 	}
 	
@@ -436,8 +466,8 @@ public class TextureManager {
 				config.setString("Format", "static");
 				config.setString("Theme", "dark");
 				config.saveConfigToFile();
-				
-				emoteList.add(name);
+
+				emoteList.add(name+"%&%.png");
 
 				try {
 					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name + "_1.png");

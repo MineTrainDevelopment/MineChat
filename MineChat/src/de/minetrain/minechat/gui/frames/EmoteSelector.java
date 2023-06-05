@@ -142,7 +142,6 @@ public class EmoteSelector extends JDialog{
 			    dummyButton.setPreferredSize(dummyButton.getSize());
 			    dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
 			    buttons.add(dummyButton);
-			    System.out.println("add - "+buttons.size());
 			}
 
 //			if(buttons.size() < MAX_EMOTES_PER_ROW){

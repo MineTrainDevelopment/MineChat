@@ -261,7 +261,6 @@ public class ChatWindowMessageComponent extends JPanel{
         input = (newInput.contains("\n") ? newInput.substring(0, newInput.lastIndexOf("\n")).trim() : newInput.trim());
         
         String previousWord = "";
-        System.out.println("-- Format? --");
 		for (String word : input.split(" ")) {
 			SimpleAttributeSet attributeSet = new SimpleAttributeSet();
 			StyleConstants.setAlignment(attributeSet, StyleConstants.ALIGN_CENTER);
@@ -270,7 +269,6 @@ public class ChatWindowMessageComponent extends JPanel{
 			boolean isEmote = false;
 			int emoteStyle = (previousWord.equals("h!") ? 1 : (previousWord.equals("v!") ? 2 : 0 ));
 			previousWord = word;
-			System.out.println("EMOTE STLYE -- "+emoteStyle+" -- "+word);
 
 			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
 			
@@ -284,6 +282,8 @@ public class ChatWindowMessageComponent extends JPanel{
 			
 			if (emotesByName.get(word) != null) {
 				ImageIcon emote = emotesByName.get(word).getImageIcon();
+				
+				System.out.println("EmoteText --> "+word);
 				
 				switch (emoteStyle) {
 				case 1: StyleConstants.setIcon(attributeSet, new MirroredImageIcon(emote.getImage())); break;
