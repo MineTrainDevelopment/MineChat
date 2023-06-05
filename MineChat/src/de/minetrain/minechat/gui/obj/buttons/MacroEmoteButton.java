@@ -50,11 +50,14 @@ public class MacroEmoteButton extends MineButton{
 		            
 		            new Thread(() -> {
 		            	String selectedEmote = emoteSelector.getSelectedEmote();
+		            	
 						while(!emoteSelector.isDisposed() && selectedEmote == null){
 			            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
 			            }
 		            	
 		            	if(selectedEmote != null){
+		            		selectedEmote = selectedEmote.replace("_BG.png", emoteSelector.getSelectetEmoteFormat());
+		            		
 							String selectedEmoteName = selectedEmote.split("/")[4];
 		            		InputFrame inputFrame;
 	            			inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);

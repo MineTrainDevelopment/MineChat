@@ -84,7 +84,7 @@ public class MacroButton extends MineButton{
 	    			            }
 	    		            	
 	    		            	if(selectedEmote != null){
-	    		            		emotePath = "%&%"+selectedEmote.replace("_BG", "");
+	    		            		emotePath = "%&%"+selectedEmote.replace("_BG.png", emoteSelector.getSelectetEmoteFormat());;
 	    		            	}
 	            			}
 

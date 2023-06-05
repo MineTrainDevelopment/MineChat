@@ -44,7 +44,7 @@ public class EmoteSelector extends JDialog{
     private static final int MAX_EMOTES_PER_ROW = 10;
     public static final int BUTTON_SIZE = 36;
     private int mouseX, mouseY;
-    private String selectedEmote;
+    private String selectedEmote, selectetEmoteFormat;
     private boolean disposed;
     private boolean disposOnSelect;
     private JTextField textFieldToEdit;
@@ -115,16 +115,20 @@ public class EmoteSelector extends JDialog{
         
         for (Map.Entry<String, List<String>> entry : emotes.entrySet()) {
             List<JButton> buttons = new ArrayList<JButton>();
+            
 			for (String emote : entry.getValue()) {
+				String[] emoteUrlSplit = emote.split("%&%");
+				
 				MineButton mineButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
 				mineButton.setPreferredSize(mineButton.getSize());
-                mineButton.setIcon(new ImageIcon(emote));
+                mineButton.setIcon(new ImageIcon(emoteUrlSplit[0]));
                 mineButton.setToolTipText(emote.split("/")[4]);
                 mineButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         System.out.println("Emote selected: " + emote);
-                        selectedEmote = emote;
+						selectedEmote = emoteUrlSplit[0];
+                        selectetEmoteFormat = emoteUrlSplit[1];
                         if(disposOnSelect){
                         	disposed = true;
                         	addSelectetEmoteToText(null);
@@ -221,6 +225,10 @@ public class EmoteSelector extends JDialog{
 
 	public String getSelectedEmote() {
 		return selectedEmote;
+	}
+	
+	public String getSelectetEmoteFormat() {
+		return selectetEmoteFormat;
 	}
 	
 }
