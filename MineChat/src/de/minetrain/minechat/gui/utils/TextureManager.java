@@ -316,7 +316,7 @@ public class TextureManager {
 			
 			GifEncoder encoder = new GifEncoder();
 			encoder.setRepeat(true);
-			encoder.setTransparent(true);
+			encoder.setTransparent();
 			encoder.start(destination);
 
 			encoder.setSize(decoder.getFrameSize());

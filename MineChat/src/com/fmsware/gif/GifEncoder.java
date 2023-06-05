@@ -35,7 +35,7 @@ import java.io.OutputStream;
  */
 
 public class GifEncoder {
-	public static final Color defaultBackground = new Color(249, 249, 249);
+	public static final Color defaultBackground = new Color(200, 254, 254);
 	protected int width; // image size
 	protected int height;
 	protected Color transparent = null; // transparent color if given
@@ -135,7 +135,7 @@ public class GifEncoder {
 	 * Set the background transparent.
 	 * @param state
 	 */
-	public void setTransparent(Boolean state) {
+	public void setTransparent() {
 		setBackground(defaultBackground);
 		setTransparent(defaultBackground, false);
 	}
