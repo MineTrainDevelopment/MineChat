@@ -25,10 +25,47 @@ public class Main {
 	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
 	private static JFrame onboardingFrame;
-//	sendMessage("minetrainlp", "", "test");
-//	try {Thread.sleep(1500);} catch (InterruptedException e) { }
-//	sendMessage("minetrainlp", "", "test "+ "ㅤ");
+	private static final String OAuth2_URL = "https://id.twitch.tv/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URL}&response_type=token&scope=chat:edit+chat:read+channel:moderate+moderation:read";
 	
+//	public static void main(String[] args) throws IOException {
+//        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+//        server.createContext("/oauth_callback", new OAuthCallbackHandler());
+//        server.start();
+//        System.out.println("OAuth2 Server gestartet. Öffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
+//    }
+//	
+//	
+//	static class OAuthCallbackHandler implements HttpHandler {
+//	    @Override
+//	    public void handle(HttpExchange exchange) throws IOException {
+//	        // Extrahieren Sie den Autorisierungscode aus der Anfrage
+//	        String requestURI = exchange.getRequestURI().toString();
+//	        System.out.println("Query: "+exchange.getRequestURI().getQuery());
+//	        
+//	        // Ausgabe der aufgerufenen URL in der Konsole
+//	        System.out.println("Aufgerufene URL: " + requestURI);
+//
+//	        // Extrahieren Sie das URL-Fragment mit JavaScript und senden Sie es an den Server
+//	        String script = "<script>" +
+//	                "var fragment = window.location.hash.substring(1);" +
+//	                "var xhr = new XMLHttpRequest();" +
+//	                "xhr.open('GET', '/oauth_callback/fragment?fragment=' + fragment, true);" +
+//	                "xhr.send();" +
+//	                "</script>";
+//
+//	        // Senden Sie die HTML-Seite mit dem JavaScript-Code zurück zum Client
+//	        String response = "<html><body>" + script + "</body></html>";
+//	        exchange.sendResponseHeaders(200, response.length());
+//	        OutputStream outputStream = exchange.getResponseBody();
+//	        outputStream.write(response.getBytes());
+//	        outputStream.close();
+//	        
+//	        if(requestURI.contains("fragment=access_token=")){
+//	        	String bearerToken = requestURI.substring(0, requestURI.indexOf("&")).replace("/oauth_callback/fragment?fragment=access_token=", "");
+//	        	System.out.println("Token -> "+bearerToken);
+//	        }
+//	    }
+//	}
 	
 	public static void main(String[] args) {
 		new Settings();

@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +48,7 @@ import de.minetrain.minechat.utils.Settings;
 import de.minetrain.minechat.utils.TwitchMessage;
 
 public class ChatWindowMessageComponent extends JPanel{
+	private static final Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindowMessageComponent.class);
 	private static final long serialVersionUID = -3116239050269500823L;
 	
@@ -253,8 +253,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	private static final void formatText(String input, StyledDocument document, Color fontColor) {
     	String newInput="";
     	if(fontColor == Color.WHITE){
-    		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
-    		input = "["+LocalTime.now().format(DateTimeFormatter.ofPattern(Settings.timeFormat, Locale.GERMAN))+"] "+input;
+    		input = "["+LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
     	}
         
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}
@@ -282,8 +281,6 @@ public class ChatWindowMessageComponent extends JPanel{
 			
 			if (emotesByName.get(word) != null) {
 				ImageIcon emote = emotesByName.get(word).getImageIcon();
-				
-				System.out.println("EmoteText --> "+word);
 				
 				switch (emoteStyle) {
 				case 1: StyleConstants.setIcon(attributeSet, new MirroredImageIcon(emote.getImage())); break;

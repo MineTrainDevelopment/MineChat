@@ -98,6 +98,7 @@ public class TwitchListner {
 			return;
 		}
 		
+		channelTab.getStatistics().addMessage(event.getUser().getName());
 		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent().getTags(), event.getMessage());
 		
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
@@ -118,9 +119,10 @@ public class TwitchListner {
 	
     @EventSubscriber
     public void onFollow(FollowEvent event) {
+    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
+    	currentChannelTab.getStatistics().addFollower();
     	if(!Settings.displaySubs_Follows){return;}
     	
-    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", ColorManager.CHAT_UNIMPORTANT,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
@@ -128,9 +130,10 @@ public class TwitchListner {
     
     @EventSubscriber
     public void onCheer(CheerEvent event) {
+    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
+    	currentChannelTab.getStatistics().addBits(event.getBits());
     	if(!Settings.displayBitsCheerd){return;}
     	
-    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!", ColorManager.CHAT_UNIMPORTANT,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%LOVE%", "Send some love!"));
@@ -139,6 +142,7 @@ public class TwitchListner {
     @EventSubscriber
     public void onSub(SubscriptionEvent event) {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
+    	currentChannelTab.getStatistics().addSub(event);
     	
         if(!event.getGifted() && Settings.displaySubs_Follows) {
         	String message = (event.getMessage().isEmpty()) ? "" : event.getMessage().get();
@@ -256,7 +260,7 @@ public class TwitchListner {
     public void onChannelMod(ChannelModEvent event){
     	if(!Settings.displayModActions){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Mod status changed", event.getUser().getName()+" The current raid got cancelled!", ColorManager.CHAT_MODERATION, null);
+			.displaySystemInfo("Mod status changed", event.getUser().getName()+" Gained or lost the mod status!", ColorManager.CHAT_MODERATION, null);
     }
 
     @EventSubscriber

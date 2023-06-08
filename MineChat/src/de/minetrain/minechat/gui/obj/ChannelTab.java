@@ -25,6 +25,7 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
 public class ChannelTab {
 	private ChannelTab thisObject;
@@ -42,6 +43,7 @@ public class ChannelTab {
 	private ActionListener editWindowAction;
 	private ChannelMacros macros;
 	private ChatWindow chatWindow = new ChatWindow(this);
+	private ChannelStatistics statistics = new ChannelStatistics();
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;
@@ -251,6 +253,10 @@ public class ChannelTab {
 
 	public ChatWindow getChatWindow() {
 		return chatWindow;
+	}
+
+	public ChannelStatistics getStatistics() {
+		return statistics;
 	}
 	
 }

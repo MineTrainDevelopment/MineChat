@@ -1,7 +1,7 @@
 package de.minetrain.minechat.twitch;
 
 import java.awt.Color;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,9 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
@@ -114,7 +116,8 @@ public class TwitchManager {
 	 */
 	public static void sendMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
-		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderNamem(), Color.WHITE);
+		message.getChannelTab().getStatistics().addMessage(message.getSenderName());
+		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
 				
 		//Check if a chatter is was mentioned
 		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {
@@ -143,7 +146,7 @@ public class TwitchManager {
 		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); //Set the default time zone.
 		
 		//Send the message to the specified Twitch chat.
-		twitch.getChat().sendMessage(channel, message.replace("{TIME}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm", Locale.GERMAN))));
+		twitch.getChat().sendMessage(channel, message);
 	}
 	
 	/**
