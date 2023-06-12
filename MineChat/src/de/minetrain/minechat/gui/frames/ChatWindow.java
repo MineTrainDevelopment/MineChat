@@ -144,7 +144,7 @@ public class ChatWindow extends JLabel {
         messagesPerMin.recordCallTime();
         chatPanel.revalidate();
         chatPanel.repaint();
-        chatStatusPanel.setDefault();
+        chatStatusPanel.setDefault(false);
         
         JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
     	int maxValue = verticalScrollBar.getMaximum() - verticalScrollBar.getVisibleAmount();

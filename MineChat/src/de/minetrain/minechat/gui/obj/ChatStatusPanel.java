@@ -131,7 +131,7 @@ public class ChatStatusPanel extends JPanel {
     	if(forceLockedState){return this;}
     	
     	if(twitchMessage == null){
-    		setDefault();
+    		setDefault(true);
     		return this;
     	}
     	
@@ -159,8 +159,9 @@ public class ChatStatusPanel extends JPanel {
     	return this;
 	}
 
-	public ChatStatusPanel setDefault() {
-		if(!isLocked()){
+	public ChatStatusPanel setDefault(boolean force) {
+		if((force && !forceLockedState) || !isLocked()){
+			setLockedState(false);
 			setText(getDefaultText(), false);
 			cancelReplyButton.setVisible(false);
 			inputInfo.setHorizontalAlignment(SwingConstants.CENTER);
