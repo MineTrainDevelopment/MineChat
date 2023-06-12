@@ -114,10 +114,6 @@ public class Main {
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
         
-        for (int i = 1; i < 150; i++) {
-    		MessageManager.getModeratorMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, "null", ""+i));
-		}
-		
 //		for (int i=0; i<20; i++) {
 //			TitleBar.currentTab.getChatWindow().displayMessage("Message "+i, "test", Color.PINK);
 //		}

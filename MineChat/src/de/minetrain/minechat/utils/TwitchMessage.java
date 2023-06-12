@@ -49,6 +49,7 @@ public class TwitchMessage {
 		this.replyUser = (data.containsKey("reply-parent-display-name") ? data.get("reply-parent-display-name") : null);
 		this.dummy = false;
 		
+		emoteIcons.putAll(TwitchEmote.getEmotesByName());
 		colorCache.put(userName.toLowerCase(), userColorCode);
 		List<String> emotesPaths = (data.get("emotes") != null ? Arrays.asList(data.get("emotes").split("/")) : null);
 
