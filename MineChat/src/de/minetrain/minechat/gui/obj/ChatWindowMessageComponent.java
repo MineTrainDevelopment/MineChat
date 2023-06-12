@@ -35,7 +35,6 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
@@ -63,10 +62,12 @@ public class ChatWindowMessageComponent extends JPanel{
 	private JTextPane messageLabel;
 	private JPanel messageContentPanel;
 	private MineButton markReadButton, replyButton;
+	private final Map<String, ImageIcon> emotes;
 	private final String userName;
 	
-	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow) {
+	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow, Map<String, ImageIcon> emotes) {
 		super(new BorderLayout());
+		this.emotes = emotes;
 		this.userName = topic;
 		this.highlighted = true;
 		JPanel messagePanel = this;
@@ -110,6 +111,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
 		super(new BorderLayout());
+		this.emotes = twitchMessage.getEmotes();
 		this.userName = userName;
 		JPanel messagePanel = this;
         setBackground(ColorManager.GUI_BACKGROUND);
@@ -250,7 +252,7 @@ public class ChatWindowMessageComponent extends JPanel{
         };
 	}
 	
-	private static final void formatText(String input, StyledDocument document, Color fontColor) {
+	private final void formatText(String input, StyledDocument document, Color fontColor) {
     	String newInput="";
     	if(fontColor == Color.WHITE){
     		input = "["+LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
@@ -269,7 +271,8 @@ public class ChatWindowMessageComponent extends JPanel{
 			int emoteStyle = (previousWord.equals("h!") ? 1 : (previousWord.equals("v!") ? 2 : 0 ));
 			previousWord = word;
 
-			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
+//			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
+			Map<String, ImageIcon> emotesByName = this.emotes;
 			
 			Settings.highlightStrings.forEach(string -> {
 	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
@@ -279,8 +282,8 @@ public class ChatWindowMessageComponent extends JPanel{
 	    		}
 	    	});
 			
-			if (emotesByName.get(word) != null) {
-				ImageIcon emote = emotesByName.get(word).getImageIcon();
+			if (emotesByName != null && emotesByName.get(word) != null) {
+				ImageIcon emote = emotesByName.get(word);
 				
 				switch (emoteStyle) {
 				case 1: StyleConstants.setIcon(attributeSet, new MirroredImageIcon(emote.getImage())); break;
@@ -306,7 +309,7 @@ public class ChatWindowMessageComponent extends JPanel{
     
     
     //TODO Replace emotes with 3 Chars for filtering.
-	private static final List<String> splitString(String input) {
+	private final List<String> splitString(String input) {
     	input = input.replace("\\n", "�");
         int chunkSize = 45;
         List<String> chunks = new ArrayList<>();
@@ -353,8 +356,8 @@ public class ChatWindowMessageComponent extends JPanel{
         return chunks;
     }
     
-    private static final String encryptEmotes(String input) {
-    	HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
+    private final String encryptEmotes(String input) {
+    	Map<String, ImageIcon> emotesByName = this.emotes;
     	String[] split = input.split(" ");
     	String output = "";
     	emoteReplacements.clear();

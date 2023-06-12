@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -22,6 +21,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -38,7 +38,6 @@ public class ChatWindow extends JLabel {
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindow.class);
 	private Dimension preferredScrollBarSize = new JScrollBar().getPreferredSize();
 	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
-	private static Map<String, String> emoteReplacements = new HashMap<>();
     private static final int MAX_MESSAGE_SICE = 500;
 //	public  List<String> chatterNames = new ArrayList<String>();
 	public final GreetingsManager greetingsManager;
@@ -173,7 +172,7 @@ public class ChatWindow extends JLabel {
     }
     
     public void displaySystemInfo(String topic, String message, Color borderColor, MineButton button){
-		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this);
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this, TwitchEmote.getEmotesByName());
 		
         chatPanel.add(messagePanel);
         chatPanel.revalidate();

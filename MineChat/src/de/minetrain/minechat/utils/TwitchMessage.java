@@ -1,12 +1,24 @@
 package de.minetrain.minechat.utils;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 
 public class TwitchMessage {
+	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{ID}/static/dark/1.0";
+	private static final Logger logger = LoggerFactory.getLogger(TwitchMessage.class);
 	private final String message;
 	private final String messageId;
 	private final String channelId;
@@ -17,7 +29,7 @@ public class TwitchMessage {
 	
 	private final String userName;
 	private final String userColorCode;
-	private final List<String> emotes;
+	private final Map<String, ImageIcon> emoteIcons = new HashMap<String, ImageIcon>();
 	
 	private final Long epochTime;
 	private final ChannelTab parentTab;
@@ -32,10 +44,40 @@ public class TwitchMessage {
 		this.client_nonce = data.get("client_nonce");
 		this.epochTime = Long.parseLong(data.get("tmi-sent-ts"));
 		this.userColorCode = (data.get("color") != null ? data.get("color") : "#ffffff");
-		this.emotes = (data.get("emotes") != null ? Arrays.asList(data.get("emotes").split("/")) : null);
 		this.replyId = (data.containsKey("reply-parent-msg-id") ? data.get("reply-parent-msg-id") : null);
 		this.replyUser = (data.containsKey("reply-parent-display-name") ? data.get("reply-parent-display-name") : null);
 		this.dummy = false;
+		
+		List<String> emotesPaths = (data.get("emotes") != null ? Arrays.asList(data.get("emotes").split("/")) : null);
+
+//		emotesv2_5d1cdac68be9419486d3be49d78ae402:0-6,8-14,16-22,24-30,32-38
+		if(emotesPaths != null){
+			emotesPaths.forEach(emote -> {
+				String[] emoteSplit = emote.split(":");
+				String emoteId = emoteSplit[0];
+				String[] emoteLocations = emoteSplit[1].split(",");
+				
+				Arrays.asList(emoteLocations).forEach(s -> {
+					String[] emoteLocation = s.split("-");
+					String emoteName = message.substring(Integer.parseInt(emoteLocation[0]), Integer.parseInt(emoteLocation[1])+1);
+					String emoteUrl = TWITCH_EMOTE_URL.replace("{ID}", emoteId);
+
+					if(TwitchEmote.getEmotesByName().containsKey(emoteName)){
+						emoteIcons.put(emoteName, TwitchEmote.getEmotesByName().get(emoteName));
+					}else if(TwitchEmote.CACHED_WEB_EMOTES.containsKey(emoteName)){
+						emoteIcons.put(emoteName, TwitchEmote.CACHED_WEB_EMOTES.get(emoteName));
+					}else{
+						try {
+							ImageIcon webEmote = new ImageIcon(ImageIO.read(new URL(emoteUrl)));
+							TwitchEmote.CACHED_WEB_EMOTES.put(emoteName, webEmote);
+							emoteIcons.put(emoteName, webEmote);
+						} catch (IOException ex) {
+							logger.warn("Failed to load an web emote!\nEmote name: "+emoteName+"\nURL: "+emoteUrl, ex);
+						}
+					}
+				});
+			});
+		}
 	}
 	
 	public TwitchMessage(ChannelTab parentTab, String userName, String message) {
@@ -47,7 +89,6 @@ public class TwitchMessage {
 		this.client_nonce = null;
 		this.epochTime = 0l;
 		this.userColorCode = "#ffffff";
-		this.emotes = null;
 		this.replyId = null;
 		this.replyUser = null;
 		this.dummy = true;
@@ -78,8 +119,8 @@ public class TwitchMessage {
 		return userColorCode;
 	}
 
-	public List<String> getEmotes() {
-		return emotes;
+	public Map<String, ImageIcon> getEmotes() {
+		return emoteIcons;
 	}
 
 	public Long getEpochTime() {

@@ -26,7 +26,8 @@ import de.minetrain.minechat.utils.ChatMessage;
 public class MessageManager {
 	private static final Logger logger = LoggerFactory.getLogger(MessageManager.class);
 	private static AsyncMessageHandler messageHandler;
-	private static final String spamProtector = "ㅤ"; //The spam protector character.
+//	private static final String spamProtector = "ㅤ"; //The spam protector character.
+	private static final String spamProtector = "᲼"; //The spam protector character.
 	private static String lastMessage = ">null<"; //The last message sent by this manager.
     private static Instant lastSentTime; //The time when the last message was sent.
     private static final int MAX_MESSAGE_LENGTH = 490; 
