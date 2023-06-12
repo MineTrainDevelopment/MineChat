@@ -35,6 +35,7 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
@@ -111,7 +112,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
 		super(new BorderLayout());
-		this.emotes = twitchMessage.getEmotes();
+		this.emotes = (twitchMessage == null) ? TwitchEmote.getEmotesByName() : twitchMessage.getEmotes();
 		this.userName = userName;
 		JPanel messagePanel = this;
         setBackground(ColorManager.GUI_BACKGROUND);
@@ -257,7 +258,7 @@ public class ChatWindowMessageComponent extends JPanel{
     	if(fontColor == Color.WHITE){
     		input = "["+LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
     	}
-        
+    	
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}
         input = (newInput.contains("\n") ? newInput.substring(0, newInput.lastIndexOf("\n")).trim() : newInput.trim());
         
@@ -314,7 +315,7 @@ public class ChatWindowMessageComponent extends JPanel{
         int chunkSize = 45;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
-        input = encryptEmotes(input);
+        input = (emotes == null) ? input : encryptEmotes(input);
 
         int wordBoundary = -1; // Index of the last space character within the chunk limit
         for (int i = 0; i < input.length(); i++) {
