@@ -117,7 +117,7 @@ public class TwitchManager {
 	public static void sendMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
 		message.getChannelTab().getStatistics().addMessage(message.getSenderName());
-		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
+		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
 				
 		//Check if a chatter is was mentioned
 		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {

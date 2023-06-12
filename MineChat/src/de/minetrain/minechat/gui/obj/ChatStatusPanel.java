@@ -135,15 +135,26 @@ public class ChatStatusPanel extends JPanel {
     		return this;
     	}
     	
-    	
+    	String message = twitchMessage.getMessage();
     	cancelReplyButton.setVisible(true);
     	stringBuilder.appendSpace();
-    	stringBuilder.appendString("Reply: ", HTMLColors.AQUA);
+    	
+    	if(twitchMessage.isParentReply()){
+        	stringBuilder.appendString("Reply to thrad from: ", HTMLColors.AQUA);
+        	stringBuilder.appendString(twitchMessage.getParentReplyUser(), twitchMessage.getParentReplyColor());
+        	stringBuilder.appendString(":", HTMLColors.WHITE);
+        	stringBuilder.appendLineSplit();
+        	message = message.substring(twitchMessage.getParentReplyUser().length()+1);
+    	}else{
+        	stringBuilder.appendString("Reply: ", HTMLColors.AQUA);
+    	}
+    	
     	stringBuilder.appendString(twitchMessage.getUserName(), twitchMessage.getUserColorCode());
-    	stringBuilder.appendString(" --> "+twitchMessage.getMessage());
+    	stringBuilder.appendString(" --> ", HTMLColors.WHITE);
+    	stringBuilder.appendString(message);
     	
         inputInfo.setHorizontalAlignment(SwingConstants.LEFT);
-		setText(stringBuilder.toString(), true);
+        setText(stringBuilder.toString(), true, (twitchMessage.isParentReply()) ? 265 : 200);
 		stringBuilder.clear();
     	return this;
 	}
@@ -158,9 +169,13 @@ public class ChatStatusPanel extends JPanel {
 	}
     
     private ChatStatusPanel setText(String message, boolean locked){
+    	return setText(message, locked, 200);
+	}
+    
+    private ChatStatusPanel setText(String message, boolean locked, int limit){
     	if(!isLocked()){
     		setLockedState(locked);
-    		this.inputInfo.setText((message.length()>200) ? message.substring(0, (200-1))+"..." : message);
+    		this.inputInfo.setText((message.length()>limit) ? message.substring(0, (limit-1))+"..." : message);
     	}
     	return this;
 	}

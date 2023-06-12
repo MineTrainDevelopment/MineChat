@@ -211,7 +211,7 @@ public class ChatWindowMessageComponent extends JPanel{
 					
 					String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
 					chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
-					chatWindow.setMessageToReply(twitchMessage);
+					chatWindow.setMessageToReply(twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName()));
 				}
 			});
 			

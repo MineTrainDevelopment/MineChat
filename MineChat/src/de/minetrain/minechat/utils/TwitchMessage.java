@@ -18,6 +18,7 @@ import de.minetrain.minechat.gui.obj.ChannelTab;
 
 public class TwitchMessage {
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{ID}/static/dark/1.0";
+	private static final Map<String, String> colorCache = new HashMap<String, String>();
 	private static final Logger logger = LoggerFactory.getLogger(TwitchMessage.class);
 	private final String message;
 	private final String messageId;
@@ -48,6 +49,7 @@ public class TwitchMessage {
 		this.replyUser = (data.containsKey("reply-parent-display-name") ? data.get("reply-parent-display-name") : null);
 		this.dummy = false;
 		
+		colorCache.put(userName.toLowerCase(), userColorCode);
 		List<String> emotesPaths = (data.get("emotes") != null ? Arrays.asList(data.get("emotes").split("/")) : null);
 
 //		emotesv2_5d1cdac68be9419486d3be49d78ae402:0-6,8-14,16-22,24-30,32-38
@@ -107,8 +109,12 @@ public class TwitchMessage {
 		return (replyId == null) ? messageId : replyId;
 	}
 	
-	public String getReplyUser() {
+	public String getParentReplyUser() {
 		return (replyUser == null) ? userName : replyUser;
+	}
+	
+	public String getParentReplyColor() {
+		return colorCache.get(getParentReplyUser().toLowerCase());
 	}
 
 	public String getUserName() {
@@ -147,9 +153,18 @@ public class TwitchMessage {
 		return replyId != null;
 	}
 	
-	public void setReply(String messageId, String userName) {
+	public boolean isParentReply() {
+		return ((replyId != null && replyUser != null) && replyId != messageId) ? true : false;
+	}
+	
+	public TwitchMessage setReply(String messageId, String userName) {
 		this.replyId = messageId;
 		this.replyUser = userName;
+		return this;
+	}
+	
+	public static final String getCachedColorCode(String userLogin) {
+		return colorCache.get(userLogin);
 	}
 	
 	@Override
