@@ -9,8 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.utils.CallCounter;
 import de.minetrain.minechat.utils.ChatMessage;
 
 /**
@@ -27,14 +28,18 @@ public class AsyncMessageHandler {
 	private BlockingQueue<ChatMessage> messageQueue; //The message queue to store the incoming messages.
     private ScheduledExecutorService executorService; //The executor service responsible for scheduling and executing message sending tasks.
     private int messageCount; //The count of messages in the message queue.
+    private final long defaultDelayMilliseconds = 1500; //The default time between messages.
+    private final long messageDelayMilliseconds; //The time between messages.
+    private static final CallCounter callCounter = new CallCounter(30);
 
     /**
      * Constructs a new AsyncMessageHandler with an empty message queue,
      * a single-threaded executor service, and initializes the message count to zero.
      */
-    public AsyncMessageHandler() {
+    public AsyncMessageHandler(long delayMilliseconds) {
         messageQueue = new LinkedBlockingQueue<>();
         executorService = Executors.newSingleThreadScheduledExecutor();
+        this.messageDelayMilliseconds = (delayMilliseconds <= 0) ? this.defaultDelayMilliseconds : delayMilliseconds;
         messageCount = 0;
     }
 
@@ -59,7 +64,7 @@ public class AsyncMessageHandler {
     public void addMessage(ChatMessage message) {
         messageQueue.offer(message);
         messageCount++;
-        updateQueueButton();
+        MessageManager.updateQueueButton();
     }
 
     /**
@@ -76,15 +81,7 @@ public class AsyncMessageHandler {
     public void clearQueue(){
     	messageQueue.clear();
     	messageCount = 0;
-        updateQueueButton();
-    }
-    
-    /**
-     * Updates the user interface queue button text based on the current message count.
-     */
-    public void updateQueueButton() {
-//    	Main.MAIN_FRAME.queueButton.setText("Message Queue: "+(getMessageCount() == 0 ? "Empty." : getMessageCount()));
-    	Main.MAIN_FRAME.queueButton.setText("Message Queue: "+getMessageCount());
+        MessageManager.updateQueueButton();
     }
     
     /**
@@ -98,11 +95,11 @@ public class AsyncMessageHandler {
             ChatMessage chatMessage = messageQueue.poll();
     		
             messageCount--;
-            updateQueueButton();
+            MessageManager.updateQueueButton();
             logger.debug("Sending message: {" + chatMessage.getMessage()+"}");
             
         	TwitchManager.sendMessage(chatMessage);
-            try{Thread.sleep(1500);}catch(InterruptedException e){ }
+            try{Thread.sleep((callCounter.getCallCount() > 19) ? defaultDelayMilliseconds : messageDelayMilliseconds); callCounter.recordCallTime();}catch(InterruptedException e){ }
         }
     }
 }

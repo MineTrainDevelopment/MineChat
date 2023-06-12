@@ -11,10 +11,12 @@ import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
+import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.Settings;
 
 public class Main {
@@ -110,7 +112,11 @@ public class Main {
 			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
 		}
 		onboardingFrame.dispose();
-		MessageManager.getMessageHandler().updateQueueButton();
+        MessageManager.updateQueueButton();
+        
+        for (int i = 1; i < 150; i++) {
+    		MessageManager.getModeratorMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, "null", ""+i));
+		}
 		
 //		for (int i=0; i<20; i++) {
 //			TitleBar.currentTab.getChatWindow().displayMessage("Message "+i, "test", Color.PINK);

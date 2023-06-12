@@ -42,7 +42,7 @@ public class ChatWindow extends JLabel {
 //	public  List<String> chatterNames = new ArrayList<String>();
 	public final GreetingsManager greetingsManager;
 	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
-	public CallCounter messagesPerMin = new CallCounter();
+	public CallCounter messagesPerMin = new CallCounter(60);
 	public Integer messagesPerDay = 0;
 	public TwitchMessage replyMessage = null;
     public JPanel chatPanel;

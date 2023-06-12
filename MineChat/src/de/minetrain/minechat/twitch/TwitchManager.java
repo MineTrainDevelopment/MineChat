@@ -1,6 +1,7 @@
 package de.minetrain.minechat.twitch;
 
 import java.awt.Color;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.TwitchMessage;
+import io.github.bucket4j.Bandwidth;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -68,6 +70,7 @@ public class TwitchManager {
 			.withClientSecret(credentials.getClientSecret())
 			.withEnableHelix(true)
 			.withChatAccount(new OAuth2Credential("twitch", credentials.getTesting_oauth2()))
+			.withChatChannelMessageLimit(Bandwidth.simple(1, Duration.ofMillis(300)).withId("per-channel-limit"))
 	        .withEnableChat(true)
 			.build();
 		

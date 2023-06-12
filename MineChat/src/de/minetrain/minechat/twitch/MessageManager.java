@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
 import de.minetrain.minechat.utils.ChatMessage;
 
@@ -25,7 +26,8 @@ import de.minetrain.minechat.utils.ChatMessage;
  */
 public class MessageManager {
 	private static final Logger logger = LoggerFactory.getLogger(MessageManager.class);
-	private static AsyncMessageHandler messageHandler;
+	private static AsyncMessageHandler defaultMessageHandler;
+	private static AsyncMessageHandler moderatorMessageHandler;
 //	private static final String spamProtector = "ㅤ"; //The spam protector character.
 	private static final String spamProtector = "᲼"; //The spam protector character.
 	private static String lastMessage = ">null<"; //The last message sent by this manager.
@@ -33,8 +35,11 @@ public class MessageManager {
     private static final int MAX_MESSAGE_LENGTH = 490; 
     
     public MessageManager() {
-    	messageHandler = new AsyncMessageHandler();
-    	messageHandler.start();
+    	defaultMessageHandler = new AsyncMessageHandler(0);
+    	defaultMessageHandler.start();
+    	
+    	moderatorMessageHandler = new AsyncMessageHandler(300);
+    	moderatorMessageHandler.start();
 	}
     
 
@@ -59,7 +64,7 @@ public class MessageManager {
     	}
     	
     	if(TitleBar.currentTab.isModerator()){
-        	TwitchManager.sendMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
+            getModeratorMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
     	}else{
     		sendDelayedMessage(message);
     	}
@@ -79,7 +84,7 @@ public class MessageManager {
 
 //        getMessageHandler().addMessage(message+"%-%"+TitleBar.currentTab.getChannelName());
         
-        getMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
+        getDefaultMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
     }
     
     
@@ -136,8 +141,21 @@ public class MessageManager {
         return chunks;
     }
 
-	public static AsyncMessageHandler getMessageHandler() {
-		return messageHandler;
+
+    
+    /**
+     * Updates the user interface queue button text based on the current message count.
+     */
+    public static void updateQueueButton() {
+    	Main.MAIN_FRAME.queueButton.setText("Message Queue: "+(getDefaultMessageHandler().getMessageCount()+getModeratorMessageHandler().getMessageCount()));
+    }
+    
+	public static AsyncMessageHandler getDefaultMessageHandler() {
+		return defaultMessageHandler;
+	}
+
+	public static AsyncMessageHandler getModeratorMessageHandler() {
+		return moderatorMessageHandler;
 	}
 }
 

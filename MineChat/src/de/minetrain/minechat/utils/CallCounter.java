@@ -6,10 +6,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class CallCounter {
-    private Deque<Instant> callTimes; // Stores the timestamps of method calls
+    private Deque<Instant> callTimes; //Stores the timestamps of method calls
+    private final int period; //Time window in seconds
     
-    public CallCounter() {
-        callTimes = new ArrayDeque<>();
+    public CallCounter(int periodSeconds) {
+        this.callTimes = new ArrayDeque<>();
+        this.period = periodSeconds;
     }
     
     /**
@@ -36,7 +38,7 @@ public class CallCounter {
      */
     private void cleanupCallTimes() {
         Instant currentTime = Instant.now();
-        Instant timeLimit = currentTime.minus(Duration.ofSeconds(60));
+        Instant timeLimit = currentTime.minus(Duration.ofSeconds(period));
         
         while (!callTimes.isEmpty() && callTimes.getFirst().isBefore(timeLimit)) {
             callTimes.removeFirst();

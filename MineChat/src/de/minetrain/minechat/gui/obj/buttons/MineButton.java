@@ -85,7 +85,8 @@ public class MineButton extends JButton{
 				
 				switch (type) {
 				case STOP_QUEUE:
-					MessageManager.getMessageHandler().clearQueue();
+					MessageManager.getDefaultMessageHandler().clearQueue();
+					MessageManager.getModeratorMessageHandler().clearQueue();
 					break;
 					
 				default:
