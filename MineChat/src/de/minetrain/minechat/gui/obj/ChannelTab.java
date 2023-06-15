@@ -158,13 +158,19 @@ public class ChannelTab {
 	public void loadMacroRow(MacroRow row){
 		if(row == null){row = getMacros().getCurrentMacroRow();}
 		getMacros().setCurrentMacroRow(row);
-		mainFrame.emoteButton0.setIcon(getMacros().getEmote_1(row).getTwitchEmote().getImageIcon());
-		mainFrame.emoteButton1.setIcon(getMacros().getEmote_2(row).getTwitchEmote().getImageIcon());
-		mainFrame.emoteButton2.setIcon(getMacros().getEmote_3(row).getTwitchEmote().getImageIcon());
-		mainFrame.emoteButton3.setIcon(getMacros().getEmote_4(row).getTwitchEmote().getImageIcon());
-		mainFrame.emoteButton4.setIcon(getMacros().getEmote_5(row).getTwitchEmote().getImageIcon());
-		mainFrame.emoteButton5.setIcon(getMacros().getEmote_6(row).getTwitchEmote().getImageIcon());
-		mainFrame.emoteButton6.setIcon(getMacros().getEmote_7(row).getTwitchEmote().getImageIcon());
+		mainFrame.emoteButton0.setIcon(new ImageIcon(getMacros().getEmote_1(row).getEmotePath()));
+		mainFrame.emoteButton1.setIcon(new ImageIcon(getMacros().getEmote_2(row).getEmotePath()));
+		mainFrame.emoteButton2.setIcon(new ImageIcon(getMacros().getEmote_3(row).getEmotePath()));
+		mainFrame.emoteButton3.setIcon(new ImageIcon(getMacros().getEmote_4(row).getEmotePath()));
+		mainFrame.emoteButton4.setIcon(new ImageIcon(getMacros().getEmote_5(row).getEmotePath()));
+		mainFrame.emoteButton5.setIcon(new ImageIcon(getMacros().getEmote_6(row).getEmotePath()));
+		mainFrame.emoteButton6.setIcon(new ImageIcon(getMacros().getEmote_7(row).getEmotePath()));
+//		mainFrame.emoteButton1.setIcon(getMacros().getEmote_2(row).getTwitchEmote().getImageIcon());
+//		mainFrame.emoteButton2.setIcon(getMacros().getEmote_3(row).getTwitchEmote().getImageIcon());
+//		mainFrame.emoteButton3.setIcon(getMacros().getEmote_4(row).getTwitchEmote().getImageIcon());
+//		mainFrame.emoteButton4.setIcon(getMacros().getEmote_5(row).getTwitchEmote().getImageIcon());
+//		mainFrame.emoteButton5.setIcon(getMacros().getEmote_6(row).getTwitchEmote().getImageIcon());
+//		mainFrame.emoteButton6.setIcon(getMacros().getEmote_7(row).getTwitchEmote().getImageIcon());
 
 		mainFrame.macroButton0.setData(getMacros().getMacro(ButtonType.MACRO_1, row));
 		mainFrame.macroButton1.setData(getMacros().getMacro(ButtonType.MACRO_2, row));

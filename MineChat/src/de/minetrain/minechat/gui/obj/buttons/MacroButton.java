@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -133,7 +134,7 @@ public class MacroButton extends MineButton{
 	 * @param macro the {@link MacroObject} containing the data for the button.
 	 */
 	public void setData(MacroObject macro) {
-		setIcon(macro.getTwitchEmote().getImageIcon());
+		setIcon(new ImageIcon(macro.getEmotePath()));
 		setText((macro.getButtonName().equalsIgnoreCase("null")) ? "" : macro.getButtonName());
 	}
 	

@@ -27,20 +27,20 @@ public class ChannelMacros {
 	private void createMaps(MacroRow row, String configID) {
 		HashMap<ButtonType, MacroObject> macroRow = getMacroRow(row);
 		if(configID == null || configID.isEmpty()){
-			macroRow.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, new TwitchEmote("null"), "null", ">null<"));
-			macroRow.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, new TwitchEmote("null"), "null", ">null<"));
-			macroRow.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, new TwitchEmote("null"), "null", ">null<"));
-			macroRow.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, new TwitchEmote("null"), "null", ">null<"));
-			macroRow.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, new TwitchEmote("null"), "null", ">null<"));
-			macroRow.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, new TwitchEmote("null"), "null", ">null<"));
+			macroRow.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, "null", "null", ">null<"));
+			macroRow.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, "null", "null", ">null<"));
+			macroRow.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, "null", "null", ">null<"));
+			macroRow.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, "null", "null", ">null<"));
+			macroRow.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, "null", "null", ">null<"));
+			macroRow.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, "null", "null", ">null<"));
 			
-			macroRow.put(ButtonType.EMOTE_1, new MacroObject(ButtonType.EMOTE_1, new TwitchEmote("null"), ">null<", ">null<"));
-			macroRow.put(ButtonType.EMOTE_2, new MacroObject(ButtonType.EMOTE_2, new TwitchEmote("null"), ">null<", ">null<"));
-			macroRow.put(ButtonType.EMOTE_3, new MacroObject(ButtonType.EMOTE_3, new TwitchEmote("null"), ">null<", ">null<"));
-			macroRow.put(ButtonType.EMOTE_4, new MacroObject(ButtonType.EMOTE_4, new TwitchEmote("null"), ">null<", ">null<"));
-			macroRow.put(ButtonType.EMOTE_5, new MacroObject(ButtonType.EMOTE_5, new TwitchEmote("null"), ">null<", ">null<"));
-			macroRow.put(ButtonType.EMOTE_6, new MacroObject(ButtonType.EMOTE_6, new TwitchEmote("null"), ">null<", ">null<"));
-			macroRow.put(ButtonType.EMOTE_7, new MacroObject(ButtonType.EMOTE_7, new TwitchEmote("null"), ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_1, new MacroObject(ButtonType.EMOTE_1, "null", ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_2, new MacroObject(ButtonType.EMOTE_2, "null", ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_3, new MacroObject(ButtonType.EMOTE_3, "null", ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_4, new MacroObject(ButtonType.EMOTE_4, "null", ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_5, new MacroObject(ButtonType.EMOTE_5, "null", ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_6, new MacroObject(ButtonType.EMOTE_6, "null", ">null<", ">null<"));
+			macroRow.put(ButtonType.EMOTE_7, new MacroObject(ButtonType.EMOTE_7, "null", ">null<", ">null<"));
 		}else{
 			ConfigManager config = Main.CONFIG;
 			String path = "Channel_"+configID+".Macros"+row.name().toLowerCase().substring(3)+".";
@@ -59,20 +59,20 @@ public class ChannelMacros {
 			String[] macro11 = config.getString(path+"M11").split("%-%");
 			String[] macro12 = config.getString(path+"M12").split("%-%");
 			
-			macroRow.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, new TwitchEmote((macro0[0].contains("%&%")) ? macro0[0].split("%&%")[1]:"null"), macro0[0].split("%&%")[0], macro0[1]));
-			macroRow.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, new TwitchEmote((macro1[0].contains("%&%")) ? macro1[0].split("%&%")[1]:"null"), macro1[0].split("%&%")[0], macro1[1]));
-			macroRow.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, new TwitchEmote((macro2[0].contains("%&%")) ? macro2[0].split("%&%")[1]:"null"), macro2[0].split("%&%")[0], macro2[1]));
-			macroRow.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, new TwitchEmote((macro3[0].contains("%&%")) ? macro3[0].split("%&%")[1]:"null"), macro3[0].split("%&%")[0], macro3[1]));
-			macroRow.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, new TwitchEmote((macro4[0].contains("%&%")) ? macro4[0].split("%&%")[1]:"null"), macro4[0].split("%&%")[0], macro4[1]));
-			macroRow.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, new TwitchEmote((macro5[0].contains("%&%")) ? macro5[0].split("%&%")[1]:"null"), macro5[0].split("%&%")[0], macro5[1]));
+			macroRow.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, macro0[0].contains("%&%") ? macro0[0].split("%&%")[1]:"null", macro0[0].split("%&%")[0], macro0[1]));
+			macroRow.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, macro1[0].contains("%&%") ? macro1[0].split("%&%")[1]:"null", macro1[0].split("%&%")[0], macro1[1]));
+			macroRow.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, macro2[0].contains("%&%") ? macro2[0].split("%&%")[1]:"null", macro2[0].split("%&%")[0], macro2[1]));
+			macroRow.put(ButtonType.MACRO_4, new MacroObject(ButtonType.MACRO_4, macro3[0].contains("%&%") ? macro3[0].split("%&%")[1]:"null", macro3[0].split("%&%")[0], macro3[1]));
+			macroRow.put(ButtonType.MACRO_5, new MacroObject(ButtonType.MACRO_5, macro4[0].contains("%&%") ? macro4[0].split("%&%")[1]:"null", macro4[0].split("%&%")[0], macro4[1]));
+			macroRow.put(ButtonType.MACRO_6, new MacroObject(ButtonType.MACRO_6, macro5[0].contains("%&%") ? macro5[0].split("%&%")[1]:"null", macro5[0].split("%&%")[0], macro5[1]));
 			
-			macroRow.put(ButtonType.EMOTE_1, new MacroObject(ButtonType.EMOTE_1, new TwitchEmote(macro6[0]), ">null<", macro6[1]));
-			macroRow.put(ButtonType.EMOTE_2, new MacroObject(ButtonType.EMOTE_2, new TwitchEmote(macro7[0]), ">null<", macro7[1]));
-			macroRow.put(ButtonType.EMOTE_3, new MacroObject(ButtonType.EMOTE_3, new TwitchEmote(macro8[0]), ">null<", macro8[1]));
-			macroRow.put(ButtonType.EMOTE_4, new MacroObject(ButtonType.EMOTE_4, new TwitchEmote(macro9[0]), ">null<", macro9[1]));
-			macroRow.put(ButtonType.EMOTE_5, new MacroObject(ButtonType.EMOTE_5, new TwitchEmote(macro10[0]),">null<",  macro10[1]));
-			macroRow.put(ButtonType.EMOTE_6, new MacroObject(ButtonType.EMOTE_6, new TwitchEmote(macro11[0]), ">null<", macro11[1]));
-			macroRow.put(ButtonType.EMOTE_7, new MacroObject(ButtonType.EMOTE_7, new TwitchEmote(macro12[0]), ">null<", macro12[1]));
+			macroRow.put(ButtonType.EMOTE_1, new MacroObject(ButtonType.EMOTE_1, macro6[0], ">null<", macro6[1]));
+			macroRow.put(ButtonType.EMOTE_2, new MacroObject(ButtonType.EMOTE_2, macro7[0], ">null<", macro7[1]));
+			macroRow.put(ButtonType.EMOTE_3, new MacroObject(ButtonType.EMOTE_3, macro8[0], ">null<", macro8[1]));
+			macroRow.put(ButtonType.EMOTE_4, new MacroObject(ButtonType.EMOTE_4, macro9[0], ">null<", macro9[1]));
+			macroRow.put(ButtonType.EMOTE_5, new MacroObject(ButtonType.EMOTE_5, macro10[0],">null<",  macro10[1]));
+			macroRow.put(ButtonType.EMOTE_6, new MacroObject(ButtonType.EMOTE_6, macro11[0], ">null<", macro11[1]));
+			macroRow.put(ButtonType.EMOTE_7, new MacroObject(ButtonType.EMOTE_7, macro12[0], ">null<", macro12[1]));
 		}
 	}
 	

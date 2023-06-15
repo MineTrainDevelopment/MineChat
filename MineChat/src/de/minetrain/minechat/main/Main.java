@@ -18,7 +18,6 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
-import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.Settings;
 
 public class Main {
