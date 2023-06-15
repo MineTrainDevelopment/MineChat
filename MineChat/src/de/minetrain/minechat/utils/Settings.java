@@ -24,6 +24,8 @@ public class Settings {
 	public static final boolean displayAnnouncement = true;
 	public static final boolean displayUserRewards = true;
 	
+	public static final long MAX_MESSAGE_DISPLAYING = 500;
+	
 	
 	public Settings() {
 		highlightStrings.add("minetrainlp");

@@ -11,8 +11,8 @@ import de.minetrain.minechat.main.Main;
 
 public class TwitchEmote {
 	private static final String folderPath = TextureManager.texturePath+"Icons/";
-	private static HashMap<String, ImageIcon> emotesByName = new HashMap<String, ImageIcon>();
-	public static final HashMap<String, ImageIcon> CACHED_WEB_EMOTES = new HashMap<String, ImageIcon>();
+	private static HashMap<String, String> emotesByName = new HashMap<String, String>();
+	public static final HashMap<String, String> CACHED_WEB_EMOTES = new HashMap<String, String>();
 	private ImageIcon imageIcon;
 	private String emotePath;
 	
@@ -49,7 +49,7 @@ public class TwitchEmote {
 				String newEmote = folderPath + channel.replace("Channel_", "") +"/"+ emote+"/"+emote+"_1"+((withBorder) ? "_BG.png%&%"+format : format);
 				tempList.add(newEmote);
 //				emotesByName.put(emote, new TwitchEmote(newEmote.replace("_BG.png%&%", "")).getImageIcon());
-				emotesByName.put(emote, new ImageIcon(newEmote.replace("_BG.png%&%", "")));
+				emotesByName.put(emote, newEmote.replace("_BG.png%&%", ""));
 			});
 			
 			emotes.put(channel, tempList);
@@ -57,7 +57,7 @@ public class TwitchEmote {
 		return emotes;
 	}
 
-	public static HashMap<String, ImageIcon> getEmotesByName() {
+	public static HashMap<String, String> getEmotesByName() {
 		if(emotesByName.isEmpty()){
 			getEmotes(false);
 		}

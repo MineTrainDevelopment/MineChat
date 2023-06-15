@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -216,7 +217,7 @@ public class TextureManager {
 	
 	public static void downloadImage(String uri, String fileLocation, String fileName, Dimension dimension) throws MalformedURLException, IOException, ProtocolException, FileNotFoundException {
 		try {
-			System.out.println(fileLocation+fileName);
+			System.out.println("New fileName --> "+fileName + " | "+fileLocation);
 	         URL url = new URL(uri);
 	         HttpURLConnection httpVerbindung = (HttpURLConnection) url.openConnection();
 	         httpVerbindung.setRequestMethod("GET");
@@ -244,8 +245,8 @@ public class TextureManager {
 	         }
 	         
 	         System.out.println("Bild erfolgreich heruntergeladen.");
-	      } catch (IOException e) {
-	         e.printStackTrace();
+	      } catch (Exception ex) {
+	    	  logger.error("Errer while downloading an emote", ex);
 	      }
 	}
 	
@@ -344,40 +345,47 @@ public class TextureManager {
 	
 	public static void downloadPublicData(){
         String badgesPath = "badges/{TYPE}/{NAME}/";
-		if(Files.exists(Paths.get(badgePath+"vip/"))){return;}
-        
+		if(!Files.exists(Paths.get(badgePath+"vip/"))){
+			try {
+				JsonObject fromJson = new Gson().fromJson(Unirest.get("https://badges.twitch.tv/v1/badges/global/display")
+						.asString()
+						.getBody(), JsonObject.class);
+		
+				JsonObject jsonObject = fromJson.getAsJsonObject("badge_sets");
+				downloadBadge(jsonObject, "bits", badgesPath);
+				downloadBadge(jsonObject, "bits-charity", badgesPath);
+				downloadBadge(jsonObject, "bits-leader", badgesPath);
+				downloadBadge(jsonObject, "sub-gift-leader", badgesPath);
+				downloadBadge(jsonObject, "sub-gifter", badgesPath);
+				downloadBadge(jsonObject, "subscriber", badgesPath);
+				downloadBadge(jsonObject, "moderator", badgesPath);
+				downloadBadge(jsonObject, "vip", badgesPath);
+				downloadBadge(jsonObject, "broadcaster", badgesPath);
+				downloadBadge(jsonObject, "twitchbot", badgesPath);
+				downloadBadge(jsonObject, "partner", badgesPath);
+				downloadBadge(jsonObject, "premium", badgesPath);
+				downloadBadge(jsonObject, "ambassador", badgesPath);
+				downloadBadge(jsonObject, "anonymous-cheerer", badgesPath);
+				downloadBadge(jsonObject, "artist-badge", badgesPath);
+				downloadBadge(jsonObject, "founder", badgesPath);
+				downloadBadge(jsonObject, "game-developer", badgesPath);
+				downloadBadge(jsonObject, "global_mod", badgesPath);
+				downloadBadge(jsonObject, "hype-train", badgesPath);
+				downloadBadge(jsonObject, "moments", badgesPath);
+				downloadBadge(jsonObject, "no_audio", badgesPath);
+				downloadBadge(jsonObject, "no_video", badgesPath);
+				downloadBadge(jsonObject, "predictions", badgesPath);
+				downloadBadge(jsonObject, "staff", badgesPath);
+				downloadBadge(jsonObject, "turbo", badgesPath);
+			} catch (kong.unirest.UnirestException ex) {
+				logger.warn("Can´t download badges. Twitch servers are curently down.");
+			}
+		}
 
-		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://badges.twitch.tv/v1/badges/global/display")
-				.asString()
-				.getBody(), JsonObject.class);
 
-		JsonObject jsonObject = fromJson.getAsJsonObject("badge_sets");
-		downloadBadge(jsonObject, "bits", badgesPath);
-		downloadBadge(jsonObject, "bits-charity", badgesPath);
-		downloadBadge(jsonObject, "bits-leader", badgesPath);
-		downloadBadge(jsonObject, "sub-gift-leader", badgesPath);
-		downloadBadge(jsonObject, "sub-gifter", badgesPath);
-		downloadBadge(jsonObject, "subscriber", badgesPath);
-		downloadBadge(jsonObject, "moderator", badgesPath);
-		downloadBadge(jsonObject, "vip", badgesPath);
-		downloadBadge(jsonObject, "broadcaster", badgesPath);
-		downloadBadge(jsonObject, "twitchbot", badgesPath);
-		downloadBadge(jsonObject, "partner", badgesPath);
-		downloadBadge(jsonObject, "premium", badgesPath);
-		downloadBadge(jsonObject, "ambassador", badgesPath);
-		downloadBadge(jsonObject, "anonymous-cheerer", badgesPath);
-		downloadBadge(jsonObject, "artist-badge", badgesPath);
-		downloadBadge(jsonObject, "founder", badgesPath);
-		downloadBadge(jsonObject, "game-developer", badgesPath);
-		downloadBadge(jsonObject, "global_mod", badgesPath);
-		downloadBadge(jsonObject, "hype-train", badgesPath);
-		downloadBadge(jsonObject, "moments", badgesPath);
-		downloadBadge(jsonObject, "no_audio", badgesPath);
-		downloadBadge(jsonObject, "no_video", badgesPath);
-		downloadBadge(jsonObject, "predictions", badgesPath);
-		downloadBadge(jsonObject, "staff", badgesPath);
-		downloadBadge(jsonObject, "turbo", badgesPath);
-		getDefaultEmotes();
+		if(!Files.exists(Paths.get(texturePath+"Icons/default"))){
+			getDefaultEmotes();
+		}
 	}
 
 
@@ -455,25 +463,26 @@ public class TextureManager {
 				JsonElement jsonElement = jsonArray.get(i);
 				JsonObject entry = jsonElement.getAsJsonObject();
 
-				String name = entry.get("name").getAsString().replaceAll("[" + Pattern.quote("<>:\"/\\|?*") + "]", "_");;
-				System.out.println("emote --> "+entry.get("name").getAsString()+" -- "+name);
-				String fileLocation = "Icons/default/" + name + "/";
+				String name = entry.get("name").getAsString();
+				String formatName = name.replaceAll("[" + Pattern.quote("<>:\"/\\|?*()") + "]", "_");;
+				System.out.println("emote --> "+name+" --> "+formatName);
+				String fileLocation = "Icons/default/" + formatName + "/";
 
 				statusBar.setProgress("Downloading: " + name, StatusBar.getPercentage(jsonArray.size(), i));
-				ConfigManager config = new ConfigManager(TextureManager.texturePath + fileLocation + name + ".yml", true);
+				ConfigManager config = new ConfigManager(TextureManager.texturePath + fileLocation + formatName + ".yml", true);
 				config.setString("Name", name);
 				config.setString("ID", entry.get("id").getAsString());
 				config.setString("Format", "static");
 				config.setString("Theme", "dark");
 				config.saveConfigToFile();
 
-				emoteList.add(name+"%&%.png");
+				emoteList.add(formatName+"%&%.png");
 
 				try {
-					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, name + "_1.png");
-					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, name + "_2.png");
-					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, name + "_3.png");
-					TextureManager.mergeEmoteImages(fileLocation, name + "_1.png", "emoteBorder.png");
+					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_1x").getAsString().replace("light", "dark"), fileLocation, formatName + "_1.png");
+					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_2x").getAsString().replace("light", "dark"), fileLocation, formatName + "_2.png");
+					TextureManager.downloadImage(entry.getAsJsonObject("images").get("url_4x").getAsString().replace("light", "dark"), fileLocation, formatName + "_3.png");
+					TextureManager.mergeEmoteImages(fileLocation, formatName + "_1.png", "emoteBorder.png");
 				} catch (IOException ex) {
 					logger.error("Error?", ex);
 				}

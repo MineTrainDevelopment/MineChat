@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.naming.ConfigurationException;
 
@@ -42,6 +43,7 @@ public class ConfigManager {
     public ConfigManager(String configFileName, boolean createFile){
     	Main.LOADINGBAR.setProgress("Reading config file", 5);
     	logger.info("Reading config file...");
+//    	configFileName = configFileName.replaceAll("[" + Pattern.quote("<>:\"\\|?*()") + "]", "_");
     	this.configFileName = configFileName;
         yaml = new Yaml();
         

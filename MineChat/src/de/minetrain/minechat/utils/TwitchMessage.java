@@ -30,7 +30,7 @@ public class TwitchMessage {
 	
 	private final String userName;
 	private final String userColorCode;
-	private final Map<String, ImageIcon> emoteIcons = new HashMap<String, ImageIcon>();
+	private final Map<String, String> emoteSet = new HashMap<String, String>();
 	
 	private final Long epochTime;
 	private final ChannelTab parentTab;
@@ -49,7 +49,7 @@ public class TwitchMessage {
 		this.replyUser = (data.containsKey("reply-parent-display-name") ? data.get("reply-parent-display-name") : null);
 		this.dummy = false;
 		
-		emoteIcons.putAll(TwitchEmote.getEmotesByName());
+		emoteSet.putAll(TwitchEmote.getEmotesByName());
 		colorCache.put(userName.toLowerCase(), userColorCode);
 		List<String> emotesPaths = (data.get("emotes") != null ? Arrays.asList(data.get("emotes").split("/")) : null);
 
@@ -63,20 +63,15 @@ public class TwitchMessage {
 				Arrays.asList(emoteLocations).forEach(s -> {
 					String[] emoteLocation = s.split("-");
 					String emoteName = message.substring(Integer.parseInt(emoteLocation[0]), Integer.parseInt(emoteLocation[1])+1);
-					String emoteUrl = TWITCH_EMOTE_URL.replace("{ID}", emoteId);
+					String emoteUrl = "URL%"+TWITCH_EMOTE_URL.replace("{ID}", emoteId);
 
 					if(TwitchEmote.getEmotesByName().containsKey(emoteName)){
-						emoteIcons.put(emoteName, TwitchEmote.getEmotesByName().get(emoteName));
+						emoteSet.put(emoteName, TwitchEmote.getEmotesByName().get(emoteName));
 					}else if(TwitchEmote.CACHED_WEB_EMOTES.containsKey(emoteName)){
-						emoteIcons.put(emoteName, TwitchEmote.CACHED_WEB_EMOTES.get(emoteName));
+						emoteSet.put(emoteName, TwitchEmote.CACHED_WEB_EMOTES.get(emoteName));
 					}else{
-						try {
-							ImageIcon webEmote = new ImageIcon(ImageIO.read(new URL(emoteUrl)));
-							TwitchEmote.CACHED_WEB_EMOTES.put(emoteName, webEmote);
-							emoteIcons.put(emoteName, webEmote);
-						} catch (IOException ex) {
-							logger.warn("Failed to load an web emote!\nEmote name: "+emoteName+"\nURL: "+emoteUrl, ex);
-						}
+						TwitchEmote.CACHED_WEB_EMOTES.put(emoteName, emoteUrl);
+						emoteSet.put(emoteName, emoteUrl);
 					}
 				});
 			});
@@ -126,8 +121,8 @@ public class TwitchMessage {
 		return userColorCode;
 	}
 
-	public Map<String, ImageIcon> getEmotes() {
-		return emoteIcons;
+	public Map<String, String> getEmotes() {
+		return emoteSet;
 	}
 
 	public Long getEpochTime() {

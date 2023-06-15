@@ -2,11 +2,13 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +33,7 @@ import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.utils.CallCounter;
+import de.minetrain.minechat.utils.Settings;
 import de.minetrain.minechat.utils.TwitchMessage;
 
 public class ChatWindow extends JLabel {
@@ -125,6 +128,15 @@ public class ChatWindow extends JLabel {
 		
         chatPanel.add(messagePanel);
 //		list.add(messagePanel);
+		
+		if(chatPanel.getComponentCount() > Settings.MAX_MESSAGE_DISPLAYING){
+			if(chatPanel.getComponent(0) instanceof ChatWindowMessageComponent){
+				ChatWindowMessageComponent component = (ChatWindowMessageComponent) chatPanel.getComponent(0);
+				if(!component.isHighlighted()){
+					chatPanel.remove(0);
+				}
+			}
+		}
 		
 //		if(list.size()==MAX_MESSAGE_OBJ){
 //			JPanel minimised = list.remove(0).getMinimised();
