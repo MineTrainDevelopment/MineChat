@@ -44,7 +44,7 @@ public class ChatWindow extends JLabel {
     private static final int MAX_MESSAGE_SICE = 500;
 //	public  List<String> chatterNames = new ArrayList<String>();
 	public final GreetingsManager greetingsManager;
-	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
+//	public final HashMap<String, List<String>> badges = new HashMap<String, List<String>>();
 	public CallCounter messagesPerMin = new CallCounter(60);
 	public Integer messagesPerDay = 0;
 	public TwitchMessage replyMessage = null;

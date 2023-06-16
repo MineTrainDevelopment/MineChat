@@ -127,12 +127,9 @@ public class ChatWindowMessageComponent extends JPanel{
 		setBorder(titledBorder);
 		
 		
-		if (chatWindow.badges.containsKey(userName.toLowerCase())) {
+		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
 			IconStringBuilder stringBuilder = new IconStringBuilder().setSuffix(userName+":");
-			chatWindow.badges.get(userName.toLowerCase()).forEach(badge -> {
-				stringBuilder.appendIcon(badge, true);
-			});
-			
+			twitchMessage.getBadges().forEach(badge -> stringBuilder.appendIcon(badge, true));
         	titledBorder.setTitle(stringBuilder.toString());
         }
 		

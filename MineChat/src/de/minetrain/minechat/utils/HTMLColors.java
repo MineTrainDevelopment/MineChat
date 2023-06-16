@@ -21,6 +21,7 @@ public enum HTMLColors {
     SILVER("#C0C0C0"),
     TEAL("#008080"),
     WHITE("#FFFFFF"),
+    CYAN("#1a9fff"),
     YELLOW("#FFFF00");
 
 	private static final Random random = new Random();

@@ -3,9 +3,6 @@ package de.minetrain.minechat.twitch;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +40,6 @@ import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.Settings;
 import de.minetrain.minechat.utils.TwitchMessage;
@@ -99,7 +95,7 @@ public class TwitchListner {
 		}
 		
 		channelTab.getStatistics().addMessage(event.getUser().getName());
-		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent().getTags(), event.getMessage());
+		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent(), event.getMessage());
 		
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
 			String[] splitMessage = event.getMessage().split(" ");
@@ -112,7 +108,6 @@ public class TwitchListner {
 			});
 		}
 
-		setBadges(event, channelTab);
 		channelTab.getChatWindow().displayMessage(twitchMessage);
 	}
 	
@@ -133,9 +128,9 @@ public class TwitchListner {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getStatistics().addBits(event.getBits());
     	if(!Settings.displayBitsCheerd){return;}
-    	
+
     	currentChannelTab.getChatWindow()
-			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!", ColorManager.CHAT_UNIMPORTANT,
+			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!\n"+event.getMessage(), ColorManager.CHAT_UNIMPORTANT,
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%LOVE%", "Send some love!"));
     }
 
@@ -378,28 +373,6 @@ public class TwitchListner {
 		
 		return actionButton;
 	}
-	
-	private void setBadges(AbstractChannelMessageEvent event, ChannelTab tab){
-    	if(tab.getChatWindow().badges.containsKey(event.getUser().getName().toLowerCase())){return;}
-    	List<String> list = new ArrayList<String>();
-    	String[] badgeTags = event.getMessageEvent().getTagValue("badges").toString().replace("Optional[", "").replace("]", "").split(",");
-		Arrays.asList(badgeTags).forEach(badge -> {
-			String path = TextureManager.badgePath+badge+"/1.png";
-			
-			if(badge.startsWith("subscriber") || badge.startsWith("bits")){
-				String channelSubBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/["+event.getChannel().getId()+"]";
-				if (Files.exists(Paths.get(channelSubBadgePath))) {
-					path = channelSubBadgePath+badge.substring(badge.indexOf("/"))+"/1.png";
-				}
-			}
-			
-			if (Files.exists(Paths.get(path))) {
-				list.add(path);
-			}
-		});
-		
-		tab.getChatWindow().badges.put(event.getUser().getName().toLowerCase(), list);
-    }
 
 
 //    @EventSubscriber

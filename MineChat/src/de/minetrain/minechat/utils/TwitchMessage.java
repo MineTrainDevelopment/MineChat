@@ -1,5 +1,8 @@
 package de.minetrain.minechat.utils;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +11,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
+
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.ChannelTab;
+import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class TwitchMessage {
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{ID}/static/dark/1.0";
@@ -26,27 +32,30 @@ public class TwitchMessage {
 	private final String userName;
 	private final String userColorCode;
 	private final Map<String, String> emoteSet = new HashMap<String, String>();
+	private final List<String> badges = new ArrayList<>();
 	
 	private final Long epochTime;
 	private final ChannelTab parentTab;
 	private final boolean dummy;
 
-	public TwitchMessage(ChannelTab parentTab, Map<String, String> data, String message) {
+	public TwitchMessage(ChannelTab parentTab, IRCMessageEvent ircMessage, String message) {
 		this.parentTab = parentTab;
 		this.message = message;
-		this.messageId = data.get("id");
-		this.channelId = data.get("room-id");
-		this.userName = data.get("display-name");
-		this.client_nonce = data.get("client_nonce");
-		this.epochTime = Long.parseLong(data.get("tmi-sent-ts"));
-		this.userColorCode = (data.get("color") != null ? data.get("color") : "#ffffff");
-		this.replyId = (data.containsKey("reply-parent-msg-id") ? data.get("reply-parent-msg-id") : null);
-		this.replyUser = (data.containsKey("reply-parent-display-name") ? data.get("reply-parent-display-name") : null);
+		this.messageId = ircMessage.getTagValue("id").orElse(">null<");
+		this.channelId = ircMessage.getTagValue("room-id").orElse(">null<");
+		this.userName = ircMessage.getTagValue("display-name").orElse(">null<");
+		this.client_nonce = ircMessage.getTagValue("client_nonce").orElse(">null<");
+		this.epochTime = Long.parseLong(ircMessage.getTagValue("tmi-sent-ts").orElse(">null<"));
+		this.userColorCode = ircMessage.getTagValue("color").orElse("#ffffff");
+		this.replyId = ircMessage.getTagValue("reply-parent-msg-id").orElse(null);
+		this.replyUser = ircMessage.getTagValue("reply-parent-display-name").orElse(null);
 		this.dummy = false;
 		
 		emoteSet.putAll(TwitchEmote.getEmotesByName());
 		colorCache.put(userName.toLowerCase(), userColorCode);
-		List<String> emotesPaths = (data.get("emotes") != null ? Arrays.asList(data.get("emotes").split("/")) : null);
+		
+		String emotes = ircMessage.getTagValue("emotes").orElse(null);
+		List<String> emotesPaths = (emotes != null ? Arrays.asList(emotes.split("/")) : null);
 
 //		emotesv2_5d1cdac68be9419486d3be49d78ae402:0-6,8-14,16-22,24-30,32-38
 		if(emotesPaths != null){
@@ -71,6 +80,23 @@ public class TwitchMessage {
 				});
 			});
 		}
+		
+    	String[] badgeTags = ircMessage.getTagValue("badges").orElse("").split(",");
+		Arrays.asList(badgeTags).forEach(badge -> {
+			String path = TextureManager.badgePath+badge+"/1.png";
+			
+			if(badge.startsWith("subscriber") || badge.startsWith("bits")){
+				String channelBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/Channel_"+ircMessage.getChannel().getId()+"";
+
+				if(Files.exists(Paths.get(channelBadgePath))){
+					path = channelBadgePath+badge.substring(badge.indexOf("/"))+"/1.png";
+				}
+			}
+			
+			if (Files.exists(Paths.get(path))) {
+				getBadges().add(path);
+			}
+		});
 	}
 	
 	public TwitchMessage(ChannelTab parentTab, String userName, String message) {
@@ -156,6 +182,10 @@ public class TwitchMessage {
 	
 	public static final String getCachedColorCode(String userLogin) {
 		return colorCache.get(userLogin);
+	}
+	
+	public List<String> getBadges() {
+		return badges;
 	}
 	
 	@Override

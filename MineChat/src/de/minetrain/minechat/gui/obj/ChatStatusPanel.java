@@ -174,12 +174,23 @@ public class ChatStatusPanel extends JPanel {
 	}
     
     private ChatStatusPanel setText(String message, boolean locked, int limit){
-    	if(!isLocked()){
+//    	if(!isLocked()){
     		setLockedState(locked);
     		this.inputInfo.setText((message.length()>limit) ? message.substring(0, (limit-1))+"..." : message);
-    	}
+//    	}
     	return this;
 	}
+    
+    public void setDownloadStatus(String type, String name, boolean locked){
+		inputInfo.setHorizontalAlignment(SwingConstants.LEFT);
+		stringBuilder.appendString("Downloading", HTMLColors.CYAN);
+		stringBuilder.appendString(" a ", HTMLColors.WHITE);
+		stringBuilder.appendString(type+":", HTMLColors.AQUA);
+		stringBuilder.appendLineSplit();
+		stringBuilder.appendString(name, HTMLColors.WHITE);
+    	setText(stringBuilder.toString(), locked);
+    	stringBuilder.clear();
+    }
     
 	public void setConectionStatus(WebsocketConnectionState stat){
     	switch (stat) {
