@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -63,10 +66,10 @@ public class ChatWindowMessageComponent extends JPanel{
 	private JTextPane messageLabel;
 	private JPanel messageContentPanel;
 	private MineButton markReadButton, replyButton;
-	private final Map<String, ImageIcon> emotes;
+	private Map<String, String> emotes;
 	private final String userName;
 	
-	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow, Map<String, ImageIcon> emotes) {
+	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow, Map<String, String> emotes) {
 		super(new BorderLayout());
 		this.emotes = emotes;
 		this.userName = topic;
@@ -124,12 +127,9 @@ public class ChatWindowMessageComponent extends JPanel{
 		setBorder(titledBorder);
 		
 		
-		if (chatWindow.badges.containsKey(userName.toLowerCase())) {
+		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
 			IconStringBuilder stringBuilder = new IconStringBuilder().setSuffix(userName+":");
-			chatWindow.badges.get(userName.toLowerCase()).forEach(badge -> {
-				stringBuilder.appendIcon(badge, true);
-			});
-			
+			twitchMessage.getBadges().forEach(badge -> stringBuilder.appendIcon(badge, true));
         	titledBorder.setTitle(stringBuilder.toString());
         }
 		
@@ -235,6 +235,7 @@ public class ChatWindowMessageComponent extends JPanel{
     	
     	replyButtonMouseAdapter(replyButton);
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
+    	emotes.clear(); //NOTE This is to improve ram usage.
 	}
 	
 	private static final MouseAdapter replyButtonMouseAdapter(JButton button) {
@@ -273,7 +274,7 @@ public class ChatWindowMessageComponent extends JPanel{
 			previousWord = word;
 
 //			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
-			Map<String, ImageIcon> emotesByName = this.emotes;
+			Map<String, String> emotesByName = this.emotes;
 			
 			Settings.highlightStrings.forEach(string -> {
 	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
@@ -283,15 +284,22 @@ public class ChatWindowMessageComponent extends JPanel{
 	    		}
 	    	});
 			
-			if (emotesByName != null && emotesByName.get(word) != null) {
-				ImageIcon emote = emotesByName.get(word);
+			String emotePath = emotesByName.get(word);
+			if (emotesByName != null && emotePath != null) {
+				ImageIcon emote = null;
 				
-				switch (emoteStyle) {
-				case 1: StyleConstants.setIcon(attributeSet, new MirroredImageIcon(emote.getImage())); break;
-				case 2: StyleConstants.setIcon(attributeSet, new FlippedImageIcon(emote.getImage())); break;
-				default: StyleConstants.setIcon(attributeSet, emote); break;}
-				
-				isEmote = true;
+				try {
+					emote = !emotePath.startsWith("URL%") ? new ImageIcon(emotePath) : new ImageIcon(ImageIO.read(new URL(emotePath.substring(4))));
+					
+					switch (emoteStyle) {
+					case 1: StyleConstants.setIcon(attributeSet, new MirroredImageIcon(emote.getImage())); break;
+					case 2: StyleConstants.setIcon(attributeSet, new FlippedImageIcon(emote.getImage())); break;
+					default: StyleConstants.setIcon(attributeSet, emote); break;}
+					
+					isEmote = true;
+				} catch (IOException ex) {
+					logger.warn("Failed to load an emote!\nPath: "+emotePath, ex);
+				}
 			}
 
 			try {
@@ -358,13 +366,12 @@ public class ChatWindowMessageComponent extends JPanel{
     }
     
     private final String encryptEmotes(String input) {
-    	Map<String, ImageIcon> emotesByName = this.emotes;
     	String[] split = input.split(" ");
     	String output = "";
     	emoteReplacements.clear();
     	
     	for (int i=0; i<split.length; i++) {
-			if(emotesByName.containsKey(split[i])){
+			if(this.emotes.containsKey(split[i])){
 	            String replacement = generateReplacement(split[i]);
 	            emoteReplacements.put(replacement, split[i]);
 	            split[i] = split[i].replaceAll("\\b" + split[i] + "\\b", replacement);

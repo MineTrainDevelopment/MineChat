@@ -4,39 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 
 public class TwitchEmote {
 	private static final String folderPath = TextureManager.texturePath+"Icons/";
-	private static HashMap<String, ImageIcon> emotesByName = new HashMap<String, ImageIcon>();
-	public static final HashMap<String, ImageIcon> CACHED_WEB_EMOTES = new HashMap<String, ImageIcon>();
-	private ImageIcon imageIcon;
-	private String emotePath;
-	
-	public TwitchEmote(ImageIcon imageIcon, String emotePath) {
-		this.imageIcon = imageIcon;
-		this.emotePath = emotePath;
-	}
-
-	public TwitchEmote(String imagePath) {
-		if(imagePath.equalsIgnoreCase("null")){
-			return;
-		}
-		
-		if(imagePath.split("/")[3].equalsIgnoreCase("bttv")){
-			imagePath = imagePath.replace(".png", ".gif");
-		}
-		
-		imageIcon = new ImageIcon(imagePath);
-		emotePath = imagePath;
-		
-		if(imageIcon == null && Main.MAIN_FRAME != null){
-			Main.MAIN_FRAME.displayInfo("Can´t find the '"+imagePath+"' emote");
-		}
-	}
+	private static HashMap<String, String> emotesByName = new HashMap<String, String>();
+	public static final HashMap<String, String> CACHED_WEB_EMOTES = new HashMap<String, String>();
 	
 	public static HashMap<String, List<String>> getEmotes(boolean withBorder){
 		emotesByName.clear();
@@ -49,7 +23,7 @@ public class TwitchEmote {
 				String newEmote = folderPath + channel.replace("Channel_", "") +"/"+ emote+"/"+emote+"_1"+((withBorder) ? "_BG.png%&%"+format : format);
 				tempList.add(newEmote);
 //				emotesByName.put(emote, new TwitchEmote(newEmote.replace("_BG.png%&%", "")).getImageIcon());
-				emotesByName.put(emote, new ImageIcon(newEmote.replace("_BG.png%&%", "")));
+				emotesByName.put(emote, newEmote.replace("_BG.png%&%", ""));
 			});
 			
 			emotes.put(channel, tempList);
@@ -57,18 +31,11 @@ public class TwitchEmote {
 		return emotes;
 	}
 
-	public static HashMap<String, ImageIcon> getEmotesByName() {
+	public static HashMap<String, String> getEmotesByName() {
 		if(emotesByName.isEmpty()){
 			getEmotes(false);
 		}
 		return emotesByName;
 	}
 
-	public ImageIcon getImageIcon() {
-		return imageIcon;
-	}
-	
-	public String getEmotePath() {
-		return emotePath;
-	}
 }

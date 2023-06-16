@@ -3,11 +3,13 @@ package de.minetrain.minechat.main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
@@ -16,7 +18,6 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
-import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.Settings;
 
 public class Main {
@@ -113,6 +114,14 @@ public class Main {
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
+        
+//        Object[] array = TwitchEmote.getEmotesByName().entrySet().toArray();
+//        Random random = new Random();
+//        for (int i=0; i<50000; i++) {
+//			String string = (array[Math.abs(random.nextInt(array.length))]).toString().split("/")[4];
+//			System.out.println("Emote -> "+string);
+//			TitleBar.currentTab.getChatWindow().displayMessage(string+" - Message", "test", Color.PINK);//5
+//		}
         
 //		for (int i=0; i<20; i++) {
 //			TitleBar.currentTab.getChatWindow().displayMessage("Message "+i, "test", Color.PINK);
