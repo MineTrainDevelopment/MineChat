@@ -13,15 +13,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,16 +44,19 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 public class EditChannelFrame extends JDialog {
 	private static final Logger logger = LoggerFactory.getLogger(EditChannelFrame.class);
 	private static final long serialVersionUID = 8773100712568642831L;
-	private JTextField twitchChannelNameField, channelDisplayNameField, triggerAmountField, deprecateAfterField;
-    private JComboBox<String> userTypeComboBox;
+	private Map<String, String> channelsFromConfig = new HashMap<String, String>();
+	private JTextField loginNameField, displayNameField;
+    private JComboBox<String> userTypeComboBox, cloneMacrosComboBox;
+    private JCheckBox emotesCheckBox, badgesCheckBox;
+    private Thread loginChangeListner;
     private int mouseX, mouseY;
     private ChannelTab editedTab;
     private static final int fontSize = 13;
-
+    
     public EditChannelFrame(MainFrame mainFrame, ChannelTab tab) {
     	super(mainFrame, "Twitch Channel Einstellungen", true);
     	this.editedTab = tab;
-        setSize(400, 180);
+        setSize(400, 230);
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
@@ -57,83 +66,78 @@ public class EditChannelFrame extends JDialog {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
         panel.setBackground(ColorManager.GUI_BACKGROUND);
-        panel.setLayout(new GridLayout(6, 2));
+//        panel.setLayout(new GridLayout(7, 2));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         addMouseListener(MoiseListner());
         addMouseMotionListener(mouseMotionListner());
 
-        // Erstellen der Texteingabefelder
-        twitchChannelNameField = new JTextField(10);
-        twitchChannelNameField.setBorder(null);
 
-        channelDisplayNameField = new JTextField(10);
-        channelDisplayNameField.setBorder(null);
-
-        triggerAmountField = new JTextField(10);
-        triggerAmountField.setBorder(null);
-
-        deprecateAfterField = new JTextField(10);
-        deprecateAfterField.setBorder(null);
-
-        // Erstellen der Labels f√ºr die Texteingabefelder
-        JLabel twitchChannelNameLabel = new JLabel(" Twitch Channel Name:");
-        JLabel channelDisplayNameLabel = new JLabel(" Channel Anzeige Name:");
-        JLabel userTypeComboNameLabel = new JLabel(" User Typ: ");
-        JLabel SpamButtonLabel1 = new JLabel("--------------------------------------Spam");
-        JLabel SpamButtonLabel2 = new JLabel("Button--------------------------------------");
-        JLabel triggerAmountLabel = new JLabel(" Trigger Amount: (Messages)");
-        JLabel deprecateAfterLabel = new JLabel(" Deprecate After: (Seconds)");
-
-        twitchChannelNameLabel.setForeground(Color.WHITE);
-        channelDisplayNameLabel.setForeground(Color.WHITE);
-        userTypeComboNameLabel.setForeground(Color.WHITE);
-        SpamButtonLabel1.setForeground(Color.WHITE);
-        SpamButtonLabel2.setForeground(Color.WHITE);
-        triggerAmountLabel.setForeground(Color.WHITE);
-        deprecateAfterLabel.setForeground(Color.WHITE);
-
-        twitchChannelNameField = new JTextField();
-        twitchChannelNameField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		twitchChannelNameField.setFont(new Font(null, Font.BOLD, fontSize));
-        twitchChannelNameField.setForeground(Color.WHITE);
-        twitchChannelNameField.setText(tab.getChannelName());
-        panel.add(twitchChannelNameLabel);
-        panel.add(twitchChannelNameField);
-
-        channelDisplayNameField = new JTextField();
-        channelDisplayNameField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        channelDisplayNameField.setFont(new Font(null, Font.BOLD, fontSize));
-        channelDisplayNameField.setForeground(Color.WHITE);
-        channelDisplayNameField.setText(tab.getDisplayName());
-        panel.add(channelDisplayNameLabel);
-        panel.add(channelDisplayNameField);
-
-        userTypeComboBox = new JComboBox<>(new String[]{"Viewer", "Moderator"});
-        userTypeComboBox.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        userTypeComboBox.setFont(new Font(null, Font.BOLD, fontSize));
-        userTypeComboBox.setForeground(Color.WHITE);
-//        userTypeComboBox.setSelectedIndex((tab.isModerator()) ? 1 : 0);
-        userTypeComboBox.setSelectedIndex(0);
-        panel.add(userTypeComboNameLabel);
-        panel.add(userTypeComboBox);
-
-        triggerAmountField = new JTextField();
-        triggerAmountField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        triggerAmountField.setFont(new Font(null, Font.BOLD, fontSize));
-        triggerAmountField.setForeground(Color.WHITE);
-        triggerAmountField.setText(""+tab.getSpamTriggerAmound());
-        panel.add(SpamButtonLabel1);
-        panel.add(SpamButtonLabel2);
-        panel.add(triggerAmountLabel);
-        panel.add(triggerAmountField);
+        JLabel seperator0 = new JLabel(" ");
+        seperator0.setForeground(Color.WHITE);
+        seperator0.setHorizontalTextPosition(SwingConstants.CENTER);
         
-        deprecateAfterField = new JTextField();
-        deprecateAfterField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        deprecateAfterField.setFont(new Font(null, Font.BOLD, fontSize));
-        deprecateAfterField.setForeground(Color.WHITE);
-        deprecateAfterField.setText(""+tab.getSpamDeprecateAfter());
-        panel.add(deprecateAfterLabel);
-        panel.add(deprecateAfterField);
+        JLabel seperator1 = new JLabel(" ");
+        seperator1.setForeground(Color.WHITE);
+        seperator1.setHorizontalTextPosition(SwingConstants.CENTER);
 
+        panel.add(createInputPanel("Channel login / URL:", "login"));
+        panel.add(seperator0);
+        panel.add(createInputPanel("Display name:", "display"));
+        panel.add(createDropdownPanel("User Typ:", new String[]{"Viewer", "Moderator"}, "type"));
+        panel.add(seperator1);
+        panel.add(createDropdownPanel("Clone macros:", new String[]{" "}, "clone"));
+        panel.add(createCheckBox("Install channel emotes:", "emote"));
+        panel.add(createCheckBox("Install channel badges:", "badge"));
+        
+        loginNameField.setText(tab.getChannelName());
+        
+        ConfigManager config = Main.CONFIG;
+		config.getRawConfig().entrySet().forEach(entry -> {
+        	if(entry.getKey().startsWith("Channel_")){
+        		channelsFromConfig.put(config.getString(entry.getKey()+".Name"), entry.getKey());
+        	}
+        });
+		
+		//Add all channels to the clone selector.
+		for(Entry<String, String> entry : channelsFromConfig.entrySet()){
+        	cloneMacrosComboBox.addItem(config.getString(entry.getValue()+".DisplayName")+" - ("+entry.getKey()+")");
+        }
+        
+		//Check if the current login input is alrady existing.
+        loginChangeListner = new Thread(() -> {
+        	String previousInput = "";
+        	while(true){
+        		try{Thread.sleep(250);}catch(InterruptedException e){ }
+				
+        		String currentInput = loginNameField.getText().toLowerCase();
+				if(!currentInput.equals(previousInput)){
+					previousInput = currentInput;
+					
+					//format the login input, should it be a link.
+					if(currentInput.contains("https://www.twitch.tv/")){
+						loginNameField.setText(loginNameField.getText().replace("https://www.twitch.tv/", "").split("\\?")[0]);
+					}
+        			
+					//Set the default values, depending if there is alrady data for the inpit login name.
+        			if(channelsFromConfig.containsKey(currentInput)){
+        				String configIndex = channelsFromConfig.get(currentInput)+".";
+        				displayNameField.setText(config.getString(configIndex+"DisplayName"));
+        				userTypeComboBox.setSelectedIndex(config.getString(configIndex+"ChannelRole").equalsIgnoreCase("moderator") ? 1 : 0);
+        				badgesCheckBox.setSelected(false);
+        				emotesCheckBox.setSelected(false);
+        			}else{
+        				displayNameField.setText(loginNameField.getText()); //Sync display name with login name.
+        				userTypeComboBox.setSelectedIndex(0);
+        				badgesCheckBox.setSelected(true);
+        				emotesCheckBox.setSelected(true);
+        			}
+        		}
+        	}
+        });
+        
+        loginChangeListner.start();
+        
+        
         // Erstellen der Buttons
         JButton confirmButton = new JButton("Confirm");
         confirmButton.setBackground(ColorManager.GUI_BACKGROUND);
@@ -156,7 +160,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(buttonPanel);
         
         // Setzen der Breite der Buttons auf die Breite der Textfelder
-        int buttonWidth = (twitchChannelNameField.getPreferredSize().width + channelDisplayNameField.getPreferredSize().width) / 2;
+        int buttonWidth = (loginNameField.getPreferredSize().width + displayNameField.getPreferredSize().width) / 2;
         cancelButton.setPreferredSize(new Dimension(buttonWidth, cancelButton.getPreferredSize().height));
         confirmButton.setPreferredSize(new Dimension(buttonWidth, confirmButton.getPreferredSize().height));
 
@@ -177,6 +181,63 @@ public class EditChannelFrame extends JDialog {
         setVisible(true);
     }
     
+    private JPanel createCheckBox(String title, String type) {
+        JPanel panel = new JPanel(new BorderLayout());
+        JCheckBox checkBox = new JCheckBox();
+        panel.addMouseListener(new MouseAdapter(){@Override public void mousePressed(MouseEvent e){checkBox.setSelected(!checkBox.isSelected());}});
+        
+        JLabel text = new JLabel(" "+title, JLabel.LEFT);
+        text.setForeground(ColorManager.FONT);
+		panel.add(text, BorderLayout.WEST);
+        
+		checkBox.setSelected(true);
+		checkBox.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+        panel.add(checkBox, BorderLayout.EAST);
+        
+        panel.setBackground(ColorManager.GUI_BACKGROUND);
+        
+        if(type.equals("emote")){emotesCheckBox = checkBox;}else{badgesCheckBox = checkBox;}
+        return panel;
+    }
+    
+    private JPanel createInputPanel(String title, String type){
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+        JLabel textField = new JLabel(" "+title);
+        JTextField inputField = new JTextField();
+        
+        inputField.setFont(new Font(null, Font.BOLD, fontSize));
+        inputField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+        inputField.setForeground(Color.WHITE);
+
+        textField.setForeground(ColorManager.FONT);
+        panel.setBackground(ColorManager.GUI_BACKGROUND);
+        
+        panel.add(textField);
+        panel.add(inputField);
+        
+        if(type.equals("login")){loginNameField = inputField;}else{displayNameField = inputField;}
+		return panel;
+    }
+    
+    private JPanel createDropdownPanel(String title, String[] items, String type){
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+        JLabel textField = new JLabel(" "+title);
+        JComboBox<String> inputField = new JComboBox<>(items);
+        
+        inputField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+        inputField.setFont(new Font(null, Font.BOLD, fontSize));
+        inputField.setForeground(Color.WHITE);
+
+        textField.setForeground(ColorManager.FONT);
+        panel.setBackground(ColorManager.GUI_BACKGROUND);
+        
+        panel.add(textField);
+        panel.add(inputField);
+        
+        if(type.equals("type")){userTypeComboBox = inputField;}else{cloneMacrosComboBox = inputField;}
+		return panel;
+    }
+    
     private ActionListener closeWindow(Boolean isCanselt){
 		return new ActionListener() {
 			
@@ -184,17 +245,17 @@ public class EditChannelFrame extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				if(isCanselt){dispose(); return;}
 				
-				TwitchUserObj twitchUser = TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, twitchChannelNameField.getText().replace("!", "").replace("?", ""));
+				TwitchUserObj twitchUser = (loginNameField.getText().isEmpty() ? new TwitchUserObj(null, null, true) : TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, loginNameField.getText().replace("!", "").replace("?", "")));
 				if(twitchUser.isDummy()){
-					twitchChannelNameField.setText("Invalid channel!");
+					loginNameField.setText("Invalid channel!");
 					new Thread(()->{
-						for (int i = 0; i < 15; i++) {
-							twitchChannelNameField.setForeground(Color.RED);
+						for (int i = 0; i < 10; i++) {
+							loginNameField.setForeground(Color.RED);
 							try{Thread.sleep(200);}catch(Exception ex){ }
-							twitchChannelNameField.setForeground(Color.YELLOW);
+							loginNameField.setForeground(Color.YELLOW);
 							try{Thread.sleep(200);}catch(Exception ex){ }
 						}
-						twitchChannelNameField.setForeground(Color.WHITE);
+						loginNameField.setForeground(Color.WHITE);
 					}).start();
 					return;
 				}
@@ -205,10 +266,28 @@ public class EditChannelFrame extends JDialog {
 				
 				String nameSavedInConfigName = config.getString(path+"Name");
 				config.setString(path + "Name", twitchUser.getLoginName());
-				config.setString(path + "DisplayName", (channelDisplayNameField.getText().isEmpty() ? twitchChannelNameField.getText() : channelDisplayNameField.getText()));
+				config.setString(path + "DisplayName", (displayNameField.getText().isEmpty() ? loginNameField.getText() : displayNameField.getText()));
 				config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
 
-				if(nameSavedInConfigName.equalsIgnoreCase(">null<")){
+				if(cloneMacrosComboBox.getSelectedIndex()>0){
+					String selectedName = cloneMacrosComboBox.getSelectedItem().toString();
+					String clonePath = channelsFromConfig.get(selectedName.contains("(") ? selectedName.split("\\(")[1].replace(")", "") : selectedName)+".";
+					
+					for(int i=0; i<=12; i++){
+						config.setString(path + "Macros_0.M"+i, config.getString(clonePath + "Macros_0.M"+i));
+					}
+
+					for(int i=0; i<=12; i++){
+						config.setString(path + "Macros_1.M"+i, config.getString(clonePath + "Macros_1.M"+i));
+					}
+
+					for(int i=0; i<=12; i++){
+						config.setString(path + "Macros_2.M"+i, config.getString(clonePath + "Macros_2.M"+i));
+					}
+					
+					config.setStringList(path + "GreetingText", config.getStringList(clonePath+"GreetingText"), false);
+					config.setStringList(path + "GreetingText", config.getStringList(clonePath+"GoodbyText"), false);
+				}else if(nameSavedInConfigName.equalsIgnoreCase(">null<")){
 					for(int i=0; i<=12; i++){
 						config.setString(path + "Macros_0.M"+i, "null%-%>null<");
 					}
@@ -230,26 +309,21 @@ public class EditChannelFrame extends JDialog {
 					goodbysList.add("By {USER}!");
 					goodbysList.add("Have a good one! {USER} <3");
 					config.setStringList(path + "GoodbyText", goodbysList, false);
+				}
 
-					TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
-					new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
-				}
-				
-				
-				
-				long parseSpamTrigger = 4;
-				long parseDeprecateAfter = 5;
-				
-				try {
-					parseSpamTrigger = Long.parseLong(triggerAmountField.getText());
-					parseDeprecateAfter = Long.parseLong(deprecateAfterField.getText());
-				} catch (NumberFormatException ex) {
-					logger.warn("Can¥t format user input into long", ex);
-				}
-				
-				config.setNumber(path + "SpamButton.TriggerAmoundMessages", parseSpamTrigger);
-				config.setNumber(path + "SpamButton.DeprecateAfterSeconds", parseDeprecateAfter);
 				config.saveConfigToFile();
+				TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
+				
+				new Thread(() -> {
+					if(emotesCheckBox.isSelected()){
+						TextureManager.downloadChannelEmotes(twitchUser.getUserId());
+//						new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
+					}
+					
+					if(badgesCheckBox.isSelected()){
+						TextureManager.downloadChannelBadges(twitchUser.getUserId());
+					}
+				}).start();
 				
 				editedTab.getTabButton().removeActionListener(editedTab.getEditWindowAction());
 				editedTab.reload(twitchUser.getUserId());
@@ -276,5 +350,13 @@ public class EditChannelFrame extends JDialog {
                 setLocation(newX, newY);
             }
         };
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public void dispose() {
+		super.dispose();
+		loginChangeListner.stop();
 	}
 }

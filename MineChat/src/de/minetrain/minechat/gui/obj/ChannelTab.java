@@ -38,8 +38,6 @@ public class ChannelTab {
 	private boolean moderator;
 	private MainFrame mainFrame;
 	private List<String> greetingTexts;
-	private Long spamTriggerAmound; //Messages
-	private Long spamDeprecateAfter; //Seconds
 	private ActionListener editWindowAction;
 	private ChannelMacros macros;
 	private ChatWindow chatWindow = new ChatWindow(this);
@@ -94,8 +92,6 @@ public class ChannelTab {
 			displayName = "";
 			moderator = false;
 			greetingTexts = null;
-			spamTriggerAmound = 4l;
-			spamDeprecateAfter = 5l;
 			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
 			this.tabButton.addActionListener(getEditWindowAction());
 			macros = new ChannelMacros(null);
@@ -122,8 +118,6 @@ public class ChannelTab {
 		displayName = config.getString(configPath+"DisplayName");
 		moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
 		greetingTexts = config.getStringList(configPath+"GreetingText");
-		spamTriggerAmound = config.getLong(configPath+"SpamButton.TriggerAmoundMessages", 4);
-		spamDeprecateAfter = config.getLong(configPath+"SpamButton.DeprecateAfterSeconds", 5);
 		TwitchManager.joinChannel(channelName);
 		loadMacros(configID);
 	}
@@ -220,16 +214,6 @@ public class ChannelTab {
 
 	public List<String> getGreetingTexts() {
 		return greetingTexts;
-	}
-
-
-	public Long getSpamTriggerAmound() {
-		return spamTriggerAmound;
-	}
-
-
-	public Long getSpamDeprecateAfter() {
-		return spamDeprecateAfter;
 	}
 
 

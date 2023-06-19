@@ -32,5 +32,6 @@ public class ColorManager {
     public static final Color CHAT_USER_REWARD = Color.BLUE;
     public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT = Color.RED;
     public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT = new Color(125, 0, 255);
+    public static final Color FONT = Color.WHITE;
 
 }

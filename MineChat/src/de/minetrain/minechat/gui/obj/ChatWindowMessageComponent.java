@@ -233,7 +233,6 @@ public class ChatWindowMessageComponent extends JPanel{
     	}
     	
     	
-    	replyButtonMouseAdapter(replyButton);
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
     	emotes.clear(); //NOTE This is to improve ram usage.
 	}

@@ -197,13 +197,8 @@ public class TextureManager {
 	
 	public static void downloadProfileImage(String uri, String channelId) {
 		try {
-			logger.info("Downloading profile image...");
 			downloadImage(uri, "Icons/"+channelId, "/profile.png");
 			downloadImage(uri, "Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
-//			resizeImage("Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
-			logger.info("Downloading channel badges...");
-			downloadChannelBadges(channelId);
-			logger.info("Image downloaded successfully.");
 		} catch (IOException ex) {
 			logger.warn("Can´t download profile image. \n URL: " + uri, ex);
 		}
@@ -389,6 +384,105 @@ public class TextureManager {
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
 		}).start();
 	}
+	
+	public static void downloadChannelEmotes(String channelId) {
+		
+		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+channelId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
+				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
+				.header("Client-Id", new TwitchCredentials().getClientID())
+				.asString()
+				.getBody(), JsonObject.class);
+		
+		JsonArray jsonArray = fromJson.getAsJsonArray("data");
+		String downloadURL = fromJson.get("template").getAsString();
+		List<String> emoteList = new ArrayList<String>();
+		List<String> emoteTier2List = new ArrayList<String>();
+		List<String> emoteTier3List = new ArrayList<String>();
+		List<String> emoteBitsList = new ArrayList<String>();
+		List<String> emoteFollowList = new ArrayList<String>();
+		
+		for (int i=0; i < jsonArray.size(); i++) {
+			JsonElement jsonElement = jsonArray.get(i);
+			JsonObject entry = jsonElement.getAsJsonObject();
+			
+			String name = entry.get("name").getAsString();
+			String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
+			String fileFormat = ((format.length()>6) ? ".gif" : ".png");
+			String emoteID = entry.get("id").getAsString();
+			String fileLocation = "Icons/"+channelId+"/"+name+"/";
+			
+		    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+			ConfigManager config = new ConfigManager(TextureManager.texturePath+fileLocation+name+".yml", true);
+			
+			String borderImageTyp = "";
+			String indexName = name+"%&%"+fileFormat;
+			switch (entry.get("tier").getAsString()) {
+				case "1000": emoteList.add(indexName); break;
+				case "2000": emoteTier2List.add(indexName); borderImageTyp="2"; break;
+				case "3000": emoteTier3List.add(indexName); borderImageTyp="3"; break;
+				default:
+					if(entry.get("emote_type").getAsString().equals("bitstier")){
+						 emoteBitsList.add(indexName); borderImageTyp="Bits";
+					}else{
+						emoteFollowList.add(indexName); borderImageTyp="Follow";
+					}
+					break;
+			}
+			
+			config.setString("Name", name);
+			config.setString("ID", emoteID);
+			config.setString("Tier", entry.get("tier").getAsString());
+			config.setString("EmoteType", entry.get("emote_type").getAsString());
+			config.setString("EmoteSet_Id",entry.get("emote_set_id").getAsString());
+			config.setString("Tier",entry.get("tier").getAsString());
+			config.setString("Format", format);
+			config.setString("Theme", "dark");
+			config.saveConfigToFile();
+			
+			try {
+//				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
+//				downloadURL = downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark");
+				System.out.println("Emote -> "+name+" --- "+downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark"));
+				for (int index = 1; index < 4; index++) {
+					TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, name+"_"+index+fileFormat);
+				}
+				
+				TextureManager.mergeEmoteImages(fileLocation, name+"_1"+fileFormat, "emoteBorder"+borderImageTyp+".png", fileFormat);
+			} catch (IOException ex) {
+				logger.error("Error?", ex);
+			}
+			
+		}
+
+	    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", "Saving data...", false);
+    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", "Saving data...", false);
+    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", "Saving data...", false);
+		Collections.sort(emoteList);
+		Collections.sort(emoteTier2List);
+		Collections.sort(emoteTier2List);
+		Collections.sort(emoteBitsList);
+		Collections.sort(emoteFollowList);
+		emoteList.addAll(emoteTier2List);
+		emoteList.addAll(emoteTier3List);
+		emoteList.addAll(emoteBitsList);
+		emoteList.addAll(emoteFollowList);
+		
+		if(jsonArray.size()>0){
+			List<String> indexList = Main.EMOTE_INDEX.getStringList("index");
+			if(!indexList.contains("Channel_"+channelId)){
+				indexList.add("Channel_"+channelId);
+			}
+			Main.EMOTE_INDEX.setStringList("index", indexList, false);
+			Main.EMOTE_INDEX.setStringList("Channel_"+channelId, emoteList, true);
+		}
+		
+		Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
+    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
+    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
+	}
+	
 	
 	private static void getDefaultEmotes() {
 		JFrame dialog = new JFrame("emote downloading...");
