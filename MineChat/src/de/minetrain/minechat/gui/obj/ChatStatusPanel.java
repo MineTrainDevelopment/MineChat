@@ -60,9 +60,9 @@ public class ChatStatusPanel extends JPanel {
         cancelReplyButton.setVisible(false);
         cancelReplyButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e){
-				if(!currentlyCachedInput.isEmpty()){
+//				if(!currentlyCachedInput.isEmpty()){
 					loadCurrentlyCachedInput();
-				}
+//				}
 				
 				setLockedState(false);
 				chat.setMessageToReply(null);
@@ -260,12 +260,10 @@ public class ChatStatusPanel extends JPanel {
 		currentlyCachedInput = "";
 	}
 
-	public void overrideCurrentInputCache() {
-		this.currentlyCachedInput = getCurrentUserInput();
-	}
-
-	public String getCurrentInputCache() {
-		return currentlyCachedInput;
+	public void overrideCurrentInputCache(boolean force) {
+		if(force || currentlyCachedInput.isEmpty()){
+			this.currentlyCachedInput = getCurrentUserInput();
+		}
 	}
 
 	public static String getLineseparator() {

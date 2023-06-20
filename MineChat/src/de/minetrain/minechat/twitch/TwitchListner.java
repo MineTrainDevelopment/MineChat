@@ -342,9 +342,7 @@ public class TwitchListner {
 			@Override public void actionPerformed(ActionEvent e){
 				ChatStatusPanel statusPanel = tab.getChatWindow().chatStatusPanel;
 				
-				if(statusPanel.getCurrentInputCache().isEmpty()){
-					statusPanel.overrideCurrentInputCache();
-				}
+				statusPanel.overrideCurrentInputCache(false);
 				
 				if(outputMessage.startsWith("%GREET%")){
 			    	if(tab.getChatWindow().greetingsManager.isMentioned("")){
