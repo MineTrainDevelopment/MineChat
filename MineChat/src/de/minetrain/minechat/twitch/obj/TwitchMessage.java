@@ -1,4 +1,4 @@
-package de.minetrain.minechat.utils;
+package de.minetrain.minechat.twitch.obj;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,6 +16,8 @@ import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.utils.Settings;
+import de.minetrain.minechat.utils.Settings.ReplyType;
 
 public class TwitchMessage {
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{ID}/static/dark/1.0";
@@ -28,6 +30,7 @@ public class TwitchMessage {
 
 	private String replyId;
 	private String replyUser;
+	private ReplyType replyType = Settings.REPLY_TYPE;
 	
 	private final String userName;
 	private final String userColorCode;
@@ -187,6 +190,15 @@ public class TwitchMessage {
 	public List<String> getBadges() {
 		return badges;
 	}
+
+	public ReplyType getReplyType() {
+		return replyType;
+	}
+
+	public void setReplyType(ReplyType replyType) {
+		this.replyType = replyType;
+	}
+	
 	
 	@Override
 	public String toString() {

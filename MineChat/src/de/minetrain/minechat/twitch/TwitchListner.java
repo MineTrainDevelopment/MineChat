@@ -41,8 +41,8 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.Settings;
-import de.minetrain.minechat.utils.TwitchMessage;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.

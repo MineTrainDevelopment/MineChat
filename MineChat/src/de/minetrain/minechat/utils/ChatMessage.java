@@ -8,6 +8,7 @@ import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
+import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 public class ChatMessage {
 	private final TwitchMessage replyMessage;

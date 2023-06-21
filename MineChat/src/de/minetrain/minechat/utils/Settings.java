@@ -23,8 +23,10 @@ public class Settings {
 	public static final boolean displayBitsCheerd = true;
 	public static final boolean displayAnnouncement = true;
 	public static final boolean displayUserRewards = true;
-	
+
 	public static final long MAX_MESSAGE_DISPLAYING = 500;
+	public static final ReplyType GREETING_TYPE = ReplyType.MESSAGE;
+	public static final ReplyType REPLY_TYPE = ReplyType.THREAD_PARENT;
 	
 	
 	public Settings() {
@@ -32,4 +34,6 @@ public class Settings {
 		highlightStrings.add("minetrain");
 		highlightStrings.add("mine");
 	}
+	
+	public enum ReplyType{MESSAGE, THREAD_PARENT, USER_NAME} //message might be debricatet from twitch side.
 }

@@ -22,9 +22,9 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.IconStringBuilder;
-import de.minetrain.minechat.utils.TwitchMessage;
 
 public class ChatStatusPanel extends JPanel {
 	private static final long serialVersionUID = -1247943509194239246L;

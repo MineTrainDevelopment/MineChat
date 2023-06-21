@@ -32,9 +32,10 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
+import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.CallCounter;
 import de.minetrain.minechat.utils.Settings;
-import de.minetrain.minechat.utils.TwitchMessage;
+import de.minetrain.minechat.utils.Settings.ReplyType;
 
 public class ChatWindow extends JLabel {
 	private static final long serialVersionUID = -8392586696866883591L;
@@ -207,7 +208,12 @@ public class ChatWindow extends JLabel {
     }
     
     public void setMessageToReply(TwitchMessage twitchMessage) {
-		this.replyMessage = twitchMessage;
+    	if(twitchMessage != null && twitchMessage.getReplyType() != ReplyType.USER_NAME){
+    		this.replyMessage = twitchMessage;
+    	}else{
+    		this.replyMessage = null;
+    	}
+    	
 		chatStatusPanel.setReply(twitchMessage);
 	}
 

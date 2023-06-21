@@ -46,9 +46,10 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.FlippedImageIcon;
 import de.minetrain.minechat.gui.utils.MirroredImageIcon;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.IconStringBuilder;
 import de.minetrain.minechat.utils.Settings;
-import de.minetrain.minechat.utils.TwitchMessage;
+import de.minetrain.minechat.utils.Settings.ReplyType;
 
 public class ChatWindowMessageComponent extends JPanel{
 	private static final Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
@@ -165,6 +166,16 @@ public class ChatWindowMessageComponent extends JPanel{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					chatWindow.setMessageToReply(twitchMessage);
+					
+					if(twitchMessage.getReplyType() == ReplyType.USER_NAME){
+						ChatStatusPanel chatStatusPanel = chatWindow.chatStatusPanel;
+						chatStatusPanel.overrideCurrentInputCache(false);
+						chatStatusPanel.overrideUserInput("@"+twitchMessage.getUserName()+" "+chatStatusPanel.getCurrentUserInput());
+					}
+					
+					if(twitchMessage.getReplyType() == ReplyType.MESSAGE){
+						twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
+					}
 				}
 			});
 		}
@@ -182,55 +193,63 @@ public class ChatWindowMessageComponent extends JPanel{
 		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
-    	if(chatWindow.greetingsManager.contains(userName)){
-	    	Settings.highlightStrings.forEach(string -> {
-	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
-	            Matcher matcher = pattern.matcher(message);
-	            
-	            if (matcher.find()) {
-	    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
-	    			highlighted = true;
-	            }
-	    	});
-    	}else{
-    		chatWindow.greetingsManager.add(userName);
-			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT, 2));
-			highlighted = true;
-    	}
-    	
-    	if(!chatWindow.greetingsManager.isMentioned(userName)){
-	    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-			waveButton.setPreferredSize(buttonSize);
-			waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-			waveButton.setBorderPainted(false);
-			waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
-			waveButton.setToolTipText("Wellcome this user!");
-			waveButton.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(ActionEvent e){
-					chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
-					
-					String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
-					chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", "").trim().replaceAll(" +", " "));
-					chatWindow.setMessageToReply(twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName()));
-				}
-			});
-			
-			waveButton.addMouseListener(new MouseAdapter() {
-			    @Override
-			    public void mouseClicked(MouseEvent event) {
-			        if (SwingUtilities.isRightMouseButton(event)) {
-			        	chatWindow.greetingsManager.setMentioned(userName);
-			        	buttonPanel.remove(waveButton);
-						buttonPanel.setMinimumSize(new Dimension(26, 26));
-						chatWindow.chatPanel.revalidate();
-			        	chatWindow.chatPanel.repaint();
-			        }
-			    }
-			});
-			
-			buttonPanel.add(waveButton, BorderLayout.WEST);
-			buttonPanel.setMinimumSize(new Dimension(52, 26));
-    	}
+        if(twitchMessage != null){
+	    	if(chatWindow.greetingsManager.contains(userName)){
+		    	Settings.highlightStrings.forEach(string -> {
+		    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
+		            Matcher matcher = pattern.matcher(message);
+		            
+		            if (matcher.find()) {
+		    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
+		    			highlighted = true;
+		            }
+		    	});
+	    	}else{
+	    		chatWindow.greetingsManager.add(userName);
+				titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT, 2));
+				highlighted = true;
+	    	}
+	    	
+	    	if(!chatWindow.greetingsManager.isMentioned(userName)){
+		    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
+				waveButton.setPreferredSize(buttonSize);
+				waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+				waveButton.setBorderPainted(false);
+				waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
+				waveButton.setToolTipText("Wellcome this user!");
+				waveButton.addActionListener(new ActionListener() {
+					@Override public void actionPerformed(ActionEvent e){
+						chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
+						
+						String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
+						chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
+						twitchMessage.setReplyType(Settings.GREETING_TYPE);
+						
+						if(twitchMessage.getReplyType() != ReplyType.THREAD_PARENT){
+							twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
+						}
+						
+						chatWindow.setMessageToReply(twitchMessage);
+					}
+				});
+				
+				waveButton.addMouseListener(new MouseAdapter() {
+				    @Override
+				    public void mouseClicked(MouseEvent event) {
+				        if (SwingUtilities.isRightMouseButton(event)) {
+				        	chatWindow.greetingsManager.setMentioned(userName);
+				        	buttonPanel.remove(waveButton);
+							buttonPanel.setMinimumSize(new Dimension(26, 26));
+							chatWindow.chatPanel.revalidate();
+				        	chatWindow.chatPanel.repaint();
+				        }
+				    }
+				});
+				
+				buttonPanel.add(waveButton, BorderLayout.WEST);
+				buttonPanel.setMinimumSize(new Dimension(52, 26));
+	    	}
+	    }
     	
     	
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
