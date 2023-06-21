@@ -24,7 +24,7 @@ public class IconStringBuilder {
      */
 	public IconStringBuilder appendString(String string){
 		output += string.replace("<", "&lt;").replace(">", "&gt;");
-		wordCount++;
+		wordCount += string.split(" ").length;
 		return this;
 	}
 	
@@ -37,7 +37,7 @@ public class IconStringBuilder {
      */
 	public IconStringBuilder appendString(String string, String hexColorCode){
 		output += "<font color="+hexColorCode+">"+string.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
-		wordCount++;
+		wordCount += string.split(" ").length;
 		return this;
 	}
 	
