@@ -26,6 +26,7 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
+import de.minetrain.minechat.utils.IconStringBuilder;
 
 public class ChannelTab {
 	private ChannelTab thisObject;
@@ -99,14 +100,19 @@ public class ChannelTab {
 			loadData(configID);
 		}
 	
-		tabLabel = new JLabel(getDisplayName(), SwingConstants.CENTER);
+		tabLabel = new JLabel(getTabName(), SwingConstants.CENTER);
 		tabLabel.setVisible(true);
 		tabLabel.setForeground(Color.WHITE);
 	}
 
+	private String getTabName() {
+		String profilePic = TextureManager.profilePicPath.replace("{ID}", configID).replace("{SIZE}", "25");
+		return new IconStringBuilder().appendIcon(profilePic, true).appendString(getDisplayName()).toString();
+	}
+
 	public void reload(String configID) {
 		loadData(configID);
-		tabLabel.setText(displayName);
+		tabLabel.setText(getTabName());
 	}
 	
 	

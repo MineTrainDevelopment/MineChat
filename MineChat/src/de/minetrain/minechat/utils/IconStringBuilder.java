@@ -7,7 +7,7 @@ package de.minetrain.minechat.utils;
  * 
  * @author MineTrain/Justin
  * @since 21.05.2023
- * @version 1.0
+ * @version 1.1
  */
 public class IconStringBuilder {
 	private int wordCount = 0;

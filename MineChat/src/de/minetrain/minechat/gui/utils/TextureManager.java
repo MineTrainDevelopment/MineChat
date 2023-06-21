@@ -49,6 +49,7 @@ public class TextureManager {
 	private static final Logger logger = LoggerFactory.getLogger(TextureManager.class);
 	public static final String texturePath = "data/texture/";
 	public static final String badgePath = texturePath + "badges/";
+	public static final String profilePicPath = "data/texture/Icons/{ID}/profile_{SIZE}.png";
 	
 	private final ImageIcon mainFrame_TAB_1;
 	private final ImageIcon mainFrame_TAB_2;
@@ -198,6 +199,7 @@ public class TextureManager {
 	public static void downloadProfileImage(String uri, String channelId) {
 		try {
 			downloadImage(uri, "Icons/"+channelId, "/profile.png");
+			downloadImage(uri, "Icons/"+channelId, "/profile_25.png", new Dimension(25, 25));
 			downloadImage(uri, "Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
 		} catch (IOException ex) {
 			logger.warn("Can´t download profile image. \n URL: " + uri, ex);
