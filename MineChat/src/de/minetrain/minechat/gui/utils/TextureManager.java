@@ -199,6 +199,7 @@ public class TextureManager {
 	public static void downloadProfileImage(String uri, String channelId) {
 		try {
 			downloadImage(uri, "Icons/"+channelId, "/profile.png");
+			downloadImage(uri, "Icons/"+channelId, "/profile_18.png", new Dimension(18, 18));
 			downloadImage(uri, "Icons/"+channelId, "/profile_25.png", new Dimension(25, 25));
 			downloadImage(uri, "Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
 		} catch (IOException ex) {

@@ -106,7 +106,7 @@ public class ChannelTab {
 	}
 
 	private String getTabName() {
-		String profilePic = TextureManager.profilePicPath.replace("{ID}", configID).replace("{SIZE}", "25");
+		String profilePic = TextureManager.profilePicPath.replace("{ID}", configID).replace("{SIZE}", "18");
 		return new IconStringBuilder().appendIcon(profilePic, true).appendString(getDisplayName()).toString();
 	}
 
