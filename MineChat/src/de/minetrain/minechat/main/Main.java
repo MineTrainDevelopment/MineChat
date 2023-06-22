@@ -134,4 +134,51 @@ public class Main {
 //		}
 	}
 	
+	
+	
+	
+	
+	
+//Programm hiernach gestorben
+//	[22.06.2023 | 18:27:59] >> ERROR << [com.github.twitch4j.client.websocket.WebsocketConnection] - connection to webSocket server wss://irc-ws.chat.twitch.tv:443 failed: retrying ...
+//		com.neovisionaries.ws.client.WebSocketException: Failed to resolve hostname irc-ws.chat.twitch.tv:443: Dies ist normalerweise ein zeitweiliger Fehler bei der Aufl�sung von Hostnamen. Grund ist, dass der lokale Server keine R�ckmeldung vom autorisierenden Server erhalten hat (irc-ws.chat.twitch.tv)
+//			at com.neovisionaries.ws.client.SocketConnector.resolveHostname(SocketConnector.java:180)
+//			at com.neovisionaries.ws.client.SocketConnector.connectSocket(SocketConnector.java:108)
+//			at com.neovisionaries.ws.client.SocketConnector.doConnect(SocketConnector.java:238)
+//			at com.neovisionaries.ws.client.SocketConnector.connect(SocketConnector.java:189)
+//			at com.neovisionaries.ws.client.WebSocket.connect(WebSocket.java:2351)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:225)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.connect(WebsocketConnection.java:245)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection.reconnect(WebsocketConnection.java:295)
+//			at com.github.twitch4j.client.websocket.WebsocketConnection$1.lambda$onDisconnected$1(WebsocketConnection.java:150)
+//			at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+//			at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+//			at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+//			at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+//			at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+//			at java.base/java.lang.Thread.run(Thread.java:833)
+//		Caused by: java.net.UnknownHostException: Dies ist normalerweise ein zeitweiliger Fehler bei der Aufl�sung von Hostnamen. Grund ist, dass der lokale Server keine R�ckmeldung vom autorisierenden Server erhalten hat (irc-ws.chat.twitch.tv)
+//			at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+//			at java.base/java.net.InetAddress$PlatformNameService.lookupAllHostAddr(InetAddress.java:933)
+//			at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1519)
+//			at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:852)
+//			at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1509)
+//			at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1367)
+//			at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1301)
+//			at com.neovisionaries.ws.client.SocketConnector.resolveHostname(SocketConnector.java:139)
+//			... 27 more
+	
 }

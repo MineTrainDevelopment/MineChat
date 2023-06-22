@@ -28,7 +28,6 @@ public class Settings {
 	public static final ReplyType GREETING_TYPE = ReplyType.MESSAGE;
 	public static final ReplyType REPLY_TYPE = ReplyType.THREAD_PARENT;
 	
-	
 	public Settings() {
 		highlightStrings.add("minetrainlp");
 		highlightStrings.add("minetrain");
