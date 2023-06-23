@@ -3,17 +3,14 @@ package de.minetrain.minechat.main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.minetrain.minechat.config.ConfigManager;
-import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
-import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -109,6 +106,7 @@ public class Main {
 	public static void openMainFrame(){
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
 		MAIN_FRAME = new MainFrame();
+        
 		if(!MAIN_FRAME.getTitleBar().getMainTab().isOccupied()){
 			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
 		}

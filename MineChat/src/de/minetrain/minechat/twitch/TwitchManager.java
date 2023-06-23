@@ -2,12 +2,9 @@ package de.minetrain.minechat.twitch;
 
 import java.awt.Color;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.IncompleteArgumentException;
@@ -22,9 +19,7 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -119,8 +114,10 @@ public class TwitchManager {
 	 */
 	public static void sendMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
+
 		message.getChannelTab().getStatistics().addMessage(message.getSenderName());
 		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
+		message.getChannelTab().getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessage());
 				
 		//Check if a chatter is was mentioned
 		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {

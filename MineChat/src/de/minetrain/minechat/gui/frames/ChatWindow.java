@@ -2,15 +2,11 @@ package de.minetrain.minechat.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -102,17 +98,21 @@ public class ChatWindow extends JLabel {
 //            	displaySystemInfo("userping", "This is a test", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
 //            	displaySystemInfo("greeding", "This is a test", ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT);
             	
-            	String message = chatStatusPanel.getCurrentUserInput();
-            	System.out.println("Message --> "+message);
-            	if(!message.isEmpty()){
-            		MessageManager.sendMessage(message);
-            		chatStatusPanel.setLockedState(false);
-            		chatStatusPanel.loadCurrentlyCachedInput();
-            		setMessageToReply(null);
-            	}
+            	sendMessage();
             }
         });
     }
+    
+    public void sendMessage() {
+		String message = chatStatusPanel.getCurrentUserInput();
+    	System.out.println("Message --> "+message);
+    	if(!message.isEmpty()){
+    		MessageManager.sendMessage(message);
+    		chatStatusPanel.setLockedState(false);
+    		chatStatusPanel.loadCurrentlyCachedInput();
+    		setMessageToReply(null);
+    	}
+	}
     
     public void displayMessage(TwitchMessage message) {
     	displayMessage(message.getMessage(), message.getUserName(), Color.decode(message.getUserColorCode()), message);

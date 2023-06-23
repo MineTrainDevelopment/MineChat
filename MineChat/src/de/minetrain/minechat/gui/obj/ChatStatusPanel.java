@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -25,12 +27,14 @@ import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.IconStringBuilder;
+import de.minetrain.minechat.utils.MessageHistory;
 
 public class ChatStatusPanel extends JPanel {
 	private static final long serialVersionUID = -1247943509194239246L;
 	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static final String lineSeparator =  System.getProperty("line.separator");
 	private IconStringBuilder stringBuilder = new IconStringBuilder();
+	private MessageHistory messageHistory = new MessageHistory();
 	private String currentlyCachedInput = "";
 	private boolean lockedState = false;
 	private boolean forceLockedState = false;
@@ -76,8 +80,39 @@ public class ChatStatusPanel extends JPanel {
         // Input Field and Send Button
         inputField = new JTextField();
         inputField.setFont(MESSAGE_FONT);
-        inputField.setForeground(Color.WHITE);
+        inputField.setForeground(ColorManager.FONT);
         inputField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+        
+        inputField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+				if(inputField.isFocusOwner()){
+					if (!(e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK && e.getKeyCode() == KeyEvent.VK_ENTER)) {
+						switch(e.getKeyCode()){
+						case KeyEvent.VK_UP:
+							overrideUserInput(messageHistory.getNextItem(getCurrentUserInput()));
+							inputField.setForeground(messageHistory.isNewText() ? ColorManager.FONT : Color.CYAN);
+							break;
+							
+						case KeyEvent.VK_DOWN:
+							overrideUserInput(messageHistory.getPreviousItem(getCurrentUserInput()));
+							inputField.setForeground(messageHistory.isNewText() ? ColorManager.FONT : Color.CYAN);
+							break;
+							
+						case KeyEvent.VK_ENTER:
+							inputField.setForeground(ColorManager.FONT);
+							chat.sendMessage();
+							break;
+						
+						default:
+							messageHistory.resetIndex();
+							break;
+						}
+                    }
+					
+				}
+			}
+        });
         
         sendButton = createNewButton(Main.TEXTURE_MANAGER.getEnterButton(), "Send message", new Dimension(62, 28), ColorManager.GUI_BACKGROUND_LIGHT);
         MineButton emoteButton = createNewButton(Main.TEXTURE_MANAGER.getEmoteButton(), "Send message", new Dimension(28, 28), ColorManager.GUI_BACKGROUND_LIGHT);
@@ -98,6 +133,12 @@ public class ChatStatusPanel extends JPanel {
         add(buttonPanel, BorderLayout.EAST);
         setBackground(ColorManager.GUI_BACKGROUND);
 		setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 4, true));
+		
+		
+		
+		
+		
+		
 	}
 
 	private final String getDefaultText(){
@@ -246,7 +287,7 @@ public class ChatStatusPanel extends JPanel {
 	public MineButton getSendButton() {
 		return sendButton;
 	}
-	
+
 	public void overrideUserInput(String text) {
 		inputField.setText(text);
 	}
@@ -255,9 +296,10 @@ public class ChatStatusPanel extends JPanel {
 		return inputField.getText();
 	}
 	
-	public void loadCurrentlyCachedInput() {
+	public String loadCurrentlyCachedInput() {
 		inputField.setText(currentlyCachedInput);
 		currentlyCachedInput = "";
+		return getCurrentUserInput();
 	}
 
 	public void overrideCurrentInputCache(boolean force) {
@@ -270,6 +312,8 @@ public class ChatStatusPanel extends JPanel {
 		return lineSeparator;
 	}
 
-
+	public MessageHistory getMessageHistory() {
+		return messageHistory;
+	}
 
 }
