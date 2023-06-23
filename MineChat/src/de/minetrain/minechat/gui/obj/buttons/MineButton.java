@@ -3,6 +3,7 @@ package de.minetrain.minechat.gui.obj.buttons;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -133,12 +134,16 @@ public class MineButton extends JButton{
      */
 	@Override
 	public void setText(String text) {
-		super.setText(text);
+		super.setText(text.length()>8 ? text.substring(0, 6)+".." : text);
 		
 		Font font = new Font(null, Font.BOLD, 15);
-		while(getPreferredSize().getWidth() > getWidth()) {
-		    font = new Font(font.getName(), font.getStyle(), font.getSize() - 1);
-		    setFont(font);
-		}
+        FontMetrics metrics = getFontMetrics(font);
+        
+        while (metrics.stringWidth(text) > getWidth() - 50) {
+            font = font.deriveFont(font.getSize2D() - 1f);
+            metrics = getFontMetrics(font);
+        }
+        
+        setFont(font);
 	}
 }
