@@ -138,4 +138,9 @@ public class MacroButton extends MineButton{
 		setText((macro.getButtonName().equalsIgnoreCase("null")) ? "" : macro.getButtonName());
 	}
 	
+	@Override
+	public void setText(String text) {
+		super.setText(text.length()>8 ? text.substring(0, 6)+".." : text);
+	}
+	
 }
