@@ -4,17 +4,20 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.naming.directory.InvalidAttributesException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
+import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchCredentials;
+import de.minetrain.minechat.utils.CredentialsManager;
 import de.minetrain.minechat.utils.Settings;
 
 public class Main {
@@ -27,47 +30,8 @@ public class Main {
 	private static JFrame onboardingFrame;
 	private static final String OAuth2_URL = "https://id.twitch.tv/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URL}&response_type=token&scope=chat:edit+chat:read+channel:moderate+moderation:read";
 	
-//	public static void main(String[] args) throws IOException {
-//        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-//        server.createContext("/oauth_callback", new OAuthCallbackHandler());
-//        server.start();
-//        System.out.println("OAuth2 Server gestartet. Öffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
-//    }
-//	
-//	
-//	static class OAuthCallbackHandler implements HttpHandler {
-//	    @Override
-//	    public void handle(HttpExchange exchange) throws IOException {
-//	        // Extrahieren Sie den Autorisierungscode aus der Anfrage
-//	        String requestURI = exchange.getRequestURI().toString();
-//	        System.out.println("Query: "+exchange.getRequestURI().getQuery());
-//	        
-//	        // Ausgabe der aufgerufenen URL in der Konsole
-//	        System.out.println("Aufgerufene URL: " + requestURI);
-//
-//	        // Extrahieren Sie das URL-Fragment mit JavaScript und senden Sie es an den Server
-//	        String script = "<script>" +
-//	                "var fragment = window.location.hash.substring(1);" +
-//	                "var xhr = new XMLHttpRequest();" +
-//	                "xhr.open('GET', '/oauth_callback/fragment?fragment=' + fragment, true);" +
-//	                "xhr.send();" +
-//	                "</script>";
-//
-//	        // Senden Sie die HTML-Seite mit dem JavaScript-Code zurück zum Client
-//	        String response = "<html><body>" + script + "</body></html>";
-//	        exchange.sendResponseHeaders(200, response.length());
-//	        OutputStream outputStream = exchange.getResponseBody();
-//	        outputStream.write(response.getBytes());
-//	        outputStream.close();
-//	        
-//	        if(requestURI.contains("fragment=access_token=")){
-//	        	String bearerToken = requestURI.substring(0, requestURI.indexOf("&")).replace("/oauth_callback/fragment?fragment=access_token=", "");
-//	        	System.out.println("Token -> "+bearerToken);
-//	        }
-//	    }
-//	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		new Settings();
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
@@ -92,8 +56,22 @@ public class Main {
 	    
 	    CONFIG = new ConfigManager("data/config.yml", false);
 	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
-		new TwitchManager(new TwitchCredentials());
+	    
+	    
+	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
+	    try {
+	    	new CredentialsManager();
+		} catch (InvalidAttributesException ex) {
+			new GetCredentialsFrame(onboardingFrame);
+		} catch (Exception ex) {
+			CredentialsManager.deleteCredentialsFile();
+			Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
+			return;
+		}
+
+		CredentialsManager credentials = new CredentialsManager();
 		
+		new TwitchManager(credentials);
 		TextureManager.downloadPublicData();
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {

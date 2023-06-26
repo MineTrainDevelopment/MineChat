@@ -18,14 +18,15 @@ import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
-import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.CredentialsManager;
 import io.github.bucket4j.Bandwidth;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -43,18 +44,17 @@ public class TwitchManager {
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
 	public static String ownerChannelName;
-	protected static TwitchCredentials credentials;
+	protected static CredentialsManager credentials;
 	protected static TwitchAccesToken accesToken;
 	
 	/**
 	 * Creates a new Twitch client instance using the provided TwitchCredentials.
 	 * @param credentials The TwitchCredentials used to authenticate the Twitch client.
 	 */
-	public TwitchManager(TwitchCredentials credentials) {
+	public TwitchManager(CredentialsManager credentials) {
 		TwitchManager.credentials = credentials;
 		TwitchClientBuilder twitchBuilder = TwitchClientBuilder.builder();
 
-		Main.LOADINGBAR.setProgress("Loading Twitch user data.", 15);
 		Main.LOADINGBAR.setProgress("Requesting new API AccesToken", 20);
 		accesToken = getAccesToken();
 		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 25);
@@ -64,10 +64,16 @@ public class TwitchManager {
 			.withClientId(credentials.getClientID())
 			.withClientSecret(credentials.getClientSecret())
 			.withEnableHelix(true)
-			.withChatAccount(new OAuth2Credential("twitch", credentials.getTesting_oauth2()))
+			.withChatAccount(new OAuth2Credential("twitch", credentials.getOAuth2Token()))
 			.withChatChannelMessageLimit(Bandwidth.simple(1, Duration.ofMillis(300)).withId("per-channel-limit"))
 	        .withEnableChat(true)
 			.build();
+		
+		if(twitch.getChat().getChannels().isEmpty()){
+			CredentialsManager.deleteCredentialsFile();
+			Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
+			return;
+		}
 		
 		
 		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
@@ -174,13 +180,31 @@ public class TwitchManager {
 		}
 		
 		logger.warn("Twitch-acces-token | Generating a new token!");
+		JsonObject json;
+		try {
+			json = new Gson().fromJson(requestAccesToken(credentials.getClientID(), credentials.getClientSecret()), JsonObject.class);
+			return new TwitchAccesToken(json);
+		} catch (JsonSyntaxException | IllegalArgumentException ex) {
+			logger.error("Error while trying to get a new AccesToken", ex);
+			return null;
+		}
+	}
+	
+	public static String requestAccesToken(String clientID, String clientSecret) throws IllegalArgumentException{
 		HttpResponse<String> response = Unirest.post("https://id.twitch.tv/oauth2/token?")
 				.header("content-type", "application/x-www-form-urlencoded")
-				.body("client_id="+credentials.getClientID()+"&client_secret="+credentials.getClientSecret()+"&grant_type=client_credentials")
+				.body("client_id="+clientID+"&client_secret="+clientSecret+"&grant_type=client_credentials")
 				.asString();
-		String jsonResponse = response.getBody();
-		JsonObject json = new Gson().fromJson(jsonResponse, JsonObject.class);
-		return new TwitchAccesToken(json);
+
+		if(response.getBody().contains("\"status\":400")){
+			throw new IllegalArgumentException("Invaild client ID");
+		}
+		
+		if(response.getBody().contains("\"status\":403")){
+			throw new IllegalArgumentException("Invaild client secret");
+		}
+		
+		return response.getBody();
 	}
 	
 	/**
