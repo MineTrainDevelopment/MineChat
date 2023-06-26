@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -27,7 +26,6 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
-import de.minetrain.minechat.utils.IconStringBuilder;
 
 public class ChannelTab {
 	private ChannelTab thisObject;

@@ -42,7 +42,6 @@ import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import kong.unirest.Unirest;
 
 public class TextureManager {
@@ -331,7 +330,7 @@ public class TextureManager {
 	public static void downloadChannelBadges(String userId){
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/badges?broadcaster_id="+userId)
 				.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
-				.header("Client-Id", new TwitchCredentials().getClientID()).asString().getBody(),
+				.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
 				JsonObject.class);
 
 		downloadBadge(fromJson, userId);
@@ -341,7 +340,7 @@ public class TextureManager {
 		if (!Files.exists(Paths.get(badgePath + "vip/"))) {
 			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/badges/global")
 					.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
-					.header("Client-Id", new TwitchCredentials().getClientID()).asString().getBody(),
+					.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
 					JsonObject.class);
 
 			downloadBadge(fromJson, null);
@@ -392,7 +391,7 @@ public class TextureManager {
 		
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+channelId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
 				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
-				.header("Client-Id", new TwitchCredentials().getClientID())
+				.header("Client-Id", TwitchManager.credentials.getClientID())
 				.asString()
 				.getBody(), JsonObject.class);
 		
@@ -504,7 +503,7 @@ public class TextureManager {
 			statusBar.setProgress("Get the emote set", 80);
 			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes/global")
 					.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
-					.header("Client-Id", new TwitchCredentials().getClientID()).asString().getBody(),
+					.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
 					JsonObject.class);
 
 			JsonArray jsonArray = fromJson.getAsJsonArray("data");

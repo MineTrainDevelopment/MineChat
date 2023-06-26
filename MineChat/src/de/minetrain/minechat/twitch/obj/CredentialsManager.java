@@ -1,4 +1,4 @@
-package de.minetrain.minechat.utils;
+package de.minetrain.minechat.twitch.obj;
 
 import java.io.BufferedReader;
 import java.io.File;

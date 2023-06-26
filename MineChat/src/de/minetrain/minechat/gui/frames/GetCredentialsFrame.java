@@ -36,7 +36,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.utils.CredentialsManager;
+import de.minetrain.minechat.twitch.obj.CredentialsManager;
 
 public class GetCredentialsFrame extends JDialog {
 	private static final long serialVersionUID = 1L;

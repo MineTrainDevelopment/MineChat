@@ -42,7 +42,6 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.twitch.obj.TwitchCredentials;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import kong.unirest.Unirest;
@@ -240,7 +239,7 @@ public class EmoteDownlodFrame extends JDialog{
 	    statusBar.setProgress("Get the emote set", 60);
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+userId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
 				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
-				.header("Client-Id", new TwitchCredentials().getClientID())
+				.header("Client-Id", TwitchManager.credentials.getClientID())
 				.asString()
 				.getBody(), JsonObject.class);
 		

@@ -21,12 +21,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
-import de.minetrain.minechat.utils.CredentialsManager;
 import io.github.bucket4j.Bandwidth;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -44,7 +44,7 @@ public class TwitchManager {
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
 	public static String ownerChannelName;
-	protected static CredentialsManager credentials;
+	public static CredentialsManager credentials;
 	protected static TwitchAccesToken accesToken;
 	
 	/**

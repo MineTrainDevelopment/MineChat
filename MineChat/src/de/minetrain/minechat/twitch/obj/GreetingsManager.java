@@ -2,7 +2,6 @@ package de.minetrain.minechat.twitch.obj;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +21,11 @@ import de.minetrain.minechat.gui.obj.ChannelTab;
 public class GreetingsManager extends ArrayList<String>{
 	private static final Logger logger = LoggerFactory.getLogger(GreetingsManager.class);
 	private static final long serialVersionUID = -6152772888792843950L;
-	private static final Random random = new Random();
+//	private static final Random random = new Random();
 	
 	private final List<String> mentionedUsers = new ArrayList<String>();
-	private final ChannelTab parentTab;
-	private String greetingsText = "";
+	protected final ChannelTab parentTab;
+//	private String greetingsText = "";
 	
 	/**
      * Constructs a new GreetingsManager object with the specified ChannelTab.

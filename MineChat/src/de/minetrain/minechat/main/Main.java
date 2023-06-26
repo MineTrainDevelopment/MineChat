@@ -16,8 +16,7 @@ import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.twitch.obj.TwitchCredentials;
-import de.minetrain.minechat.utils.CredentialsManager;
+import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.utils.Settings;
 
 public class Main {
@@ -28,8 +27,6 @@ public class Main {
 	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
 	private static JFrame onboardingFrame;
-	private static final String OAuth2_URL = "https://id.twitch.tv/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URL}&response_type=token&scope=chat:edit+chat:read+channel:moderate+moderation:read";
-	
 	
 	public static void main(String[] args) throws Exception {
 		new Settings();
