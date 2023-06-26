@@ -105,7 +105,7 @@ public class ChatWindow extends JLabel {
     
     public void sendMessage() {
 		String message = chatStatusPanel.getCurrentUserInput();
-    	System.out.println("Message --> "+message);
+    	System.out.println("Message --> ["+message+"]");
     	if(!message.isEmpty()){
     		MessageManager.sendMessage(message);
     		chatStatusPanel.setLockedState(false);

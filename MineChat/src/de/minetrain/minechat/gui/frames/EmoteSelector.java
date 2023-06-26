@@ -22,7 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 
@@ -47,7 +47,7 @@ public class EmoteSelector extends JDialog{
     private String selectedEmote, selectetEmoteFormat;
     private boolean disposed;
     private boolean disposOnSelect;
-    private JTextField textFieldToEdit;
+    private JTextArea textFieldToEdit;
     HashMap<String, List<String>> emotes;
 
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
@@ -187,7 +187,7 @@ public class EmoteSelector extends JDialog{
         scrollPane.addMouseMotionListener(mouseMotionListner());
     }
 	
-	public void addSelectetEmoteToText(JTextField text){
+	public void addSelectetEmoteToText(JTextArea text){
 		if(text != null){textFieldToEdit = text;}
 		if(textFieldToEdit == null){return;}
 		

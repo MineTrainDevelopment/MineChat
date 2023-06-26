@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -43,7 +44,7 @@ public class ChatStatusPanel extends JPanel {
     private JLabel inputInfo;
 	private MineButton sendButton;
 	private MineButton cancelReplyButton;
-	private JTextField inputField;
+	private JTextArea inputArea;
 	
 	public ChatStatusPanel(ChatWindow chat) {
 		super(new BorderLayout());
@@ -52,6 +53,7 @@ public class ChatStatusPanel extends JPanel {
 
 		JPanel infoHoldingLabel = new JPanel(new BorderLayout());
 		infoHoldingLabel.setBackground(ColorManager.GUI_BACKGROUND);
+        infoHoldingLabel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
 		
 		inputInfo = new JLabel(getMineChatStatusText().toString());
         inputInfo.setBackground(ColorManager.GUI_BACKGROUND);
@@ -75,33 +77,35 @@ public class ChatStatusPanel extends JPanel {
 //		inputInfo.add(cancelReplyButton, BorderLayout.WEST);
 		infoHoldingLabel.add(cancelReplyButton, BorderLayout.WEST);
 		infoHoldingLabel.add(inputInfo, BorderLayout.CENTER);
+		
+		inputArea = new JTextArea();
+        inputArea.setFont(MESSAGE_FONT);
+        inputArea.setForeground(ColorManager.FONT);
+        inputArea.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+        inputArea.setLineWrap(true);
+        inputArea.setWrapStyleWord(true);
+        inputArea.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 1));
         
-        
-        // Input Field and Send Button
-        inputField = new JTextField();
-        inputField.setFont(MESSAGE_FONT);
-        inputField.setForeground(ColorManager.FONT);
-        inputField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        
-        inputField.addKeyListener(new KeyAdapter() {
+        inputArea.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
-				if(inputField.isFocusOwner()){
-					if (!(e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK && e.getKeyCode() == KeyEvent.VK_ENTER)) {
-						switch(e.getKeyCode()){
+            public void keyPressed(KeyEvent event) {
+				if(inputArea.isFocusOwner()){
+					if (!(event.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK && event.getKeyCode() == KeyEvent.VK_ENTER)) {
+						switch(event.getKeyCode()){
 						case KeyEvent.VK_UP:
 							overrideUserInput(messageHistory.getNextItem(getCurrentUserInput()));
-							inputField.setForeground(messageHistory.isNewText() ? ColorManager.FONT : Color.CYAN);
+							inputArea.setForeground(messageHistory.isNewText() ? ColorManager.FONT : Color.CYAN);
 							break;
 							
 						case KeyEvent.VK_DOWN:
 							overrideUserInput(messageHistory.getPreviousItem(getCurrentUserInput()));
-							inputField.setForeground(messageHistory.isNewText() ? ColorManager.FONT : Color.CYAN);
+							inputArea.setForeground(messageHistory.isNewText() ? ColorManager.FONT : Color.CYAN);
 							break;
 							
 						case KeyEvent.VK_ENTER:
-							inputField.setForeground(ColorManager.FONT);
+							inputArea.setForeground(ColorManager.FONT);
 							chat.sendMessage();
+							event.consume();
 							break;
 						
 						default:
@@ -119,7 +123,7 @@ public class ChatStatusPanel extends JPanel {
         emoteButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e){
 				EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
-				emoteSelector.addSelectetEmoteToText(inputField);
+				emoteSelector.addSelectetEmoteToText(inputArea);
 			}
 		});
 		
@@ -127,9 +131,10 @@ public class ChatStatusPanel extends JPanel {
         buttonPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		buttonPanel.add(emoteButton, BorderLayout.WEST);
         buttonPanel.add(getSendButton(), BorderLayout.EAST);
+        buttonPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 1));
         
         add(infoHoldingLabel, BorderLayout.NORTH);
-        add(inputField, BorderLayout.CENTER);
+        add(inputArea, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.EAST);
         setBackground(ColorManager.GUI_BACKGROUND);
 		setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 4, true));
@@ -289,15 +294,15 @@ public class ChatStatusPanel extends JPanel {
 	}
 
 	public void overrideUserInput(String text) {
-		inputField.setText(text);
+		inputArea.setText(text);
 	}
 	
 	public String getCurrentUserInput() {
-		return inputField.getText();
+		return inputArea.getText();
 	}
 	
 	public String loadCurrentlyCachedInput() {
-		inputField.setText(currentlyCachedInput);
+		inputArea.setText(currentlyCachedInput);
 		currentlyCachedInput = "";
 		return getCurrentUserInput();
 	}
