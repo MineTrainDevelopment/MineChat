@@ -99,6 +99,7 @@ public class TwitchListner {
 		
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
     		channelTab.getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(event.getMessage());
+    		MessageManager.setLastMessage(event.getMessage());
     		
 			String[] splitMessage = event.getMessage().split(" ");
 			List<String> words = Arrays.asList(splitMessage);

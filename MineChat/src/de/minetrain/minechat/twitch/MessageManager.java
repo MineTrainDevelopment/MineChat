@@ -158,5 +158,13 @@ public class MessageManager {
 	public static AsyncMessageHandler getModeratorMessageHandler() {
 		return moderatorMessageHandler;
 	}
+	
+	public static String getLastMessage() {
+		return lastMessage;
+	}
+
+	public static void setLastMessage(String lastMessage) {
+		MessageManager.lastMessage = lastMessage;
+	}
 }
 
