@@ -2,7 +2,11 @@ package de.minetrain.minechat.gui.utils;
 
 import java.awt.Color;
 
+//import javax.swing.JColorChooser;
+
 public class ColorManager {
+//	Color newColor = JColorChooser.showDialog(onboardingFrame, "Choose a color", ColorManager.GUI_BACKGROUND, false);
+//    System.out.println(newColor.getGreen());
 	
 	/**
 	 * (14, 14, 14)

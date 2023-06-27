@@ -3,14 +3,12 @@ package de.minetrain.minechat.gui.frames;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -25,7 +23,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,20 +31,19 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 
-public class GetCredentialsFrame extends JDialog {
-	private static final long serialVersionUID = 1L;
+public class GetCredentialsFrame extends MineDialog {
+	private static final long serialVersionUID = 8000895546484388251L;
 	private static final Logger logger = LoggerFactory.getLogger(GetCredentialsFrame.class);
 	private static final String OAuth2_URL = "https://id.twitch.tv/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URL}&response_type=token&scope=chat:edit+chat:read+channel:moderate+moderation:read";
 	private static final String redirectUrl = "http://localhost:8000/oauth_callback";
 
 	private static HttpServer server;
 	private JTextField clientIdField, clientSecretField;
-	private JLabel statusText;
-	private int mouseX, mouseY;
 	private JDialog thisDialog = this;
 	
 	private static String clientId;
@@ -57,77 +53,19 @@ public class GetCredentialsFrame extends JDialog {
 	//{"status":403,"message":"invalid client secret"}
 	
 	public GetCredentialsFrame(JFrame frame) {
-    	super(frame, "CredentialsFrame", true);
-		setSize(400, 120);
-//		setAlwaysOnTop(true);
-        setUndecorated(true);
-        setLocationRelativeTo(null);
-        setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
-        
-        
+		super(frame, "Please fill out the data fields.", new Dimension(400, 60));
+		
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
         panel.setBackground(ColorManager.GUI_BACKGROUND);
-//        panel.setLayout(new GridLayout(7, 2));
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        addMouseListener(MoiseListner());
-        addMouseMotionListener(mouseMotionListner());
 
-
-        JPanel statusLabel = new JPanel(new BorderLayout());
-        statusLabel.setBackground(getBackground());
-        
-        statusText = new JLabel("Please fill out the data fields.");
-        statusText.setForeground(Color.WHITE);
-        statusText.setFont(new Font(null, Font.BOLD, 20));
-        statusText.setHorizontalAlignment(SwingConstants.CENTER);
-        statusLabel.add(statusText, BorderLayout.CENTER);
-        
-        panel.add(statusLabel);
         panel.add(createInputPanel("ClientID:", "id"));
         panel.add(createInputPanel("ClientSecret:", "secret"));
         
-        // Erstellen der Buttons
-        JButton confirmButton = new JButton("Confirm");
-        confirmButton.setBackground(ColorManager.GUI_BACKGROUND);
-        confirmButton.setForeground(Color.WHITE);
-        confirmButton.setBorder(null);
-        confirmButton.addActionListener(closeWindow(false));
-
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setBackground(ColorManager.GUI_BACKGROUND);
-        cancelButton.setForeground(Color.WHITE);
-        cancelButton.setBorder(null);
-        cancelButton.addActionListener(closeWindow(true));
-
-        // Hinzufügen der Buttons am unteren Rand des JFrame
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 9, 5));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(7, 2, 2, 2));
-        buttonPanel.setBackground(ColorManager.GUI_BORDER);
-        buttonPanel.add(cancelButton);
-        buttonPanel.add(confirmButton);
-        panel.add(buttonPanel);
-        
-        // Setzen der Breite der Buttons auf die Breite der Textfelder
-//        int buttonWidth = (loginNameField.getPreferredSize().width + displayNameField.getPreferredSize().width) / 2;
-//        cancelButton.setPreferredSize(new Dimension(buttonWidth, cancelButton.getPreferredSize().height));
-//        confirmButton.setPreferredSize(new Dimension(buttonWidth, confirmButton.getPreferredSize().height));
-
-        // Erstellen des Haupt-Panels und Hinzufügen der Elemente
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
-        mainPanel.setBackground(ColorManager.GUI_BACKGROUND);
-        mainPanel.add(panel, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        // Setzen der Position des Frames relativ zum Haupt-Frame
-//        Point location = mainFrame.getLocation();
-//        location.setLocation(location.x+50, location.y+200);
-//        setLocation(location);
-
-        // Hinzufügen des Haupt-Panels zum Frame und Anzeigen des Frames
-        getContentPane().add(mainPanel, BorderLayout.CENTER);
+        addContent(panel, BorderLayout.CENTER);
+        setConfirmButtonAction(closeWindow());
+        setExitOnCancelButton(true);
         setVisible(true);
 	}
 	
@@ -167,32 +105,12 @@ public class GetCredentialsFrame extends JDialog {
 		return panel;
     }
 	
-	private MouseAdapter MoiseListner() {
-		return new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
-        };
-	}
-
-	private MouseAdapter mouseMotionListner() {
-		return new MouseAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                int newX = e.getXOnScreen() - mouseX;
-                int newY = e.getYOnScreen() - mouseY;
-
-                setLocation(newX, newY);
-            }
-        };
-	}
 	
-	private ActionListener closeWindow(Boolean isCanselt){
+	private ActionListener closeWindow(){
 		return new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(isCanselt){dispose(); System.exit(1); return;}
 				clientId = clientIdField.getText();
 				clientSecret = clientSecretField.getText();
 				
@@ -201,10 +119,10 @@ public class GetCredentialsFrame extends JDialog {
 						throw new IllegalArgumentException("Please fill out the data fields.");
 					}
 
-					statusText.setText("Validating your data input.");
+					setTitle("Validating your data input.");
 					TwitchManager.requestAccesToken(clientId, clientSecret);
 				} catch (IllegalArgumentException ex) {
-					statusText.setText(ex.getMessage());
+					setTitle(ex.getMessage());
 					return;
 				}
 				
@@ -212,13 +130,12 @@ public class GetCredentialsFrame extends JDialog {
 					server = HttpServer.create(new InetSocketAddress(8000), 0);
 					server.createContext("/oauth_callback", new OAuthCallbackHandler(thisDialog));
 					server.start();
-					statusText.setText("Please register your twitch client.");
+					setTitle("Please register your twitch client.");
 					Desktop.getDesktop().browse(new URI(OAuth2_URL.replace("{CLIENT_ID}", clientId).replace("{REDIRECT_URL}", redirectUrl)));
 //					System.out.println("OAuth2 Server gestartet. �ffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
 				} catch (IOException | URISyntaxException ex) {
 					logger.error("Error while trying to start the Http server to get the OAuth2 token from the useres Twutch acc.", ex);
 				}
-//				dispose();
 			}
 		};
 	}

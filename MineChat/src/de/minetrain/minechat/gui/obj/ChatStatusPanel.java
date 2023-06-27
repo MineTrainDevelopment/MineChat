@@ -167,7 +167,6 @@ public class ChatStatusPanel extends JPanel {
 		stringBuilder.appendString("<3", HTMLColors.RED);
 		stringBuilder.appendSpace();
 		stringBuilder.appendString("  -  Version: "+Main.VERSION, HTMLColors.GRAY);
-		System.out.println(stringBuilder.toString());
 		return stringBuilder;
 	}
 

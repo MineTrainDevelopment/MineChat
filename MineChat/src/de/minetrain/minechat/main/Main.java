@@ -1,10 +1,15 @@
 package de.minetrain.minechat.main;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -12,7 +17,9 @@ import de.minetrain.minechat.config.ConfigManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -54,7 +61,6 @@ public class Main {
 	    CONFIG = new ConfigManager("data/config.yml", false);
 	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
 	    
-	    
 	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
 	    try {
 	    	new CredentialsManager();
@@ -87,6 +93,7 @@ public class Main {
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
+        
         
 //        Object[] array = TwitchEmote.getEmotesByName().entrySet().toArray();
 //        Random random = new Random();
