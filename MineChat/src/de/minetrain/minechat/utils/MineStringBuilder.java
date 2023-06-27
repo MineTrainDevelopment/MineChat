@@ -1,5 +1,7 @@
 package de.minetrain.minechat.utils;
 
+import java.awt.Color;
+
 import javax.swing.ImageIcon;
 
 /**
@@ -11,7 +13,7 @@ import javax.swing.ImageIcon;
  * @since 21.05.2023
  * @version 1.1
  */
-public class IconStringBuilder {
+public class MineStringBuilder {
 	private int wordCount = 0;
 	private int fontSize = 0;
 	private String output="";
@@ -26,8 +28,21 @@ public class IconStringBuilder {
      * @param color hex color code.
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendString(String string, String hexColorCode){
+	public MineStringBuilder appendString(String string, String hexColorCode){
 		output += "<font color="+hexColorCode+"%FONT-SIZE%>"+string.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
+		wordCount += string.split(" ").length;
+		return this;
+	}
+	
+	/**
+     * Appends the specified string to the output string.
+     *
+     * @param string the string to be appended
+     * @param color {@link Color}
+     * @return the IconStringBuilder object for method chaining
+     */
+	public MineStringBuilder appendString(String string, Color color){
+		output += "<font color="+String.format("#%06x", color.getRGB() & 0x00FFFFFF)+"%FONT-SIZE%>"+string.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
 		wordCount += string.split(" ").length;
 		return this;
 	}
@@ -39,7 +54,7 @@ public class IconStringBuilder {
      * @param color {@link htmlColors}
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendString(String string, HTMLColors color){
+	public MineStringBuilder appendString(String string, HTMLColors color){
 		appendString(string, color.getColorCode());
 		return this;
 	}
@@ -50,7 +65,7 @@ public class IconStringBuilder {
      * @param string the string to be appended
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendString(String string){
+	public MineStringBuilder appendString(String string){
 		appendString(string, HTMLColors.WHITE);
 		return this;
 	}
@@ -62,7 +77,7 @@ public class IconStringBuilder {
      * @param withPlaceholder  indicates whether to include a placeholder behind the icon
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendIcon(String iconPath, boolean withPlaceholder){
+	public MineStringBuilder appendIcon(String iconPath, boolean withPlaceholder){
 		output += "<img src='file:"+iconPath+"'>" + (withPlaceholder ? "&nbsp;" : "");
 		if(fontSize == 0){setFontSize(iconPath);}
 		wordCount++;
@@ -73,7 +88,7 @@ public class IconStringBuilder {
      * Appends a space to the output string.
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendSpace(){
+	public MineStringBuilder appendSpace(){
 		output += " ";
 		return this;
 	}
@@ -82,7 +97,7 @@ public class IconStringBuilder {
      * Appends line split to the output string.
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder appendLineSplit(){
+	public MineStringBuilder appendLineSplit(){
 		output += "<br>";
 		return this;
 	}
@@ -91,7 +106,7 @@ public class IconStringBuilder {
      * @param prefix the prefix string to be set
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder setPrefix(String prefix){
+	public MineStringBuilder setPrefix(String prefix){
 		this.prefix = prefix;
 		return this;
 	}
@@ -100,7 +115,7 @@ public class IconStringBuilder {
      * @param suffix the suffix string to be set
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder setSuffix(String suffix){
+	public MineStringBuilder setSuffix(String suffix){
 		this.suffix = suffix;
 		return this;
 	}
@@ -109,7 +124,7 @@ public class IconStringBuilder {
 	 * Set the font size based on image height.
 	 * @param iconPath system path only.
      */
-	public IconStringBuilder setFontSize(String iconPath){
+	public MineStringBuilder setFontSize(String iconPath){
 		fontSize = new ImageIcon(iconPath).getIconHeight()/3;
 		return this;
 	}
@@ -118,7 +133,7 @@ public class IconStringBuilder {
      * Clear all texts.
      * @return the IconStringBuilder object for method chaining
      */
-	public IconStringBuilder clear(){
+	public MineStringBuilder clear(){
 		this.wordCount = 0;
 		this.fontSize = 0;
 		this.suffix = "";

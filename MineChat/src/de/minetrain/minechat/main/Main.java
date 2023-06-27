@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.gui.frames.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -36,7 +37,6 @@ public class Main {
 	private static JFrame onboardingFrame;
 	
 	public static void main(String[] args) throws Exception {
-		new Settings();
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
 		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));
@@ -76,6 +76,7 @@ public class Main {
 		
 		new TwitchManager(credentials);
 		TextureManager.downloadPublicData();
+		Settings.reloadHighlights();
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {

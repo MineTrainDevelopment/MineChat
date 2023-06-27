@@ -1,7 +1,6 @@
 package de.minetrain.minechat.gui.frames.parant;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -70,12 +69,12 @@ public class MineDialog extends JDialog{
         
         confirmButton = new JButton("Confirm");
         confirmButton.setBackground(ColorManager.GUI_BACKGROUND);
-        confirmButton.setForeground(Color.WHITE);
+        confirmButton.setForeground(ColorManager.FONT);
         confirmButton.setBorder(null);
 
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setBackground(ColorManager.GUI_BACKGROUND);
-        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setForeground(ColorManager.FONT);
         cancelButton.setBorder(null);
         cancelButton.addActionListener(getDefaultWindowCloseAction(true));
 

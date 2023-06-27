@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.gui.frames.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -68,7 +69,8 @@ public class TitleBar extends JPanel{
             public void actionPerformed(ActionEvent e){
             	System.err.println("TODO: Settings Menü.");
 //            	new EmoteDownlodFrame(mainFrame);
-            	new EmoteSelector(mainFrame, false);
+//            	new EmoteSelector(mainFrame, false);
+            	new AddWordHighlightFrame(mainFrame);
             }
         });
 

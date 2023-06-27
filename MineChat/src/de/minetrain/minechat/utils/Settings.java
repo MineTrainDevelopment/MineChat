@@ -1,7 +1,13 @@
 package de.minetrain.minechat.utils;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.utils.obj.HighlightString;
 
 public class Settings {
 //	https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
@@ -10,7 +16,7 @@ public class Settings {
 	public static final String timeFormat = "HH:mm";
 	public static final String dateFormat = "dd.MM.yyy";
 	public static final String dayFormat = "eeee";
-	public static final List<String> highlightStrings = new ArrayList<String>();
+	public static final List<HighlightString> highlightStrings = new ArrayList<HighlightString>();
 	
 	public static final boolean highlightChatMessages = true;
 	public static final boolean dhighlightUserFirstMessages = true;
@@ -28,10 +34,13 @@ public class Settings {
 	public static final ReplyType GREETING_TYPE = ReplyType.MESSAGE;
 	public static final ReplyType REPLY_TYPE = ReplyType.THREAD_PARENT;
 	
-	public Settings() {
-		highlightStrings.add("minetrainlp");
-		highlightStrings.add("minetrain");
-		highlightStrings.add("mine");
+	public static final Font MESSAGE_FONT = new Font("Arial Unicode MS", Font.BOLD, 17);
+	
+	public static void reloadHighlights(){
+		Main.CONFIG.getStringList("Highlights").forEach(highlight -> highlightStrings.add(new HighlightString(highlight)));
+		if(highlightStrings.isEmpty()){
+			HighlightString.saveNewWord(TwitchManager.ownerChannelName, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+		}
 	}
 	
 	public enum ReplyType{MESSAGE, THREAD_PARENT, USER_NAME} //message might be debricatet from twitch side.

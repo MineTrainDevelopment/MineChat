@@ -47,7 +47,7 @@ import de.minetrain.minechat.gui.utils.FlippedImageIcon;
 import de.minetrain.minechat.gui.utils.MirroredImageIcon;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
-import de.minetrain.minechat.utils.IconStringBuilder;
+import de.minetrain.minechat.utils.MineStringBuilder;
 import de.minetrain.minechat.utils.Settings;
 import de.minetrain.minechat.utils.Settings.ReplyType;
 
@@ -56,7 +56,6 @@ public class ChatWindowMessageComponent extends JPanel{
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindowMessageComponent.class);
 	private static final long serialVersionUID = -3116239050269500823L;
 	
-	private static final Font MESSAGE_FONT = new Font("Arial Unicode MS", Font.BOLD, 17);
 	private static final Map<String, String> emoteReplacements = new HashMap<>();
 	private static final Dimension buttonSize = new Dimension(28, 28);
 	public static final Random random = new Random();
@@ -82,7 +81,7 @@ public class ChatWindowMessageComponent extends JPanel{
 		messageLabel = new JTextPane();
 		messageLabel.setEditable(false);
 		messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		messageLabel.setFont(MESSAGE_FONT);
+		messageLabel.setFont(Settings.MESSAGE_FONT);
 		formatText(message, messageLabel.getStyledDocument(), new Color(30, 30, 30));
 		
 		messageContentPanel = new JPanel(new BorderLayout());
@@ -129,7 +128,7 @@ public class ChatWindowMessageComponent extends JPanel{
 		
 		
 		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
-			IconStringBuilder stringBuilder = new IconStringBuilder().setSuffix(userName+":");
+			MineStringBuilder stringBuilder = new MineStringBuilder().setSuffix(userName+":");
 			twitchMessage.getBadges().forEach(badge -> stringBuilder.appendIcon(badge, true));
         	titledBorder.setTitle(stringBuilder.toString());
         }
@@ -187,7 +186,7 @@ public class ChatWindowMessageComponent extends JPanel{
 
 		messageLabel = new JTextPane();
         messageLabel.setEditable(false);
-		messageLabel.setFont(MESSAGE_FONT);
+		messageLabel.setFont(Settings.MESSAGE_FONT);
         messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(replyButton));
 		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
@@ -195,12 +194,12 @@ public class ChatWindowMessageComponent extends JPanel{
         
         if(twitchMessage != null){
 	    	if(chatWindow.greetingsManager.contains(userName)){
-		    	Settings.highlightStrings.forEach(string -> {
-		    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
+		    	Settings.highlightStrings.forEach(highlight -> {
+		    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
 		            Matcher matcher = pattern.matcher(message);
 		            
 		            if (matcher.find()) {
-		    			titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, 2));
+		    			titledBorder.setBorder(BorderFactory.createLineBorder(Color.decode(highlight.getBorderColorCode()), 2));
 		    			highlighted = true;
 		            }
 		    	});
@@ -294,11 +293,11 @@ public class ChatWindowMessageComponent extends JPanel{
 //			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
 			Map<String, String> emotesByName = this.emotes;
 			
-			Settings.highlightStrings.forEach(string -> {
-	    		Pattern pattern = Pattern.compile("\\b" + string + "\\b", Pattern.CASE_INSENSITIVE);
+			Settings.highlightStrings.forEach(highlight -> {
+	    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
 	            Matcher matcher = pattern.matcher(word);
 	            if (matcher.find()) {
-	    			StyleConstants.setForeground(attributeSet, new Color(255, 40, 40));
+	    			StyleConstants.setForeground(attributeSet, Color.decode(highlight.getWordColorCode()));
 	    		}
 	    	});
 			

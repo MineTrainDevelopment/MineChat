@@ -5,8 +5,6 @@ import java.awt.Color;
 //import javax.swing.JColorChooser;
 
 public class ColorManager {
-//	Color newColor = JColorChooser.showDialog(onboardingFrame, "Choose a color", ColorManager.GUI_BACKGROUND, false);
-//    System.out.println(newColor.getGreen());
 	
 	/**
 	 * (14, 14, 14)
@@ -34,7 +32,7 @@ public class ColorManager {
     public static final Color CHAT_SPENDING_BIG = Color.YELLOW;
     public static final Color CHAT_ANNOUNCEMENT = Color.GREEN;
     public static final Color CHAT_USER_REWARD = Color.BLUE;
-    public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT = Color.RED;
+    public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT = new Color(255, 40, 40);
     public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT = new Color(125, 0, 255);
     public static final Color FONT = Color.WHITE;
 

@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com.github.twitch4j.client.websocket.domain.WebsocketConnectionState;
@@ -27,14 +26,14 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.HTMLColors;
-import de.minetrain.minechat.utils.IconStringBuilder;
+import de.minetrain.minechat.utils.MineStringBuilder;
 import de.minetrain.minechat.utils.MessageHistory;
 
 public class ChatStatusPanel extends JPanel {
 	private static final long serialVersionUID = -1247943509194239246L;
 	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static final String lineSeparator =  System.getProperty("line.separator");
-	private IconStringBuilder stringBuilder = new IconStringBuilder();
+	private MineStringBuilder stringBuilder = new MineStringBuilder();
 	private MessageHistory messageHistory = new MessageHistory();
 	private String currentlyCachedInput = "";
 	private boolean lockedState = false;
@@ -160,8 +159,8 @@ public class ChatStatusPanel extends JPanel {
     	return button;
     }
     
-    public static final IconStringBuilder getMineChatStatusText() {
-		IconStringBuilder stringBuilder = new IconStringBuilder();
+    public static final MineStringBuilder getMineChatStatusText() {
+		MineStringBuilder stringBuilder = new MineStringBuilder();
 		stringBuilder.appendString("Welcome to ", HTMLColors.WHITE);
 		stringBuilder.appendString("MineChat ", HTMLColors.AQUA);
 		stringBuilder.appendString("<3", HTMLColors.RED);
