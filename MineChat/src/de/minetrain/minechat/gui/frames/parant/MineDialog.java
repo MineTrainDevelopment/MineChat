@@ -63,8 +63,6 @@ public class MineDialog extends JDialog{
         setLocationRelativeTo(null);
         setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
-        addMouseListener(MoiseListner());
-        addMouseMotionListener(mouseMotionListner());
         
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
@@ -114,6 +112,8 @@ public class MineDialog extends JDialog{
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 3, 2));
 		mainPanel.setBackground(ColorManager.GUI_BORDER);
 		mainPanel.add(titleBar, BorderLayout.CENTER);
+		mainPanel.addMouseListener(MoiseListner());
+		mainPanel.addMouseMotionListener(mouseMotionListner());
         return mainPanel;
 	}
 	
