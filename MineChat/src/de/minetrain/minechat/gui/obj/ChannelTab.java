@@ -22,6 +22,7 @@ import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -40,8 +41,8 @@ public class ChannelTab {
 	private List<String> greetingTexts;
 	private ActionListener editWindowAction;
 	private ChannelMacros macros;
-	private ChatWindow chatWindow = new ChatWindow(this);
-	private ChannelStatistics statistics = new ChannelStatistics();
+	private ChatWindow chatWindow;
+	private ChannelStatistics statistics = new ChannelStatistics(this);
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;
@@ -50,10 +51,11 @@ public class ChannelTab {
 	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab) {
 		ConfigManager config = Main.CONFIG;
 		configID = ""+config.getLong(tab.getConfigPath(), 0);
+		this.mainFrame = mainFrame;
+		this.chatWindow = new ChatWindow(this);
 		chatWindow.setLocation(8, 186);
 		chatWindow.setVisible(false);
-		mainFrame.getContentPane().add(chatWindow);
-		this.mainFrame = mainFrame;
+		this.mainFrame.getContentPane().add(chatWindow);
 		
 		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
 		this.tabType = tab;
@@ -124,6 +126,7 @@ public class ChannelTab {
 		displayName = config.getString(configPath+"DisplayName");
 		moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
 		greetingTexts = config.getStringList(configPath+"GreetingText");
+		chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
 		TwitchManager.joinChannel(channelName);
 		loadMacros(configID);
 	}
@@ -253,6 +256,10 @@ public class ChannelTab {
 
 	public ChannelStatistics getStatistics() {
 		return statistics;
+	}
+	
+	public MainFrame getMainFrame(){
+		return mainFrame;
 	}
 	
 }

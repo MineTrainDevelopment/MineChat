@@ -6,20 +6,25 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.time.format.DateTimeFormatter;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.obj.chat.completion.AutoSuggestor;
+import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -86,6 +91,29 @@ public class Main {
 	}
 	
 	public static void openMainFrame(){
+		LOADINGBAR.setProgress("Loading auto suggestion.", 60);
+		
+		TwitchEmote.getEmotesByName().entrySet().forEach(entry -> {//May also be caled when new emotes get addet.
+			AutoSuggestor.addToStaticDictionary(new SuggestionObj(":"+entry.getKey()+(entry.getValue().contains("bttv") ? " -- BTTV" : ""), entry.getValue().replace("_1.png", "_1_BG.png")));
+		});
+		
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{DAY}", null, "{DAY} ---> Monday"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{MYSELF}", null, "{MYSELF} ---> @"+TwitchManager.ownerChannelName));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{STREAMER}", null, "{STREAMER} ---> @STREAMER"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{VIEWER}", null, "{VIEWER} - NOT WORKING"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{UPTIME}", null, "{UPTIME} - NOT WORKING"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{GAME}", null, "{GAME} - NOT WORKING"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TITLE}", null, "{TITLE} - NOT WORKING"));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{MY_MESSAGES}", null));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_MESSAGES}", null));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_SUBS}", null));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_RESUBS}", null));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));// TODO
+        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));// TODO
+        
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
 		MAIN_FRAME = new MainFrame();
         

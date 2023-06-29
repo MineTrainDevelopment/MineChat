@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 
+import de.minetrain.minechat.gui.obj.ChannelTab;
+import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
 import de.minetrain.minechat.twitch.TwitchManager;
 
 public class ChannelStatistics {
@@ -19,7 +21,11 @@ public class ChannelStatistics {
 	private long totalNewSubs = 0;
 	private long totalBits = 0;
 	private long totalFollower = 0;
-	public ChannelStatistics(){}
+	private ChannelTab parentTab;
+	
+	public ChannelStatistics(ChannelTab parentTab){
+		this.parentTab = parentTab;
+	}
 	
 	public void setStreamStartupTime(long streamStartupTime) {
 		this.streamStartupTime = streamStartupTime;
@@ -27,6 +33,11 @@ public class ChannelStatistics {
 
 	public void addMessage(String senderName) {
 		totalMessages++;
+		
+		if(!sendedMessages.containsKey(senderName)){
+			parentTab.getChatWindow().chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+senderName, null));
+		}
+		
 		sendedMessages.put(senderName, sendedMessages.containsKey(senderName) ? sendedMessages.get(senderName)+1 : 1l);
 	}
 
@@ -48,7 +59,7 @@ public class ChannelStatistics {
 	public void addFollower() {
 		totalFollower++;
 	}
-
+	
 	
 	
 	

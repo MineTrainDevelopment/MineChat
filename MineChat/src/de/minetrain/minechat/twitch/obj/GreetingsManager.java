@@ -16,7 +16,7 @@ import de.minetrain.minechat.gui.obj.ChannelTab;
  * 
  * @author MineTrain/Justin
  * @since 23.05.2023
- * @version 1.0
+ * @version 1.1
  */
 public class GreetingsManager extends ArrayList<String>{
 	private static final Logger logger = LoggerFactory.getLogger(GreetingsManager.class);
@@ -157,5 +157,12 @@ public class GreetingsManager extends ArrayList<String>{
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Get the list of Mentioned Users.
+	 */
+	public List<String> getMentionedUsers(){
+		return mentionedUsers;
 	}
 }

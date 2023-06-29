@@ -123,7 +123,7 @@ public class TwitchManager {
 
 		message.getChannelTab().getStatistics().addMessage(message.getSenderName());
 		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
-		message.getChannelTab().getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessage());
+		message.getChannelTab().getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessageRaw());
 				
 		//Check if a chatter is was mentioned
 		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {

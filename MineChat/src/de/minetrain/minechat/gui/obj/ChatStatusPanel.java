@@ -8,12 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import com.github.twitch4j.client.websocket.domain.WebsocketConnectionState;
@@ -22,6 +22,8 @@ import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
+import de.minetrain.minechat.gui.obj.chat.completion.AutoSuggestor;
+import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -29,7 +31,7 @@ import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
 import de.minetrain.minechat.utils.MessageHistory;
 
-public class ChatStatusPanel extends JPanel {
+public class ChatStatusPanel extends JPanel{
 	private static final long serialVersionUID = -1247943509194239246L;
 	public static final Font MESSAGE_FONT = new Font("SansSerif", Font.BOLD, 17);
 	private static final String lineSeparator =  System.getProperty("line.separator");
@@ -43,7 +45,7 @@ public class ChatStatusPanel extends JPanel {
     private JLabel inputInfo;
 	private MineButton sendButton;
 	private MineButton cancelReplyButton;
-	private JTextArea inputArea;
+	private AutoSuggestor inputArea;
 	
 	public ChatStatusPanel(ChatWindow chat) {
 		super(new BorderLayout());
@@ -76,8 +78,9 @@ public class ChatStatusPanel extends JPanel {
 //		inputInfo.add(cancelReplyButton, BorderLayout.WEST);
 		infoHoldingLabel.add(cancelReplyButton, BorderLayout.WEST);
 		infoHoldingLabel.add(inputInfo, BorderLayout.CENTER);
-		
-		inputArea = new JTextArea();
+
+//		inputArea = new AutoSuggestor(chat.parentTab.getMainFrame(), null, Color.WHITE, Color.BLUE, Color.RED, 0.75f, "@", ":");
+		inputArea = new AutoSuggestor(chat, null, ColorManager.GUI_BACKGROUND_LIGHT, Color.WHITE, Color.RED, 1f, "@", ":", "{");
         inputArea.setFont(MESSAGE_FONT);
         inputArea.setForeground(ColorManager.FONT);
         inputArea.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
@@ -89,7 +92,7 @@ public class ChatStatusPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent event) {
 				if(inputArea.isFocusOwner()){
-					if (!(event.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK && event.getKeyCode() == KeyEvent.VK_ENTER)) {
+					if (!(event.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK && event.getKeyCode() == KeyEvent.VK_ENTER) && !inputArea.getAutoSuggestionPopUpWindow().isVisible()) {
 						switch(event.getKeyCode()){
 						case KeyEvent.VK_UP:
 							overrideUserInput(messageHistory.getNextItem(getCurrentUserInput()));
@@ -106,13 +109,16 @@ public class ChatStatusPanel extends JPanel {
 							chat.sendMessage();
 							event.consume();
 							break;
+							
+						case KeyEvent.VK_TAB:
+							event.consume();
+							break;
 						
 						default:
 							messageHistory.resetIndex();
 							break;
 						}
-                    }
-					
+					}
 				}
 			}
         });
@@ -317,6 +323,10 @@ public class ChatStatusPanel extends JPanel {
 
 	public MessageHistory getMessageHistory() {
 		return messageHistory;
+	}
+	
+	public AutoSuggestor getinputArea(){
+		return inputArea;
 	}
 
 }

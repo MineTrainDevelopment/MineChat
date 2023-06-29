@@ -13,6 +13,7 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
 public class ChatMessage {
 	private final TwitchMessage replyMessage;
 	private final String message;
+	private final String messageRaw;
 	private final String senderNamem;
 	private final ChannelTab channelTab;
 	
@@ -20,6 +21,7 @@ public class ChatMessage {
 		this.replyMessage = tab.getChatWindow().replyMessage;
 		this.senderNamem = senderNamem;
 		this.channelTab = tab;
+		this.messageRaw = message;
 		
 //		https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 		if(message.contains("{")){
@@ -67,6 +69,10 @@ public class ChatMessage {
 
 	public ChannelTab getChannelTab() {
 		return channelTab;
+	}
+
+	public String getMessageRaw() {
+		return messageRaw;
 	}
 
 
