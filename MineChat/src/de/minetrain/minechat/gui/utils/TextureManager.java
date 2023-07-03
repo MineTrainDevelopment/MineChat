@@ -59,6 +59,7 @@ public class TextureManager {
 	private final ImageIcon replyButton;
 	private final ImageIcon markReadButton;
 	private final ImageIcon cancelButton;
+	private final ImageIcon confirmButton;
 	private final ImageIcon enterButton;
 	private final ImageIcon emoteButton;
 	private final ImageIcon waveButton;
@@ -81,6 +82,7 @@ public class TextureManager {
 		this.replyButton = new ImageIcon(texturePath + "replyButton.png");
 		this.markReadButton = new ImageIcon(texturePath + "markReadButton.png");
 		this.cancelButton = new ImageIcon(texturePath + "cancelButton.png");
+		this.confirmButton = new ImageIcon(texturePath + "confirmButton.png");
 		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
 		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
 //		this.emoteButton = new ImageIcon("data/texture/Icons/99351845/jennyanPopcorn/jennyanPopcorn_1.gif");
@@ -131,6 +133,10 @@ public class TextureManager {
 	
 	public ImageIcon getCancelButton() {
 		return cancelButton;
+	}
+	
+	public ImageIcon getConfirmButton() {
+		return confirmButton;
 	}
 
 	public ImageIcon getEnterButton() {

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,9 +19,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.main.Main;
 
 public class MineDialog extends JDialog{
 	private static final long serialVersionUID = 4562021738118686842L;
@@ -32,6 +33,9 @@ public class MineDialog extends JDialog{
 	private int mouseX, mouseY;
 	private boolean exitOnCancelButton;
 	
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public MineDialog(JFrame parentFrame, String title) {
 		super(parentFrame, title, true);
 		createPanal(title, new Dimension(400, 100));
@@ -67,29 +71,11 @@ public class MineDialog extends JDialog{
         contentPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
         contentPanel.setBackground(ColorManager.GUI_BACKGROUND);
         
-        confirmButton = new JButton("Confirm");
-        confirmButton.setBackground(ColorManager.GUI_BACKGROUND);
-        confirmButton.setForeground(ColorManager.FONT);
-        confirmButton.setBorder(null);
-
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setBackground(ColorManager.GUI_BACKGROUND);
-        cancelButton.setForeground(ColorManager.FONT);
-        cancelButton.setBorder(null);
-        cancelButton.addActionListener(getDefaultWindowCloseAction(true));
-
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 9, 5));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(7, 2, 2, 2));
-        buttonPanel.setBackground(ColorManager.GUI_BORDER);
-        buttonPanel.add(cancelButton);
-        buttonPanel.add(confirmButton);
-
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
         mainPanel.setBackground(ColorManager.GUI_BACKGROUND);
         mainPanel.add(createTitleBar(), BorderLayout.NORTH);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 	}
@@ -102,15 +88,36 @@ public class MineDialog extends JDialog{
 		
 		JPanel titleBar = new JPanel(new BorderLayout());
         titleBar.setBackground(ColorManager.GUI_BACKGROUND);
-        titleBar.add(Box.createHorizontalStrut(4), BorderLayout.NORTH);
 		titleBar.add(titleText, BorderLayout.CENTER);
         titleBar.add(Box.createHorizontalStrut(4), BorderLayout.SOUTH);
-//        titleBar.add(new JButton("X"), BorderLayout.EAST);
         
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 3, 2));
 		mainPanel.setBackground(ColorManager.GUI_BORDER);
 		mainPanel.add(titleBar, BorderLayout.CENTER);
+		
+		JPanel buttonPanal = new JPanel(new BorderLayout());
+		buttonPanal.setBorder(new EmptyBorder(2, 2, 2, 2));
+		buttonPanal.setBackground(titleBar.getBackground());
+		titleBar.add(buttonPanal, BorderLayout.EAST);
+		
+		JButton cancelButton = new JButton("");
+		cancelButton.setIcon(Main.TEXTURE_MANAGER.getCancelButton());
+		cancelButton.setBackground(titleBar.getBackground());
+		cancelButton.setMinimumSize(new Dimension(30, 30));
+		cancelButton.setBorder(null);
+		cancelButton.addActionListener(getDefaultWindowCloseAction(true));
+		
+		confirmButton = new JButton("");
+		confirmButton.setIcon(Main.TEXTURE_MANAGER.getConfirmButton());
+		confirmButton.setBackground(titleBar.getBackground());
+		confirmButton.setMinimumSize(new Dimension(30, 30));
+		confirmButton.setBorder(null);
+		confirmButton.addActionListener(getDefaultWindowCloseAction(false));
+
+		buttonPanal.add(confirmButton, BorderLayout.WEST);
+		buttonPanal.add(Box.createHorizontalStrut(2), BorderLayout.CENTER);
+		buttonPanal.add(cancelButton, BorderLayout.EAST);
 		mainPanel.addMouseListener(MoiseListner());
 		mainPanel.addMouseMotionListener(mouseMotionListner());
         return mainPanel;
@@ -170,7 +177,7 @@ public class MineDialog extends JDialog{
 	
 	@Override
 	public void setSize(Dimension d) {
-		super.setSize(new Dimension(d.width+18, d.height+68));
+		super.setSize(new Dimension(d.width+18, d.height+53));
 	}
 	
 	/**
