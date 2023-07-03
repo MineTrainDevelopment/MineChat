@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.obj.chat.completion;
+package de.minetrain.minechat.gui.obj.chat.userinput.textarea;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,20 +41,21 @@ public class AutoSuggestor extends JTextArea {
 	private final List<String> prefixs;
 	private final Color suggestionsTextColor;
 	private final Color suggestionFocusedColor;
+	private final UndoManager undoManager;
 	
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
-		public void insertUpdate(DocumentEvent de) {
+		public void insertUpdate(DocumentEvent event) {
 			checkForAndShowSuggestions();
 		}
 
 		@Override
-		public void removeUpdate(DocumentEvent de) {
+		public void removeUpdate(DocumentEvent event) {
 			checkForAndShowSuggestions();
 		}
 
 		@Override
-		public void changedUpdate(DocumentEvent de) {
+		public void changedUpdate(DocumentEvent event) {
 			checkForAndShowSuggestions();
 		}
 	};
@@ -66,6 +67,7 @@ public class AutoSuggestor extends JTextArea {
 		this.suggestionFocusedColor = suggestionFocusedColor;
 		getDocument().addDocumentListener(documentListener);
 		this.prefixs = Arrays.asList(prefixs);
+		this.undoManager = new UndoManager(this);
 		
 		setDictionary(words);
 
@@ -112,7 +114,7 @@ public class AutoSuggestor extends JTextArea {
 							component.select();
 						}
 						break;
-
+						
 					default:
 						break;
 					}
@@ -339,5 +341,9 @@ public class AutoSuggestor extends JTextArea {
 	        }
 	    }
 	    return suggestionAdded;
+	}
+
+	public UndoManager getUndoManager() {
+		return undoManager;
 	}
 }

@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.obj.chat.completion;
+package de.minetrain.minechat.gui.obj.chat.userinput.textarea;
 
 import javax.swing.ImageIcon;
 

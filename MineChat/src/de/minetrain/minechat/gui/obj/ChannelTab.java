@@ -22,7 +22,7 @@ import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
-import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;

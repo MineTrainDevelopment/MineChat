@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import com.github.twitch4j.client.websocket.domain.WebsocketConnectionState;
@@ -22,8 +24,8 @@ import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
-import de.minetrain.minechat.gui.obj.chat.completion.AutoSuggestor;
-import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.AutoSuggestor;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -89,7 +91,7 @@ public class ChatStatusPanel extends JPanel{
         inputArea.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 1));
         
         inputArea.addKeyListener(new KeyAdapter() {
-            @Override
+			@Override
             public void keyPressed(KeyEvent event) {
 				if(inputArea.isFocusOwner()){
 					if (!(event.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK && event.getKeyCode() == KeyEvent.VK_ENTER) && !inputArea.getAutoSuggestionPopUpWindow().isVisible()) {
@@ -117,6 +119,14 @@ public class ChatStatusPanel extends JPanel{
 						default:
 							messageHistory.resetIndex();
 							break;
+						}
+						
+						if(event.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK && event.getKeyCode() == KeyEvent.VK_Z){
+							inputArea.getUndoManager().undo();
+						}
+//						
+						if(event.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK && event.getKeyCode() == KeyEvent.VK_Y){
+							inputArea.getUndoManager().redo();
 						}
 					}
 				}

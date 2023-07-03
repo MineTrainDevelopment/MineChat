@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.UndoManager.UndoVariation;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -33,6 +34,9 @@ public class Settings {
 	public static final long MAX_MESSAGE_DISPLAYING = 500;
 	public static final ReplyType GREETING_TYPE = ReplyType.MESSAGE;
 	public static final ReplyType REPLY_TYPE = ReplyType.THREAD_PARENT;
+
+	public static final UndoVariation UNDO_VARIATION = UndoVariation.WORD;
+	public static final long MAX_UNDO_LOG_SIZE = 100;
 	
 	public static final Font MESSAGE_FONT = new Font("Arial Unicode MS", Font.BOLD, 17);
 	

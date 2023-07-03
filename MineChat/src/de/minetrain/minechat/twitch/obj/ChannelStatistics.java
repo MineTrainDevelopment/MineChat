@@ -6,7 +6,7 @@ import java.util.Map;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 
 import de.minetrain.minechat.gui.obj.ChannelTab;
-import de.minetrain.minechat.gui.obj.chat.completion.SuggestionObj;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.twitch.TwitchManager;
 
 public class ChannelStatistics {

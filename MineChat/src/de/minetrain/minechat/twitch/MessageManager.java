@@ -76,7 +76,7 @@ public class MessageManager {
         
         //If the same message has been sent recently, append the spam protector character.
         if(message.equals(lastMessage) && lastSentTime.plusSeconds(30).isAfter(now)) {
-            message += " "+spamProtector;
+            message += " "+getSpamprotector();
         }
         
         //Update the last message and last sent time variables.
@@ -165,6 +165,10 @@ public class MessageManager {
 
 	public static void setLastMessage(String lastMessage) {
 		MessageManager.lastMessage = lastMessage;
+	}
+
+	public static String getSpamprotector() {
+		return spamProtector;
 	}
 }
 
