@@ -24,10 +24,10 @@ public class SuggestionLabel extends JLabel {
 	private boolean focused = false;
     private final JWindow autoSuggestionsPopUpWindow;
     private final JTextArea textArea;
-    private final AutoSuggestor autoSuggestor;
+    private final MineTextArea autoSuggestor;
     private Color suggestionsTextColor, suggestionBorderColor;
 
-    public SuggestionLabel(SuggestionObj word, final Color borderColor, Color suggestionsTextColor, AutoSuggestor autoSuggestor) {
+    public SuggestionLabel(SuggestionObj word, final Color borderColor, Color suggestionsTextColor, MineTextArea autoSuggestor) {
     	super(word.getDisplayText());
     	setIcon(word.getIcon());
         setFont(Settings.MESSAGE_FONT);

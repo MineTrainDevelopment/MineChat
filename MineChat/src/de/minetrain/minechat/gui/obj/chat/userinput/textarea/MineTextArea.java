@@ -28,7 +28,7 @@ import de.minetrain.minechat.gui.utils.ColorManager;
 /**
  * NOTE: I stoll this code from <a href="https://stackoverflow.com/questions/14186955/create-a-autocompleting-textbox-in-java-with-a-dropdown-list">StackOverflow</a> 
  */
-public class AutoSuggestor extends JTextArea {
+public class MineTextArea extends JTextArea {
 	private static final long serialVersionUID = 8558626585350253751L;
 	private final JFrame container;
 	private final ChatWindow chat;
@@ -60,7 +60,7 @@ public class AutoSuggestor extends JTextArea {
 		}
 	};
 
-	public AutoSuggestor(ChatWindow chat, ArrayList<SuggestionObj> words, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity, String... prefixs) {
+	public MineTextArea(ChatWindow chat, ArrayList<SuggestionObj> words, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity, String... prefixs) {
 		this.container = chat.parentTab.getMainFrame();
 		this.chat = chat;
 		this.suggestionsTextColor = textColor;

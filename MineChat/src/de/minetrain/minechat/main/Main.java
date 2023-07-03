@@ -23,7 +23,7 @@ import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.obj.StatusBar;
-import de.minetrain.minechat.gui.obj.chat.userinput.textarea.AutoSuggestor;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
@@ -35,7 +35,7 @@ import de.minetrain.minechat.utils.Settings;
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
-	public static final String VERSION = "V0.6";
+	public static final String VERSION = "V0.7";
 	public static ConfigManager CONFIG;
 	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
@@ -94,25 +94,25 @@ public class Main {
 		LOADINGBAR.setProgress("Loading auto suggestion.", 60);
 		
 		TwitchEmote.getEmotesByName().entrySet().forEach(entry -> {//May also be caled when new emotes get addet.
-			AutoSuggestor.addToStaticDictionary(new SuggestionObj(":"+entry.getKey()+(entry.getValue().contains("bttv") ? " -- BTTV" : ""), entry.getValue().replace("_1.png", "_1_BG.png")));
+			MineTextArea.addToStaticDictionary(new SuggestionObj(":"+entry.getKey()+(entry.getValue().contains("bttv") ? " -- BTTV" : ""), entry.getValue().replace("_1.png", "_1_BG.png")));
 		});
 		
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{DAY}", null, "{DAY} ---> Monday"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{MYSELF}", null, "{MYSELF} ---> @"+TwitchManager.ownerChannelName));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{STREAMER}", null, "{STREAMER} ---> @STREAMER"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{VIEWER}", null, "{VIEWER} - NOT WORKING"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{UPTIME}", null, "{UPTIME} - NOT WORKING"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{GAME}", null, "{GAME} - NOT WORKING"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TITLE}", null, "{TITLE} - NOT WORKING"));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{MY_MESSAGES}", null));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_MESSAGES}", null));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_SUBS}", null));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_RESUBS}", null));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));// TODO
-        AutoSuggestor.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{DAY}", null, "{DAY} ---> Monday"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{MYSELF}", null, "{MYSELF} ---> @"+TwitchManager.ownerChannelName));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{STREAMER}", null, "{STREAMER} ---> @STREAMER"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{VIEWER}", null, "{VIEWER} - NOT WORKING"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{UPTIME}", null, "{UPTIME} - NOT WORKING"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{GAME}", null, "{GAME} - NOT WORKING"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TITLE}", null, "{TITLE} - NOT WORKING"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{MY_MESSAGES}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_MESSAGES}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_SUBS}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_RESUBS}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));// TODO
         
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
 		MAIN_FRAME = new MainFrame();

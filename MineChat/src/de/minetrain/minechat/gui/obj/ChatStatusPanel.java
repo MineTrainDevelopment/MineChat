@@ -24,7 +24,7 @@ import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
-import de.minetrain.minechat.gui.obj.chat.userinput.textarea.AutoSuggestor;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
@@ -47,7 +47,7 @@ public class ChatStatusPanel extends JPanel{
     private JLabel inputInfo;
 	private MineButton sendButton;
 	private MineButton cancelReplyButton;
-	private AutoSuggestor inputArea;
+	private MineTextArea inputArea;
 	
 	public ChatStatusPanel(ChatWindow chat) {
 		super(new BorderLayout());
@@ -82,7 +82,7 @@ public class ChatStatusPanel extends JPanel{
 		infoHoldingLabel.add(inputInfo, BorderLayout.CENTER);
 
 //		inputArea = new AutoSuggestor(chat.parentTab.getMainFrame(), null, Color.WHITE, Color.BLUE, Color.RED, 0.75f, "@", ":");
-		inputArea = new AutoSuggestor(chat, null, ColorManager.GUI_BACKGROUND_LIGHT, Color.WHITE, Color.RED, 1f, "@", ":", "{");
+		inputArea = new MineTextArea(chat, null, ColorManager.GUI_BACKGROUND_LIGHT, Color.WHITE, Color.RED, 1f, "@", ":", "{");
         inputArea.setFont(MESSAGE_FONT);
         inputArea.setForeground(ColorManager.FONT);
         inputArea.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
@@ -335,7 +335,7 @@ public class ChatStatusPanel extends JPanel{
 		return messageHistory;
 	}
 	
-	public AutoSuggestor getinputArea(){
+	public MineTextArea getinputArea(){
 		return inputArea;
 	}
 
