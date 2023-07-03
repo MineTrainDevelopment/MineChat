@@ -10,7 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +69,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	private JPanel messageContentPanel;
 	private MineButton markReadButton, replyButton;
 	private Map<String, String> emotes;
+	private long epochTime = 0;
 	private final String userName;
 	
 	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow, Map<String, String> emotes) {
@@ -82,7 +85,7 @@ public class ChatWindowMessageComponent extends JPanel{
 		messageLabel.setEditable(false);
 		messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		messageLabel.setFont(Settings.MESSAGE_FONT);
-		formatText(message, messageLabel.getStyledDocument(), new Color(30, 30, 30));
+		formatText(message, messageLabel.getStyledDocument(), new Color(30, 30, 30), epochTime);
 		
 		messageContentPanel = new JPanel(new BorderLayout());
 		messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
@@ -115,7 +118,8 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
 		super(new BorderLayout());
-		this.emotes = (twitchMessage == null) ? TwitchEmote.getEmotesByName() : twitchMessage.getEmotes();
+		this.emotes = twitchMessage == null ? TwitchEmote.getEmotesByName() : twitchMessage.getEmotes();
+		this.epochTime = twitchMessage == null ? epochTime : twitchMessage.getEpochTime();
 		this.userName = userName;
 		JPanel messagePanel = this;
         setBackground(ColorManager.GUI_BACKGROUND);
@@ -189,7 +193,7 @@ public class ChatWindowMessageComponent extends JPanel{
 		messageLabel.setFont(Settings.MESSAGE_FONT);
         messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(replyButton));
-		formatText(message, messageLabel.getStyledDocument(), Color.WHITE);
+		formatText(message, messageLabel.getStyledDocument(), Color.WHITE, epochTime);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
         if(twitchMessage != null){
@@ -271,10 +275,13 @@ public class ChatWindowMessageComponent extends JPanel{
         };
 	}
 	
-	private final void formatText(String input, StyledDocument document, Color fontColor) {
+	private final void formatText(String input, StyledDocument document, Color fontColor, long epochTime) {
     	String newInput="";
     	if(fontColor == Color.WHITE){
-    		input = "["+LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
+			LocalDateTime dateTime = epochTime > 0
+					? LocalDateTime.ofEpochSecond(epochTime/ 1000, 0, ZoneId.systemDefault().getRules().getOffset(Instant.now()))
+					: LocalDateTime.now();
+    		input = "["+dateTime.format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
     	}
     	
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}

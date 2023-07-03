@@ -48,7 +48,7 @@ public class TwitchMessage {
 		this.channelId = ircMessage.getTagValue("room-id").orElse(">null<");
 		this.userName = ircMessage.getTagValue("display-name").orElse(">null<");
 		this.client_nonce = ircMessage.getTagValue("client_nonce").orElse(">null<");
-		this.epochTime = Long.parseLong(ircMessage.getTagValue("tmi-sent-ts").orElse(">null<"));
+		this.epochTime = Long.parseLong(ircMessage.getTagValue("tmi-sent-ts").orElse("0"));
 		this.userColorCode = ircMessage.getTagValue("color").orElse("#ffffff");
 		this.replyId = ircMessage.getTagValue("reply-parent-msg-id").orElse(null);
 		this.replyUser = ircMessage.getTagValue("reply-parent-display-name").orElse(null);
