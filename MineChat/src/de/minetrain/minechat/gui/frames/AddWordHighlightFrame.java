@@ -41,7 +41,7 @@ public class AddWordHighlightFrame extends MineDialog {
 	private static final MineStringBuilder stringBuilder = new MineStringBuilder();
 
 	public AddWordHighlightFrame(JFrame parentFrame) {
-		super(parentFrame, "Add a word Highlight", new Dimension(400, 180));
+		super(parentFrame, "Add a word Highlight", new Dimension(400, 115));
 		
 		inputField = new JTextField();
         inputField.setText("{WORD}");
@@ -115,19 +115,17 @@ public class AddWordHighlightFrame extends MineDialog {
         buttonPanel.add(borderColorButton);
         buttonPanel.add(wordColorButton);
         
-        TitledBorder inputBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 5, true), "Change Word/Color");
-        inputBorder.setTitleJustification(TitledBorder.CENTER);
-        inputBorder.setTitleColor(ColorManager.FONT);
-        inputBorder.setTitleFont(new Font(null, Font.BOLD, 20));
-        
 		JPanel inputPanel = new JPanel(new BorderLayout());
 		inputPanel.add(inputField, BorderLayout.CENTER);
 		inputPanel.add(buttonPanel, BorderLayout.EAST);
 		inputPanel.setBackground(ColorManager.GUI_BACKGROUND);
-		inputPanel.setBorder(inputBorder);
 		
-		addContent(messagePreview, BorderLayout.NORTH);
-		addContent(inputPanel, BorderLayout.SOUTH);
+		JPanel contentPanel = new JPanel(new BorderLayout());
+		contentPanel.setBackground(ColorManager.GUI_BACKGROUND);
+		contentPanel.add(inputPanel, BorderLayout.SOUTH);
+		contentPanel.add(messagePreview, BorderLayout.NORTH);
+		
+		addContent(contentPanel, BorderLayout.CENTER);
 		setConfirmButtonAction(new ActionListener() {
 			
 			@Override
