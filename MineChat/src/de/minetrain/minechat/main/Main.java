@@ -16,12 +16,15 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.obj.TwitchEmote;
-import de.minetrain.minechat.gui.frames.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
+import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
+import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
+import de.minetrain.minechat.gui.frames.settings.editors.CustomiseTimeFormatFrame;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
@@ -30,7 +33,6 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
-import de.minetrain.minechat.utils.Settings;
 
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
@@ -40,6 +42,7 @@ public class Main {
 	public static ConfigManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
 	private static JFrame onboardingFrame;
+	public static Settings rftnfijdg = new Settings(); //TODO: TEMP
 	
 	public static void main(String[] args) throws Exception {
 		LOADINGBAR.setSize(400, 50);
@@ -64,6 +67,8 @@ public class Main {
 	    onboardingFrame.setVisible(true);
 	    
 	    CONFIG = new ConfigManager("data/config.yml", false);
+	    new Settings();
+//	    new SettingsFrame(onboardingFrame);/////////////////////////////////////////////
 	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
 	    
 	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);

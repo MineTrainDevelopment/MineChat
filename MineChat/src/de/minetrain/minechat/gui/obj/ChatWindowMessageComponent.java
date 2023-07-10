@@ -40,6 +40,8 @@ import javax.swing.text.StyledDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -50,8 +52,6 @@ import de.minetrain.minechat.gui.utils.MirroredImageIcon;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.MineStringBuilder;
-import de.minetrain.minechat.utils.Settings;
-import de.minetrain.minechat.utils.Settings.ReplyType;
 
 public class ChatWindowMessageComponent extends JPanel{
 	private static final Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
@@ -207,9 +207,9 @@ public class ChatWindowMessageComponent extends JPanel{
 		    			highlighted = true;
 		            }
 		    	});
-	    	}else{
+	    	}else if(Settings.highlightUserFirstMessages.isActive()){
 	    		chatWindow.greetingsManager.add(userName);
-				titledBorder.setBorder(BorderFactory.createLineBorder(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT, 2));
+				titledBorder.setBorder(BorderFactory.createLineBorder(Settings.highlightUserFirstMessages.getColor(), 2));
 				highlighted = true;
 	    	}
 	    	
@@ -228,7 +228,7 @@ public class ChatWindowMessageComponent extends JPanel{
 						chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
 						twitchMessage.setReplyType(Settings.GREETING_TYPE);
 						
-						if(twitchMessage.getReplyType() != ReplyType.THREAD_PARENT){
+						if(twitchMessage.getReplyType() != ReplyType.THREAD){
 							twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
 						}
 						

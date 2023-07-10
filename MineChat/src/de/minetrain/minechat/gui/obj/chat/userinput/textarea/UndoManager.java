@@ -6,11 +6,11 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import de.minetrain.minechat.utils.Settings;
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.UndoVariation;
 
 public class UndoManager extends ArrayList<String>{
 	private static final long serialVersionUID = 3614006111036329804L;
-	public enum UndoVariation {WORD, LETTER}
 	private final JTextArea textArea;
 	private final UndoVariation variation;
 	

@@ -68,14 +68,14 @@ public class MineDialog extends JDialog{
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
         
         contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
-        contentPanel.setBackground(ColorManager.GUI_BACKGROUND);
+        getContentPanel().setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
+        getContentPanel().setBackground(ColorManager.GUI_BACKGROUND);
         
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
         mainPanel.setBackground(ColorManager.GUI_BACKGROUND);
         mainPanel.add(createTitleBar(), BorderLayout.NORTH);
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
+        mainPanel.add(getContentPanel(), BorderLayout.CENTER);
 
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 	}
@@ -185,8 +185,12 @@ public class MineDialog extends JDialog{
 	 * @param borderPosion Needs to be {@link BorderLayout} for examle {@link BorderLayout#CENTER}
 	 */
 	public MineDialog addContent(Component comp, String borderPosion) {
-		contentPanel.add(comp, borderPosion);
+		getContentPanel().add(comp, borderPosion);
 		return this;
+	}
+
+	public JPanel getContentPanel() {
+		return contentPanel;
 	}
 	
 }

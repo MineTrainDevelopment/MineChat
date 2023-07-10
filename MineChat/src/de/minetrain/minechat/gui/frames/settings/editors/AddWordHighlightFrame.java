@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.frames;
+package de.minetrain.minechat.gui.frames.settings.editors;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,11 +24,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.MineStringBuilder;
-import de.minetrain.minechat.utils.Settings;
 import de.minetrain.minechat.utils.obj.HighlightString;
 
 public class AddWordHighlightFrame extends MineDialog {

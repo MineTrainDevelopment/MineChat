@@ -3,8 +3,8 @@ package de.minetrain.minechat.utils.obj;
 import java.awt.Color;
 import java.util.List;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.utils.Settings;
 
 public class HighlightString {
 	private final String word;
@@ -28,6 +28,7 @@ public class HighlightString {
 	 */
 	public static void saveNewWord(String word, Color wordColor, Color borderColor) {
 		List<String> stringList = Main.CONFIG.getStringList("Highlights");
+		word = word.replaceAll("[\\[\\]{}()\\\\^$|?.+*]", "");
 		String removeFromList = "";
 		for(String string : stringList){
 			if(string.toLowerCase().startsWith(word.toLowerCase().replace("%-%", "%"))){

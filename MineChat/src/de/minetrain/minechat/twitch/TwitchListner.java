@@ -33,6 +33,7 @@ import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -42,7 +43,6 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
-import de.minetrain.minechat.utils.Settings;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
@@ -119,10 +119,10 @@ public class TwitchListner {
     public void onFollow(FollowEvent event) {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getStatistics().addFollower();
-    	if(!Settings.displaySubs_Follows){return;}
+    	if(!Settings.displayFollows.isActive()){return;}
     	
     	currentChannelTab.getChatWindow()
-			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", ColorManager.CHAT_UNIMPORTANT,
+			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", Settings.displayFollows.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
     }
     
@@ -130,10 +130,10 @@ public class TwitchListner {
     public void onCheer(CheerEvent event) {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getStatistics().addBits(event.getBits());
-    	if(!Settings.displayBitsCheerd){return;}
+    	if(!Settings.displayBitsCheerd.isActive()){return;}
 
     	currentChannelTab.getChatWindow()
-			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!\n"+event.getMessage(), ColorManager.CHAT_UNIMPORTANT,
+			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!\n"+event.getMessage(), Settings.displayBitsCheerd.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%LOVE%", "Send some love!"));
     }
 
@@ -142,22 +142,22 @@ public class TwitchListner {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getStatistics().addSub(event);
     	
-        if(!event.getGifted() && Settings.displaySubs_Follows) {
+        if(!event.getGifted() && Settings.displaySubs.isActive()) {
         	String message = (event.getMessage().isEmpty()) ? "" : event.getMessage().get();
 			currentChannelTab.getChatWindow().displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed for "+event.getMonths()+"month! \n "+message,
-    			(event.getMonths()>12) ? ColorManager.CHAT_SPENDING_SMALL : ColorManager.CHAT_UNIMPORTANT,
+    			(event.getMonths()>12) ? Settings.displayGiftedSubs.getColor() : Settings.displaySubs.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
-        }else if(Settings.displayGiftedSubscriptions){
+        }else if(Settings.displayGiftedSubs.isActive() && Settings.displayIndividualGiftedSubs.isActive()){
         	currentChannelTab.getChatWindow().displaySystemInfo("New subscription", "@"+event.getGiftedBy().getName()
 				+" just gifted a sub to @"+event.getUser().getName()
-				+"! ("+event.getGiftMonths()+".months)", ColorManager.CHAT_UNIMPORTANT,
+				+"! ("+event.getGiftMonths()+".months)", Settings.displayIndividualGiftedSubs.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "%LOVE%", "Send some love!"));
         }
     }
 
     @EventSubscriber
     public void onGiftSubscriptions(GiftSubscriptionsEvent event) { //ONLY Random sub gifed
-    	if(!Settings.displayGiftedSubscriptions){return;}
+    	if(!Settings.displayGiftedSubs.isActive()){return;}
     	
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
@@ -166,7 +166,7 @@ public class TwitchListner {
 				+" \nTier: "+event.getSubscriptionPlan()
 				+" \nAmound: "+event.getCount()
 				+" \nThis user gifted "+event.getTotalCount()+" subs on this Channel!"
-				,(event.getCount() >= 5) ? ColorManager.CHAT_SPENDING_BIG : ColorManager.CHAT_SPENDING_SMALL,
+				,(event.getCount() >= 5) ? Settings.displayGiftedSubs.getBigColor() : Settings.displayGiftedSubs.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "%LOVE%", "Send some love!"));
     }
     
@@ -194,78 +194,78 @@ public class TwitchListner {
 
     @EventSubscriber
     public void onModAnnouncement(ModAnnouncementEvent event){
-    	if(!Settings.displayAnnouncement){return;}
+    	if(!Settings.displayAnnouncement.isActive()){return;}
     	
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
-			.displaySystemInfo("Announcement", "From: "+event.getAnnouncer().getName()+" \nMessage: "+event.getMessage(), ColorManager.CHAT_ANNOUNCEMENT,
+			.displaySystemInfo("Announcement", "From: "+event.getAnnouncer().getName()+" \nMessage: "+event.getMessage(), Settings.displayAnnouncement.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%REPLY%"+event.getAnnouncer().getName(), "Say something about this announcement!"));
     }
 
     @EventSubscriber
     public void onIncumingRaid(RaidEvent event){
-    	if(!Settings.displayAnnouncement){return;}
+    	if(!Settings.displayAnnouncement.isActive()){return;}
 //    	getCurrentChannelTab(event.getChannel()).getChatWindow()
 //			.displaySystemInfo("Incuming raid", "@"+event.getRaider().getName()+" is raiding with "+event.getViewers()+" raiders!", announcement);
 
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
-			.displaySystemInfo("Incuming raid", "Frome: "+event.getRaider().getName()+" \nViewers: "+event.getViewers(), ColorManager.CHAT_ANNOUNCEMENT,
+			.displaySystemInfo("Incuming raid", "Frome: "+event.getRaider().getName()+" \nViewers: "+event.getViewers(), Settings.displayAnnouncement.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%RAID%", "Say hello to the Raiders!"));
     }
     
     @EventSubscriber
     public void onRewardGift(RewardGiftEvent event){ //Someone got a reward
-    	if(!Settings.displayUserRewards){return;}
+    	if(!Settings.displayUserRewards.isActive()){return;}
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
-    		.displaySystemInfo("Reward granted ", event.getUser().getName()+" got a "+event.getTriggerType()+ " reward", ColorManager.CHAT_USER_REWARD,
+    		.displaySystemInfo("Reward granted ", event.getUser().getName()+" got a "+event.getTriggerType()+ " reward", Settings.displayUserRewards.getColor(),
 				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%REPLY%"+event.getUser().getName(), "Congratulate this user!"));
     	
     }
     
     @EventSubscriber
     public void onBitsBadgeEarned(BitsBadgeEarnedEvent event){
-    	if(!Settings.displayUserRewards){return;}
+    	if(!Settings.displayUserRewards.isActive()){return;}
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
 		currentChannelTab.getChatWindow()
-			.displaySystemInfo("BitBadge Earned ", event.getUser().getName()+" got a new bit badge! -> "+event.getBitsThreshold(), ColorManager.CHAT_USER_REWARD,
+			.displaySystemInfo("BitBadge Earned ", event.getUser().getName()+" got a new bit badge! -> "+event.getBitsThreshold(), Settings.displayUserRewards.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%REPLY%"+event.getUser().getName(), "Congratulate this user!"));
     }
 
     @EventSubscriber
     public void onClearChat(ClearChatEvent event){
-    	if(!Settings.displayModActions){return;}
+    	if(!Settings.displayModActions.isActive()){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Chat cleared", "All chat-messages got cleared!", ColorManager.CHAT_MODERATION, null);
+			.displaySystemInfo("Chat cleared", "All chat-messages got cleared!", Settings.displayModActions.getColor(), null);
     }
 
     @EventSubscriber
     public void onDeleteMessage(DeleteMessageEvent event){
-    	if(!Settings.displayModActions){return;}
+    	if(!Settings.displayModActions.isActive()){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-    		.displaySystemInfo("Message deleted", "@"+event.getUserName()+": "+event.getMessage(), ColorManager.CHAT_MODERATION, null);
+    		.displaySystemInfo("Message deleted", "@"+event.getUserName()+": "+event.getMessage(), Settings.displayModActions.getColor(), null);
     }
 
     @EventSubscriber
     public void onRaidCancellation(RaidCancellationEvent event){
-    	if(!Settings.displayModActions){return;}
+    	if(!Settings.displayModActions.isActive()){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Raid cancelled", "The current raid got cancelled!", ColorManager.CHAT_MODERATION, null);
+			.displaySystemInfo("Raid cancelled", "The current raid got cancelled!", Settings.displayModActions.getColor(), null);
     }
     
     @EventSubscriber
     public void onChannelMod(ChannelModEvent event){
-    	if(!Settings.displayModActions){return;}
+    	if(!Settings.displayModActions.isActive()){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Mod status changed", event.getUser().getName()+" Gained or lost the mod status!", ColorManager.CHAT_MODERATION, null);
+			.displaySystemInfo("Mod status changed", event.getUser().getName()+" Gained or lost the mod status!", Settings.displayModActions.getColor(), null);
     }
 
     @EventSubscriber
     public void onUserBan(UserBanEvent event){
-    	if(!Settings.displayModActions){return;}
+    	if(!Settings.displayModActions.isActive()){return;}
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-    		.displaySystemInfo("User banned", "@"+event.getUser().getName()+" got banned!", ColorManager.CHAT_MODERATION, null);
+    		.displaySystemInfo("User banned", "@"+event.getUser().getName()+" got banned!", Settings.displayModActions.getColor(), null);
     }
 
     @EventSubscriber
@@ -274,12 +274,12 @@ public class TwitchListner {
     		
     	}
     	
-    	if(!Settings.displayModActions){return;}
+    	if(!Settings.displayModActions.isActive()){return;}
 //    	getCurrentChannelTab(event.getChannel()).getChatWindow()
 //			.displaySystemInfo("User Timeout", "@"+event.getUser().getName()+" got a timeout for "+event.getDuration()+".sec! Reason: "+event.getReason(), moderationColor);
     	
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" \nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), ColorManager.CHAT_MODERATION, null);
+			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" \nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), Settings.displayModActions.getColor(), null);
     }
     
     @EventSubscriber

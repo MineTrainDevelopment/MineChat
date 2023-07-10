@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.utils.Settings;
-import de.minetrain.minechat.utils.Settings.ReplyType;
 
 public class TwitchMessage {
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{ID}/static/dark/1.0";

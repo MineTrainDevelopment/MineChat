@@ -14,7 +14,7 @@ import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
-import de.minetrain.minechat.utils.Settings;
+import de.minetrain.minechat.config.Settings;
 
 /**
  * NOTE: I stoll this code from <a href="https://stackoverflow.com/questions/14186955/create-a-autocompleting-textbox-in-java-with-a-dropdown-list">StackOverflow</a> 

@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;

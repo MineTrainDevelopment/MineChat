@@ -64,6 +64,10 @@ public class ConfigManager {
 		} catch (IOException ex) {
 			throw new IllegalArgumentException("Canot initialize ConfigManager. Can´t create file", ex);
 		}
+        
+        if(getRawConfig() == null){
+			throw new IllegalArgumentException("Canot initialize ConfigManager. File is empty");
+        }
     }
     
     /**
