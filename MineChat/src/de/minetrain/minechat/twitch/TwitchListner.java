@@ -165,7 +165,7 @@ public class TwitchListner {
 				"From: "+event.getUser().getName()
 				+" \nTier: "+event.getSubscriptionPlan()
 				+" \nAmound: "+event.getCount()
-				+" \nThis user gifted "+event.getTotalCount()+" subs on this Channel!"
+				+" \nThis user gifted "+(event.getCount()+event.getTotalCount())+" subs on this Channel!"
 				,(event.getCount() >= 5) ? Settings.displayGiftedSubs.getBigColor() : Settings.displayGiftedSubs.getColor(),
 					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "%LOVE%", "Send some love!"));
     }
