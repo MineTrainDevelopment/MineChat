@@ -193,7 +193,7 @@ public class ChatWindowMessageComponent extends JPanel{
 		messageLabel.setFont(Settings.MESSAGE_FONT);
         messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(replyButton));
-		formatText(message, messageLabel.getStyledDocument(), Color.WHITE, epochTime);
+		formatText(message, messageLabel.getStyledDocument(), ColorManager.FONT, epochTime);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
         
@@ -280,7 +280,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	private final void formatText(String input, StyledDocument document, Color fontColor, long epochTime) {
     	String newInput="";
-    	if(fontColor == Color.WHITE){
+    	if(fontColor == ColorManager.FONT){
 			LocalDateTime dateTime = epochTime > 0
 					? LocalDateTime.ofEpochSecond(epochTime/ 1000, 0, ZoneId.systemDefault().getRules().getOffset(Instant.now()))
 					: LocalDateTime.now();
