@@ -1,6 +1,5 @@
 package de.minetrain.minechat.config;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
@@ -12,13 +11,12 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.utils.obj.HighlightDefault;
 import de.minetrain.minechat.utils.obj.HighlightGiftSubs;
 import de.minetrain.minechat.utils.obj.HighlightString;
 
-public class Settings {
+public class Settings{
 	private static final Logger logger = LoggerFactory.getLogger(Settings.class);
 //	https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 //	public static String messageTimeFormat = "dd.MM.yyy | HH:mm:ss";
@@ -93,12 +91,12 @@ public class Settings {
 		
 		MESSAGE_FONT = new Font(settings.getString("Font.Name"), settings.getInt("Font.Style"), settings.getInt("Font.Size"));
 		
-//		reloadHighlights();
+		reloadHighlights();
 		new ColorManager(settings);
 	}
 	
 	public static void reloadHighlights(){
-		Main.CONFIG.getStringList("Highlights").forEach(highlight -> highlightStrings.add(new HighlightString(highlight)));
+		settings.getStringList("Highlights.MessageHighlights.KeyWods.List").forEach(highlight -> highlightStrings.add(new HighlightString(highlight)));
 		if(highlightStrings.isEmpty()){
 			HighlightString.saveNewWord(TwitchManager.ownerChannelName, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
 		}

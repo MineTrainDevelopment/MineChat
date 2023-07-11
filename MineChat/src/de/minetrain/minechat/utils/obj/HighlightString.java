@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.List;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.main.Main;
 
 public class HighlightString {
 	private final String word;
@@ -27,11 +26,11 @@ public class HighlightString {
 	 * @param borderColor
 	 */
 	public static void saveNewWord(String word, Color wordColor, Color borderColor) {
-		List<String> stringList = Main.CONFIG.getStringList("Highlights");
+		List<String> stringList = Settings.settings.getStringList("Highlights.MessageHighlights.KeyWods.List");
 		word = word.replaceAll("[\\[\\]{}()\\\\^$|?.+*]", "");
 		String removeFromList = "";
 		for(String string : stringList){
-			if(string.toLowerCase().startsWith(word.toLowerCase().replace("%-%", "%"))){
+			if(string.toLowerCase().equalsIgnoreCase(word.toLowerCase().replace("%-%", "%"))){
 				removeFromList = string;
 			}
 		}
@@ -44,7 +43,7 @@ public class HighlightString {
 				String.format("#%06x", borderColor.getRGB() & 0x00FFFFFF)+"%-%"+
 				"true");
 		
-		Main.CONFIG.setStringList("Highlights", stringList, true);
+		Settings.settings.setStringList("Highlights.MessageHighlights.KeyWods.List", stringList, true);
 		Settings.reloadHighlights();
 	}
 

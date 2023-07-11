@@ -196,21 +196,24 @@ public class ChatWindowMessageComponent extends JPanel{
 		formatText(message, messageLabel.getStyledDocument(), Color.WHITE, epochTime);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
+        
         if(twitchMessage != null){
 	    	if(chatWindow.greetingsManager.contains(userName)){
 		    	Settings.highlightStrings.forEach(highlight -> {
 		    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
 		            Matcher matcher = pattern.matcher(message);
 		            
-		            if (matcher.find()) {
+		            if (matcher.find() && !highlighted) {
 		    			titledBorder.setBorder(BorderFactory.createLineBorder(Color.decode(highlight.getBorderColorCode()), 2));
 		    			highlighted = true;
 		            }
 		    	});
-	    	}else if(Settings.highlightUserFirstMessages.isActive()){
+	    	}else{
 	    		chatWindow.greetingsManager.add(userName);
-				titledBorder.setBorder(BorderFactory.createLineBorder(Settings.highlightUserFirstMessages.getColor(), 2));
-				highlighted = true;
+	    		if(Settings.highlightUserFirstMessages.isActive()){
+					titledBorder.setBorder(BorderFactory.createLineBorder(Settings.highlightUserFirstMessages.getColor(), 2));
+					highlighted = true;
+	    		}
 	    	}
 	    	
 	    	if(!chatWindow.greetingsManager.isMentioned(userName)){
