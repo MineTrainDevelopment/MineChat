@@ -43,7 +43,7 @@ public class TwitchManager {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchManager.class);
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
-	public static String ownerChannelName;
+	public static String ownerChannelName = ">null<";
 	public static CredentialsManager credentials;
 	protected static TwitchAccesToken accesToken;
 	

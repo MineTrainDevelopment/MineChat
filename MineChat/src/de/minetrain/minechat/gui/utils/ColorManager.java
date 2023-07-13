@@ -4,12 +4,12 @@ import java.awt.Color;
 
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 
 //import javax.swing.JColorChooser;
 
 public class ColorManager {
-	public static ConfigManager settings;
+	public static YamlManager settings;
 	public static final Color FONT_DEFAULT = Color.WHITE;
 	public static final Color GUI_BORDER_DEFAULT = new Color(14, 14, 14);
 	public static final Color GUI_BACKGROUND_DEFAULT = new Color(40, 40, 40);
@@ -49,18 +49,18 @@ public class ColorManager {
     public static Color CHAT_MESSAGE_KEY_HIGHLIGHT = CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
     public static Color FONT = Color.WHITE;
     
-	public ColorManager(ConfigManager setting) {
+	public ColorManager(YamlManager setting) {
 		settings = setting;
 		loadSettings();
 	}
 
 	public static void loadSettings() {
-		FONT = decode(settings.getString("Colors.GUI.Font"));
-		GUI_BACKGROUND = decode(settings.getString("Colors.GUI.Background"));
-		GUI_BACKGROUND_LIGHT = decode(settings.getString("Colors.GUI.BackgroundLight"));
-		GUI_BORDER = decode(settings.getString("Colors.GUI.Border"));
-		GUI_BUTTON_BACKGROUND = decode(settings.getString("Colors.GUI.ButtonBackground"));
-		CHAT_MESSAGE_KEY_HIGHLIGHT = decode(settings.getString("Colors.GUI.DefaultKeyHighlight"));
+		FONT = decode(settings.getString("Colors.GUI.Font", encode(FONT_DEFAULT)));
+		GUI_BACKGROUND = decode(settings.getString("Colors.GUI.Background", encode(GUI_BACKGROUND_DEFAULT)));
+		GUI_BACKGROUND_LIGHT = decode(settings.getString("Colors.GUI.BackgroundLight", encode(GUI_BACKGROUND_LIGHT_DEFAULT)));
+		GUI_BORDER = decode(settings.getString("Colors.GUI.Border", encode(GUI_BORDER_DEFAULT)));
+		GUI_BUTTON_BACKGROUND = decode(settings.getString("Colors.GUI.ButtonBackground", encode(GUI_BUTTON_BACKGROUND_DEFAULT)));
+		CHAT_MESSAGE_KEY_HIGHLIGHT = decode(settings.getString("Colors.GUI.DefaultKeyHighlight", encode(CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT)));
 	}
 	
 	public static Color decode(String hexCode){
@@ -77,7 +77,7 @@ public class ColorManager {
 		return "#"+String.format("%06x", 0xFFFFFF & color.getRGB());
 	}
 	
-	public static ConfigManager getSettingsConfig(){
+	public static YamlManager getSettingsConfig(){
 		return settings;
 	}
 

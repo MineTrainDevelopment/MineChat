@@ -2,14 +2,14 @@ package de.minetrain.minechat.utils.obj;
 
 import java.awt.Color;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.utils.ColorManager;
 
 public class HighlightGiftSubs extends HighlightDefault{
 	private final String borderColorCodeBig;
 	
-	public HighlightGiftSubs(ConfigManager settings, String path) {
+	public HighlightGiftSubs(YamlManager settings, String path) {
 		super(settings, path);
 		super.setColorCode(settings.getString(path+".ColorSmall"));
 		this.borderColorCodeBig = settings.getString(path+".ColorBig");

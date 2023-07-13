@@ -2,7 +2,7 @@ package de.minetrain.minechat.utils.obj;
 
 import java.awt.Color;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.utils.ColorManager;
 
@@ -11,7 +11,7 @@ public class HighlightDefault {
 	private String borderColorCode;
 	private boolean active;
 	
-	public HighlightDefault(ConfigManager settings, String path) {
+	public HighlightDefault(YamlManager settings, String path) {
 		this.borderColorCode = settings.getString(path+".Color");
 		this.active = settings.getBoolean(path+".Active");
 		this.configPath = path;

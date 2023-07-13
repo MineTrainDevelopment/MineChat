@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
@@ -91,8 +91,8 @@ public class EditChannelFrame extends JDialog {
         
         loginNameField.setText(tab.getChannelName());
         
-        ConfigManager config = Main.CONFIG;
-		config.getRawConfig().entrySet().forEach(entry -> {
+        YamlManager config = Main.CONFIG;
+		config.entrySet().forEach(entry -> {
         	if(entry.getKey().startsWith("Channel_")){
         		channelsFromConfig.put(config.getString(entry.getKey()+".Name"), entry.getKey());
         	}
@@ -260,7 +260,7 @@ public class EditChannelFrame extends JDialog {
 					return;
 				}
 				
-				ConfigManager config = Main.CONFIG;
+				YamlManager config = Main.CONFIG;
 				String path = "Channel_"+twitchUser.getUserId()+".";
 				config.setNumber(editedTab.getTabType().getConfigPath(), Long.parseLong(twitchUser.getUserId()));
 				

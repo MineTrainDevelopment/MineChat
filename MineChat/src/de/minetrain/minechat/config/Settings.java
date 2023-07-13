@@ -20,7 +20,7 @@ public class Settings{
 	private static final Logger logger = LoggerFactory.getLogger(Settings.class);
 //	https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 //	public static String messageTimeFormat = "dd.MM.yyy | HH:mm:ss";
-	public static ConfigManager settings;
+	public static YamlManager settings;
 	
 	public static String messageTimeFormat; //
 	public static String timeFormat; //
@@ -56,17 +56,16 @@ public class Settings{
 	
 	public static void loadSettings() {
 		File file = new File("data/Settings.yml");
-		if(file.exists() && !file.isDirectory()) { 
-			settings = new ConfigManager("data/Settings.yml", false);
+		if(file.isFile()) { 
+			settings = new YamlManager("data/Settings.yml");
 		}else{
-			logger.warn("Create new settings.yml");
 			settings = createNewConfig("data/Settings.yml");
 		}
 		
-		messageTimeFormat = settings.getString("Variables.MessageTime");
-		timeFormat = settings.getString("Variables.TimeFormat");
-		dateFormat = settings.getString("Variables.DateFormat");
-		dayFormat = settings.getString("Variables.DayFormat");
+		messageTimeFormat = settings.getString("Variables.MessageTime", "HH:mm");
+		timeFormat = settings.getString("Variables.TimeFormat", "HH:mm");
+		dateFormat = settings.getString("Variables.DateFormat", "dd:MM:yyyy");
+		dayFormat = settings.getString("Variables.DayFormat", "eeee");
 		highlightStrings = new ArrayList<HighlightString>();
 		
 		highlightUserFirstMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.FirstMessage");
@@ -82,14 +81,17 @@ public class Settings{
 		displayAnnouncement = new HighlightDefault(settings, "Highlights.EventHighlights.ModAnnouncement");
 		displayUserRewards = new HighlightDefault(settings, "Highlights.EventHighlights.UserRewards");
 
-		MAX_MESSAGE_DISPLAYING = settings.getInt("Chatting.MaxMessageDisplaying");
-		GREETING_TYPE = ReplyType.get(settings.getString("Chatting.GreetingType"));
-		REPLY_TYPE = ReplyType.get(settings.getString("Chatting.ReplyType"));
+		MAX_MESSAGE_DISPLAYING = settings.getInt("Chatting.MaxMessageDisplaying", 500);
+		GREETING_TYPE = ReplyType.get(settings.getString("Chatting.GreetingType", "MESSAGE"));
+		REPLY_TYPE = ReplyType.get(settings.getString("Chatting.ReplyType", "ReplyType"));
 
-		UNDO_VARIATION = UndoVariation.get(settings.getString("Chatting.UndoMode"));
-		MAX_UNDO_LOG_SIZE = settings.getInt("Chatting.UndoCacheSize");
+		UNDO_VARIATION = UndoVariation.get(settings.getString("Chatting.UndoMode", "WORD"));
+		MAX_UNDO_LOG_SIZE = settings.getInt("Chatting.UndoCacheSize", 100);
 		
-		MESSAGE_FONT = new Font(settings.getString("Font.Name"), settings.getInt("Font.Style"), settings.getInt("Font.Size"));
+		MESSAGE_FONT = new Font(
+				settings.getString("Font.Name", "Arial Unicode MS"), 
+				settings.getInt("Font.Style", 1), 
+				settings.getInt("Font.Size", 17));
 		
 		reloadHighlights();
 		new ColorManager(settings);
@@ -126,8 +128,9 @@ public class Settings{
 	}
 	
 	
-	private static ConfigManager createNewConfig(String path){
-		ConfigManager settings = new ConfigManager(path, true);
+	private static YamlManager createNewConfig(String path){
+		logger.warn("Create new Settings file!");
+		YamlManager settings = new YamlManager(path);
 		settings.setString("Colors.GUI.Font", ColorManager.encode(ColorManager.FONT_DEFAULT));
 		settings.setString("Colors.GUI.Background", ColorManager.encode(ColorManager.GUI_BACKGROUND_DEFAULT));
 		settings.setString("Colors.GUI.BackgroundLight", ColorManager.encode(ColorManager.GUI_BACKGROUND_LIGHT_DEFAULT));

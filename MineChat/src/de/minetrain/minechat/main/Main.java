@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.obj.TwitchEmote;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
@@ -38,11 +38,11 @@ public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
 	public static final String VERSION = "V0.7";
-	public static ConfigManager CONFIG;
-	public static ConfigManager EMOTE_INDEX;
+	public static YamlManager CONFIG;
+	public static YamlManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
 	private static JFrame onboardingFrame;
-	public static Settings rftnfijdg = new Settings(); //TODO: TEMP
+	public static Settings rftnfijdg;
 	
 	public static void main(String[] args) throws Exception {
 		LOADINGBAR.setSize(400, 50);
@@ -66,10 +66,14 @@ public class Main {
 	    onboardingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    onboardingFrame.setVisible(true);
 	    
-	    CONFIG = new ConfigManager("data/config.yml", false);
-	    new Settings();
-//	    new SettingsFrame(onboardingFrame);/////////////////////////////////////////////
-	    EMOTE_INDEX = new ConfigManager(TextureManager.texturePath+"Icons/emoteIndex.yml", true);
+	    LOADINGBAR.setProgress("Reading config file.", 5);
+	    try {
+	    	CONFIG = new YamlManager("data/config.yml");
+	    	EMOTE_INDEX = new YamlManager(TextureManager.texturePath+"Icons/emoteIndex.yml");
+		} catch (Exception ex) {
+	    	LOADINGBAR.setError("config.yml or emoteIndex.yml not found!");
+	    	return;
+		}
 	    
 	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
 	    try {
@@ -85,6 +89,7 @@ public class Main {
 		CredentialsManager credentials = new CredentialsManager();
 		
 		new TwitchManager(credentials);
+		new Settings();
 		TextureManager.downloadPublicData();
 		Settings.reloadHighlights();
 		

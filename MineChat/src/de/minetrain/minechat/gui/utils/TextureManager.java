@@ -37,7 +37,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.main.Main;
@@ -369,7 +369,7 @@ public class TextureManager {
 					JsonObject version = badgeVersion.getAsJsonObject();
 					String path = badgePath.replace("{SET_ID}", asJsonObject.get("set_id").getAsString()).replace("{ID}", version.get("id").getAsString());
 					
-					ConfigManager config = new ConfigManager(TextureManager.texturePath + path + "meta.yml", true);
+					YamlManager config = new YamlManager(TextureManager.texturePath + path + "meta.yml");
 					config.setString("Name", version.get("title").getAsString());
 					config.setString("Description", version.get("description").getAsString());
 					config.saveConfigToFile();
@@ -422,7 +422,7 @@ public class TextureManager {
 		    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-			ConfigManager config = new ConfigManager(TextureManager.texturePath+fileLocation+name+".yml", true);
+			YamlManager config = new YamlManager(TextureManager.texturePath+fileLocation+name+".yml");
 			
 			String borderImageTyp = "";
 			String indexName = name+"%&%"+fileFormat;
@@ -525,7 +525,7 @@ public class TextureManager {
 				String fileLocation = "Icons/default/" + formatName + "/";
 
 				statusBar.setProgress("Downloading: " + name, StatusBar.getPercentage(jsonArray.size(), i));
-				ConfigManager config = new ConfigManager(TextureManager.texturePath + fileLocation + formatName + ".yml", true);
+				YamlManager config = new YamlManager(TextureManager.texturePath + fileLocation + formatName + ".yml");
 				config.setString("Name", name);
 				config.setString("ID", entry.get("id").getAsString());
 				config.setString("Format", "static");

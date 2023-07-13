@@ -36,7 +36,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
@@ -262,7 +262,7 @@ public class EmoteDownlodFrame extends JDialog{
 			String fileLocation = "Icons/"+userId+"/"+name+"/";
 			
 		    statusBar.setProgress("Downloading: "+name, StatusBar.getPercentage(jsonArray.size(), i));
-			ConfigManager config = new ConfigManager(TextureManager.texturePath+fileLocation+name+".yml", true);
+			YamlManager config = new YamlManager(TextureManager.texturePath+fileLocation+name+".yml");
 			
 			String borderImageTyp = "";
 			String indexName = name+"%&%"+fileFormat;

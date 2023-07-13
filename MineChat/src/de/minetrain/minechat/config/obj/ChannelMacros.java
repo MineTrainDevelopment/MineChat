@@ -2,7 +2,7 @@ package de.minetrain.minechat.config.obj;
 
 import java.util.HashMap;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.main.Main;
 
@@ -42,7 +42,7 @@ public class ChannelMacros {
 			macroRow.put(ButtonType.EMOTE_6, new MacroObject(ButtonType.EMOTE_6, "null", ">null<", ">null<"));
 			macroRow.put(ButtonType.EMOTE_7, new MacroObject(ButtonType.EMOTE_7, "null", ">null<", ">null<"));
 		}else{
-			ConfigManager config = Main.CONFIG;
+			YamlManager config = Main.CONFIG;
 			String path = "Channel_"+configID+".Macros"+row.name().toLowerCase().substring(3)+".";
 
 			String[] macro0 = config.getString(path+"M0").split("%-%");

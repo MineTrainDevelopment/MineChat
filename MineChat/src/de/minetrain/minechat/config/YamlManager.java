@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.naming.ConfigurationException;
 
@@ -21,64 +22,71 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import de.minetrain.minechat.main.Main;
-
 /**
  * This class manages the configuration for the application.
  * @author MineTrain/Justin
  * @since 29.04.2023
  * @version 1.0
  */
-public class ConfigManager {
-	private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
-	private final String configFileName; //Name of the configuration file to be loaded.
+public class YamlManager extends HashMap<String, Object>{
+	private static final long serialVersionUID = 3482232292003401166L;
+	private static final Logger logger = LoggerFactory.getLogger(YamlManager.class);
+	private final String filePath; //Name of the configuration file to be loaded.
     private final Yaml yaml; //Yaml instance for parsing the configuration file.
-    private Map<String, Object> config; //Map containing the configuration values.
+	private static final String invalidFileChars = "<>:\"\\|?*"; //List of invalid chars, that operating systems don´t allow in there file names.
 
     /**
      * Constructor for the ConfigManager class.
      * @param configFileName Name of the configuration file to be loaded.
      */
-    public ConfigManager(String configFileName, boolean createFile){
-    	Main.LOADINGBAR.setProgress("Reading config file", 5);
-    	logger.info("Reading config file...");
-//    	configFileName = configFileName.replaceAll("[" + Pattern.quote("<>:\"\\|?*()") + "]", "_");
-    	this.configFileName = configFileName;
-        yaml = new Yaml();
-        
-        try {
-        	if(createFile){
-        		Files.createDirectories(Paths.get(configFileName.substring(0, configFileName.lastIndexOf("/"))));
-        		new File(configFileName).createNewFile();
-        	}
-        	
-			reloadConfig();
-			
-			if(getRawConfig() == null && createFile){
-				config = new HashMap<String, Object>();
-			}
-			
-		} catch (FileNotFoundException ex) {
-	    	Main.LOADINGBAR.setError(configFileName+" not found!");
-			throw new IllegalArgumentException("Canot initialize ConfigManager. File not found!", ex);
+    public YamlManager(String filePath) {
+    	super(new HashMap<String, Object>());
+    	if(!filePath.endsWith(".yml")){
+    		logger.warn("Tryed to load a non yaml file! - Automatically appending a '.yml'...", new IllegalArgumentException(filePath+" does not end with '.yml'!"));
+    		filePath = filePath+".yml";
+    	}
+    	
+		filePath = filePath
+			.replaceAll("[" + Pattern.quote(invalidFileChars) + "]", "_")
+			.replaceAll("(?i)null", "")
+			.replaceAll("\\s", "_");
+    	
+        this.filePath = filePath;
+		this.yaml = new Yaml();
+    	logger.info("Reading config file: ["+filePath+"]");
+    	
+    	try {
+    		File file = new File(filePath);
+    		if(!file.isFile()) {
+    			logger.warn("["+filePath+"] Not found! Trying to create this file.");
+    			Files.createDirectories(Paths.get(filePath.substring(0, filePath.lastIndexOf("/"))));
+    			file.createNewFile();
+    		}
+    		
+    		reloadConfig();
+    		
+	    } catch (FileNotFoundException ex) {
+			throw new IllegalArgumentException("Can't initialize YamlManager. File not found!", ex);
 		} catch (IOException ex) {
-			throw new IllegalArgumentException("Canot initialize ConfigManager. Can´t create file", ex);
+			throw new IllegalArgumentException("Can't initialize YamlManager. Can´t create file", ex);
 		}
-        
-        if(getRawConfig() == null){
-			throw new IllegalArgumentException("Canot initialize ConfigManager. File is empty");
-        }
-    }
+	}
     
     /**
      * Method for reloading the configuration file.
      * @throws FileNotFoundException If the configuration file is not found.
      */
     public void reloadConfig() throws FileNotFoundException{
-    	logger.info("Reload the ocnfig file!");
-        config = yaml.load(new FileInputStream(configFileName));
-//        Main.SETTINGS = new Settings(this); //Initialize settings using configuration values
-        logger.info("Config reloadet...");
+    	logger.info("Reload config file! - ["+filePath+"]");
+    	Map<String, Object> yamlLoad = yaml.load(new FileInputStream(filePath));
+    	if(yamlLoad != null){
+    		clear();
+    		putAll(yamlLoad);
+    		logger.info("Config reloadet...");
+    		return;
+    	}
+    	
+		logger.info("Can´t reload the config file...");
     }
     
     /**
@@ -90,11 +98,11 @@ public class ConfigManager {
     	
         Yaml yaml = new Yaml(options);
         try {
-            FileWriter writer = new FileWriter(configFileName, StandardCharsets.UTF_8);
-            yaml.dump(getRawConfig(), writer);
+            FileWriter writer = new FileWriter(filePath, StandardCharsets.UTF_8);
+            yaml.dump(this, writer);
             writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+        	logger.error("Can´t save config file!", ex);
         }
     }
     
@@ -167,7 +175,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final boolean getBoolean(String path, boolean defaultValue) {
 		String[] keys = path.split("\\.");
-		Map<String, Object> current = getRawConfig();
+		Map<String, Object> current = this;
 		for (String key : keys) {
 			if (current.containsKey(key)) {
 				Object value = current.get(key);
@@ -194,7 +202,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public Long getLong(String path, long defaultValue) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (String key : keys) {
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -221,7 +229,7 @@ public class ConfigManager {
 	public int getInt(String path, int defaultValue) {
 	    Long value = getLong(path, defaultValue);
 	    if(value > Integer.MAX_VALUE){
-	    	logger.warn("Intiger is to larg! Use getLong instat!");
+	    	logger.warn("Intiger is to large! Use getLong instat!");
 	    	return defaultValue;
 	    }
 	    
@@ -239,7 +247,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final String getString(String path, String defaultValue) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (String key : keys) {
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -265,7 +273,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final List<Long> getLongList(String path) {
 	    String[] keys = path.split("\\."); //Split the path into individual keys
-	    Map<String, Object> current = getRawConfig(); //Start at the root of the configuration map
+	    Map<String, Object> current = this; //Start at the root of the configuration map
 	    for (String key : keys) { //Traverse down the map to the requested key
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -301,7 +309,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public final List<String> getStringList(String path) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (String key : keys) {
 	        if (current.containsKey(key)) {
 	            Object value = current.get(key);
@@ -363,7 +371,17 @@ public class ConfigManager {
 	public void setNumber(String path, Number value) {
 		setNumber(path, value, false);
 	}
+	
 
+	/**
+	 * Sets the value of a String at the given path in the configuration.
+	 * @param path the path to the value, specified as a dot-separated string.
+	 * @param value the String {@link List} value to set.
+	 */
+	public void setStringList(String path, List<String> values) {
+		setString(path, path, false);
+	}
+	
 	/**
 	 * Sets the value of a String at the given path in the configuration.
 	 * @param path the path to the value, specified as a dot-separated string.
@@ -373,7 +391,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setString(String path, String value, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -401,7 +419,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setBoolean(String path, boolean value, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -429,7 +447,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setNumber(String path, Number value, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -457,7 +475,7 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public void setStringList(String path, List<String> values, boolean saveFile) {
 	    String[] keys = path.split("\\.");
-	    Map<String, Object> current = getRawConfig();
+	    Map<String, Object> current = this;
 	    for (int i = 0; i < keys.length - 1; i++) {
 	        String key = keys[i];
 	        if (!current.containsKey(key)) {
@@ -474,9 +492,5 @@ public class ConfigManager {
 	    }
 	    current.put(keys[keys.length - 1], values);
 	    if(saveFile){saveConfigToFile();}
-	}
-
-	public Map<String, Object> getRawConfig() {
-		return config;
 	}
 }

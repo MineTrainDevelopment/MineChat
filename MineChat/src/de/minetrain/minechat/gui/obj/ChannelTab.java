@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import de.minetrain.minechat.config.ConfigManager;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.obj.ChannelMacros;
 import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.gui.frames.ChatWindow;
@@ -49,7 +49,7 @@ public class ChannelTab {
 	
 	
 	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab) {
-		ConfigManager config = Main.CONFIG;
+		YamlManager config = Main.CONFIG;
 		configID = ""+config.getLong(tab.getConfigPath(), 0);
 		this.mainFrame = mainFrame;
 		this.chatWindow = new ChatWindow(this);
@@ -120,7 +120,7 @@ public class ChannelTab {
 	
 	private void loadData(String configID) {
 		this.configID = configID;
-		ConfigManager config = Main.CONFIG;
+		YamlManager config = Main.CONFIG;
 		String configPath = "Channel_"+configID+".";
 		channelName = config.getString(configPath+"Name");
 		displayName = config.getString(configPath+"DisplayName");
