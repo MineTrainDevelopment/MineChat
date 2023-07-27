@@ -286,7 +286,7 @@ public class EditChannelFrame extends JDialog {
 					}
 					
 					config.setStringList(path + "GreetingText", config.getStringList(clonePath+"GreetingText"), false);
-					config.setStringList(path + "GreetingText", config.getStringList(clonePath+"GoodbyText"), false);
+					config.setStringList(path + "GoodbyText", config.getStringList(clonePath+"GoodbyText"), false);
 				}else if(nameSavedInConfigName.equalsIgnoreCase(">null<")){
 					for(int i=0; i<=12; i++){
 						config.setString(path + "Macros_0.M"+i, "null%-%>null<");
