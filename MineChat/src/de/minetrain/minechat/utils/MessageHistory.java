@@ -4,37 +4,47 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MessageHistory {
-	private List<String> sendedMessages = new ArrayList<String>();
+import de.minetrain.minechat.twitch.MessageManager;
+
+public class MessageHistory extends ArrayList<String>{
+	private static final long serialVersionUID = 5485805171115038665L;
 	private String tempUserInput = "";
 	private int index = 0;
 	
-	public MessageHistory() { }
+	public MessageHistory() {
+		super();
+	}
 	
 	public List<String> getSendedMessages() {
-		return sendedMessages;
+		return this;
 	}
 
 	public void addSendedMessages(String... messages) {
-		Arrays.asList(messages).forEach(message -> this.sendedMessages.add(message));
-		resetIndex();
-		System.out.println(sendedMessages);
+		Arrays.asList(messages).forEach(message -> add(message));
+	}
+
+	public void addSendedMessages(String message) {
+		add(message);
 	}
 	
 	public boolean isNewText(){
-		return index > sendedMessages.size();
+		return index > size();
 	}
 	
 	public void resetIndex(){
-		index = sendedMessages.size()+1;
+		resetIndex(0);
+	}
+	
+	public void resetIndex(int offset){
+		index = (size()+1)+offset;
 	}
 	
 	public String getNextItem(String currentUserInput){
-		if(sendedMessages.isEmpty()){
+		if(isEmpty()){
 			return currentUserInput;
 		}
 		
-		if(index == sendedMessages.size()+1){
+		if(index == size()+1){
 			tempUserInput = currentUserInput;
 		}
 		
@@ -45,12 +55,12 @@ public class MessageHistory {
 	}
 	
 	public String getPreviousItem(String currentUserInput){
-		if(sendedMessages.isEmpty()){
+		if(isEmpty()){
 			return currentUserInput;
 		}
 		
-		if(index >= sendedMessages.size()){
-			index = sendedMessages.size()+1;
+		if(index >= size()){
+			index = size()+1;
 			return tempUserInput;
 		}
 		index = index+1;
@@ -58,10 +68,25 @@ public class MessageHistory {
 	}
 
 	private String getItem(){
-		if(!sendedMessages.isEmpty()){
-			return sendedMessages.get((index-1));
+		if(!isEmpty()){
+			return get((index-1));
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean add(String message) {
+		message = message.strip().trim();
+		
+		if(message.endsWith(MessageManager.getSpamprotector())){
+			return false;
+		}
+		
+		if(isEmpty() || !get(size()-1).equals(message)){
+			resetIndex(1);
+			return super.add(message);
+		}
+		return false;
 	}
 	
 }
