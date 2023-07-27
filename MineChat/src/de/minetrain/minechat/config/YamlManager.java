@@ -379,7 +379,7 @@ public class YamlManager extends HashMap<String, Object>{
 	 * @param value the String {@link List} value to set.
 	 */
 	public void setStringList(String path, List<String> values) {
-		setString(path, path, false);
+		setStringList(path, values, false);
 	}
 	
 	/**
@@ -492,5 +492,32 @@ public class YamlManager extends HashMap<String, Object>{
 	    }
 	    current.put(keys[keys.length - 1], values);
 	    if(saveFile){saveConfigToFile();}
+	}
+	
+	/**
+	 * Removes everything after a given path.
+	 * @param path
+	 */
+	@SuppressWarnings("unchecked")
+	public final void remove(String path) {
+		String[] keys = path.split("\\.");
+	    Map<String, Object> current = this;
+	    for (int i = 0; i < keys.length - 1; i++) {
+	        String key = keys[i];
+	        if (!current.containsKey(key)) {
+	            current.put(key, new LinkedHashMap<>());
+	        }
+	        Object valueObj = current.get(key);
+	        if (valueObj instanceof Map) {
+	            current = (Map<String, Object>) valueObj;
+	        } else {
+	            Map<String, Object> newMap = new LinkedHashMap<>();
+	            current.put(key, newMap);
+	            current = newMap;
+	        }
+	    }
+	    
+	    current.remove(keys[keys.length-1]);
+		saveConfigToFile();
 	}
 }
