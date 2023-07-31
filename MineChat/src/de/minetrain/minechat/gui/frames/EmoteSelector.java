@@ -4,14 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,22 +19,19 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.OverlayLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.gui.emotes.BackgroundImageIcon;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
-import de.minetrain.minechat.gui.emotes.BackgroundImageIcon;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -52,7 +46,7 @@ public class EmoteSelector extends JDialog{
     private static final int MAX_EMOTES_PER_ROW = 10;
     public static final int BUTTON_SIZE = 36;
     private int mouseX, mouseY;
-    private Emote selectedEmote, selectetEmoteFormat;
+    private Emote selectedEmote;
     private boolean disposed;
     private boolean disposOnSelect;
     private JTextArea textFieldToEdit;
@@ -163,31 +157,19 @@ public class EmoteSelector extends JDialog{
 		            }
 		        }
 		    });
-		    
-
-			JPanel buttonPanel = new JPanel();
-			buttonPanel.setLayout(new OverlayLayout(buttonPanel));
-			buttonPanel.setSize(mineButton.getSize());
-			buttonPanel.setLocation(mineButton.getLocation());
-			
-			JLabel background = new JLabel(Main.TEXTURE_MANAGER.getEmoteBorder());
-			background.setSize(mineButton.getSize());
-			background.setLocation(mineButton.getLocation());
-			
-			buttonPanel.add(background);
-			buttonPanel.add(mineButton);
 			buttons.add(mineButton);
 		}
 		
 		int numDummyButtons = MAX_EMOTES_PER_ROW - (buttons.size() % MAX_EMOTES_PER_ROW);
-		for(int i = 0; i < numDummyButtons; i++){
-			MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
-//			JPanel dummyButton = new JPanel();
-//			dummyButton.setSize(BUTTON_SIZE, BUTTON_SIZE);
-		    dummyButton.setPreferredSize(dummyButton.getSize());
-		    dummyButton.add(new JLabel(Main.TEXTURE_MANAGER.getEmoteBorder()));
-		    buttons.add(dummyButton);
+		if(numDummyButtons<10){
+			for(int i = 0; i < numDummyButtons; i++){
+				MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
+				dummyButton.setPreferredSize(dummyButton.getSize());
+				dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
+				buttons.add(dummyButton);
+			}
 		}
+		
 
 //			if(buttons.size() < MAX_EMOTES_PER_ROW){
 //				for(int i = buttons.size(); i < MAX_EMOTES_PER_ROW; i++){

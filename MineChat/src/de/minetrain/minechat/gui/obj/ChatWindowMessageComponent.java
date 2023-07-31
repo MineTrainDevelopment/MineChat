@@ -401,7 +401,7 @@ public class ChatWindowMessageComponent extends JPanel{
 			if(this.emotes.containsKey(split[i])){
 	            String replacement = generateReplacement(split[i]);
 	            emoteReplacements.put(replacement, split[i]);
-	            split[i] = split[i].replaceAll("\\b" + split[i] + "\\b", replacement);
+	            split[i] = split[i].replaceAll("\\b" + Pattern.quote(split[i]) + "\\b", replacement);
 			}
 			output += split[i]+" ";
 		}
