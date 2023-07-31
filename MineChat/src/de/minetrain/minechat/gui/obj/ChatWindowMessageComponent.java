@@ -42,13 +42,13 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.config.obj.TwitchEmote;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.emotes.FlippedImageIcon;
+import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.gui.utils.FlippedImageIcon;
-import de.minetrain.minechat.gui.utils.MirroredImageIcon;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.MineStringBuilder;
@@ -118,7 +118,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
 		super(new BorderLayout());
-		this.emotes = twitchMessage == null ? TwitchEmote.getEmotesByName() : twitchMessage.getEmotes();
+		this.emotes = twitchMessage == null ? EmoteManager.getAllEmotesByName() : twitchMessage.getEmotes();
 		this.epochTime = twitchMessage == null ? epochTime : twitchMessage.getEpochTime();
 		this.userName = userName;
 		JPanel messagePanel = this;

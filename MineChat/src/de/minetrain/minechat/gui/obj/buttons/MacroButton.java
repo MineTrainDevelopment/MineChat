@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.obj.MacroObject;
+import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.frames.AskToAddEmoteFrame;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
@@ -78,14 +79,14 @@ public class MacroButton extends MineButton{
 	            			String emotePath = "";
 	            			if(askToAddEmoteFrame.isAddEmote()){
 	            				EmoteSelector emoteSelector = new EmoteSelector(mainFrame, true);
-	            				String selectedEmote = emoteSelector.getSelectedEmote();
+	            				Emote selectedEmote = emoteSelector.getSelectedEmote();
 	            				
 	    						while(!emoteSelector.isDisposed() && selectedEmote == null){
 	    			            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
 	    			            }
 	    		            	
 	    		            	if(selectedEmote != null){
-	    		            		emotePath = "%&%"+selectedEmote.replace("_BG.png", emoteSelector.getSelectetEmoteFormat());;
+	    		            		emotePath = "%&%"+selectedEmote.getFilePath().replace("_BG.png", selectedEmote.getFileFormat());
 	    		            	}
 	            			}
 

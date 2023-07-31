@@ -120,7 +120,6 @@ public class YamlManager extends HashMap<String, Object>{
      * @param path Path to the long value in the configuration file.
      * @return The long value.
      */
-
 	public final long getLong(String path) {
 		return getLong(path, 0l);
 	}
@@ -492,6 +491,27 @@ public class YamlManager extends HashMap<String, Object>{
 	    }
 	    current.put(keys[keys.length - 1], values);
 	    if(saveFile){saveConfigToFile();}
+	}
+	
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getObjectMap(String path) {
+		String[] keys = path.split("\\.");
+		Map<String, Object> current = this;
+
+		for (String key : keys) {
+			if (current instanceof Map) {
+				current = (Map<String, Object>) current.get(key);
+			} else {
+				return current;
+			}
+		}
+
+		return (Map<String, Object>) current;
 	}
 	
 	/**

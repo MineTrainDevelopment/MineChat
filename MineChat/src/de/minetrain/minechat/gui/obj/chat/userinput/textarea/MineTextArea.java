@@ -22,6 +22,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import de.minetrain.minechat.gui.emotes.ChannelEmotes;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.utils.ColorManager;
 
@@ -36,6 +38,7 @@ public class MineTextArea extends JTextArea {
 	private JWindow popUpWindow;
 	private String typedWord;
 	private static final ArrayList<SuggestionObj> staticDictionary = new ArrayList<>();
+	private static final ArrayList<SuggestionObj> staticChannelDictionary = new ArrayList<>();
 	private final ArrayList<SuggestionObj> dictionary = new ArrayList<>();
 	private int tW, tH;
 	private final List<String> prefixs;
@@ -267,6 +270,7 @@ public class MineTextArea extends JTextArea {
 	public ArrayList<SuggestionObj> getDictionary() {
 		ArrayList<SuggestionObj> tempList = new ArrayList<>();
 		tempList.addAll(staticDictionary);
+		tempList.addAll(staticChannelDictionary);
 		tempList.addAll(dictionary);
 		tempList.addAll(getUnMentionedUsers());
 		
@@ -303,6 +307,23 @@ public class MineTextArea extends JTextArea {
 	public static void addToStaticDictionary(SuggestionObj word) {
 		staticDictionary.add(word);
 	}
+	
+	public static void clearStaticDictionary() {
+		staticDictionary.clear();
+	}
+	
+	public static void setStaticChannelDictionary(String channelId) {
+		staticChannelDictionary.clear();
+		ChannelEmotes channel = EmoteManager.getChannelEmotes(channelId);
+		if(channel != null){
+			channel.values().forEach(emote -> {
+				if(channel.hasPermission(emote) && !emote.isGlobal()){
+					staticChannelDictionary.add(new SuggestionObj(emote));
+				}
+			});
+		}
+	}
+
 
 	
 	public boolean wordTyped(String typedWord) {

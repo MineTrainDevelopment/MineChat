@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,8 @@ import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.config.obj.TwitchEmote;
+import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.TextureManager;
 
@@ -53,8 +55,12 @@ public class TwitchMessage {
 		this.replyId = ircMessage.getTagValue("reply-parent-msg-id").orElse(null);
 		this.replyUser = ircMessage.getTagValue("reply-parent-display-name").orElse(null);
 		this.dummy = false;
+
+		if(EmoteManager.getChannelEmotes().containsKey(channelId)){
+			emoteSet.putAll(EmoteManager.getChannelEmotes(channelId).values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
+		}
 		
-		emoteSet.putAll(TwitchEmote.getEmotesByName());
+		emoteSet.putAll(EmoteManager.getGlobalEmotes().values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
 		colorCache.put(userName.toLowerCase(), userColorCode);
 		
 		String emotes = ircMessage.getTagValue("emotes").orElse(null);
@@ -71,14 +77,15 @@ public class TwitchMessage {
 					String[] emoteLocation = s.split("-");
 					String emoteName = message.substring(Integer.parseInt(emoteLocation[0]), Integer.parseInt(emoteLocation[1])+1);
 					String emoteUrl = "URL%"+TWITCH_EMOTE_URL.replace("{ID}", emoteId);
-
-					if(TwitchEmote.getEmotesByName().containsKey(emoteName)){
-						emoteSet.put(emoteName, TwitchEmote.getEmotesByName().get(emoteName));
-					}else if(TwitchEmote.CACHED_WEB_EMOTES.containsKey(emoteName)){
-						emoteSet.put(emoteName, TwitchEmote.CACHED_WEB_EMOTES.get(emoteName));
-					}else{
-						TwitchEmote.CACHED_WEB_EMOTES.put(emoteName, emoteUrl);
-						emoteSet.put(emoteName, emoteUrl);
+					
+					//Put all emotes in there, incase its not posible to get non Static twitch emotes.
+					if(!emoteSet.containsKey(emoteName)){
+						if(EmoteManager.CACHED_WEB_EMOTES.containsKey(emoteId)){
+							emoteSet.put(emoteName, EmoteManager.CACHED_WEB_EMOTES.get(emoteId));
+						}else{
+							EmoteManager.CACHED_WEB_EMOTES.put(emoteId, emoteUrl);
+							emoteSet.put(emoteName, emoteUrl);
+						}
 					}
 				});
 			});

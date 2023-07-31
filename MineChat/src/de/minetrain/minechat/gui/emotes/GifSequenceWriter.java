@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.utils;
+package de.minetrain.minechat.gui.emotes;
 
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;

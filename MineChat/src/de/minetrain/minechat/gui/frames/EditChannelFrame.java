@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
@@ -47,7 +48,7 @@ public class EditChannelFrame extends JDialog {
 	private Map<String, String> channelsFromConfig = new HashMap<String, String>();
 	private JTextField loginNameField, displayNameField;
     private JComboBox<String> userTypeComboBox, cloneMacrosComboBox;
-    private JCheckBox emotesCheckBox, badgesCheckBox;
+    private JCheckBox emotesCheckBox, badgesCheckBox, subscriberCheckBox;
     private Thread loginChangeListner;
     private int mouseX, mouseY;
     private ChannelTab editedTab;
@@ -56,7 +57,7 @@ public class EditChannelFrame extends JDialog {
     public EditChannelFrame(MainFrame mainFrame, ChannelTab tab) {
     	super(mainFrame, "Twitch Channel Einstellungen", true);
     	this.editedTab = tab;
-        setSize(400, 230);
+        setSize(400, 250);
         setAlwaysOnTop(true);
         setUndecorated(true);
         setLocationRelativeTo(null);
@@ -88,6 +89,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(createDropdownPanel("Clone macros:", new String[]{" "}, "clone"));
         panel.add(createCheckBox("Install channel emotes:", "emote"));
         panel.add(createCheckBox("Install channel badges:", "badge"));
+        panel.add(createCheckBox("Are you subscriber on this channel:", "subscriber"));
         
         loginNameField.setText(tab.getChannelName());
         
@@ -125,11 +127,13 @@ public class EditChannelFrame extends JDialog {
         				userTypeComboBox.setSelectedIndex(config.getString(configIndex+"ChannelRole").equalsIgnoreCase("moderator") ? 1 : 0);
         				badgesCheckBox.setSelected(false);
         				emotesCheckBox.setSelected(false);
+        				subscriberCheckBox.setSelected(EmoteManager.getYaml().getBoolean(configIndex+"sub"));
         			}else{
         				displayNameField.setText(loginNameField.getText()); //Sync display name with login name.
         				userTypeComboBox.setSelectedIndex(0);
         				badgesCheckBox.setSelected(true);
         				emotesCheckBox.setSelected(true);
+        				subscriberCheckBox.setSelected(false);
         			}
         		}
         	}
@@ -196,7 +200,13 @@ public class EditChannelFrame extends JDialog {
         
         panel.setBackground(ColorManager.GUI_BACKGROUND);
         
-        if(type.equals("emote")){emotesCheckBox = checkBox;}else{badgesCheckBox = checkBox;}
+        
+        switch (type) {
+			case "emote": emotesCheckBox = checkBox; break;
+			case "badge": badgesCheckBox = checkBox; break;
+			case "subscriber": subscriberCheckBox = checkBox; break;
+			default: break;
+		}
         return panel;
     }
     
@@ -315,10 +325,20 @@ public class EditChannelFrame extends JDialog {
 				TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
 				
 				new Thread(() -> {
+					String yamlPath = "Channel_"+twitchUser.getUserId()+".";
+					YamlManager yaml = EmoteManager.getYaml();
+					yaml.setString(yamlPath+"Id", twitchUser.getUserId());
+					yaml.setString(yamlPath+"Name", twitchUser.getDisplayName());
+					yaml.setBoolean(yamlPath+"sub", subscriberCheckBox.isSelected());
+					
 					if(emotesCheckBox.isSelected()){
-						TextureManager.downloadChannelEmotes(twitchUser.getUserId());
+						TextureManager.downloadChannelEmotes(twitchUser.getUserId(), yaml);
+						TextureManager.downloadBttvEmotes(twitchUser.getUserId(), yaml);
 //						new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
 					}
+					
+					yaml.saveConfigToFile();
+					EmoteManager.load();
 					
 					if(badgesCheckBox.isSelected()){
 						TextureManager.downloadChannelBadges(twitchUser.getUserId());

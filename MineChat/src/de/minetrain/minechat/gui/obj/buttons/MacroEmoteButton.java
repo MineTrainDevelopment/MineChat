@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
+import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -49,16 +50,16 @@ public class MacroEmoteButton extends MineButton{
 		            EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
 		            
 		            new Thread(() -> {
-		            	String selectedEmote = emoteSelector.getSelectedEmote();
+		            	Emote selectedEmote = emoteSelector.getSelectedEmote();
 		            	
 						while(!emoteSelector.isDisposed() && selectedEmote == null){
 			            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
 			            }
 		            	
 		            	if(selectedEmote != null){
-		            		selectedEmote = selectedEmote.replace("_BG.png", emoteSelector.getSelectetEmoteFormat());
+//		            		selectedEmote = selectedEmote.getFilePath().replace("_BG.png", selectedEmote.getFileFormat());
 		            		
-							String selectedEmoteName = selectedEmote.split("/")[4];
+							String selectedEmoteName = selectedEmote.getName();
 		            		InputFrame inputFrame;
 	            			inputFrame = new InputFrame(Main.MAIN_FRAME, "Selected Emote:", selectedEmoteName, "Change output:", selectedEmoteName);
 		            		
@@ -69,7 +70,7 @@ public class MacroEmoteButton extends MineButton{
 		            		if(inputFrame.getOutputInput() != null){
 		            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : selectedEmoteName;
 		            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
-		            			Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros"+macroRow+"."+type.getConfigIndex(), (selectedEmote.replace("_BG", ""))+"%-%"+output, true);
+		            			Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros"+macroRow+"."+type.getConfigIndex(), (selectedEmote.getFilePath().replace("_BG", ""))+"%-%"+output, true);
 		            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
 		            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab.getTabType(), TitleBar.currentTab);
 		            		}

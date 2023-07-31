@@ -4,32 +4,40 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.OverlayLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.obj.TwitchEmote;
+import de.minetrain.minechat.gui.emotes.ChannelEmotes;
+import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
+import de.minetrain.minechat.gui.emotes.BackgroundImageIcon;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -44,17 +52,17 @@ public class EmoteSelector extends JDialog{
     private static final int MAX_EMOTES_PER_ROW = 10;
     public static final int BUTTON_SIZE = 36;
     private int mouseX, mouseY;
-    private String selectedEmote, selectetEmoteFormat;
+    private Emote selectedEmote, selectetEmoteFormat;
     private boolean disposed;
     private boolean disposOnSelect;
     private JTextArea textFieldToEdit;
-    HashMap<String, List<String>> emotes;
+    HashMap<String, ChannelEmotes> emotes;
 
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
 		super(mainFrame, "Emotes", true);
 		this.disposOnSelect = disposOnSelect;
 		thisObect = this;
-		emotes = TwitchEmote.getEmotes(true);
+		emotes = EmoteManager.getChannelEmotes();
 		
         setResizable(false);
         setUndecorated(true);
@@ -112,67 +120,15 @@ public class EmoteSelector extends JDialog{
         optionPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         emotePanel.add(optionPanel);
         
+
+        if(!EmoteManager.getFavoriteEmotes().isEmpty()){
+        	addEmoteSet(EmoteManager.getDefaultEmotes().values(), "Favorites");
+        }
         
-        for (Map.Entry<String, List<String>> entry : emotes.entrySet()) {
-            List<JButton> buttons = new ArrayList<JButton>();
-            
-			for (String emote : entry.getValue()) {
-				String[] emoteUrlSplit = emote.split("%&%");
-				
-				MineButton mineButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
-				mineButton.setPreferredSize(mineButton.getSize());
-                mineButton.setIcon(new ImageIcon(emoteUrlSplit[0]));
-                mineButton.setToolTipText(emote.split("/")[4]);
-                mineButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("Emote selected: " + emote);
-						selectedEmote = emoteUrlSplit[0];
-                        selectetEmoteFormat = emoteUrlSplit[1];
-                        if(disposOnSelect){
-                        	disposed = true;
-                        	addSelectetEmoteToText(null);
-                        	dispose();
-                        }
-                    }
-                });
-                buttons.add(mineButton);
-            }
-			
-			System.out.println(buttons.size() + " - " + MAX_EMOTES_PER_ROW);
-			int numDummyButtons = MAX_EMOTES_PER_ROW - (buttons.size() % MAX_EMOTES_PER_ROW);
-			for(int i = 0; i < numDummyButtons; i++){
-			    MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
-			    dummyButton.setPreferredSize(dummyButton.getSize());
-			    dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
-			    buttons.add(dummyButton);
-			}
-
-//			if(buttons.size() < MAX_EMOTES_PER_ROW){
-//				for(int i = buttons.size(); i < MAX_EMOTES_PER_ROW; i++){
-//					MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
-//					dummyButton.setPreferredSize(dummyButton.getSize());
-//					dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
-//					buttons.add(dummyButton);
-//					System.out.println("add - "+buttons.size());
-//				}
-				
-//			}
-
-			int numRows = (int) Math.ceil((double) buttons.size() / MAX_EMOTES_PER_ROW);
-			JPanel buttonPanel = new JPanel(new GridLayout(numRows, MAX_EMOTES_PER_ROW));
-			buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
-			buttons.forEach(button -> buttonPanel.add(button));
-			
-			TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(80, 80, 80), 2), entry.getKey());
-			titledBorder.setTitleJustification(TitledBorder.CENTER);
-			titledBorder.setTitleColor(Color.WHITE);
-			titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
-			buttonPanel.setBorder(titledBorder);
-			
-            buttonPanel.setSize((numRows*BUTTON_SIZE), (MAX_EMOTES_PER_ROW*BUTTON_SIZE));
-            emotePanel.add(buttonPanel);
-            emotePanel.add(Box.createVerticalStrut(5));
+    	addEmoteSet(EmoteManager.getDefaultEmotes().values(), "Default");
+    	
+        for (ChannelEmotes channel : emotes.values()) {
+        	addEmoteSet(channel.values(), channel.getChannelName());
         }
         
         scrollPane = new JScrollPane(emotePanel);
@@ -186,6 +142,79 @@ public class EmoteSelector extends JDialog{
         scrollPane.addMouseListener(MoiseListner());
         scrollPane.addMouseMotionListener(mouseMotionListner());
     }
+
+	private void addEmoteSet(Collection<Emote> collection, String setName) {
+		List<JButton> buttons = new ArrayList<JButton>();
+		
+		for (Emote emote : collection) {
+			MineButton mineButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
+			mineButton.setPreferredSize(mineButton.getSize());
+		    mineButton.setIcon(new BackgroundImageIcon(emote));
+//		    mineButton.setIcon(new MirroredImageIcon(emote.getFilePath()));
+		    mineButton.setToolTipText(emote.getName());
+		    mineButton.addActionListener(new ActionListener() {
+		        @Override
+		        public void actionPerformed(ActionEvent e) {
+					selectedEmote = emote;
+		            if(disposOnSelect){
+		            	disposed = true;
+		            	addSelectetEmoteToText(null);
+		            	dispose();
+		            }
+		        }
+		    });
+		    
+
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout(new OverlayLayout(buttonPanel));
+			buttonPanel.setSize(mineButton.getSize());
+			buttonPanel.setLocation(mineButton.getLocation());
+			
+			JLabel background = new JLabel(Main.TEXTURE_MANAGER.getEmoteBorder());
+			background.setSize(mineButton.getSize());
+			background.setLocation(mineButton.getLocation());
+			
+			buttonPanel.add(background);
+			buttonPanel.add(mineButton);
+			buttons.add(mineButton);
+		}
+		
+		int numDummyButtons = MAX_EMOTES_PER_ROW - (buttons.size() % MAX_EMOTES_PER_ROW);
+		for(int i = 0; i < numDummyButtons; i++){
+			MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
+//			JPanel dummyButton = new JPanel();
+//			dummyButton.setSize(BUTTON_SIZE, BUTTON_SIZE);
+		    dummyButton.setPreferredSize(dummyButton.getSize());
+		    dummyButton.add(new JLabel(Main.TEXTURE_MANAGER.getEmoteBorder()));
+		    buttons.add(dummyButton);
+		}
+
+//			if(buttons.size() < MAX_EMOTES_PER_ROW){
+//				for(int i = buttons.size(); i < MAX_EMOTES_PER_ROW; i++){
+//					MineButton dummyButton = new MineButton(new Dimension(BUTTON_SIZE, BUTTON_SIZE), null, ButtonType.NON).setInvisible(!MainFrame.debug);
+//					dummyButton.setPreferredSize(dummyButton.getSize());
+//					dummyButton.setIcon(Main.TEXTURE_MANAGER.getEmoteBorder());
+//					buttons.add(dummyButton);
+//					System.out.println("add - "+buttons.size());
+//				}
+			
+//			}
+
+		int numRows = (int) Math.ceil((double) buttons.size() / MAX_EMOTES_PER_ROW);
+		JPanel buttonPanel = new JPanel(new GridLayout(numRows, MAX_EMOTES_PER_ROW));
+		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
+		buttons.forEach(button -> buttonPanel.add(button));
+		
+		TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(80, 80, 80), 2), setName);
+		titledBorder.setTitleJustification(TitledBorder.CENTER);
+		titledBorder.setTitleColor(Color.WHITE);
+		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
+		buttonPanel.setBorder(titledBorder);
+		
+		buttonPanel.setSize((numRows*BUTTON_SIZE), (MAX_EMOTES_PER_ROW*BUTTON_SIZE));
+		emotePanel.add(buttonPanel);
+		emotePanel.add(Box.createVerticalStrut(5));
+	}
 	
 	public void addSelectetEmoteToText(JTextArea text){
 		if(text != null){textFieldToEdit = text;}
@@ -193,7 +222,7 @@ public class EmoteSelector extends JDialog{
 		
 		try {
 			int position = text.getCaretPosition();
-			text.getDocument().insertString(position, " "+selectedEmote.split("/")[4]+" ", null);
+			text.getDocument().insertString(position, " "+selectedEmote.getName()+" ", null);
 		} catch (BadLocationException ex) {
 			logger.error("Can´t add emote to text. ",ex);
 		} catch (NullPointerException ex) { }
@@ -223,12 +252,9 @@ public class EmoteSelector extends JDialog{
 		return disposed;
 	}
 
-	public String getSelectedEmote() {
+	public Emote getSelectedEmote() {
 		return selectedEmote;
 	}
-	
-	public String getSelectetEmoteFormat() {
-		return selectetEmoteFormat;
-	}
-	
 }
+
+

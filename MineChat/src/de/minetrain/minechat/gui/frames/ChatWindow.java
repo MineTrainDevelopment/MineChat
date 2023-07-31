@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.config.obj.TwitchEmote;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -185,7 +185,7 @@ public class ChatWindow extends JLabel {
     }
     
     public void displaySystemInfo(String topic, String message, Color borderColor, MineButton button){
-		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this, TwitchEmote.getEmotesByName());
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this, EmoteManager.getAllEmotesByName());
 		
         chatPanel.add(messagePanel);
         chatPanel.revalidate();

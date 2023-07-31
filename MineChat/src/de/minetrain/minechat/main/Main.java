@@ -17,7 +17,8 @@ import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.config.obj.TwitchEmote;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -101,11 +102,9 @@ public class Main {
 	}
 	
 	public static void openMainFrame(){
-		LOADINGBAR.setProgress("Loading auto suggestion.", 60);
-		
-		TwitchEmote.getEmotesByName().entrySet().forEach(entry -> {//May also be caled when new emotes get addet.
-			MineTextArea.addToStaticDictionary(new SuggestionObj(":"+entry.getKey()+(entry.getValue().contains("bttv") ? " -- BTTV" : ""), entry.getValue().replace("_1.png", "_1_BG.png")));
-		});
+		LOADINGBAR.setProgress("Loading auto suggestion and emotes.", 60);
+		new EmoteManager();
+		EmoteManager.load();
 		
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));// TODO
         MineTextArea.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));// TODO
@@ -200,4 +199,56 @@ public class Main {
 //			at com.neovisionaries.ws.client.SocketConnector.resolveHostname(SocketConnector.java:139)
 //			... 27 more
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	[14:02:13] >> ERROR<< | Unhandled exception caught dispatching event ChannelMessageEvent
+//	java.lang.reflect.InvocationTargetException
+//		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+//		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+//		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+//		at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:130)
+//		at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:127)
+//		at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:126)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
+//		at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
+//		at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+//		at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
+//		at com.github.twitch4j.chat.events.IRCEventHandler.onChannelMessage(IRCEventHandler.java:124)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$3(SimpleEventHandler.java:112)
+//		at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$4(SimpleEventHandler.java:112)
+//		at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+//		at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1087)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleConsumerHandlers(SimpleEventHandler.java:109)
+//		at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:99)
+//		at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
+//		at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+//		at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
+//		at com.github.twitch4j.chat.TwitchChat.lambda$onTextMessage$16(TwitchChat.java:572)
+//		at java.base/java.util.Arrays$ArrayList.forEach(Arrays.java:4203)
+//		at com.github.twitch4j.chat.TwitchChat.onTextMessage(TwitchChat.java:544)
+//		at com.github.twitch4j.client.websocket.WebsocketConnection$1.onTextMessage(WebsocketConnection.java:123)
+//		at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+//		at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+//		at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+//		at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+//		at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+//		at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+//		at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+//		at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+//	Caused by: java.lang.NullPointerException: Cannot invoke "de.minetrain.minechat.gui.emotes.ChannelEmotes.values()" because the return value of "de.minetrain.minechat.gui.emotes.EmoteManager.getChannelEmotes(String)" is null
+//		at de.minetrain.minechat.twitch.obj.TwitchMessage.<init>(TwitchMessage.java:59)
+//		at de.minetrain.minechat.twitch.TwitchListner.onAbstractChannelMessage(TwitchListner.java:98)
+//		... 36 more
 }

@@ -26,6 +26,7 @@ import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
 import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.main.Main;
 
 public class TitleBar extends JPanel{
@@ -138,6 +139,8 @@ public class TitleBar extends JPanel{
     	mainTab.offsetButton(buttonType);
     	thirdTab.offsetButton(buttonType);
     	secondTab.offsetButton(buttonType);
+    	
+    	MineTextArea.setStaticChannelDictionary(tab.getConfigID());
 	}
 	
 	public ArrayList<JLabel> getTabNames(){
