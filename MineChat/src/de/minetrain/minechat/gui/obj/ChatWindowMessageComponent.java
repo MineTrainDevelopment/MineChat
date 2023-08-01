@@ -105,7 +105,12 @@ public class ChatWindowMessageComponent extends JPanel{
 		markReadButton.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
 		markReadButton.setToolTipText("Mark this message as read.");
 		markReadButton.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e){chatWindow.chatPanel.remove(messagePanel); chatWindow.chatPanel.revalidate(); chatWindow.chatPanel.repaint();}
+			@Override 
+			public void actionPerformed(ActionEvent e){
+				chatWindow.chatPanel.remove(messagePanel); 
+				chatWindow.chatPanel.revalidate(); 
+				chatWindow.chatPanel.repaint();
+			}
 		});
 		
 		if(actionButton != null){
@@ -169,6 +174,7 @@ public class ChatWindowMessageComponent extends JPanel{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					chatWindow.setMessageToReply(twitchMessage);
+					chatWindow.chatStatusPanel.getinputArea().requestFocus();
 					
 					if(twitchMessage.getReplyType() == ReplyType.USER_NAME){
 						ChatStatusPanel chatStatusPanel = chatWindow.chatStatusPanel;
@@ -226,6 +232,7 @@ public class ChatWindowMessageComponent extends JPanel{
 				waveButton.addActionListener(new ActionListener() {
 					@Override public void actionPerformed(ActionEvent e){
 						chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
+						chatWindow.chatStatusPanel.getinputArea().requestFocus();
 						
 						String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
 						chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));

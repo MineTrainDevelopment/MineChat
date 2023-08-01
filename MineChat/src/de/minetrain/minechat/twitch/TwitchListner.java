@@ -344,7 +344,7 @@ public class TwitchListner {
 		actionButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e){
 				ChatStatusPanel statusPanel = tab.getChatWindow().chatStatusPanel;
-				
+				statusPanel.getinputArea().requestFocus();
 				statusPanel.overrideCurrentInputCache(false);
 				
 				if(outputMessage.startsWith("%GREET%")){
