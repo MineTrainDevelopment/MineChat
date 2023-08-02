@@ -96,6 +96,17 @@ public class TwitchManager {
 	}
 	
 	
+//	public static void joinChannelById(String... channelIds){
+//		getTwitchUsers(TwitchApiCallType.ID, channelIds).forEach(channel -> {
+//			if(!channel.isDummy() && !twitch.getChat().getChannels().contains(channel.getLoginName())){
+//				logger.info("Joining channel: "+channel.getLoginName());
+//				twitch.getChat().joinChannel(channel.getLoginName());
+//				twitch.getClientHelper().enableFollowEventListener(channel.getLoginName());
+//			}
+//		});
+//	}
+	
+	
 	public static void leaveChannel(String... names){
 		for(String name : names) {
 			logger.info("Leaving channel: "+name);

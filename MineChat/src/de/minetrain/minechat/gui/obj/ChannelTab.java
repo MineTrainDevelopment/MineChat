@@ -51,6 +51,7 @@ public class ChannelTab {
 	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab) {
 		YamlManager config = Main.CONFIG;
 		configID = ""+config.getLong(tab.getConfigPath(), 0);
+		
 		this.mainFrame = mainFrame;
 		this.chatWindow = new ChatWindow(this);
 		chatWindow.setLocation(8, 186);

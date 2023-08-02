@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,14 +21,16 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.gui.frames.EmoteSelector;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
-import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class TitleBar extends JPanel{
 	private static final Logger logger = LoggerFactory.getLogger(TitleBar.class);
@@ -95,6 +98,24 @@ public class TitleBar extends JPanel{
 			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_THIRD, thirdTab);}
 		});
         
+        YamlManager config = Main.CONFIG;
+		List<TwitchUserObj> twitchUsers = TwitchManager.getTwitchUsers(TwitchApiCallType.ID, 
+    		""+config.getLong(TabButtonType.TAB_MAIN.getConfigPath(), 0),
+    		""+config.getLong(TabButtonType.TAB_SECOND.getConfigPath(), 0),
+    		""+config.getLong(TabButtonType.TAB_THIRD.getConfigPath(), 0));
+        
+        twitchUsers.forEach(channel -> {
+        	String yamlPath = "Channel_"+channel.getUserId();
+			if(!channel.isDummy()){
+				if(!channel.getLoginName().equals(config.getString(yamlPath+".Name"))){
+					config.setString(yamlPath+".Name", channel.getLoginName(), true);
+				}
+			}else{
+//				config.remove(yamlPath);
+			}
+        });
+        
+        
         this.mainTab = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN);
 		this.secondTab = new ChannelTab(mainFrame, tab2, TabButtonType.TAB_SECOND);
 		this.thirdTab = new ChannelTab(mainFrame, tab3, TabButtonType.TAB_THIRD);
@@ -104,9 +125,9 @@ public class TitleBar extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					java.awt.Desktop.getDesktop().browse(new URI("https://twitch.tv/"+currentTab.getChannelName()));
-					Thread.sleep(250);
 					java.awt.Desktop.getDesktop().browse(new URI("https://www.twitch.tv/popout/"+currentTab.getChannelName()+"/chat?popout="));
+					Thread.sleep(250);
+					java.awt.Desktop.getDesktop().browse(new URI("https://twitch.tv/"+currentTab.getChannelName()));
 				} catch (IOException | URISyntaxException | InterruptedException ex) {
 					logger.error("Something went wrong, while opening a Website!", ex);
 				}
