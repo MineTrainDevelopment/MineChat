@@ -50,6 +50,7 @@ public class MacroButton extends MineButton{
 		mainFrame.add(icon);
 		setHorizontalAlignment(JTextField.RIGHT);
 		setForeground(Color.WHITE);
+		setHolding(true);
 		
 		addMouseListener(new MouseAdapter() {
 		    @Override

@@ -42,6 +42,7 @@ public class MacroEmoteButton extends MineButton{
 	 */
 	public MacroEmoteButton(Dimension size, Point location, ButtonType type, MainFrame mainFrame) {
 		super(size, location, type);
+		setHolding(true);
 		addMouseListener(new MouseAdapter() {
 		    @Override
 		    public void mouseClicked(MouseEvent e) {

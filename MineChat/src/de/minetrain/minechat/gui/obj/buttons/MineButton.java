@@ -7,8 +7,11 @@ import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
+import javax.swing.Timer;
 
 import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.config.obj.MacroObject;
@@ -32,6 +35,8 @@ import de.minetrain.minechat.twitch.TwitchManager;
 
 public class MineButton extends JButton{
 	private static final long serialVersionUID = -8580714214977222615L;
+	private boolean holding = false;
+	private int holdingMillisecond = 500;
 
 	/**
 	 * A custom button used in the application.
@@ -50,52 +55,78 @@ public class MineButton extends JButton{
 	public MineButton(Dimension size, Point location, ButtonType type) {
 		setSize((size != null) ? size : new Dimension(0, 0));
 		setLocation((location != null) ? location : new Point(0, 0));
+		
 		addActionListener(new ActionListener() {
 			
 			/**
 			 * If the button type is a macro type, it retrieves the associated macro's output from the current tab's macros and sends it as a message using the MessageManager.
-			 * 
 			 * @param e the ActionEvent object.
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(type == null || type == ButtonType.NON){
-					return;
-				}
-				
-				if(type == ButtonType.STATUS){
-					TwitchManager.twitch.getChat().reconnect();
-				}
-				
-				MacroRow currentRow = TitleBar.currentTab.getMacros().getCurrentMacroRow();
-				if(type == ButtonType.CHANGE_ROW_LEFT){
-					TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_2) ? MacroRow.ROW_1 : MacroRow.ROW_0);
-				}
-				
-				if(type == ButtonType.CHANGE_ROW_RIGHT){
-					TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_0) ? MacroRow.ROW_1 : MacroRow.ROW_2);
-				}
-				
-				if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
-					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
-					if(!macro.getMacroOutput().equals(">null<")){
-						System.out.println("send message");
-						MessageManager.sendMessage(macro.getMacroOutput());
-					}
-				}
-				
-				switch (type) {
-				case STOP_QUEUE:
-					MessageManager.getDefaultMessageHandler().clearQueue();
-					MessageManager.getModeratorMessageHandler().clearQueue();
-					break;
-					
-				default:
-					break;
-				}
+				onButtonPressed(type);
 				
 			}
 		});
+		
+        Timer timer = new Timer(holdingMillisecond, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if(isHolding()){
+            		onButtonPressed(type);
+            	}
+            }
+        });
+		
+		addMouseListener(new MouseAdapter() {
+		    @Override
+            public void mousePressed(MouseEvent event) {
+                timer.start(); // Start the timer when the mouse button is pressed
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                timer.stop(); // Stop the timer when the mouse button is released
+            }
+		});
+	}
+	
+	private void onButtonPressed(ButtonType type) {
+		if(type == null || type == ButtonType.NON){
+			return;
+		}
+		
+		if(type == ButtonType.STATUS){
+			TwitchManager.twitch.getChat().reconnect();
+		}
+		
+		MacroRow currentRow = TitleBar.currentTab.getMacros().getCurrentMacroRow();
+		if(type == ButtonType.CHANGE_ROW_LEFT){
+			TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_2) ? MacroRow.ROW_1 : MacroRow.ROW_0);
+		}
+		
+		if(type == ButtonType.CHANGE_ROW_RIGHT){
+			TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_0) ? MacroRow.ROW_1 : MacroRow.ROW_2);
+		}
+		
+		if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
+			MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
+			if(!macro.getMacroOutput().equals(">null<")){
+				System.out.println("send message");
+				MessageManager.sendMessage(macro.getMacroOutput());
+			}
+		}
+		
+		switch (type) {
+		case STOP_QUEUE:
+			MessageManager.getDefaultMessageHandler().clearQueue();
+			MessageManager.getModeratorMessageHandler().clearQueue();
+			break;
+			
+		default:
+			break;
+		}
 	}
 	
 	/**
@@ -146,4 +177,22 @@ public class MineButton extends JButton{
         
         setFont(font);
 	}
+
+	public boolean isHolding() {
+		return holding;
+	}
+
+	public void setHolding(boolean holding) {
+		this.holding = holding;
+	}
+
+	public int getHoldingMillisecond() {
+		return holdingMillisecond;
+	}
+
+	public void setHoldingMillisecond(int holdingMillisecond) {
+		this.holdingMillisecond = holdingMillisecond;
+	}
+	
+	
 }
