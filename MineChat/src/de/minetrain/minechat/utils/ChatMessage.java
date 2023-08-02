@@ -7,7 +7,6 @@ import java.util.Locale;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -45,7 +44,7 @@ public class ChatMessage {
 					.replace("{TOTAL_MESSAGES}", ""+statistics.getTotalMessages())
 					.replace("{TOTAL_SUBS}", ""+statistics.getTotalSubs())
 					.replace("{TOTAL_RESUBS}", ""+statistics.getTotalResubs())
-					.replace("{TOTAL_GIFTSUB}", ""+statistics.getGiftedSubs())
+					.replace("{TOTAL_GIFTSUB}", ""+statistics.getTotalGiftSubs())
 					.replace("{TOTAL_NEWSUB}", ""+statistics.getTotalNewSubs())
 					.replace("{TOTAL_BITS}", ""+statistics.getTotalBits());
 		}else{
