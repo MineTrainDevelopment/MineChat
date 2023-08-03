@@ -1,15 +1,21 @@
 package de.minetrain.minechat.twitch.obj;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.twitch.TwitchManager;
 
 public class ChannelStatistics {
+	private final Map<String, Long> messageTimestamps = new HashMap<>();
 	private final Map<String, Long> sendedMessages = new HashMap<>();
 	private final Map<String, Long> giftedSubs = new HashMap<>();
 	private final Map<String, Long> cheerdBits = new HashMap<>();
@@ -39,6 +45,7 @@ public class ChannelStatistics {
 		}
 		
 		sendedMessages.put(senderName, sendedMessages.containsKey(senderName) ? sendedMessages.get(senderName)+1 : 1l);
+		getMessageTimestamps().put(senderName, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
 	}
 
 	public void addSub(SubscriptionEvent event) {
@@ -74,6 +81,10 @@ public class ChannelStatistics {
 	
 	public Map<String, Long> getCheerdBits() {
 		return cheerdBits;
+	}
+	
+	public Map<String, Long> getMessageTimestamps() {
+		return messageTimestamps;
 	}
 	
 	public long getStreamStartupTime() {
@@ -112,4 +123,34 @@ public class ChannelStatistics {
 		return totalFollower;
 	}
 	
+//	Das hier muss noch in die @user auswahl.
+	public String getPresenceStatus(String userName){
+		Long epochTime = getMessageTimestamps().get(userName);
+		
+		if(epochTime == null){
+			return null;
+		}
+		
+		Long timeDifference = (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - epochTime) / 60 ; // min
+
+		if(timeDifference > 60){
+			return "Extended-Away";
+		}
+		
+		if(timeDifference > 30){
+			return "Away";
+		}
+		
+		if(timeDifference > 15){
+			return "Lurk";
+		}
+		
+		return null;
+	}
+	
+	public static String getCurentTime() {
+		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat,
+				new Locale(System.getProperty("user.language"), System.getProperty("user.country"))));
+	}
+
 }

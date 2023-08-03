@@ -25,6 +25,7 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.MessageLogger;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
@@ -37,12 +38,14 @@ public class ChannelTab {
 	private String displayName;
 	private String channelName;
 	private boolean moderator;
+	private boolean messageLog = false;
 	private MainFrame mainFrame;
 	private List<String> greetingTexts;
 	private ActionListener editWindowAction;
 	private ChannelMacros macros;
 	private ChatWindow chatWindow;
 	private ChannelStatistics statistics = new ChannelStatistics(this);
+	public MessageLogger messageLogger;
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;
@@ -57,6 +60,7 @@ public class ChannelTab {
 		chatWindow.setLocation(8, 186);
 		chatWindow.setVisible(false);
 		this.mainFrame.getContentPane().add(chatWindow);
+		this.messageLogger = new MessageLogger();
 		
 		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
 		this.tabType = tab;
@@ -125,6 +129,7 @@ public class ChannelTab {
 		String configPath = "Channel_"+configID+".";
 		channelName = config.getString(configPath+"Name");
 		displayName = config.getString(configPath+"DisplayName");
+		messageLog = config.getBoolean(configPath+"MessageLog");
 		moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
 		greetingTexts = config.getStringList(configPath+"GreetingText");
 		chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
@@ -189,6 +194,10 @@ public class ChannelTab {
 
 	public boolean isOccupied(){
 		return !configID.equals("0");
+	}
+	
+	public boolean isMessageLog(){
+		return messageLog;
 	}
 
 

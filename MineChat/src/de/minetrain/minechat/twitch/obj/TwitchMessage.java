@@ -33,7 +33,8 @@ public class TwitchMessage {
 	private String replyId;
 	private String replyUser;
 	private ReplyType replyType = Settings.REPLY_TYPE;
-	
+
+	private final String userId;
 	private final String userName;
 	private final String userColorCode;
 	private final Map<String, String> emoteSet = new HashMap<String, String>();
@@ -41,6 +42,7 @@ public class TwitchMessage {
 	
 	private final Long epochTime;
 	private final ChannelTab parentTab;
+	private final boolean emoteOnly;
 	private final boolean dummy;
 
 	public TwitchMessage(ChannelTab parentTab, IRCMessageEvent ircMessage, String message) {
@@ -48,13 +50,19 @@ public class TwitchMessage {
 		this.message = message;
 		this.messageId = ircMessage.getTagValue("id").orElse(">null<");
 		this.channelId = ircMessage.getTagValue("room-id").orElse(">null<");
+		this.userId = ircMessage.getTagValue("user-id").orElse("0");
 		this.userName = ircMessage.getTagValue("display-name").orElse(">null<");
 		this.client_nonce = ircMessage.getTagValue("client_nonce").orElse(">null<");
 		this.epochTime = Long.parseLong(ircMessage.getTagValue("tmi-sent-ts").orElse("0"));
 		this.userColorCode = ircMessage.getTagValue("color").orElse("#ffffff");
 		this.replyId = ircMessage.getTagValue("reply-parent-msg-id").orElse(null);
 		this.replyUser = ircMessage.getTagValue("reply-parent-display-name").orElse(null);
+		this.emoteOnly = !Boolean.parseBoolean(ircMessage.getTagValue("emote-only").orElse("true"));
 		this.dummy = false;
+		
+		if(parentTab.isMessageLog()){
+			parentTab.messageLogger.log(this);
+		}
 
 		if(EmoteManager.getChannelEmotes().containsKey(channelId)){
 			emoteSet.putAll(EmoteManager.getChannelEmotes(channelId).values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
@@ -114,6 +122,7 @@ public class TwitchMessage {
 		this.message = message;
 		this.messageId = null;
 		this.channelId = null;
+		this.userId = "0";
 		this.userName = userName;
 		this.client_nonce = null;
 		this.epochTime = 0l;
@@ -121,6 +130,7 @@ public class TwitchMessage {
 		this.replyId = null;
 		this.replyUser = null;
 		this.dummy = true;
+		this.emoteOnly = false;
 	}
 
 
@@ -142,6 +152,10 @@ public class TwitchMessage {
 	
 	public String getParentReplyColor() {
 		return colorCache.get(getParentReplyUser().toLowerCase());
+	}
+
+	public String getUserId() {
+		return userId;
 	}
 
 	public String getUserName() {
@@ -178,6 +192,10 @@ public class TwitchMessage {
 	
 	public boolean isReply() {
 		return replyId != null;
+	}
+	
+	public boolean isEmoteOnly() {
+		return emoteOnly;
 	}
 	
 	public boolean isParentReply() {

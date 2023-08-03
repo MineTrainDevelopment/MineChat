@@ -34,6 +34,7 @@ public class YamlManager extends HashMap<String, Object>{
 	private final String filePath; //Name of the configuration file to be loaded.
     private final Yaml yaml; //Yaml instance for parsing the configuration file.
 	private static final String invalidFileChars = "<>:\"\\|?*"; //List of invalid chars, that operating systems don´t allow in there file names.
+	private boolean suppressWarnings = false;
 
     /**
      * Constructor for the ConfigManager class.
@@ -334,14 +335,6 @@ public class YamlManager extends HashMap<String, Object>{
 	    return new ArrayList<String>();
 	}
 	
-	/**
-	 * Throws a warning message indicating that an invalid configuration path was provided.
-	 * @param path the invalid configuration path
-	 */
-	private void throwWarn(String path) {
-		logger.warn("Invalid config path!", new ConfigurationException("Cant find a value on this path: "+path));
-	}
-	
 	
 
 	/**
@@ -539,5 +532,20 @@ public class YamlManager extends HashMap<String, Object>{
 	    
 	    current.remove(keys[keys.length-1]);
 		saveConfigToFile();
+	}
+	
+	public void setSuppressWarnings(boolean state){
+		suppressWarnings = state;
+	}
+	
+	/**
+	 * Throws a warning message indicating that an invalid configuration path was provided.
+	 * @param path the invalid configuration path
+	 */
+	private void throwWarn(String path) {
+		if(!suppressWarnings){
+			
+			logger.warn("Invalid config path!", new ConfigurationException("Cant find a value on this path: "+path));
+		}
 	}
 }

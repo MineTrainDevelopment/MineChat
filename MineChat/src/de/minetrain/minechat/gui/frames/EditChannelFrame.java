@@ -278,6 +278,7 @@ public class EditChannelFrame extends JDialog {
 				config.setString(path + "Name", twitchUser.getLoginName());
 				config.setString(path + "DisplayName", (displayNameField.getText().isEmpty() ? loginNameField.getText() : displayNameField.getText()));
 				config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
+				config.setBoolean(path + "MessageLog", true);
 
 				if(cloneMacrosComboBox.getSelectedIndex()>0){
 					String selectedName = cloneMacrosComboBox.getSelectedItem().toString();

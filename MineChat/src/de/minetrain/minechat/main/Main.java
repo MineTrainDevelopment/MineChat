@@ -25,7 +25,7 @@ import de.minetrain.minechat.twitch.obj.CredentialsManager;
 public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
-	public static final String VERSION = "V0.7";
+	public static final String VERSION = "V0.8";
 	public static YamlManager CONFIG;
 	public static YamlManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;

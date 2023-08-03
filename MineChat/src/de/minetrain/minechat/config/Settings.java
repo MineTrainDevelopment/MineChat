@@ -47,6 +47,9 @@ public class Settings{
 
 	public static UndoVariation UNDO_VARIATION;
 	public static long MAX_UNDO_LOG_SIZE;
+
+	public static boolean CHAT_LOG = false;
+	
 	
 	public static Font MESSAGE_FONT;
 	
