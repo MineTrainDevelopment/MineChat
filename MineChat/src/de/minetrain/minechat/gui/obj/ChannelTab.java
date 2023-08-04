@@ -25,7 +25,6 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.MessageLogger;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
@@ -45,7 +44,6 @@ public class ChannelTab {
 	private ChannelMacros macros;
 	private ChatWindow chatWindow;
 	private ChannelStatistics statistics = new ChannelStatistics(this);
-	public MessageLogger messageLogger;
 	
 	private JLabel tabLabel;
 //	private ChannelMacros macros;
@@ -60,7 +58,6 @@ public class ChannelTab {
 		chatWindow.setLocation(8, 186);
 		chatWindow.setVisible(false);
 		this.mainFrame.getContentPane().add(chatWindow);
-		this.messageLogger = new MessageLogger();
 		
 		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
 		this.tabType = tab;

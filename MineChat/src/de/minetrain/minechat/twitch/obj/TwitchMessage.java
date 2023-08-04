@@ -60,10 +60,6 @@ public class TwitchMessage {
 		this.emoteOnly = !Boolean.parseBoolean(ircMessage.getTagValue("emote-only").orElse("true"));
 		this.dummy = false;
 		
-		if(parentTab.isMessageLog()){
-			parentTab.messageLogger.log(this);
-		}
-
 		if(EmoteManager.getChannelEmotes().containsKey(channelId)){
 			emoteSet.putAll(EmoteManager.getChannelEmotes(channelId).values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
 		}
