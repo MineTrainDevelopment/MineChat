@@ -18,11 +18,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -62,6 +57,7 @@ public class TextureManager {
 	private final ImageIcon markReadButton;
 	private final ImageIcon cancelButton;
 	private final ImageIcon confirmButton;
+	private final ImageIcon infoButton;
 	private final ImageIcon enterButton;
 	private final ImageIcon emoteButton;
 	private final ImageIcon waveButton;
@@ -85,6 +81,7 @@ public class TextureManager {
 		this.markReadButton = new ImageIcon(texturePath + "markReadButton.png");
 		this.cancelButton = new ImageIcon(texturePath + "cancelButton.png");
 		this.confirmButton = new ImageIcon(texturePath + "confirmButton.png");
+		this.infoButton = new ImageIcon(texturePath + "infoButton.png");
 		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
 		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
 //		this.emoteButton = new ImageIcon("data/texture/Icons/99351845/jennyanPopcorn/jennyanPopcorn_1.gif");
@@ -139,6 +136,10 @@ public class TextureManager {
 	
 	public ImageIcon getConfirmButton() {
 		return confirmButton;
+	}
+	
+	public ImageIcon getInfoButton() {
+		return infoButton;
 	}
 
 	public ImageIcon getEnterButton() {

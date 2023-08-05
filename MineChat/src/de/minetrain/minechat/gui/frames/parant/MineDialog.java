@@ -28,6 +28,7 @@ import de.minetrain.minechat.main.Main;
 public class MineDialog extends JDialog{
 	private static final long serialVersionUID = 4562021738118686842L;
 	private final JLabel titleText = new JLabel(ChatStatusPanel.getMineChatStatusText().toString());;
+	private JButton infoButton;
 	private JButton confirmButton;
 	private JPanel contentPanel;
 	private int mouseX, mouseY;
@@ -106,17 +107,33 @@ public class MineDialog extends JDialog{
 		cancelButton.setBackground(titleBar.getBackground());
 		cancelButton.setMinimumSize(new Dimension(30, 30));
 		cancelButton.setBorder(null);
+		cancelButton.setToolTipText("Cancel");
 		cancelButton.addActionListener(getDefaultWindowCloseAction(true));
+
+		JPanel confirmButtonPanal = new JPanel(new BorderLayout());
+		confirmButtonPanal.setBorder(new EmptyBorder(0, 3, 0, 3));
+		confirmButtonPanal.setBackground(titleBar.getBackground());
 		
 		confirmButton = new JButton("");
 		confirmButton.setIcon(Main.TEXTURE_MANAGER.getConfirmButton());
 		confirmButton.setBackground(titleBar.getBackground());
 		confirmButton.setMinimumSize(new Dimension(30, 30));
 		confirmButton.setBorder(null);
+		confirmButton.setToolTipText("Confirm");
 		confirmButton.addActionListener(getDefaultWindowCloseAction(false));
+		confirmButtonPanal.add(confirmButton, BorderLayout.CENTER);
+		
+		infoButton = new JButton("");
+		infoButton.setIcon(Main.TEXTURE_MANAGER.getInfoButton());
+		infoButton.setBackground(titleBar.getBackground());
+		infoButton.setMinimumSize(new Dimension(30, 30));
+		infoButton.setBorder(null);
+		infoButton.setVisible(false);
+		infoButton.setToolTipText("Info");
+		infoButton.addActionListener(getDefaultWindowCloseAction(false));
 
-		buttonPanal.add(confirmButton, BorderLayout.WEST);
-		buttonPanal.add(Box.createHorizontalStrut(2), BorderLayout.CENTER);
+		buttonPanal.add(infoButton, BorderLayout.WEST);
+		buttonPanal.add(confirmButtonPanal, BorderLayout.CENTER);
 		buttonPanal.add(cancelButton, BorderLayout.EAST);
 		mainPanel.addMouseListener(MoiseListner());
 		mainPanel.addMouseMotionListener(mouseMotionListner());
@@ -165,6 +182,13 @@ public class MineDialog extends JDialog{
 	public MineDialog setConfirmButtonAction(ActionListener actionListener) {
 		Arrays.asList(confirmButton.getActionListeners()).forEach(listner -> confirmButton.removeActionListener(listner));
 		confirmButton.addActionListener(actionListener);
+		return this;
+	}
+
+	public MineDialog setInfoButtonAction(ActionListener actionListener) {
+		Arrays.asList(confirmButton.getActionListeners()).forEach(listner -> confirmButton.removeActionListener(listner));
+		infoButton.addActionListener(actionListener);
+		infoButton.setVisible(true);
 		return this;
 	}
 	

@@ -7,6 +7,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -24,6 +27,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -34,6 +40,7 @@ import de.minetrain.minechat.utils.obj.HighlightString;
 
 public class AddWordHighlightFrame extends MineDialog {
 	private static final long serialVersionUID = -4774556639413934907L;
+	private static final Logger logger = LoggerFactory.getLogger(AddWordHighlightFrame.class);
 	private Color borderColor = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT;
 	private Color wordColor = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT;
 	private JDialog thisDialog = this;
@@ -141,6 +148,18 @@ public class AddWordHighlightFrame extends MineDialog {
 				stringBuilder.setPrefix("["+getCurentTime()+"] ");
 				stringBuilder.appendString(newWord, HTMLColors.RED);
 				textLabel.setText(stringBuilder.toString());
+			}
+		});
+
+		setInfoButtonAction(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					java.awt.Desktop.getDesktop().browse(new URI("https://www.javainuse.com/rexgenerator"));
+				} catch (IOException | URISyntaxException ex) {
+					logger.error("Can´t open a web URL -> https://www.javainuse.com/rexgenerator", ex);
+				}
 			}
 		});
 		
