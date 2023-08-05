@@ -42,6 +42,7 @@ public class Settings{
 	public static HighlightDefault displayBitsCheerd; //
 	public static HighlightDefault displayAnnouncement; //
 	public static HighlightDefault displayUserRewards; //
+	public static HighlightDefault displayTwitchHighlighted; //
 
 	public static long MAX_MESSAGE_DISPLAYING;
 	public static ReplyType GREETING_TYPE; //
@@ -82,6 +83,7 @@ public class Settings{
 		displayBitsCheerd = new HighlightDefault(settings, "Highlights.EventHighlights.BitsCheerd");
 		displayAnnouncement = new HighlightDefault(settings, "Highlights.EventHighlights.ModAnnouncement");
 		displayUserRewards = new HighlightDefault(settings, "Highlights.EventHighlights.UserRewards");
+		displayTwitchHighlighted = new HighlightDefault(settings, "Highlights.EventHighlights.TwitchHighlighted");
 
 		MAX_MESSAGE_DISPLAYING = settings.getInt("Chatting.MaxMessageDisplaying", 500);
 		GREETING_TYPE = ReplyType.get(settings.getString("Chatting.GreetingType", "MESSAGE"));
@@ -203,6 +205,9 @@ public class Settings{
 
 		settings.setBoolean("Highlights.EventHighlights.UserRewards.Active", true);
 		settings.setString("Highlights.EventHighlights.UserRewards.Color", ColorManager.encode(ColorManager.CHAT_USER_REWARD_DEFAULT));
+
+		settings.setBoolean("Highlights.EventHighlights.TwitchHighlighted.Active", true);
+		settings.setString("Highlights.EventHighlights.TwitchHighlighted.Color", ColorManager.encode(ColorManager.CHAT_TWITCH_HIGHLIGHTED_DEFAULT));
 		
 
 

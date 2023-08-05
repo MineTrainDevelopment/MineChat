@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -26,7 +27,7 @@ import de.minetrain.minechat.utils.obj.HighlightDefault;
 
 public class SettingsTab_Chatting extends SettingsTab{
 	private static final long serialVersionUID = -2903086341948789185L;
-	private JPanel highlightFormatConentPanel, generalFormatConentPanel;
+	private JPanel generalFormatConentPanel, highlightFormatConentPanel;
 	
 	public SettingsTab_Chatting(JFrame parentFrame) {
 		super(parentFrame, "Chatting");
@@ -100,7 +101,7 @@ public class SettingsTab_Chatting extends SettingsTab{
 		JPanel highlightFormatPanel = new JPanel();
 		highlightFormatPanel.setBackground(new Color(128, 128, 128));
 		highlightFormatPanel.setBorder(highlightBorder);
-		highlightFormatPanel.setBounds(30, 205, 408, 340);
+		highlightFormatPanel.setBounds(30, 205, 408, 379);
 		highlightFormatPanel.setBackground(getBackground());
 		highlightFormatPanel.setLayout(null);
 		add(highlightFormatPanel);
@@ -108,7 +109,7 @@ public class SettingsTab_Chatting extends SettingsTab{
 		highlightFormatConentPanel = new JPanel();
 		highlightFormatConentPanel.setBackground(new Color(98, 98, 98));
 		highlightFormatConentPanel.setBorder(null);
-		highlightFormatConentPanel.setBounds(10, 25, 385, 309);
+		highlightFormatConentPanel.setBounds(10, 25, 385, 358);
 		highlightFormatConentPanel.setLayout(null);
 		highlightFormatPanel.add(highlightFormatConentPanel);
 		
@@ -122,13 +123,14 @@ public class SettingsTab_Chatting extends SettingsTab{
 		addHighlightLabel("Individual GiftSubs", 197, Settings.displayIndividualGiftedSubs);
 		addHighlightLabel("Follows.", 236, Settings.displayFollows);
 		addHighlightLabel("Bits Cheerd.", 275, Settings.displayBitsCheerd);
+		addHighlightLabel("Twitch Highlighted.", 314, Settings.displayTwitchHighlighted);
 		
 		
 		JButton highlightButton = new JButton("Add new Highlight word");
-		highlightButton.setBounds(200, 560, 170, 30);
+		highlightButton.setBounds(200, 579, 170, 30);
 		highlightButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {	
 				new AddWordHighlightFrame(parentFrame);
 			}
 		});

@@ -22,6 +22,7 @@ public class ColorManager {
     public static final Color CHAT_SPENDING_BIG_DEFAULT = Color.YELLOW;
     public static final Color CHAT_ANNOUNCEMENT_DEFAULT = Color.GREEN;
     public static final Color CHAT_USER_REWARD_DEFAULT = Color.BLUE;
+    public static final Color CHAT_TWITCH_HIGHLIGHTED_DEFAULT = new Color(120, 86, 188);
     public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = new Color(255, 40, 40);
     public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = new Color(125, 0, 255);
 	

@@ -43,6 +43,7 @@ public class TwitchMessage {
 	private final Long epochTime;
 	private final ChannelTab parentTab;
 	private final boolean emoteOnly;
+	private final boolean highlighted;
 	private final boolean dummy;
 
 	public TwitchMessage(ChannelTab parentTab, IRCMessageEvent ircMessage, String message) {
@@ -58,6 +59,8 @@ public class TwitchMessage {
 		this.replyId = ircMessage.getTagValue("reply-parent-msg-id").orElse(null);
 		this.replyUser = ircMessage.getTagValue("reply-parent-display-name").orElse(null);
 		this.emoteOnly = !Boolean.parseBoolean(ircMessage.getTagValue("emote-only").orElse("true"));
+		this.highlighted = ircMessage.getTagValue("msg-id").orElse("false").equals("false") ? false : true;
+		
 		this.dummy = false;
 		
 		if(EmoteManager.getChannelEmotes().containsKey(channelId)){
@@ -126,6 +129,7 @@ public class TwitchMessage {
 		this.replyId = null;
 		this.replyUser = null;
 		this.dummy = true;
+		this.highlighted = false;
 		this.emoteOnly = false;
 	}
 
@@ -192,6 +196,10 @@ public class TwitchMessage {
 	
 	public boolean isEmoteOnly() {
 		return emoteOnly;
+	}
+	
+	public boolean isHighlighted() {
+		return highlighted;
 	}
 	
 	public boolean isParentReply() {

@@ -204,6 +204,10 @@ public class ChatWindowMessageComponent extends JPanel{
         
         
         if(twitchMessage != null){
+        	if(twitchMessage.isHighlighted() && Settings.displayTwitchHighlighted.isActive()){
+        		messageLabel.setBackground(Settings.displayTwitchHighlighted.getColor());
+            }
+        	
 	    	if(chatWindow.greetingsManager.contains(userName)){
 		    	Settings.highlightStrings.forEach(highlight -> {
 		    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
