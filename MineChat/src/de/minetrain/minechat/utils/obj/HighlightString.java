@@ -3,6 +3,8 @@ package de.minetrain.minechat.utils.obj;
 import java.awt.Color;
 import java.util.List;
 
+import com.google.code.regexp.Pattern;
+
 import de.minetrain.minechat.config.Settings;
 
 public class HighlightString {
@@ -25,9 +27,14 @@ public class HighlightString {
 	 * @param wordColor
 	 * @param borderColor
 	 */
-	public static void saveNewWord(String word, Color wordColor, Color borderColor) {
+	public static String saveNewWord(String word, Color wordColor, Color borderColor) {
 		List<String> stringList = Settings.settings.getStringList("Highlights.MessageHighlights.KeyWods.List");
-		word = word.replaceAll("[\\[\\]{}()\\\\^$|?.+*]", "");
+//		word = word.replaceAll("[\\[\\]{}()\\\\^$|?.+*]", "");
+		
+		if(Pattern.compile("[{}.]").matcher(word).find()){
+			return "\"{\", \"}\" and \".\" are invalid chars!";
+		}
+		
 		String removeFromList = "";
 		for(String string : stringList){
 			if(string.toLowerCase().equalsIgnoreCase(word.toLowerCase().replace("%-%", "%"))){
@@ -45,6 +52,7 @@ public class HighlightString {
 		
 		Settings.settings.setStringList("Highlights.MessageHighlights.KeyWods.List", stringList, true);
 		Settings.reloadHighlights();
+		return null;
 	}
 
 	public String getWord() {

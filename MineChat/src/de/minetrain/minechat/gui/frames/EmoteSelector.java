@@ -22,6 +22,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 
@@ -116,7 +117,7 @@ public class EmoteSelector extends JDialog{
         
 
         if(!EmoteManager.getFavoriteEmotes().isEmpty()){
-        	addEmoteSet(EmoteManager.getDefaultEmotes().values(), "Favorites");
+        	addEmoteSet(EmoteManager.getFavoriteEmotes().values(), "Favorites");
         }
         
     	addEmoteSet(EmoteManager.getDefaultEmotes().values(), "Default");
@@ -145,18 +146,40 @@ public class EmoteSelector extends JDialog{
 			mineButton.setPreferredSize(mineButton.getSize());
 		    mineButton.setIcon(new BackgroundImageIcon(emote));
 //		    mineButton.setIcon(new MirroredImageIcon(emote.getFilePath()));
-		    mineButton.setToolTipText(emote.getName());
-		    mineButton.addActionListener(new ActionListener() {
-		        @Override
-		        public void actionPerformed(ActionEvent e) {
-					selectedEmote = emote;
-		            if(disposOnSelect){
-		            	disposed = true;
-		            	addSelectetEmoteToText(null);
-		            	dispose();
-		            }
-		        }
-		    });
+		    mineButton.setToolTipText(setName.equalsIgnoreCase("favorites") ? emote.getName()+" - "+emote.getEmoteType().name() : emote.getName());
+//		    mineButton.addActionListener(new ActionListener() {
+//		        @Override
+//		        public void actionPerformed(ActionEvent e) {
+//					selectedEmote = emote;
+//		            if(disposOnSelect){
+//		            	disposed = true;
+//		            	addSelectetEmoteToText(null);
+//		            	dispose();
+//		            }
+//		        }
+//		    });
+		    
+		    mineButton.addMouseListener(new MouseAdapter() {
+			    @Override
+			    public void mouseClicked(MouseEvent e) {
+			        if (SwingUtilities.isLeftMouseButton(e)) {
+			        	selectedEmote = emote;
+			            if(disposOnSelect){
+			            	disposed = true;
+			            	addSelectetEmoteToText(null);
+			            	dispose();
+			            }
+			        }
+			        
+			        if (SwingUtilities.isRightMouseButton(e)) {
+			        	emote.toggleFavorite();
+		        		dispose();
+		        		new EmoteSelector(Main.MAIN_FRAME, disposOnSelect);
+			        }
+			    }
+			});
+		    
+		    
 			buttons.add(mineButton);
 		}
 		

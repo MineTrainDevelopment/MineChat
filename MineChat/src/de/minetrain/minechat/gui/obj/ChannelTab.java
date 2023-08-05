@@ -37,7 +37,6 @@ public class ChannelTab {
 	private String displayName;
 	private String channelName;
 	private boolean moderator;
-	private boolean messageLog = false;
 	private MainFrame mainFrame;
 	private List<String> greetingTexts;
 	private ActionListener editWindowAction;
@@ -126,7 +125,6 @@ public class ChannelTab {
 		String configPath = "Channel_"+configID+".";
 		channelName = config.getString(configPath+"Name");
 		displayName = config.getString(configPath+"DisplayName");
-		messageLog = config.getBoolean(configPath+"MessageLog");
 		moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
 		greetingTexts = config.getStringList(configPath+"GreetingText");
 		chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
@@ -192,11 +190,6 @@ public class ChannelTab {
 	public boolean isOccupied(){
 		return !configID.equals("0");
 	}
-	
-	public boolean isMessageLog(){
-		return messageLog;
-	}
-
 
 	public ChannelTab getThisObject() {
 		return thisObject;

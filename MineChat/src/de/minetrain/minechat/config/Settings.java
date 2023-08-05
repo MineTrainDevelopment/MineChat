@@ -4,9 +4,11 @@ import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
@@ -100,7 +102,36 @@ public class Settings{
 	public static void reloadHighlights(){
 		settings.getStringList("Highlights.MessageHighlights.KeyWods.List").forEach(highlight -> highlightStrings.add(new HighlightString(highlight)));
 		if(highlightStrings.isEmpty()){
-			HighlightString.saveNewWord(TwitchManager.ownerChannelName, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+			String twitchName = TwitchManager.ownerChannelName;
+			String[] result = twitchName.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)|(?<=\\D)(?=[_-])|(?<=[_-])(?=\\D)");
+			String name = result[0];
+			
+			if(result.length > 1){
+				for(int i = 0; i < result.length; i++) {
+					if(Pattern.compile("(?=[a-zA-Z])").matcher(result[i]).find()){
+						name = result[i];
+						break;
+					}
+				}
+				
+				String suffix = "";
+				for(int i = 1; i < result.length; i++) {
+					suffix += result[i];
+				}
+				
+				
+				if(twitchName.startsWith(name)){
+					name = "^"+name+"(?:"+suffix+")?$";
+				}else{
+					//^(?:_Boomy0|_Boomy|Boomy(?:0)?)$
+					String prefix = twitchName.substring(0, twitchName.indexOf(name));
+					suffix = suffix.substring(suffix.indexOf(name)+name.length(), suffix.length());
+					name = "^(?:"+twitchName+"|"+prefix+name+"|"+name+"(?:"+suffix+")?)$";
+				}
+				
+			}
+			
+			HighlightString.saveNewWord(name, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
 		}
 	}
 

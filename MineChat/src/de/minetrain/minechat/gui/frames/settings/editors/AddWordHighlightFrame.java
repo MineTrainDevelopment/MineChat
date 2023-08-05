@@ -28,6 +28,7 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
 import de.minetrain.minechat.utils.obj.HighlightString;
 
@@ -130,8 +131,16 @@ public class AddWordHighlightFrame extends MineDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HighlightString.saveNewWord(inputField.getText(), wordColor, borderColor);
-				dispose();
+				String newWord = HighlightString.saveNewWord(inputField.getText(), wordColor, borderColor);
+				if(newWord == null){
+					dispose();
+					return;
+				}
+
+				stringBuilder.clear();
+				stringBuilder.setPrefix("["+getCurentTime()+"] ");
+				stringBuilder.appendString(newWord, HTMLColors.RED);
+				textLabel.setText(stringBuilder.toString());
 			}
 		});
 		

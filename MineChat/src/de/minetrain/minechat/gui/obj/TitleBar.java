@@ -161,7 +161,7 @@ public class TitleBar extends JPanel{
     	thirdTab.offsetButton(buttonType);
     	secondTab.offsetButton(buttonType);
     	
-    	MineTextArea.setStaticChannelDictionary(tab.getConfigID());
+    	MineTextArea.setStaticChannelEmoteDictionary(tab.getConfigID());
 	}
 	
 	public ArrayList<JLabel> getTabNames(){

@@ -14,7 +14,10 @@ public class Emote {
 	private final String filePath;
 	private final String channelId;
 	
+	private final String key;
+	
 	public Emote(String key, YamlManager yaml, String channelId) {
+		this.key = key;
 		this.name = yaml.getString(key+".Name");
 		this.favorite = yaml.getBoolean(key+".Favorite");
 		this.id = yaml.getString(key+".Id");
@@ -28,8 +31,20 @@ public class Emote {
 		return new ImageIcon(filePath);
 	}
 	
+	public void toggleFavorite() {
+		setFavorite(!favorite);
+	}
+	
 	public void setFavorite(boolean state) {
 		favorite = state;
+		EmoteManager.getYaml().setBoolean(key+".Favorite", state, true);
+		
+		if(state){
+			EmoteManager.addFavoriteEmote(this);
+			return;
+		}
+
+		EmoteManager.removeFavoriteEmote(this);
 	}
 	
 	public boolean isFavorite() {

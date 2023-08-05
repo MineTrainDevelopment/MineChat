@@ -6,13 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.swing.ImageIcon;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.YamlManager;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 
@@ -75,7 +72,7 @@ public class EmoteManager {
 //					new SuggestionObj(":" + emote.getName() + (emote.getEmoteType().equals(EmoteType.BTTV) ? " -- BTTV" : ""), 
 //							emote.getFilePath()));
 
-			MineTextArea.addToStaticDictionary(new SuggestionObj(emote));
+			MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote));
 		});
 	}
 
@@ -121,6 +118,14 @@ public class EmoteManager {
 	
 	public static HashMap<String, Emote> getFavoriteEmotes(){
 		return favoriteEmotes;
+	}
+	
+	public static void addFavoriteEmote(Emote emote){
+		favoriteEmotes.put(emote.getName(), emote);
+	}
+	
+	public static void removeFavoriteEmote(Emote emote){
+		favoriteEmotes.remove(emote.getName(), emote);
 	}
 	
 	public static YamlManager getYaml(){

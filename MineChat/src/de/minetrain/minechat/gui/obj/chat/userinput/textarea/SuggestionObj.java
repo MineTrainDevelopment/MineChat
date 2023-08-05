@@ -8,16 +8,20 @@ import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class SuggestionObj {
+	private static final ImageIcon defaultBorderImage = new ImageIcon(TextureManager.texturePath+"emoteBorder.png");
 	private String text;
 	private String displayText;
 	private final String iconPath;
 	private final ImageIcon borderImage;
+	private final Emote emote;
+	private boolean sortPriority = false;
 	
 	public SuggestionObj(String text, String iconPath, String... displayText) {
 		this.text = text;
 		this.displayText = displayText.length!=0 ? displayText[0] : "";
 		this.iconPath = iconPath;
-		this.borderImage = new ImageIcon(TextureManager.texturePath+"emoteBorder.png");
+		this.borderImage = defaultBorderImage;
+		this.emote = null;
 	}
 	
 	public SuggestionObj(Emote emote) {
@@ -25,6 +29,8 @@ public class SuggestionObj {
 		this.displayText = "";
 		this.iconPath = emote.getFilePath();
 		this.borderImage = emote.getBorderImage();
+		this.emote = emote;
+		setSortPriority(emote.isFavorite());;
 	}
 
 	public SuggestionObj setDisplayText(String displayText) {
@@ -52,6 +58,14 @@ public class SuggestionObj {
 	public ImageIcon getIcon() {
 		if(iconPath == null){return null;}
 		return new BackgroundImageIcon(iconPath, borderImage);
+	}
+	
+	public void setSortPriority(boolean sortPoririty){
+		this.sortPriority = sortPoririty;
+	}
+	
+	public boolean getSortPriority(){
+		return (emote != null) ? !emote.isFavorite() : !sortPriority;
 	}
 	
 }
