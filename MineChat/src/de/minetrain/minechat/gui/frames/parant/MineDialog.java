@@ -186,7 +186,7 @@ public class MineDialog extends JDialog{
 	}
 
 	public MineDialog setInfoButtonAction(ActionListener actionListener) {
-		Arrays.asList(confirmButton.getActionListeners()).forEach(listner -> confirmButton.removeActionListener(listner));
+		Arrays.asList(infoButton.getActionListeners()).forEach(listner -> infoButton.removeActionListener(listner));
 		infoButton.addActionListener(actionListener);
 		infoButton.setVisible(true);
 		return this;
