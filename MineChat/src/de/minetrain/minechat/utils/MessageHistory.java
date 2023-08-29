@@ -79,6 +79,7 @@ public class MessageHistory extends ArrayList<String>{
 		message = message.strip().trim();
 		
 		if(message.endsWith(MessageManager.getSpamprotector())){
+			resetIndex(0);
 			return false;
 		}
 		
@@ -86,6 +87,8 @@ public class MessageHistory extends ArrayList<String>{
 			resetIndex(1);
 			return super.add(message);
 		}
+
+		resetIndex(0);
 		return false;
 	}
 	
