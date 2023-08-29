@@ -18,6 +18,10 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -406,6 +410,15 @@ public class TextureManager {
 		JsonArray jsonArray = fromJson.getAsJsonArray("data");
 		String downloadURL = fromJson.get("template").getAsString();
 		
+
+		List<String> newEmoteIDs = new ArrayList<String>();
+		Map<String, Object> cachedEmoteMap = yaml.getObjectMap("Channel_"+channelId+".twitch");
+		List<String> cachedEmoteIDs = new ArrayList<String>();
+		
+		if(cachedEmoteMap != null){
+			cachedEmoteIDs.addAll(cachedEmoteMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
+		}
+		
 		for (int i=0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
 			JsonObject entry = jsonElement.getAsJsonObject();
@@ -430,6 +443,7 @@ public class TextureManager {
 			yaml.setString(yamlPath+"EmoteSet_Id",entry.get("emote_set_id").getAsString());
 			yaml.setString(yamlPath+"Format", format);
 			yaml.setString(yamlPath+"File", texturePath+fileLocation+emoteID+"_1"+fileFormat);
+			newEmoteIDs.add(emoteID);
 			
 			try {
 //				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
@@ -445,6 +459,13 @@ public class TextureManager {
 			}
 			
 		}
+		
+		cachedEmoteIDs.forEach(emoteID -> {
+			if(!newEmoteIDs.contains(emoteID)){
+				yaml.remove("Channel_"+channelId+".twitch."+emoteID);
+			}
+		});
+		
 
 		Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
     	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
@@ -463,6 +484,14 @@ public class TextureManager {
 		JsonArray sharedArray = fromJson.getAsJsonArray("sharedEmotes");
 		channelArray.addAll(sharedArray);
 		
+		
+		List<String> newEmoteIDs = new ArrayList<String>();
+		Map<String, Object> cachedEmoteMap = yaml.getObjectMap("Channel_"+channelId+".bttv");
+		List<String> cachedEmoteIDs = new ArrayList<String>();
+		
+		if(cachedEmoteMap != null){
+			cachedEmoteIDs.addAll(cachedEmoteMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
+		}
 		
 		for (int i=0; i < channelArray.size(); i++) {
 			JsonObject entry = channelArray.get(i).getAsJsonObject();
@@ -486,6 +515,7 @@ public class TextureManager {
 			yaml.setString(yamlPath+"imageType", imageType);
 			yaml.setString(yamlPath+"Animated", animated);
 			yaml.setString(yamlPath+"File", texturePath+fileLocation+emoteID+"_1."+imageType);
+			newEmoteIDs.add(emoteID);
 			
 			try {
 				String downloadURL = "https://cdn.betterttv.net/emote/{{id}}/{{scale}}";
@@ -502,6 +532,12 @@ public class TextureManager {
 	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
 		}
+		
+		cachedEmoteIDs.forEach(emoteID -> {
+			if(!newEmoteIDs.contains(emoteID)){
+				yaml.remove("Channel_"+channelId+".twitch."+emoteID);
+			}
+		});
 		
 	}
 	
