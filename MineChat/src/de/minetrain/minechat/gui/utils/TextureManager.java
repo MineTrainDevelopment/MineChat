@@ -61,6 +61,7 @@ public class TextureManager {
 	private final ImageIcon markReadButton;
 	private final ImageIcon cancelButton;
 	private final ImageIcon confirmButton;
+	private final ImageIcon editButton;
 	private final ImageIcon infoButton;
 	private final ImageIcon enterButton;
 	private final ImageIcon emoteButton;
@@ -85,6 +86,7 @@ public class TextureManager {
 		this.markReadButton = new ImageIcon(texturePath + "markReadButton.png");
 		this.cancelButton = new ImageIcon(texturePath + "cancelButton.png");
 		this.confirmButton = new ImageIcon(texturePath + "confirmButton.png");
+		this.editButton = new ImageIcon(texturePath + "editButton.png");
 		this.infoButton = new ImageIcon(texturePath + "infoButton.png");
 		this.enterButton = new ImageIcon(texturePath + "enterButton.png");
 		this.emoteButton = new ImageIcon(texturePath + "emoteButton.png");
@@ -140,6 +142,10 @@ public class TextureManager {
 	
 	public ImageIcon getConfirmButton() {
 		return confirmButton;
+	}
+	
+	public ImageIcon getEditButton() {
+		return editButton;
 	}
 	
 	public ImageIcon getInfoButton() {

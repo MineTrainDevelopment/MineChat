@@ -92,6 +92,8 @@ public class Settings{
 		UNDO_VARIATION = UndoVariation.get(settings.getString("Chatting.UndoMode", "WORD"));
 		MAX_UNDO_LOG_SIZE = settings.getInt("Chatting.UndoCacheSize", 100);
 		
+		boolean BUTTON_HOLD; //Implement me.
+		
 		MESSAGE_FONT = new Font(
 				settings.getString("Font.Name", "Arial Unicode MS"), 
 				settings.getInt("Font.Style", 1), 

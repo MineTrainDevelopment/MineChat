@@ -1,25 +1,28 @@
 package de.minetrain.minechat.gui.frames.settings.tabs;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.frames.settings.SettingsTab;
 import de.minetrain.minechat.gui.frames.settings.editors.CustomiseTimeFormatFrame;
+import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
+import de.minetrain.minechat.gui.obj.panels.tabel.TabelObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 
 public class SettingsTab_Appearance extends SettingsTab{
 	private static final long serialVersionUID = -2903086341948789185L;
-	private JPanel timeFormatConentPanel, colorsPanelConentPanel;
 	
 	public SettingsTab_Appearance(JFrame parentFrame) {
 		super(parentFrame, "Appearance");
@@ -28,117 +31,101 @@ public class SettingsTab_Appearance extends SettingsTab{
 		border.setTitleFont(Settings.MESSAGE_FONT);
 		border.setTitleColor(ColorManager.FONT);
 		
-		JPanel timeFormatPanel = new JPanel();
+		JPanel timeFormatPanel = new JPanel(new BorderLayout());
 		timeFormatPanel.setBackground(new Color(128, 128, 128));
 		timeFormatPanel.setBorder(border);
-		timeFormatPanel.setBounds(30, 15, 408, 190);
+		timeFormatPanel.setBounds(30, 15, 408, 233);
 		timeFormatPanel.setBackground(getBackground());
-		timeFormatPanel.setLayout(null);
 		add(timeFormatPanel);
 		
-		timeFormatConentPanel = new JPanel();
-		timeFormatConentPanel.setBackground(new Color(98, 98, 98));
-		timeFormatConentPanel.setBorder(null);
-		timeFormatConentPanel.setBounds(10, 25, 385, 156);
-		timeFormatConentPanel.setLayout(null);
-		timeFormatPanel.add(timeFormatConentPanel);
+		MineTabel timeTabel = new MineTabel();
+		timeFormatPanel.add(timeTabel, BorderLayout.CENTER);
+		addTimeFormatItmes(parentFrame, timeTabel);
+
 		
-		addTimeFormatLabel("Messages: ["+Settings.messageTimeFormat+"]", 2, new ActionListener() {
+		
+		
+		TitledBorder colorBorder = new TitledBorder(new EmptyBorder(0, 0, 0, 0), "Colors - Changes may require a program restart.", TitledBorder.LEFT, TitledBorder.ABOVE_TOP, null, new Color(0, 0, 0));
+		colorBorder.setTitleFont(Settings.MESSAGE_FONT);
+		colorBorder.setTitleColor(ColorManager.FONT);
+		
+		JPanel colorsPanel = new JPanel(new BorderLayout());
+		colorsPanel.setBorder(colorBorder);
+		colorsPanel.setBackground(timeFormatPanel.getBackground());
+		colorsPanel.setBounds(30, 256, 408, 315);
+		add(colorsPanel);
+		
+		MineTabel colorTabel = new MineTabel();
+		colorsPanel.add(colorTabel, BorderLayout.CENTER);
+		addColorFormatItmes(parentFrame, colorTabel);
+	}
+
+	private void addTimeFormatItmes(JFrame parentFrame, MineTabel mineTabel) {
+		mineTabel.clear();
+		mineTabel.add(new TabelObj("Messages: ["+Settings.messageTimeFormat+"]", mineTabel).setEditButtonAction(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CustomiseTimeFormatFrame customiser = new CustomiseTimeFormatFrame(parentFrame, "Message-Format", Settings.messageTimeFormat);
 				Settings.setMessageTimeFormat(customiser.getCurentInput());
+				addTimeFormatItmes(parentFrame, mineTabel);
 			}
-		});
+		}));
 		
-		addTimeFormatLabel("Time format: ["+Settings.timeFormat+"]", 41, new ActionListener() {
+		mineTabel.add(new TabelObj("Time format: ["+Settings.timeFormat+"]", mineTabel).setEditButtonAction(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CustomiseTimeFormatFrame customiser = new CustomiseTimeFormatFrame(parentFrame, "Time-Format", Settings.timeFormat);
 				Settings.setTimeFormat(customiser.getCurentInput());
+				addTimeFormatItmes(parentFrame, mineTabel);
 			}
-		});
+		}));
 		
-		addTimeFormatLabel("Date format: ["+Settings.dateFormat+"]", 80, new ActionListener() {
+		mineTabel.add(new TabelObj("Date format: ["+Settings.dateFormat+"]", mineTabel).setEditButtonAction(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CustomiseTimeFormatFrame customiser = new CustomiseTimeFormatFrame(parentFrame, "Date-Format", Settings.dateFormat);
 				Settings.setDateFormat(customiser.getCurentInput());
+				addTimeFormatItmes(parentFrame, mineTabel);
 			}
-		});
+		}));
 		
-		addTimeFormatLabel("Day format: ["+Settings.dayFormat+"]", 119, new ActionListener() {
+		mineTabel.add(new TabelObj("Day format: ["+Settings.dayFormat+"]", mineTabel).setEditButtonAction(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CustomiseTimeFormatFrame customiser = new CustomiseTimeFormatFrame(parentFrame, "Day-Format", Settings.dayFormat);
 				Settings.setDayFormat(customiser.getCurentInput());
+				addTimeFormatItmes(parentFrame, mineTabel);
 			}
-		});
-		
-		
-		
-		TitledBorder colorBorder = new TitledBorder(new EmptyBorder(0, 0, 0, 0), "Colors", TitledBorder.LEFT, TitledBorder.ABOVE_TOP, null, new Color(0, 0, 0));
-		colorBorder.setTitleFont(Settings.MESSAGE_FONT);
-		colorBorder.setTitleColor(ColorManager.FONT);
-		
-		JPanel colorsPanel = new JPanel();
-		colorsPanel.setLayout(null);
-		colorsPanel.setBorder(colorBorder);
-		colorsPanel.setBackground(timeFormatPanel.getBackground());
-		colorsPanel.setBounds(30, 216, 408, 260);
-		add(colorsPanel);
-		
-		colorsPanelConentPanel = new JPanel();
-		colorsPanelConentPanel.setLayout(null);
-		colorsPanelConentPanel.setBorder(null);
-		colorsPanelConentPanel.setBackground(timeFormatConentPanel.getBackground());
-		colorsPanelConentPanel.setBounds(10, 25, 385, 230);
-		colorsPanel.add(colorsPanelConentPanel);
+		}));
+	}
 
-		addColorChangeLabel("Font color.", 2, ColorManager.FONT, ColorManager.FONT_DEFAULT, "Font");
-		addColorChangeLabel("Background color.", 41, ColorManager.GUI_BACKGROUND, ColorManager.GUI_BACKGROUND_DEFAULT, "Background");
-		addColorChangeLabel("Background_Light color.", 80, ColorManager.GUI_BACKGROUND_LIGHT, ColorManager.GUI_BACKGROUND_LIGHT_DEFAULT, "BackgroundLight");
-		addColorChangeLabel("Border color.", 119, ColorManager.GUI_BORDER, ColorManager.GUI_BORDER_DEFAULT, "Border");
-		addColorChangeLabel("Button color.", 158, ColorManager.GUI_BUTTON_BACKGROUND, ColorManager.GUI_BUTTON_BACKGROUND_DEFAULT, "ButtonBackground");
-		addColorChangeLabel("Default key word.", 197, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT, "DefaultKeyHighlight");
-		
-		colorsPanelConentPanel.add(new JLabel("NOTE: Changing color may need a program restart!"));
+	private void addColorFormatItmes(JFrame parentFrame, MineTabel mineTabel) {
+		mineTabel.clear();
+		createColorTableObj("Font color.", ColorManager.FONT, ColorManager.FONT_DEFAULT, "Font", mineTabel);
+		createColorTableObj("Background color.", ColorManager.GUI_BACKGROUND, ColorManager.GUI_BACKGROUND_DEFAULT, "Background", mineTabel);
+		createColorTableObj("Background_Light color.", ColorManager.GUI_BACKGROUND_LIGHT, ColorManager.GUI_BACKGROUND_LIGHT_DEFAULT, "BackgroundLight", mineTabel);
+		createColorTableObj("Border color.", ColorManager.GUI_BORDER, ColorManager.GUI_BORDER_DEFAULT, "Border", mineTabel);
+		createColorTableObj("Button color.", ColorManager.GUI_BUTTON_BACKGROUND, ColorManager.GUI_BUTTON_BACKGROUND_DEFAULT, "ButtonBackground", mineTabel);
+		createColorTableObj("Default key word.", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT, "DefaultKeyHighlight", mineTabel);
 	}
 	
-	private void addTimeFormatLabel(String title, int y, ActionListener changeButtonAction){
-		JLabel titleLabel = new JLabel(title);
-		titleLabel.setFont(Settings.MESSAGE_FONT);
-		titleLabel.setForeground(ColorManager.FONT);
-		titleLabel.setBounds(2, y, 282, 32);
-		timeFormatConentPanel.add(titleLabel);
+	private void createColorTableObj(String title, Color curentColor, Color defaultColor, String configName, MineTabel mineTabel){
+		JPanel contentPanel = new JPanel(new BorderLayout());
+		contentPanel.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
 		
-		JButton changeButton = new JButton("Change");
-		changeButton.setBounds(283, y, 100, 32);
-		changeButton.setFont(Settings.MESSAGE_FONT);
-		changeButton.setForeground(ColorManager.FONT);
-		changeButton.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-		changeButton.addActionListener(changeButtonAction);
-		timeFormatConentPanel.add(changeButton);
-	}
-	
-	private void addColorChangeLabel(String title, int y, Color curentColor, Color defaultColor, String configName){
-		JLabel titleLabel = new JLabel(title);
+		JLabel titleLabel = new JLabel("  "+title);
 		titleLabel.setFont(Settings.MESSAGE_FONT);
 		titleLabel.setForeground(ColorManager.FONT);
-		titleLabel.setBounds(2, y, 200, 32);
-		colorsPanelConentPanel.add(titleLabel);
+		contentPanel.add(titleLabel, BorderLayout.CENTER);
 		
 		JPanel colorLabel = new JPanel();
+		colorLabel.setBorder(new LineBorder(contentPanel.getBackground(), 4, false));
 		colorLabel.setBackground(curentColor);
-		colorLabel.setBounds(207, y, 32, 32);
-		colorsPanelConentPanel.add(colorLabel);
+		colorLabel.setPreferredSize(new Dimension(36, 28));
+		contentPanel.add(colorLabel, BorderLayout.EAST);
 		
-		JButton changeButton = new JButton("Change");
-		changeButton.setBounds(242, y, 95, 32);
-		changeButton.setFont(Settings.MESSAGE_FONT);
-		changeButton.setForeground(ColorManager.FONT);
-		changeButton.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-		changeButton.addActionListener(new ActionListener() {
+		TabelObj tabelObj = new TabelObj(contentPanel, mineTabel);
+		tabelObj.setEditButtonAction(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Color newColor = JColorChooser.showDialog(getParentFrame(), "Change the "+title, curentColor, true);
@@ -146,22 +133,18 @@ public class SettingsTab_Appearance extends SettingsTab{
 				colorLabel.setBackground(newColor == null ? curentColor : newColor);
 			}
 		});
-		colorsPanelConentPanel.add(changeButton);
 		
-		JButton defaultButton = new JButton("X");
-		defaultButton.setBounds(339, y, 45, 32);
-		defaultButton.setFont(Settings.MESSAGE_FONT);
-		defaultButton.setForeground(ColorManager.FONT);
-		defaultButton.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-		defaultButton.addActionListener(new ActionListener() {
+		tabelObj.setDeleteButtonAction(true, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveNewColor(configName, defaultColor);
 				colorLabel.setBackground(defaultColor);
 			}
 		});
-		colorsPanelConentPanel.add(defaultButton);
+		
+		mineTabel.add(tabelObj);
 	}
+	
 	
 	private void saveNewColor(String configName, Color newColor) {
 		ColorManager.getSettingsConfig().setString("Colors.GUI."+configName, newColor == null ?  ColorManager.encode(Color.WHITE) : ColorManager.encode(newColor), true);

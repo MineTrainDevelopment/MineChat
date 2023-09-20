@@ -1,6 +1,8 @@
 package de.minetrain.minechat.main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
 
@@ -14,9 +16,13 @@ import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.frames.parant.MineDialog;
+import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
+import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
+import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -33,59 +39,80 @@ public class Main {
 	public static Settings rftnfijdg;
 	
 	public static void main(String[] args) throws Exception {
-		LOADINGBAR.setSize(400, 50);
-		LOADINGBAR.setLocation(50, 600);
-		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));
-//		
-		JLabel textureLabel = new JLabel(TEXTURE_MANAGER.getOnboarding());
-	    textureLabel.setSize(500, 700);
-	    textureLabel.add(LOADINGBAR);
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 		
-	    onboardingFrame = new JFrame("MineChat "+VERSION);
-	    onboardingFrame.setLayout(null);
-	    onboardingFrame.setSize(500, 700);
-	    onboardingFrame.setUndecorated(true);
-	    onboardingFrame.setLayout(null);
-	    onboardingFrame.setResizable(false);
-	    onboardingFrame.setLocationRelativeTo(null);
-	    onboardingFrame.getContentPane().setBackground(new Color(173, 96, 164));
-	    onboardingFrame.setShape(new RoundRectangle2D.Double(0, 0, 500, 700, 50, 50));
-	    onboardingFrame.add(textureLabel);
-	    onboardingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    onboardingFrame.setVisible(true);
-	    
-	    LOADINGBAR.setProgress("Reading config file.", 5);
-	    try {
-	    	CONFIG = new YamlManager("data/config.yml");
-	    	EMOTE_INDEX = new YamlManager(TextureManager.texturePath+"Icons/emoteIndex.yml");
-		} catch (Exception ex) {
-	    	LOADINGBAR.setError("config.yml or emoteIndex.yml not found!");
-	    	return;
-		}
-	    
-	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
-	    try {
-	    	new CredentialsManager();
-		} catch (InvalidAttributesException ex) {
-			new GetCredentialsFrame(onboardingFrame);
-		} catch (Exception ex) {
-			CredentialsManager.deleteCredentialsFile();
-			Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
-			return;
-		}
+//		MineDialog dialog = new MineDialog(frame, ChatStatusPanel.getMineChatStatusText().toString(), new Dimension(500,500));
+//		dialog.setExitOnCancelButton(true);
+//		dialog.addContent(new MineTabel(), BorderLayout.CENTER);
+//		dialog.setVisible(true);
 
-		CredentialsManager credentials = new CredentialsManager();
-		
-		new TwitchManager(credentials);
 		new Settings();
-		TextureManager.downloadPublicData();
 		Settings.reloadHighlights();
 		
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-		    public void run() {
-		    	TwitchManager.leaveAllChannel();
-		    }
-		});
+		SettingsFrame settings = new SettingsFrame(frame);
+		settings.setExitOnCancelButton(true);
+		settings.setVisible(true);
+		
+		
+		
+		
+		
+		
+//		LOADINGBAR.setSize(400, 50);
+//		LOADINGBAR.setLocation(50, 600);
+//		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));
+//		
+//		JLabel textureLabel = new JLabel(TEXTURE_MANAGER.getOnboarding());
+//	    textureLabel.setSize(500, 700);
+//	    textureLabel.add(LOADINGBAR);
+//		
+//	    onboardingFrame = new JFrame("MineChat "+VERSION);
+//	    onboardingFrame.setLayout(null);
+//	    onboardingFrame.setSize(500, 700);
+//	    onboardingFrame.setUndecorated(true);
+//	    onboardingFrame.setLayout(null);
+//	    onboardingFrame.setResizable(false);
+//	    onboardingFrame.setLocationRelativeTo(null);
+//	    onboardingFrame.getContentPane().setBackground(new Color(173, 96, 164));
+//	    onboardingFrame.setShape(new RoundRectangle2D.Double(0, 0, 500, 700, 50, 50));
+//	    onboardingFrame.add(textureLabel);
+//	    onboardingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//	    onboardingFrame.setVisible(true);
+//	    
+//	    LOADINGBAR.setProgress("Reading config file.", 5);
+//	    try {
+//	    	CONFIG = new YamlManager("data/config.yml");
+//	    	EMOTE_INDEX = new YamlManager(TextureManager.texturePath+"Icons/emoteIndex.yml");
+//		} catch (Exception ex) {
+//	    	LOADINGBAR.setError("config.yml or emoteIndex.yml not found!");
+//	    	return;
+//		}
+//	    
+//	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
+//	    try {
+//	    	new CredentialsManager();
+//		} catch (InvalidAttributesException ex) {
+//			new GetCredentialsFrame(onboardingFrame);
+//		} catch (Exception ex) {
+//			CredentialsManager.deleteCredentialsFile();
+//			Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
+//			return;
+//		}
+//
+//		CredentialsManager credentials = new CredentialsManager();
+//		
+//		new TwitchManager(credentials);
+//		new Settings();
+//		TextureManager.downloadPublicData();
+//		Settings.reloadHighlights();
+//		
+//		Runtime.getRuntime().addShutdownHook(new Thread() {
+//		    public void run() {
+//		    	TwitchManager.leaveAllChannel();
+//		    }
+//		});
 	}
 	
 	public static void openMainFrame(){

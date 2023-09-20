@@ -34,9 +34,6 @@ public class MineDialog extends JDialog{
 	private int mouseX, mouseY;
 	private boolean exitOnCancelButton;
 	
-	/**
-	 * @wbp.parser.constructor
-	 */
 	public MineDialog(JFrame parentFrame, String title) {
 		super(parentFrame, title, true);
 		createPanal(title, new Dimension(400, 100));
@@ -69,14 +66,14 @@ public class MineDialog extends JDialog{
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
         
         contentPanel = new JPanel(new BorderLayout());
-        getContentPanel().setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
-        getContentPanel().setBackground(ColorManager.GUI_BACKGROUND);
+        contentPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
+        contentPanel.setBackground(ColorManager.GUI_BACKGROUND);
         
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
         mainPanel.setBackground(ColorManager.GUI_BACKGROUND);
         mainPanel.add(createTitleBar(), BorderLayout.NORTH);
-        mainPanel.add(getContentPanel(), BorderLayout.CENTER);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 	}
@@ -209,7 +206,7 @@ public class MineDialog extends JDialog{
 	 * @param borderPosion Needs to be {@link BorderLayout} for examle {@link BorderLayout#CENTER}
 	 */
 	public MineDialog addContent(Component comp, String borderPosion) {
-		getContentPanel().add(comp, borderPosion);
+		contentPanel.add(comp, borderPosion);
 		return this;
 	}
 

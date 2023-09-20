@@ -138,6 +138,7 @@ public class AddWordHighlightFrame extends MineDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				logger.debug("Try to save a new HighlightString\n  " + (inputField != null ? inputField.getText() : "null"));
 				String newWord = HighlightString.saveNewWord(inputField.getText(), wordColor, borderColor);
 				if(newWord == null){
 					dispose();

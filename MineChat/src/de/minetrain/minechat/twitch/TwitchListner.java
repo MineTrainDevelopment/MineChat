@@ -63,6 +63,7 @@ public class TwitchListner {
 	@EventSubscriber
 	public void onStreamUp(ChannelGoLiveEvent event){
 		logger.info("Twtich livestram startet: "+event.getStream().getUserName()+" | "+event.getStream().getViewerCount()+" | "+event.getStream().getTitle());
+		//TODO Call a sound event and display a red dott next to the name inside a channels tab.
 	}
 
 	/**
@@ -72,6 +73,7 @@ public class TwitchListner {
 	@EventSubscriber
 	public void onStreamDown(ChannelGoOfflineEvent event){
 		logger.info("Twtich livestram Offline: "+event.getChannel().getName());
+		//remove the red dot next to chennel name in tab
 	}
 	
 	/**

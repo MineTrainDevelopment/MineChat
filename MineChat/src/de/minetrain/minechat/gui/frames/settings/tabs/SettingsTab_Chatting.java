@@ -1,5 +1,6 @@
 package de.minetrain.minechat.gui.frames.settings.tabs;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -22,6 +22,8 @@ import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
 import de.minetrain.minechat.gui.frames.settings.SettingsTab;
 import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
+import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
+import de.minetrain.minechat.gui.obj.panels.tabel.TabelObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.utils.obj.HighlightDefault;
 
@@ -36,26 +38,23 @@ public class SettingsTab_Chatting extends SettingsTab{
 		generalBorder.setTitleFont(Settings.MESSAGE_FONT);
 		generalBorder.setTitleColor(ColorManager.FONT);
 		
-		JPanel generalFormatPanel = new JPanel();
+		JPanel generalFormatPanel = new JPanel(new BorderLayout());
 		generalFormatPanel.setBackground(new Color(128, 128, 128));
 		generalFormatPanel.setBorder(generalBorder);
 		generalFormatPanel.setBounds(30, 15, 408, 190);
 		generalFormatPanel.setBackground(getBackground());
-		generalFormatPanel.setLayout(null);
 		add(generalFormatPanel);
 		
-		generalFormatConentPanel = new JPanel();
-		generalFormatConentPanel.setBackground(new Color(98, 98, 98));
-		generalFormatConentPanel.setBorder(null);
-		generalFormatConentPanel.setBounds(10, 25, 385, 159);
-		generalFormatConentPanel.setLayout(null);
-		generalFormatPanel.add(generalFormatConentPanel);
+		MineTabel generalTabel = new MineTabel();
+		generalFormatPanel.add(generalTabel, BorderLayout.CENTER);
 		
 		
 		String[] replyType = String.valueOf(ReplyType.MESSAGE.name()+" "+ReplyType.THREAD.name()+" "+ReplyType.USER_NAME.name()).split(" ");
 
 		JComboBox<String> replyDropDown = new JComboBox<String>(replyType);
 		replyDropDown.setSelectedItem(Settings.REPLY_TYPE.name());
+		replyDropDown.setForeground(ColorManager.FONT);
+		replyDropDown.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		replyDropDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -66,6 +65,8 @@ public class SettingsTab_Chatting extends SettingsTab{
 		
 		JComboBox<String> greetDropDown = new JComboBox<String>(replyType);
 		greetDropDown.setSelectedItem(Settings.GREETING_TYPE.name());
+		greetDropDown.setForeground(ColorManager.FONT);
+		greetDropDown.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		greetDropDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -76,6 +77,8 @@ public class SettingsTab_Chatting extends SettingsTab{
 		
 		JComboBox<String> undoDropDown = new JComboBox<String>(String.valueOf(UndoVariation.LETTER.name()+" "+UndoVariation.WORD).split(" "));
 		undoDropDown.setSelectedItem(Settings.UNDO_VARIATION.name());
+		undoDropDown.setForeground(ColorManager.FONT);
+		undoDropDown.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		undoDropDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -85,10 +88,15 @@ public class SettingsTab_Chatting extends SettingsTab{
 		});
 		
 
-		addDropDownLabel("Reply type:", 2, replyDropDown);
-		addDropDownLabel("Greeting type:", 41, greetDropDown);
-		addDropDownLabel("Undo Variation:", 80, undoDropDown);
-		addInputLabel("Undo cache size.", 119, new JTextArea("[TODO] - 100"));
+//		addDropDownLabel("Reply type:", 2, replyDropDown);
+//		addDropDownLabel("Greeting type:", 41, greetDropDown);
+//		addDropDownLabel("Undo Variation:", 80, undoDropDown);
+//		addInputLabel("Undo cache size.", 119, new JTextArea("[TODO] - 100"));
+
+		generalTabel.add(new TabelObj("Reply type:", generalTabel).overrideOptionPanel(replyDropDown));
+		generalTabel.add(new TabelObj("Greeting type:", generalTabel).overrideOptionPanel(greetDropDown));
+		generalTabel.add(new TabelObj("Undo Variation:", generalTabel).overrideOptionPanel(undoDropDown));
+		generalTabel.add(new TabelObj("Undo cache size.", generalTabel).overrideOptionPanel(new JTextArea("[TODO] - 100")));
 
 		
 		
