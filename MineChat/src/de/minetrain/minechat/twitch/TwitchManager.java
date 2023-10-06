@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
@@ -70,8 +71,24 @@ public class TwitchManager {
 			.build();
 		
 		if(twitch.getChat().getChannels().isEmpty()){
-			CredentialsManager.deleteCredentialsFile();
-			Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
+//			TODO Reask for OAuth2 Token.
+//			CredentialsManager.deleteCredentialsFile();
+			
+			Main.LOADINGBAR.setError("Requesting new OAuth2 Token.");
+			logger.error("Requesting new OAuth2 Token.");
+			
+			GetCredentialsFrame newCredentialsFrame = new GetCredentialsFrame(Main.onboardingFrame);
+			newCredentialsFrame.injectData(credentials.getClientID(), credentials.getClientSecret());
+			newCredentialsFrame.dispose();
+			
+			try {
+				new TwitchManager(new CredentialsManager());
+			} catch (Exception ex) {
+				CredentialsManager.deleteCredentialsFile();
+				Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
+				logger.error("Invalid twitch credentials!", ex);
+			}
+			
 			return;
 		}
 		

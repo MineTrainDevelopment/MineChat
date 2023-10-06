@@ -105,6 +105,11 @@ public class GetCredentialsFrame extends MineDialog {
 		return panel;
     }
 	
+	public void injectData(String clientId, String clientSecret){
+		clientIdField.setText(clientId);
+		clientSecretField.setText(clientSecret);
+	}
+		
 	
 	private ActionListener closeWindow(){
 		return new ActionListener() {
@@ -151,10 +156,10 @@ public class GetCredentialsFrame extends MineDialog {
 	    public void handle(HttpExchange exchange) throws IOException {
 	        // Extrahieren Sie den Autorisierungscode aus der Anfrage
 	        String requestURI = exchange.getRequestURI().toString();
-	        System.out.println("Query: "+exchange.getRequestURI().getQuery());
+	        logger.debug("Query: "+exchange.getRequestURI().getQuery());
 	        
 	        // Ausgabe der aufgerufenen URL in der Konsole
-	        System.out.println("Aufgerufene URL: " + requestURI);
+	        logger.debug("Aufgerufene URL: " + requestURI);
 
 	        // Extrahieren Sie das URL-Fragment mit JavaScript und senden Sie es an den Server
 	        String script = "<script>" +

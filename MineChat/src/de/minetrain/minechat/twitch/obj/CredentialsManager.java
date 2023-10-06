@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -22,10 +23,10 @@ import org.slf4j.LoggerFactory;
 public class CredentialsManager {
 	private static final Logger logger = LoggerFactory.getLogger(CredentialsManager.class);
 	protected static String SECRET_KEY;
-	protected static  String SALT;
-	protected static final String INIT_VECTOR = "jhrasrtzjew485wd";
-	protected static final String algorithm = "PBKDF2WithHmacSHA256";
-	protected static final String placeHolder = "Jä7bAtPübAt";
+	protected static String SALT;
+	protected static String INIT_VECTOR;// = "jhrasrtzjew485wd";
+	protected static String algorithm;// = "PBKDF2WithHmacSHA256";
+	protected static String placeHolder;// = "Jä7bAtPübAt";
 	protected static final String fileLocation = "data/data.minefile";
 
 	protected static String clientId;
@@ -39,19 +40,25 @@ public class CredentialsManager {
 	    	}
 	    	
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(fileLocation));
-			String[] split = bufferedReader.readLine().split(placeHolder);
+			String fileContent = bufferedReader.readLine();
+			placeHolder = fileContent.substring(0, 10);
+			
+			String[] split = fileContent.split(placeHolder);
 			bufferedReader.close();
 			
-			if(split.length != 11){
+			if(split.length != 16){
 				deleteCredentialsFile();
 				throw new InvalidAttributesException("Invalid credentials file.");
 			}
 
-			SECRET_KEY = split[5];
-			SALT = split[7];
-			clientId = decrypt(split[1]);
-			clientSecret = decrypt(split[3]);
-			oAuth2Token = decrypt(split[9]);
+
+			INIT_VECTOR = split[2];
+			algorithm = split[4];
+			SECRET_KEY = split[6];
+			SALT = split[8];
+			clientId = decrypt(split[10]);
+			clientSecret = decrypt(split[12]);
+			oAuth2Token = decrypt(split[14]);
 			
 		} catch (InvalidAttributesException ex) {
 			throw ex;
@@ -61,13 +68,61 @@ public class CredentialsManager {
 		}
 	}
 
-    public CredentialsManager(String clientID, String clientSecret, String OAuth2Token) throws Exception {
+    public CredentialsManager(String clientId, String clientSecret, String oAuth2Token) throws Exception {
     	SECRET_KEY = generateBoilerplate();
     	SALT = generateBoilerplate();
-		String credentials = generateBoilerplate()+placeHolder+encrypt(clientID)+placeHolder+generateBoilerplate()+placeHolder+encrypt(clientSecret)+placeHolder+generateBoilerplate()+placeHolder+SECRET_KEY+placeHolder+generateBoilerplate()+placeHolder+SALT+placeHolder+generateBoilerplate()+placeHolder+encrypt(OAuth2Token)+placeHolder+generateBoilerplate();
+    	
+    	INIT_VECTOR = generateSimpleBoilerplate().substring(0, 16);
+    	algorithm =  "PBKDF2WithHmacSHA256";
+
+		clientId = encrypt(clientId);
+		clientSecret = encrypt(clientSecret);
+		oAuth2Token = encrypt(oAuth2Token);
+		System.out.println(encrypt("PferdchenIstFein"));
+		
+		CredentialsManager.clientId = clientId;
+		CredentialsManager.clientSecret = clientSecret;
+		CredentialsManager.oAuth2Token = oAuth2Token;
+		
+		placeHolder = createPlaceHolder(SECRET_KEY + SALT + INIT_VECTOR + algorithm + clientId + clientSecret + oAuth2Token);
+		
+		StringBuilder credentials = new StringBuilder();
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //0
+		credentials.append(INIT_VECTOR);									   //1
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //2
+		credentials.append(algorithm);									   	   //3
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //4
+		credentials.append(SECRET_KEY);									   	   //5
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //6
+		credentials.append(SALT);									   		   //7
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //8
+		credentials.append(clientId);									       //9
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //10
+		credentials.append(clientSecret);									   //11
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //12
+		credentials.append(oAuth2Token);									   //13
+		credentials.append(placeHolder + generateBoilerplate() + placeHolder); //14
+
+		
+//		String credentials = generateBoilerplate() + placeHolder + encryptClientID + placeHolder
+//				+ generateBoilerplate() + placeHolder + encryptClientSecret + placeHolder + generateBoilerplate()
+//				+ placeHolder + SECRET_KEY + placeHolder + generateBoilerplate() + placeHolder + SALT + placeHolder
+//				+ generateBoilerplate() + placeHolder + encryptOAuth2Token + placeHolder + generateBoilerplate();
+		
 		try (PrintWriter writer = new PrintWriter(fileLocation)) {
-			writer.println(credentials);
+			writer.println(credentials.toString());
 		}
+	}
+    
+	private static final String createPlaceHolder(String values) {
+		String placeHolder = generateSimpleBoilerplate().substring(0, 10);
+		if(values.contains(placeHolder)){
+			logger.debug("illegal placeHolder! Regenerating it...");
+			return createPlaceHolder(values);
+		}
+
+		logger.debug("PlaceHolder gegenerated!");
+		return placeHolder;
 	}
     
     public static void deleteCredentialsFile(){
@@ -101,7 +156,18 @@ public class CredentialsManager {
     }
     
     private static final String generateBoilerplate() {
-        String alphabet = "/\\===*#ÄäÜüÖöabcdefghijklmnopqrstuvwABCDEFGHIKLMJNOPQRSTUVWXYZ1234567890";
+        String alphabet = "/\\===#ÄäÜüÖöabcdefghijklmnopqrstuvwABCDEFGHIKLMJNOPQRSTUVWXYZ1234567890";
+        String output = "";
+        for (int i = 0; i < Math.random()*250+25; i++) {
+            int index = (int) (Math.random() * alphabet.length());
+            output += alphabet.charAt(index);
+        }
+        
+        return output;
+    }
+    
+    private static final String generateSimpleBoilerplate() {
+        String alphabet = "abcdefghijklmnopqrstuvwABCDEFGHIKLMJNOPQRSTUVWXYZ1234567890";
         String output = "";
         for (int i = 0; i < Math.random()*250+25; i++) {
             int index = (int) (Math.random() * alphabet.length());
