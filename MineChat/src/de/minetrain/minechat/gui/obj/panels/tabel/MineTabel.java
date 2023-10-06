@@ -1,45 +1,23 @@
 package de.minetrain.minechat.gui.obj.panels.tabel;
 
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.awt.event.ActionEvent;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
-import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
-import de.minetrain.minechat.gui.frames.settings.editors.CustomiseTimeFormatFrame;
-import de.minetrain.minechat.gui.obj.ChatStatusPanel;
-import de.minetrain.minechat.gui.obj.ScrollBarUI;
-import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.Main;
-
-import javax.swing.JScrollBar;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.JInternalFrame;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
-import javax.swing.JDesktopPane;
-import java.awt.Dimension;
-import javax.swing.JToggleButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+
+import de.minetrain.minechat.gui.obj.ScrollBarUI;
+import de.minetrain.minechat.gui.utils.ColorManager;
 
 public class MineTabel extends JPanel{
+	private static final long serialVersionUID = 38501554803967353L;
 	public long itemIndex = 0;
 	public JPanel contentPanel = new JPanel();
 	
