@@ -125,7 +125,7 @@ public class TwitchListner {
     	
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", Settings.displayFollows.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
+				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
     }
     
     @EventSubscriber
@@ -136,7 +136,7 @@ public class TwitchListner {
 
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("Bit cheer", "@"+event.getUser().getName()+" just cheered "+event.getBits()+" bits!\n"+event.getMessage(), Settings.displayBitsCheerd.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%LOVE%", "Send some love!"));
+				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "Send some love!", EventButtonType.LOVE));
     }
 
     @EventSubscriber
@@ -148,12 +148,12 @@ public class TwitchListner {
         	String message = (event.getMessage().isEmpty()) ? "" : event.getMessage().get();
 			currentChannelTab.getChatWindow().displaySystemInfo("New subscription", "@"+event.getUser().getName()+" just subscribed for "+event.getMonths()+"month! \n "+message,
     			(event.getMonths()>12) ? Settings.displayGiftedSubs.getColor() : Settings.displaySubs.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "%GREET%"+event.getUser().getName(), "Say hello to "+event.getUser().getName()));
+					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
         }else if(Settings.displayGiftedSubs.isActive() && Settings.displayIndividualGiftedSubs.isActive()){
         	currentChannelTab.getChatWindow().displaySystemInfo("New subscription", "@"+event.getGiftedBy().getName()
 				+" just gifted a sub to @"+event.getUser().getName()
 				+"! ("+event.getGiftMonths()+".months)", Settings.displayIndividualGiftedSubs.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "%LOVE%", "Send some love!"));
+					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "Send some love!", EventButtonType.LOVE));
         }
     }
 
@@ -169,7 +169,7 @@ public class TwitchListner {
 				+" \nAmound: "+event.getCount()
 				+" \nThis user gifted "+(event.getCount()+event.getTotalCount())+" subs on this Channel!"
 				,(event.getCount() >= 5) ? Settings.displayGiftedSubs.getBigColor() : Settings.displayGiftedSubs.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "%LOVE%", "Send some love!"));
+						getButton(currentChannelTab, Main.TEXTURE_MANAGER.getLoveButton(), "Send some love!", EventButtonType.LOVE));
     }
     
 //    @EventSubscriber
@@ -201,7 +201,7 @@ public class TwitchListner {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("Announcement", "From: "+event.getAnnouncer().getName()+" \nMessage: "+event.getMessage(), Settings.displayAnnouncement.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%REPLY%"+event.getAnnouncer().getName(), "Say something about this announcement!"));
+				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "Say something about this announcement!", EventButtonType.REPLY, event.getAnnouncer().getName()));
     }
 
     @EventSubscriber
@@ -213,7 +213,7 @@ public class TwitchListner {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
 			.displaySystemInfo("Incuming raid", "Frome: "+event.getRaider().getName()+" \nViewers: "+event.getViewers(), Settings.displayAnnouncement.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%RAID%", "Say hello to the Raiders!"));
+				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to the Raiders!", EventButtonType.RAID));
     }
     
     @EventSubscriber
@@ -222,7 +222,7 @@ public class TwitchListner {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
     	currentChannelTab.getChatWindow()
     		.displaySystemInfo("Reward granted ", event.getUser().getName()+" got a "+event.getTriggerType()+ " reward", Settings.displayUserRewards.getColor(),
-				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%REPLY%"+event.getUser().getName(), "Congratulate this user!"));
+				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "Congratulate this user!", EventButtonType.REPLY, event.getUser().getName()));
     	
     }
     
@@ -232,7 +232,7 @@ public class TwitchListner {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
 		currentChannelTab.getChatWindow()
 			.displaySystemInfo("BitBadge Earned ", event.getUser().getName()+" got a new bit badge! -> "+event.getBitsThreshold(), Settings.displayUserRewards.getColor(),
-					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "%REPLY%"+event.getUser().getName(), "Congratulate this user!"));
+					getButton(currentChannelTab, Main.TEXTURE_MANAGER.getReplyButton(), "Congratulate this user!", EventButtonType.REPLY, event.getUser().getName()));
     }
 
     @EventSubscriber
@@ -336,7 +336,13 @@ public class TwitchListner {
 	}
 
 	
-	private MineButton getButton(ChannelTab tab, ImageIcon icon, String outputMessage, String toolTip){
+	private enum EventButtonType{GREETING, REPLY, RAID, LOVE;}
+
+	private MineButton getButton(ChannelTab tab, ImageIcon icon, String toolTip, EventButtonType buttonType){
+		return getButton(tab, icon, toolTip, buttonType, "");
+	}
+	
+	private MineButton getButton(ChannelTab tab, ImageIcon icon, String toolTip, EventButtonType buttonType, String userLogin){
 		MineButton actionButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 		actionButton.setPreferredSize(buttonSize);
 		actionButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
@@ -349,26 +355,25 @@ public class TwitchListner {
 				statusPanel.getinputArea().requestFocus();
 				statusPanel.overrideCurrentInputCache(false);
 				
-				if(outputMessage.startsWith("%GREET%")){
-			    	if(tab.getChatWindow().greetingsManager.isMentioned("")){
+				if(buttonType.equals(EventButtonType.GREETING)){
+			    	if(tab.getChatWindow().greetingsManager.isMentioned(userLogin)){
 			    		return;
 			    	}
 			    	
-			    	String userName = outputMessage.replace("%GREET%", "");
-			    	tab.getChatWindow().greetingsManager.add(userName);
+			    	tab.getChatWindow().greetingsManager.add(userLogin);
 					String greeting = tab.getGreetingTexts().get(ChatWindowMessageComponent.random.nextInt(tab.getGreetingTexts().size()));
-					statusPanel.overrideUserInput(greeting.replace("{USER}", "@"+userName).trim().replaceAll(" +", " "));
+					statusPanel.overrideUserInput(greeting.replace("{USER}", "@"+userLogin).trim().replaceAll(" +", " "));
 				}
 
-				if(outputMessage.startsWith("%REPLY%")){
-					statusPanel.overrideUserInput("@"+outputMessage.replace("%REPLY%", "")+" ");
+				if(buttonType.equals(EventButtonType.REPLY)){
+					statusPanel.overrideUserInput("@"+userLogin+" ");
 				}
 
-				if(outputMessage.startsWith("%RAID%")){
+				if(buttonType.equals(EventButtonType.RAID)){
 					statusPanel.overrideUserInput("%RAID% - [TODO]");
 				}
 
-				if(outputMessage.startsWith("%LOVE%")){
+				if(buttonType.equals(EventButtonType.LOVE)){
 					statusPanel.overrideUserInput("%LOVE% - [TODO]");
 				}
 			}
