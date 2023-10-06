@@ -1,8 +1,16 @@
 package de.minetrain.minechat.utils;
 
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.obj.ChannelTab;
@@ -12,6 +20,7 @@ import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 public class ChatMessage {
+	private static final Logger logger = LoggerFactory.getLogger(ChatMessage.class);
 	private final TwitchMessage replyMessage;
 	private final String message;
 	private final String messageRaw;
@@ -30,6 +39,13 @@ public class ChatMessage {
 			Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
 			ChannelStatistics statistics = TitleBar.currentTab.getStatistics();
 			
+			String clipBoard = "";
+			try {
+				clipBoard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+			} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
+				logger.info("Can´t readout the System ClipBoard. It may be empty.");
+			} 
+			
 			this.message = message
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
@@ -46,7 +62,11 @@ public class ChatMessage {
 					.replace("{TOTAL_RESUBS}", ""+statistics.getTotalResubs())
 					.replace("{TOTAL_GIFTSUB}", ""+statistics.getTotalGiftSubs())
 					.replace("{TOTAL_NEWSUB}", ""+statistics.getTotalNewSubs())
-					.replace("{TOTAL_BITS}", ""+statistics.getTotalBits());
+					.replace("{TOTAL_BITS}", ""+statistics.getTotalBits())
+					.replace("{ClipBoard}", clipBoard)
+					.replace("{CLIP_BOARD}", clipBoard)
+					.replace("{Clip}", clipBoard)
+					.replace("{CLIP}", clipBoard);
 		}else{
 			this.message = message;
 		}

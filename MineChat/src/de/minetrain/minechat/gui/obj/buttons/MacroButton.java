@@ -138,6 +138,7 @@ public class MacroButton extends MineButton{
 	public void setData(MacroObject macro) {
 		setIcon(new ImageIcon(macro.getEmotePath()));
 		setText((macro.getButtonName().equalsIgnoreCase("null")) ? "" : macro.getButtonName());
+		setToolTipText(macro.getMacroOutput());
 	}
 	
 	@Override
