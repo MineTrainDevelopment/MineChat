@@ -20,6 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;

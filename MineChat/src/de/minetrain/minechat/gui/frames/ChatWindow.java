@@ -213,6 +213,11 @@ public class ChatWindow extends JLabel {
     	}else{
     		this.replyMessage = null;
     	}
+
+    	//Fixed that the Greeting button, overrides the reply type, for the particular message.
+    	if(twitchMessage != null){
+    		twitchMessage.setReplyType(Settings.REPLY_TYPE);
+    	}
     	
 		chatStatusPanel.setReply(twitchMessage);
 	}

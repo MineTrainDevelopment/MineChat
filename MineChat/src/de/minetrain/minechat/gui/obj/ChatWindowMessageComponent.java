@@ -242,7 +242,11 @@ public class ChatWindowMessageComponent extends JPanel{
 						chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
 						twitchMessage.setReplyType(Settings.GREETING_TYPE);
 						
-						if(twitchMessage.getReplyType() != ReplyType.THREAD){
+						if(twitchMessage.getReplyType() == ReplyType.THREAD){
+							twitchMessage.setReply(twitchMessage.getReplyId(), twitchMessage.getUserName());
+						}
+						
+						if(twitchMessage.getReplyType() == ReplyType.MESSAGE){
 							twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
 						}
 						
