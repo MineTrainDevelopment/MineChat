@@ -26,7 +26,7 @@ public class ChannelMacros {
 	
 	private void createMaps(MacroRow row, String configID) {
 		HashMap<ButtonType, MacroObject> macroRow = getMacroRow(row);
-		if(configID == null || configID.isEmpty()){
+		if(configID == null || configID.isEmpty() || configID.equals("0")){
 			macroRow.put(ButtonType.MACRO_1, new MacroObject(ButtonType.MACRO_1, "null", "null", ">null<"));
 			macroRow.put(ButtonType.MACRO_2, new MacroObject(ButtonType.MACRO_2, "null", "null", ">null<"));
 			macroRow.put(ButtonType.MACRO_3, new MacroObject(ButtonType.MACRO_3, "null", "null", ">null<"));

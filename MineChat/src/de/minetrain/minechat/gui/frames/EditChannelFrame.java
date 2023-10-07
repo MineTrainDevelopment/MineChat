@@ -346,7 +346,6 @@ public class EditChannelFrame extends JDialog {
 					}
 				}).start();
 				
-				editedTab.getTabButton().removeActionListener(editedTab.getEditWindowAction());
 				editedTab.reload(twitchUser.getUserId());
 				dispose();
 			}

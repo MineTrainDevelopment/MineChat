@@ -54,6 +54,7 @@ public class TextureManager {
 	private final ImageIcon mainFrame_TAB_1;
 	private final ImageIcon mainFrame_TAB_2;
 	private final ImageIcon mainFrame_TAB_3;
+	private final ImageIcon mainFrame_Blank;
 	private final ImageIcon onboarding;
 	private final ImageIcon emoteBorder;
 	private final ImageIcon programIcon;
@@ -73,12 +74,15 @@ public class TextureManager {
 	private final ImageIcon rowArrowRight;
 	private final ImageIcon rowArrowLeft;
 	private final ImageIcon replyChainButton;
+	private final ImageIcon programClose;
+	private final ImageIcon programMinimize;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
 		this.mainFrame_TAB_1 = new ImageIcon(texturePath + "MineChatTextur.png");
 		this.mainFrame_TAB_2 =new ImageIcon(texturePath + "MineChatTextur2.png");
 		this.mainFrame_TAB_3 = new ImageIcon(texturePath + "MineChatTextur3.png");
+		this.mainFrame_Blank = new ImageIcon(texturePath + "MineChatTextur_Blank.png");
 		this.onboarding = new ImageIcon(texturePath + "MineChatTexturOnboarding.png");
 		this.emoteBorder = new ImageIcon(texturePath + "emoteBorder.png");
 		this.programIcon = new ImageIcon(texturePath + "programIcon.png");
@@ -99,6 +103,8 @@ public class TextureManager {
 		this.rowArrowLeft = new ImageIcon(texturePath + "rowArrowLeft.png");
 		this.rowArrowRight = new ImageIcon(texturePath + "rowArrowRight.png");
 		this.replyChainButton = new ImageIcon(texturePath + "replyChainButton.png");
+		this.programClose = new ImageIcon(texturePath + "programClose.png");
+		this.programMinimize = new ImageIcon(texturePath + "programMinimize.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -113,6 +119,10 @@ public class TextureManager {
 
 	public ImageIcon getMainFrame_TAB_3() {
 		return mainFrame_TAB_3;
+	}
+
+	public ImageIcon getMainFrame_Blank() {
+		return mainFrame_Blank;
 	}
 
 	public ImageIcon getOnboarding() {
@@ -194,6 +204,14 @@ public class TextureManager {
 	public ImageIcon getReplyChainButton() {
 		return replyChainButton;
 	}
+	
+	public ImageIcon getProgramClose() {
+		return programClose;
+	}
+	
+	public ImageIcon getProgramMinimize() {
+		return programMinimize;
+	}
 
 	
 	public ImageIcon getByTabButton(TabButtonType tab){
@@ -206,7 +224,16 @@ public class TextureManager {
 			
 		case TAB_THIRD:
 			return mainFrame_TAB_3;
-
+			
+		case TAB_MAIN_ROW_2:
+			return mainFrame_TAB_1;
+			
+		case TAB_SECOND_ROW_2:
+			return mainFrame_TAB_2;
+			
+		case TAB_THIRD_ROW_2:
+			return mainFrame_TAB_3;
+			
 		default:
 			logger.warn("Invalid boolean.", new IllegalArgumentException("Can´t fine a vaule for: "+tab));
 			return null;

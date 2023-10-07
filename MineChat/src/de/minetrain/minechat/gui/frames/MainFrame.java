@@ -96,7 +96,7 @@ public class MainFrame extends JFrame{
 		
         this.titleBar = new TitleBar(this, textureLabel);
         titleBar.getTabNames().forEach(panal -> textureLabel.add(panal)); //Add TabTexts
-        titleBar.changeTab(TabButtonType.TAB_MAIN, titleBar.getMainTab());
+        titleBar.reloadTabs();
         
 		getContentPane().add(titleBar);
         getContentPane().add(textureLabel);

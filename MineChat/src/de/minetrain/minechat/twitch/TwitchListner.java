@@ -320,16 +320,28 @@ public class TwitchListner {
 		
 		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
 		ChannelTab channelTab = null;
-		if(titleBar.getMainTab().getConfigID().equals(eventChannel.getId())){
-			channelTab = titleBar.getMainTab();
+		if(titleBar.mainTab.getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.mainTab;
 		}
 		
-		if(titleBar.getSecondTab().getConfigID().equals(eventChannel.getId())){
-			channelTab = titleBar.getSecondTab();
+		if(titleBar.secondTab.getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.secondTab;
 		}
 		
-		if(titleBar.getThirdTab().getConfigID().equals(eventChannel.getId())){
-			channelTab = titleBar.getThirdTab();
+		if(titleBar.thirdTab.getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.thirdTab;
+		}
+		
+		if(titleBar.channelTabRow_Main.getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.channelTabRow_Main;
+		}
+		
+		if(titleBar.channelTabRow_Second.getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.channelTabRow_Second;
+		}
+		
+		if(titleBar.channelTabRow_Third.getConfigID().equals(eventChannel.getId())){
+			channelTab = titleBar.channelTabRow_Third;
 		}
 		
 		return channelTab;

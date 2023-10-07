@@ -42,10 +42,8 @@ public class Main {
 	public static MainFrame MAIN_FRAME;
 	public static JFrame onboardingFrame;
 	public static Settings rftnfijdg;
-	private static String[] args;
 	
 	public static void main(String[] args) throws Exception {
-		Main.args = args;
 //		JFrame frame = new JFrame();
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.setVisible(true);

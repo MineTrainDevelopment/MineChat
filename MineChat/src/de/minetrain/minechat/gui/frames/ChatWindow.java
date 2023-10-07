@@ -226,5 +226,12 @@ public class ChatWindow extends JLabel {
 	public JScrollPane getScrollPane() {
 		return scrollPane;
 	}
+	
+	@Override
+	public void setVisible(boolean aFlag) {
+		super.setVisible(aFlag);
+		this.revalidate();
+		this.repaint();
+	}
 
 }

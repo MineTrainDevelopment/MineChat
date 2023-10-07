@@ -73,7 +73,7 @@ public class MacroEmoteButton extends MineButton{
 		            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
 		            			Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros"+macroRow+"."+type.getConfigIndex(), (selectedEmote.getFilePath().replace("_BG", ""))+"%-%"+output, true);
 		            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
-		            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab.getTabType(), TitleBar.currentTab);
+		            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab);
 		            		}
 		            	}
 		            }).start();

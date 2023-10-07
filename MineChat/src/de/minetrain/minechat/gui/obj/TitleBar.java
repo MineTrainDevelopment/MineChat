@@ -2,6 +2,7 @@ package de.minetrain.minechat.gui.obj;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +41,21 @@ public class TitleBar extends JPanel{
 	public static ChannelTab currentTab;
 	public final MainFrame mainFrame;
 	public final JLabel texture;
-	private ChannelTab mainTab;
-	private ChannelTab secondTab;
-	private ChannelTab thirdTab;
+	public ChannelTab mainTab;
+	public ChannelTab secondTab;
+	public ChannelTab thirdTab;
 	private JButton tab1;
 	private JButton tab2;
 	private JButton tab3;
+	public ChannelTab channelTabRow_Main;
+	public ChannelTab channelTabRow_Second;
+	public ChannelTab channelTabRow_Third;
+	
+	private JLabel mainTabName = new JLabel("", SwingConstants.CENTER);
+    private JLabel secondTabName = new JLabel("", SwingConstants.CENTER);
+    private JLabel thirdTabName = new JLabel("", SwingConstants.CENTER);
+    
+	public int titleRowIndex = 0;
     private int mouseX, mouseY;
 
 	public TitleBar(MainFrame mainFrame, JLabel texture) {
@@ -52,17 +63,17 @@ public class TitleBar extends JPanel{
 		this.texture = texture;
 
         // Erstelle den Minimieren-Button
-        JButton minimizeButton = new MineButton(new Dimension(25, 25), null, ButtonType.MINIMIZE);
-        minimizeButton.setBackground(Color.GREEN);
-        minimizeButton.setBounds(410, 10, 30, 30);
+        JButton minimizeButton = new MineButton(new Dimension(25, 25), null, ButtonType.MINIMIZE).setInvisible(!MainFrame.debug);
+        minimizeButton.setBounds(410, 9, 30, 30);
+        minimizeButton.setIcon(Main.TEXTURE_MANAGER.getProgramMinimize());
         minimizeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {mainFrame.setExtendedState(JFrame.ICONIFIED);}
         });
 
         // Erstelle den Schließen-Button
-        JButton closeButton = new MineButton(new Dimension(25, 25), null, ButtonType.CLOSE);
-        closeButton.setBackground(Color.RED);
-        closeButton.setBounds(450, 10, 30, 30);
+        JButton closeButton = new MineButton(new Dimension(25, 25), null, ButtonType.CLOSE).setInvisible(!MainFrame.debug);
+        closeButton.setIcon(Main.TEXTURE_MANAGER.getProgramClose());
+        closeButton.setBounds(448, 9, 30, 30);
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){System.exit(0);}
         });
@@ -79,30 +90,45 @@ public class TitleBar extends JPanel{
             	new SettingsFrame(mainFrame);
             }
         });
+        
+
+        JButton changeRowButton = new MineButton(new Dimension(25, 25), null, ButtonType.MINIMIZE).setInvisible(!MainFrame.debug);
+        changeRowButton.setBounds(410, 9, 30, 30);
+        changeRowButton.setIcon(Main.TEXTURE_MANAGER.getRowArrowRight());
+        changeRowButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	titleRowIndex = (titleRowIndex > 0) ? 0:1;
+            	changeRowButton.setIcon(titleRowIndex == 0 ? Main.TEXTURE_MANAGER.getRowArrowRight() : Main.TEXTURE_MANAGER.getRowArrowLeft());
+            	reloadTabs();
+        	}
+        });
 
         tab1 = new MineButton(new Dimension(80, 30), null, ButtonType.TAB_1).setInvisible(!MainFrame.debug);
         tab1.setBounds(53, tabButtonHight, 110, 35);
         tab1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_MAIN, mainTab);}
+			public void actionPerformed(ActionEvent e){changeTab(getMainTab());}
 		});
         
         tab2 = new MineButton(new Dimension(80, 30), null, ButtonType.TAB_2).setInvisible(!MainFrame.debug);
         tab2.setBounds(168, tabButtonHight, 115, 35);
         tab2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_SECOND, secondTab);}
+			public void actionPerformed(ActionEvent e){changeTab(getSecondTab());}
 		});
         
         tab3 = new MineButton(new Dimension(80, 30), null, ButtonType.TAB_3).setInvisible(!MainFrame.debug);
         tab3.setBounds(288, tabButtonHight, 110, 35);
         tab3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){changeTab(TabButtonType.TAB_THIRD, thirdTab);}
+			public void actionPerformed(ActionEvent e){changeTab(getThirdTab());}
 		});
         
         YamlManager config = Main.CONFIG;
 		List<TwitchUserObj> twitchUsers = TwitchManager.getTwitchUsers(TwitchApiCallType.ID, 
     		""+config.getLong(TabButtonType.TAB_MAIN.getConfigPath(), 0),
     		""+config.getLong(TabButtonType.TAB_SECOND.getConfigPath(), 0),
-    		""+config.getLong(TabButtonType.TAB_THIRD.getConfigPath(), 0));
+    		""+config.getLong(TabButtonType.TAB_THIRD.getConfigPath(), 0),
+			""+config.getLong(TabButtonType.TAB_THIRD_ROW_2.getConfigPath(), 0),
+			""+config.getLong(TabButtonType.TAB_THIRD_ROW_2.getConfigPath(), 0),
+			""+config.getLong(TabButtonType.TAB_THIRD_ROW_2.getConfigPath(), 0));
         
         twitchUsers.forEach(channel -> {
         	String yamlPath = "Channel_"+channel.getUserId();
@@ -115,10 +141,14 @@ public class TitleBar extends JPanel{
 			}
         });
         
-        
-        this.mainTab = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN);
-		this.secondTab = new ChannelTab(mainFrame, tab2, TabButtonType.TAB_SECOND);
-		this.thirdTab = new ChannelTab(mainFrame, tab3, TabButtonType.TAB_THIRD);
+        this.mainTab = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN, mainTabName);
+        this.channelTabRow_Main = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN_ROW_2, mainTabName);
+
+        this.secondTab = new ChannelTab(mainFrame, tab2, TabButtonType.TAB_SECOND, secondTabName);
+        this.channelTabRow_Second = new ChannelTab(mainFrame, tab2, TabButtonType.TAB_SECOND_ROW_2, secondTabName);
+
+        this.thirdTab = new ChannelTab(mainFrame, tab3, TabButtonType.TAB_THIRD, thirdTabName);
+		this.channelTabRow_Third = new ChannelTab(mainFrame, tab3, TabButtonType.TAB_THIRD_ROW_2, thirdTabName);
 		
 		mainFrame.profileButton.addActionListener(new ActionListener() {
 			
@@ -144,12 +174,23 @@ public class TitleBar extends JPanel{
         add(tab1);
         add(tab2);
         add(tab3);
-        add(minimizeButton);
+//        add(minimizeButton);
+        add(changeRowButton);
         add(settingsButton);
         add(closeButton);
 	}
+	
+	public void reloadTabs(){
+		YamlManager config = Main.CONFIG;
+		
+		getMainTab().reload(""+config.getLong(getMainTab().getTabType().getConfigPath(), 0));
+		getSecondTab().reload(""+config.getLong(getSecondTab().getTabType().getConfigPath(), 0));
+		getThirdTab().reload(""+config.getLong(getThirdTab().getTabType().getConfigPath(), 0));
+		
+		changeTab(getMainTab());
+	}
 
-	public void changeTab(TabButtonType buttonType, ChannelTab tab) {
+	public void changeTab(ChannelTab tab) {
 		currentTab = tab;
 		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
 		mainFrame.profileButton.setIcon(new ImageIcon(tab.getProfileImagePath()));
@@ -157,19 +198,34 @@ public class TitleBar extends JPanel{
 		tab.loadMacroRow(null);
 		
     	texture.setIcon(tab.getTexture());
-    	mainTab.offsetButton(buttonType);
-    	thirdTab.offsetButton(buttonType);
-    	secondTab.offsetButton(buttonType);
+    	
+		getMainTab().offsetButton(tab.getTabType());
+    	getSecondTab().offsetButton(tab.getTabType());
+    	getThirdTab().offsetButton(tab.getTabType());
+
+		mainTab.getChatWindow().setVisible((tab.getTabType().equals(TabButtonType.TAB_MAIN)) ? true : false);
+		secondTab.getChatWindow().setVisible((tab.getTabType().equals(TabButtonType.TAB_SECOND)) ? true : false);
+		thirdTab.getChatWindow().setVisible((tab.getTabType().equals(TabButtonType.TAB_THIRD)) ? true : false);
+		
+    	channelTabRow_Main.getChatWindow().setVisible((tab.getTabType().equals(TabButtonType.TAB_MAIN_ROW_2)) ? true : false);
+    	channelTabRow_Second.getChatWindow().setVisible((tab.getTabType().equals(TabButtonType.TAB_SECOND_ROW_2)) ? true : false);
+    	channelTabRow_Third.getChatWindow().setVisible((tab.getTabType().equals(TabButtonType.TAB_THIRD_ROW_2)) ? true : false);
     	
     	MineTextArea.setStaticChannelEmoteDictionary(tab.getConfigID());
 	}
 	
 	public ArrayList<JLabel> getTabNames(){
 		ArrayList<JLabel> list = new ArrayList<JLabel>();
-		list.add(mainTab.getTabLabelWithData(tab1.getLocation(getLocation()), tab1.getSize()));
-		list.add(secondTab.getTabLabelWithData(tab2.getLocation(getLocation()), tab2.getSize()));
-		list.add(thirdTab.getTabLabelWithData(tab3.getLocation(getLocation()), tab3.getSize()));
+		list.add(getTabLabelWithData(mainTabName, tab1.getLocation(getLocation()), tab1.getSize()));
+		list.add(getTabLabelWithData(secondTabName, tab2.getLocation(getLocation()), tab2.getSize()));
+		list.add(getTabLabelWithData(thirdTabName, tab3.getLocation(getLocation()), tab3.getSize()));
 		return list;
+	}
+	
+	public JLabel getTabLabelWithData(JLabel nameLabel, Point point, Dimension size) {
+		nameLabel.setLocation(point);
+		nameLabel.setSize(size);
+		return nameLabel;
 	}
 	
 	private MouseAdapter MoiseListner() {
@@ -191,18 +247,19 @@ public class TitleBar extends JPanel{
             }
         };
 	}
-
+	
 	public ChannelTab getMainTab() {
-		return mainTab;
+		return titleRowIndex == 0 ? mainTab : channelTabRow_Main;
 	}
 
 	public ChannelTab getSecondTab() {
-		return secondTab;
+		return titleRowIndex == 0 ? secondTab : channelTabRow_Second;
 	}
 
 	public ChannelTab getThirdTab() {
-		return thirdTab;
+		return titleRowIndex == 0 ? thirdTab : channelTabRow_Third;
 	}
+
 
 	public JButton getTab1() {
 		return tab1;

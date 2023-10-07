@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -39,7 +41,7 @@ public class ChannelTab {
 	private boolean moderator;
 	private MainFrame mainFrame;
 	private List<String> greetingTexts;
-	private ActionListener editWindowAction;
+	private static List<ActionListener> editWindowActions = new ArrayList<ActionListener>();
 	private ChannelMacros macros;
 	private ChatWindow chatWindow;
 	private ChannelStatistics statistics = new ChannelStatistics(this);
@@ -48,7 +50,7 @@ public class ChannelTab {
 //	private ChannelMacros macros;
 	
 	
-	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab) {
+	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab, JLabel nameLabel) {
 		YamlManager config = Main.CONFIG;
 		configID = ""+config.getLong(tab.getConfigPath(), 0);
 		
@@ -58,51 +60,57 @@ public class ChannelTab {
 		chatWindow.setVisible(false);
 		this.mainFrame.getContentPane().add(chatWindow);
 		
-		this.texture = Main.TEXTURE_MANAGER.getByTabButton(tab);
+		this.texture = Main.TEXTURE_MANAGER.getMainFrame_Blank();
 		this.tabType = tab;
 		this.thisObject = this;
 		this.tabButton = button;
 		
-		tabButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (SwingUtilities.isRightMouseButton(e)) {
-					System.out.println("Right klick");
-					switch (tab) {
-					case TAB_MAIN:
-						ChannelTab mainTab = Main.MAIN_FRAME.getTitleBar().getMainTab();
-						if(mainTab.isOccupied()){mainTab.openEditFrame();}
-						break;
-						
-					case TAB_SECOND:
-						ChannelTab secondTab = Main.MAIN_FRAME.getTitleBar().getSecondTab();
-						if(secondTab.isOccupied()){secondTab.openEditFrame();}
-						break;
-						
-					case TAB_THIRD:
-						ChannelTab thirdTab = Main.MAIN_FRAME.getTitleBar().getThirdTab();
-						if(thirdTab.isOccupied()){thirdTab.openEditFrame();}
-						break;
-
-					default:
-						break;
+		if(tab.isFirstRow()){
+			System.err.println("Add mouseListner - " + tabButton);
+			tabButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						System.out.println("Right klick");
+						switch (tab) {
+						case TAB_MAIN, TAB_MAIN_ROW_2:
+							ChannelTab mainTab = Main.MAIN_FRAME.getTitleBar().getMainTab();
+							if(mainTab.isOccupied()){mainTab.openEditFrame();}
+							break;
+							
+						case TAB_SECOND, TAB_SECOND_ROW_2:
+							ChannelTab secondTab = Main.MAIN_FRAME.getTitleBar().getSecondTab();
+							if(secondTab.isOccupied()){secondTab.openEditFrame();}
+							break;
+							
+						case TAB_THIRD, TAB_THIRD_ROW_2:
+							ChannelTab thirdTab = Main.MAIN_FRAME.getTitleBar().getThirdTab();
+							if(thirdTab.isOccupied()){thirdTab.openEditFrame();}
+							break;
+	
+						default:
+							break;
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 		
 		if(!isOccupied()){
 			displayName = "";
 			moderator = false;
 			greetingTexts = null;
-			editWindowAction = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
-			this.tabButton.addActionListener(getEditWindowAction());
+			
+			ActionListener actionListener = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
+			editWindowActions.add(actionListener);
+			this.tabButton.addActionListener(actionListener);
 			macros = new ChannelMacros(null);
 		}else{
 			loadData(configID);
 		}
 	
-		tabLabel = new JLabel(getTabName(), SwingConstants.CENTER);
+		tabLabel = nameLabel;
+		tabLabel.setText(getTabName());
 		tabLabel.setVisible(true);
 		tabLabel.setForeground(Color.WHITE);
 	}
@@ -121,14 +129,35 @@ public class ChannelTab {
 	
 	private void loadData(String configID) {
 		this.configID = configID;
-		YamlManager config = Main.CONFIG;
-		String configPath = "Channel_"+configID+".";
-		channelName = config.getString(configPath+"Name");
-		displayName = config.getString(configPath+"DisplayName");
-		moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
-		greetingTexts = config.getStringList(configPath+"GreetingText");
-		chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
-		TwitchManager.joinChannel(channelName);
+		
+		editWindowActions.forEach(editWindowAction -> {
+			if(Arrays.asList(this.tabButton.getActionListeners()).contains(editWindowAction)){
+				this.tabButton.removeActionListener(editWindowAction);
+			}
+		});
+		
+		
+		if(configID.equals("0")) {
+			displayName = "";
+			moderator = false;
+			greetingTexts = null;
+			
+			ActionListener actionListener = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
+			editWindowActions.add(actionListener);
+			this.tabButton.addActionListener(actionListener);
+		}else{
+			YamlManager config = Main.CONFIG;
+			String configPath = "Channel_"+configID+".";
+			channelName = config.getString(configPath+"Name");
+			displayName = config.getString(configPath+"DisplayName");
+			moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
+			greetingTexts = config.getStringList(configPath+"GreetingText");
+			chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
+			this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
+			TwitchManager.joinChannel(channelName);
+		}
+		
+		
 		loadMacros(configID);
 	}
 
@@ -141,21 +170,15 @@ public class ChannelTab {
 		macros.reloadMacros(configID);
 	}
 	
-	public void openEditFrame(){
+	public void openEditFrame() {
 		new EditChannelFrame(Main.MAIN_FRAME, thisObject);
-	}
-	
-	public JLabel getTabLabelWithData(Point point, Dimension size) {
-		tabLabel.setLocation(point);
-		tabLabel.setSize(size);
-		return tabLabel;
 	}
 	
 	public ChannelTab offsetButton(TabButtonType offset){
 		Point location = tabButton.getLocation();
 		location.setLocation(location.getX(), offset.getOffset(tabType, location.y));
 		tabButton.setLocation(location);
-		chatWindow.setVisible((tabType.equals(offset)) ? true : false);
+//		chatWindow.setVisible((tabType.equals(offset)) ? true : false);
 		return this;
 	}
 	
@@ -240,10 +263,6 @@ public class ChannelTab {
 
 	public ChannelMacros getMacros() {
 		return macros;
-	}
-
-	public ActionListener getEditWindowAction() {
-		return editWindowAction;
 	}
 
 	public boolean isModerator() {
