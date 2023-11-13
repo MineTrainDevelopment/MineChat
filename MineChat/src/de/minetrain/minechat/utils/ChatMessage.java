@@ -21,11 +21,12 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 public class ChatMessage {
 	private static final Logger logger = LoggerFactory.getLogger(ChatMessage.class);
-	private final TwitchMessage replyMessage;
+	private TwitchMessage replyMessage;
 	private final String message;
 	private final String messageRaw;
 	private final String senderNamem;
 	private final ChannelTab channelTab;
+	private boolean replyOveride;
 	
 	public ChatMessage(ChannelTab tab, String senderNamem, String message) {
 		this.replyMessage = tab.getChatWindow().replyMessage;
@@ -95,7 +96,16 @@ public class ChatMessage {
 	public String getMessageRaw() {
 		return messageRaw;
 	}
-
+	
+	public boolean isReplyOveride(){
+		return replyOveride;
+	}
+	
+	public void overrideReplyMessage(TwitchMessage message){
+		this.replyMessage = message;
+		this.replyOveride = true;
+	}
+	
 
 	
 }

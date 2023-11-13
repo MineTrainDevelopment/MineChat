@@ -3,6 +3,7 @@ package de.minetrain.minechat.twitch;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -43,6 +45,7 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.utils.ChatMessage;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
@@ -55,6 +58,7 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
 public class TwitchListner {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchListner.class);
 	private static final Dimension buttonSize = new Dimension(28, 28);
+	public static int messagesTEMP = 0;
 	
 	/**
 	 * Handles the event when a stream goes live and sends a message to the channel with a randomized stream-up sentence.
@@ -114,6 +118,7 @@ public class TwitchListner {
 		}
 
 		channelTab.getChatWindow().displayMessage(twitchMessage);
+		AutoReplyManager.recordMessage(twitchMessage);
 	}
 	
 	

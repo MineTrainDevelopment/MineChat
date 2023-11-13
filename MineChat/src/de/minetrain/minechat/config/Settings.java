@@ -12,11 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
+import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
+import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.utils.obj.HighlightDefault;
-import de.minetrain.minechat.utils.obj.HighlightGiftSubs;
-import de.minetrain.minechat.utils.obj.HighlightString;
 
 public class Settings{
 	private static final Logger logger = LoggerFactory.getLogger(Settings.class);

@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_Appearance;
+import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_AutoReply;
 import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_Chatting;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
@@ -51,6 +52,7 @@ public class SettingsFrame extends MineDialog{
 		
 		add(new SettingsTab_Chatting(parentFrame));
 		add(new SettingsTab_Appearance(parentFrame));
+		add(new SettingsTab_AutoReply(parentFrame));
 //		mainPanel.add(new SettingsTab("Test"));
 		
 

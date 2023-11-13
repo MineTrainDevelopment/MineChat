@@ -118,6 +118,7 @@ public class EditChannelFrame extends JDialog {
 					//format the login input, should it be a link.
 					if(currentInput.contains("https://www.twitch.tv/")){
 						loginNameField.setText(loginNameField.getText().replace("https://www.twitch.tv/", "").split("\\?")[0]);
+						currentInput = loginNameField.getText().toLowerCase();
 					}
         			
 					//Set the default values, depending if there is alrady data for the inpit login name.

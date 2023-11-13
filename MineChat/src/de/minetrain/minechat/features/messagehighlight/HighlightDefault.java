@@ -1,4 +1,4 @@
-package de.minetrain.minechat.utils.obj;
+package de.minetrain.minechat.features.messagehighlight;
 
 import java.awt.Color;
 

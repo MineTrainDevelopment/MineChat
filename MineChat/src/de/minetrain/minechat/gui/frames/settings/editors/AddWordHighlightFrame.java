@@ -31,12 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
-import de.minetrain.minechat.utils.obj.HighlightString;
 
 public class AddWordHighlightFrame extends MineDialog {
 	private static final long serialVersionUID = -4774556639413934907L;

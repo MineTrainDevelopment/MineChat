@@ -1,7 +1,6 @@
 package de.minetrain.minechat.gui.obj;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,12 +8,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.YamlManager;
@@ -31,6 +31,8 @@ import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
 public class ChannelTab {
+	public static final Map<String, String> channelDisplayNameList = new HashMap<String, String>();
+	public static final Map<String, ChannelTab> byId = new HashMap<String, ChannelTab>();//channelId -> channelTab
 	private ChannelTab thisObject;
 	private TabButtonType tabType;
 	private String configID;
@@ -155,6 +157,9 @@ public class ChannelTab {
 			chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
 			this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
 			TwitchManager.joinChannel(channelName);
+			
+			channelDisplayNameList.put(channelName, displayName);
+			byId.put(configID, this);
 		}
 		
 		
@@ -279,6 +284,10 @@ public class ChannelTab {
 	
 	public MainFrame getMainFrame(){
 		return mainFrame;
+	}
+	
+	public static ChannelTab getById(String channelId){
+		return byId.get(channelId);
 	}
 	
 }

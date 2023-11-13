@@ -1,6 +1,7 @@
 package de.minetrain.minechat.gui.frames.parant;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -194,6 +195,10 @@ public class MineDialog extends JDialog{
 		title = title.isEmpty() ? " " : title;
 		super.setTitle(title);
 		titleText.setText(title);
+	}
+	
+	public void setTitleColor(Color color){
+		titleText.setForeground(color);
 	}
 	
 	@Override

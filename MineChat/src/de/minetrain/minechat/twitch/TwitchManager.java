@@ -20,8 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
@@ -194,9 +192,11 @@ public class TwitchManager {
 	private static void replyMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
 		if(!replyMessage.isNull()){
-			replyMessage.getParentTab().getChatWindow().greetingsManager.setMentioned(replyMessage.getUserName().toLowerCase());
 			twitch.getChat().sendMessage(message.getChannelTab().getChannelName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
-			replyMessage.getParentTab().getChatWindow().setMessageToReply(null);
+			if(!message.isReplyOveride()){
+				replyMessage.getParentTab().getChatWindow().greetingsManager.setMentioned(replyMessage.getUserName().toLowerCase());
+				replyMessage.getParentTab().getChatWindow().setMessageToReply(null);
+			}
 			return;
 		}
 		sendMessage(message);

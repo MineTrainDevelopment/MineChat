@@ -34,6 +34,13 @@ public class CallCounter {
     }
     
     /**
+     * Reset the call Records
+     */
+    public void clear(){
+    	callTimes.clear();
+    }
+    
+    /**
      * Removes any call times that are older than 60 seconds.
      */
     private void cleanupCallTimes() {

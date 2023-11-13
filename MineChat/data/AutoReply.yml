@@ -1,0 +1,96 @@
+data:
+  84a914e8-8826-4010-b902-5142e0faffbb:
+    channelId: '278743428'
+    aktiv: true
+    chatReply: false
+    messagesPerMin: 1
+    fireDelay: 10
+    trigger: kuchen
+    output:
+    - Kuchen? modCheck
+  defe80a5-efd6-4b01-8730-ad985665d085:
+    channelId: '962743570'
+    aktiv: true
+    chatReply: false
+    messagesPerMin: 5
+    fireDelay: 10
+    trigger: '!play'
+    output:
+    - '!play jennyanPopcorn'
+    - '!play jennyanCozy'
+    - '!play jennyanKluk'
+    - '!play peepoSwing'
+    - '!play peepoBell'
+  6461af1d-2bdd-4ef3-ba1c-fa283da07ad9:
+    channelId: '177849882'
+    aktiv: true
+    chatReply: false
+    messagesPerMin: 1
+    fireDelay: 1
+    trigger: test
+    output:
+    - Output text
+    - Line split (ENTER key) == Random output text list
+  3db874c3-3265-4d2f-b7fc-cac22a27e1cf:
+    channelId: '177849882'
+    aktiv: false
+    chatReply: true
+    messagesPerMin: 1
+    fireDelay: 1
+    trigger: Pferdchen
+    output:
+    - Pferdchen ist besonders fein! jennyanKluk
+  f3238ad5-594c-4e51-93c6-65c5d1d1db9f:
+    channelId: '177849882'
+    aktiv: true
+    chatReply: true
+    messagesPerMin: 1
+    fireDelay: 30
+    trigger: ^Mine(?:Train(?:/Justin|LP)?)?$
+    output:
+    - Ja? modCheck so heiße ich jennyanKluk
+  3a757309-bf88-4c69-9207-c7c49e71e856:
+    channelId: '962743570'
+    aktiv: false
+    chatReply: false
+    messagesPerMin: 3
+    fireDelay: 60
+    trigger: kuchen
+    output:
+    - Kuchen? modCheck
+  3275bcd8-8545-49d5-9def-deb7d2165321:
+    channelId: '605556313'
+    aktiv: false
+    chatReply: false
+    messagesPerMin: 1
+    fireDelay: 1
+    trigger: jennyanMesser
+    output:
+    - jennyanMesser
+  df98c1b0-318d-4202-bcaa-4b690ef8424b:
+    channelId: '177849882'
+    aktiv: true
+    chatReply: false
+    messagesPerMin: 1
+    fireDelay: 10
+    trigger: Fein
+    output:
+    - Weißt du was auch fein ist? Pferdchen sind gaaanz besonders fein jennyanKluk
+  12b31ed9-0b06-4f56-aace-aafd728cabd9:
+    channelId: '278743428'
+    aktiv: true
+    chatReply: true
+    messagesPerMin: 1
+    fireDelay: 500
+    trigger: pups
+    output:
+    - Devlin auch nach Pferde pups! jennyanKotz
+  7e55a54a-4d34-4244-9b10-5fb9fa141bd4:
+    channelId: '177849882'
+    aktiv: true
+    chatReply: true
+    messagesPerMin: 1
+    fireDelay: 1
+    trigger: Jeb
+    output:
+    - Jeb? modCheck Wer ist Jeb? jennyanHm Noch nie von gehört jennyanKluk jennyanDerp

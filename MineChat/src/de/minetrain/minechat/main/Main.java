@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
@@ -22,6 +23,7 @@ import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
 import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettings;
+import de.minetrain.minechat.gui.frames.settings.editors.CreateAutoReplyFrame;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
@@ -56,7 +58,8 @@ public class Main {
 //		new Settings();
 //		Settings.reloadHighlights();
 		
-//		ChannelSettings settings = new ChannelSettings(frame);
+//		new AutoReplyManager();
+//		CreateAutoReplyFrame settings = new CreateAutoReplyFrame(frame);
 //		settings.setExitOnCancelButton(true);
 //		settings.setVisible(true);
 		
@@ -111,9 +114,10 @@ public class Main {
 		
 		new TwitchManager(credentials);
 		new Settings();
+		new AutoReplyManager();
 		TextureManager.downloadPublicData();
 		Settings.reloadHighlights();
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	TwitchManager.leaveAllChannel();

@@ -20,12 +20,12 @@ import javax.swing.border.TitledBorder;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
+import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
 import de.minetrain.minechat.gui.frames.settings.SettingsTab;
 import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
 import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
 import de.minetrain.minechat.gui.obj.panels.tabel.TabelObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.utils.obj.HighlightDefault;
 
 public class SettingsTab_Chatting extends SettingsTab{
 	private static final long serialVersionUID = -2903086341948789185L;
