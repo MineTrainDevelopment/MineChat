@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
@@ -113,6 +114,8 @@ public class Main {
 		CredentialsManager credentials = new CredentialsManager();
 		
 		new TwitchManager(credentials);
+		Main.LOADINGBAR.setProgress("Reading Database file.", 65);
+		new DatabaseManager();
 		new Settings();
 		new AutoReplyManager();
 		TextureManager.downloadPublicData();

@@ -94,3 +94,27 @@ data:
     trigger: Jeb
     output:
     - Jeb? modCheck Wer ist Jeb? jennyanHm Noch nie von gehört jennyanKluk jennyanDerp
+  41bd5b18-1a53-465f-a421-98b6f6f91e52:
+    channelId: '605556313'
+    aktiv: true
+    chatReply: false
+    messagesPerMin: 1
+    fireDelay: 3600
+    trigger: GAMBA
+    output:
+    - GAMBA jennyanPopcorn
+    - GAMBA jennyanKluk
+    - GAMBA jennyanCozy
+    - GAMBA peepoRun
+    - GAMBA monkaSTEER
+    - Jackpot ich komme GAMBA jennyanYeah
+  c3f0c0a7-aeb2-4c0b-ba85-4a25a8e62ad5:
+    channelId: '605556313'
+    aktiv: true
+    chatReply: false
+    messagesPerMin: 1
+    fireDelay: 1
+    trigger: jdfhiudfhgjopfr
+    output:
+    - Output text
+    - Line split (ENTER key) == Random output text list

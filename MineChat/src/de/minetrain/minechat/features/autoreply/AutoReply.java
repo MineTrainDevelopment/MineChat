@@ -1,9 +1,11 @@
 package de.minetrain.minechat.features.autoreply;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 
-import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -26,19 +28,31 @@ public class AutoReply {
 	private final boolean chatReply;
 	
 	private Instant firedTimeStamp = Instant.now().minusSeconds(Integer.MAX_VALUE);
-	
-	public AutoReply(YamlManager file, String uuid) {
-		String filePath = "data."+uuid;
-		this.uuid = uuid;
-		this.channelId = file.getString(filePath+".channelId");
+
+	public AutoReply(ResultSet resultSet) throws SQLException {
+		this.uuid = resultSet.getString("uuid");
+		this.channelId = resultSet.getString("channel_Id");
 		this.channelName = TwitchManager.getTwitchUser(TwitchApiCallType.ID, channelId).getLoginName();
-		this.aktiv = file.getBoolean(filePath+".aktiv");
-		this.trigger = file.getString(filePath+".trigger");
-		this.outputs = file.getStringList(filePath+".output").toArray(new String[0]);
-		this.messagesPerMin = file.getLong(filePath+".messagesPerMin");
+		this.aktiv = resultSet.getBoolean("state");
+		this.trigger = resultSet.getString("trigger");
+		this.outputs = resultSet.getString("output").split("\n");
+		this.messagesPerMin = resultSet.getLong("messages_per_min");
 		this.messageCounter = new CallCounter(60);
-		this.fireDelay = file.getLong(filePath+".fireDelay");
-		this.chatReply = file.getBoolean(filePath+".chatReply");
+		this.fireDelay = resultSet.getLong("fire_delay");
+		this.chatReply = resultSet.getBoolean("chat_reply");
+	}
+	
+	public AutoReply(String uuid, String channelId, boolean state, boolean chatReply, Long messagesPerMin, Long fireDelay, String trigger, String[] output){
+		this.uuid = uuid;
+		this.channelId = channelId;
+		this.channelName = TwitchManager.getTwitchUser(TwitchApiCallType.ID, channelId).getLoginName();
+		this.aktiv = state;
+		this.trigger = trigger;
+		this.outputs = output;
+		this.messagesPerMin = messagesPerMin;
+		this.messageCounter = new CallCounter(60);
+		this.fireDelay = fireDelay;
+		this.chatReply = chatReply;
 	}
 	
 	public void fire(TwitchMessage message){
@@ -78,7 +92,7 @@ public class AutoReply {
 
 	public void setAktiv(boolean state) {
 		this.aktiv = state;
-		AutoReplyManager.getAutoReplyData().setBoolean("data."+uuid+".aktiv", state, true);
+		DatabaseManager.getAutoReply().setState(uuid, state);
 	}
 
 	public String getTrigger() {

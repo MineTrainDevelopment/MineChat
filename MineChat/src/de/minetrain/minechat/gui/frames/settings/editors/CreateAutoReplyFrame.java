@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.LongStream;
 
@@ -26,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.code.regexp.Pattern;
 
-import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReply;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
@@ -167,20 +165,9 @@ public class CreateAutoReplyFrame extends MineDialog{
 				}
 				
 				
-				List<String> output = Arrays.asList(outputText.getText().strip().trim().split("\\r?\\n"));
-				
-				YamlManager autoReplyData = AutoReplyManager.getAutoReplyData();
-				String path = "data."+uuid+".";
-				autoReplyData.setString(path+"channelId", twitchUser.getUserId());
-				autoReplyData.setBoolean(path+"aktiv", isAktiv);
-				autoReplyData.setBoolean(path+"chatReply", chatReply.isSelected());
-				autoReplyData.setNumber(path+"messagesPerMin", messagesPerMin);
-				autoReplyData.setNumber(path+"fireDelay", fireDelay);
-				autoReplyData.setString(path+"trigger", triggerWord.getText());
-				autoReplyData.setStringList(path+"output", output);
-				autoReplyData.saveConfigToFile();
-				
-				AutoReplyManager.addAutoReply(uuid);
+				String[] output = outputText.getText().strip().trim().split("\\r?\\n");
+				DatabaseManager.getAutoReply().insert(uuid.toString(), twitchUser.getUserId(), isAktiv, chatReply.isSelected(), messagesPerMin, fireDelay, triggerWord.getText(), output);
+				DatabaseManager.commit();
 				dispose();
 			}
 			

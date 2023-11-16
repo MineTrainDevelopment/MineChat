@@ -8,11 +8,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -112,7 +110,7 @@ public class SettingsTab_AutoReply extends SettingsTab{
 		tabelObj.setDeleteButtonAction(true, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AutoReplyManager.getAutoReplys().get(autoReply.getChannelId()).remove(autoReply.getTrigger());
+				AutoReplyManager.deleteAutoReply(autoReply);
 				loadAutoReplys(mineTabel);
 			}
 		});
