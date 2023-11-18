@@ -18,6 +18,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
@@ -393,7 +396,7 @@ public class TextureManager {
 		}
 
 
-		if(!Files.exists(Paths.get(texturePath+"Icons/default"))){
+		if(!DatabaseManager.getEmote().isPublicEmotesInstald()){
 			getDefaultEmotes();
 		}
 	}
@@ -442,41 +445,56 @@ public class TextureManager {
 		
 		JsonArray jsonArray = fromJson.getAsJsonArray("data");
 		String downloadURL = fromJson.get("template").getAsString();
-		
 
-		List<String> newEmoteIDs = new ArrayList<String>();
-		Map<String, Object> cachedEmoteMap = yaml.getObjectMap("Channel_"+channelId+".twitch");
-		List<String> cachedEmoteIDs = new ArrayList<String>();
-		
-		if(cachedEmoteMap != null){
-			cachedEmoteIDs.addAll(cachedEmoteMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
-		}
+		ArrayList<String> tier1 = new ArrayList<String>();
+		ArrayList<String> tier2 = new ArrayList<String>();
+		ArrayList<String> tier3 = new ArrayList<String>();
+		ArrayList<String> follower = new ArrayList<String>();
+		ArrayList<String> bits = new ArrayList<String>();
 		
 		for (int i=0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
 			JsonObject entry = jsonElement.getAsJsonObject();
 			
-			String name = entry.get("name").getAsString();
+			String emoteID = entry.get("id").getAsString();
 			String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
 			String fileFormat = ((format.length()>6) ? ".gif" : ".png");
-			String tier = entry.get("tier").getAsString();
-			String emoteID = entry.get("id").getAsString();
 			String fileLocation = "Icons/"+channelId+"/"+emoteID+"/";
+			String name = entry.get("name").getAsString();
+			String tier = entry.get("tier").getAsString();
+			String emote_type = entry.get("emote_type").getAsString();
 			
 		    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+	    	
+	    	switch (tier) {
+			case "1000": tier1.add(emoteID); break;
+			case "2000": tier2.add(emoteID); break;
+			case "3000": tier3.add(emoteID); break;
+
+			default:
+				if(emote_type.startsWith("bitstier")){
+					bits.add(emoteID);
+				}
+				
+				if(emote_type.startsWith("follower")){
+					follower.add(emoteID);
+				}
+				break;
+			}
 			
-			String yamlPath = "Channel_"+channelId+".twitch."+emoteID+".";
-			yaml.setBoolean(yamlPath+"Favorite", false);
-			yaml.setString(yamlPath+"Name", name);
-			yaml.setString(yamlPath+"Id", emoteID);
-			yaml.setString(yamlPath+"Tier", tier);
-			yaml.setString(yamlPath+"EmoteType", entry.get("emote_type").getAsString()+ (tier.isEmpty() ? "" : ":"+tier));
-			yaml.setString(yamlPath+"EmoteSet_Id",entry.get("emote_set_id").getAsString());
-			yaml.setString(yamlPath+"Format", format);
-			yaml.setString(yamlPath+"File", texturePath+fileLocation+emoteID+"_1"+fileFormat);
-			newEmoteIDs.add(emoteID);
+//	    	DatabaseManager.getEmote().insert(channelId, emoteID, name, false, isFavorite, entry.get("emote_type").getAsString(), tier, format, !format.equals("static"), fileLocation);
+			DatabaseManager.getEmote().insert(
+	    			emoteID, 
+	    			name, 
+	    			false, 
+	    			EmoteManager.emoteFavorite.containsKey(emoteID) && EmoteManager.emoteFavorite.get(emoteID),
+	    			emote_type, 
+	    			tier, 
+	    			format.contains("animated") ? "gif" : "png", 
+	    			!format.equals("static"), 
+	    			texturePath+fileLocation+emoteID+"_1"+fileFormat);
 			
 			try {
 //				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
@@ -493,12 +511,8 @@ public class TextureManager {
 			
 		}
 		
-		cachedEmoteIDs.forEach(emoteID -> {
-			if(!newEmoteIDs.contains(emoteID)){
-				yaml.remove("Channel_"+channelId+".twitch."+emoteID);
-			}
-		});
-		
+		DatabaseManager.getEmote().insertChannel(channelId, tier1, tier2, tier3, bits, follower);
+		DatabaseManager.commit();
 
 		Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
     	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
@@ -517,14 +531,7 @@ public class TextureManager {
 		JsonArray sharedArray = fromJson.getAsJsonArray("sharedEmotes");
 		channelArray.addAll(sharedArray);
 		
-		
-		List<String> newEmoteIDs = new ArrayList<String>();
-		Map<String, Object> cachedEmoteMap = yaml.getObjectMap("Channel_"+channelId+".bttv");
-		List<String> cachedEmoteIDs = new ArrayList<String>();
-		
-		if(cachedEmoteMap != null){
-			cachedEmoteIDs.addAll(cachedEmoteMap.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
-		}
+		ArrayList<String> emoteIDs = new ArrayList<String>();
 		
 		for (int i=0; i < channelArray.size(); i++) {
 			JsonObject entry = channelArray.get(i).getAsJsonObject();
@@ -532,24 +539,25 @@ public class TextureManager {
 			String emoteID = entry.get("id").getAsString();
 			String name = entry.get("code").getAsString();
 			String imageType = entry.get("imageType").getAsString();
-			String animated = entry.get("animated").getAsString();
-			String fileLocation = "Icons/"+channelId+"/bttv/"+emoteID+"/";
+			String fileLocation = "Icons/bttv/"+emoteID+"/";
 			
 			Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-			
-			String yamlPath = "Channel_"+channelId+".bttv."+emoteID+".";
-			yaml.setBoolean(yamlPath+"Favorite", false);
-			yaml.setString(yamlPath+"Name", name);
-			yaml.setString(yamlPath+"Id", emoteID);
-			yaml.setString(yamlPath+"EmoteType", "bttv");
-			yaml.setString(yamlPath+"Tier", "0");
-			yaml.setString(yamlPath+"imageType", imageType);
-			yaml.setString(yamlPath+"Animated", animated);
-			yaml.setString(yamlPath+"File", texturePath+fileLocation+emoteID+"_1."+imageType);
-			newEmoteIDs.add(emoteID);
-			
+	    	
+			emoteIDs.add(emoteID);
+	    	
+	    	DatabaseManager.getEmote().insert(
+	    			emoteID, 
+	    			name, 
+	    			false, 
+	    			EmoteManager.emoteFavorite.containsKey(emoteID) && EmoteManager.emoteFavorite.get(emoteID),
+	    			"bttv", 
+	    			null, 
+	    			imageType, 
+	    			entry.get("animated").getAsBoolean(), 
+	    			texturePath+fileLocation+emoteID+"_1."+imageType);
+	    	
 			try {
 				String downloadURL = "https://cdn.betterttv.net/emote/{{id}}/{{scale}}";
 				for (int index = 1; index < 4; index++) {
@@ -566,16 +574,12 @@ public class TextureManager {
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
 		}
 		
-		cachedEmoteIDs.forEach(emoteID -> {
-			if(!newEmoteIDs.contains(emoteID)){
-				yaml.remove("Channel_"+channelId+".twitch."+emoteID);
-			}
-		});
-		
+
+		DatabaseManager.getEmote().insertChannelBttv(channelId, emoteIDs);
+		DatabaseManager.commit();
 	}
 	
 	
-	//Das hier neu
 	private static void getDefaultEmotes() {
 		JFrame dialog = new JFrame("emote downloading...");
 		try {
@@ -597,7 +601,6 @@ public class TextureManager {
 					JsonObject.class);
 
 			JsonArray jsonArray = fromJson.getAsJsonArray("data");
-			YamlManager yaml = EmoteManager.getYaml();
 
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JsonElement jsonElement = jsonArray.get(i);
@@ -612,14 +615,16 @@ public class TextureManager {
 
 				statusBar.setProgress("Downloading: " + name, StatusBar.getPercentage(jsonArray.size(), i));
 				
-				String yamlPath = "Default.twitch."+emoteId+".";
-				yaml.setBoolean(yamlPath+"Favorite", false);
-				yaml.setString(yamlPath+"Id", emoteId);
-				yaml.setString(yamlPath+"Name", name);
-				yaml.setString(yamlPath+"Format", format);
-				yaml.setString(yamlPath+"Tier", "0");
-				yaml.setString(yamlPath+"EmoteType", "default");
-				yaml.setString(yamlPath+"File", texturePath+fileLocation+emoteId+"_1"+fileFormat);
+				DatabaseManager.getEmote().insert(
+		    			emoteId, 
+		    			name, 
+		    			true, 
+		    			EmoteManager.emoteFavorite.containsKey(emoteId) && EmoteManager.emoteFavorite.get(emoteId),
+		    			"default", 
+		    			null,
+		    			format.contains("animated") ? "gif" : "png", 
+		    			!format.equals("static"), 
+		    			texturePath+fileLocation+emoteId+"_1"+fileFormat);
 
 				try {
 					for (int index = 1; index < 4; index++) {
@@ -632,7 +637,7 @@ public class TextureManager {
 			}
 
 			statusBar.setProgress("Saving data...", 99);
-			yaml.saveConfigToFile();
+			DatabaseManager.commit();
 			statusBar.setDone("Download completed!");
 			
 			dialog.dispose();

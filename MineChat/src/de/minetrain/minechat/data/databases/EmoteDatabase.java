@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,14 @@ public class EmoteDatabase extends Database{
 	private static final String select_sql = "SELECT emote_id, name, public, favorite, emote_type, tier, image_type, animated, file_location FROM "+tabelName;
 
 	private static final String tabelName_channel = "channel_emotes";
-	private static final String insert_channel_SQL = "INSERT INTO "+tabelName_channel+"(channel_id,user_sub,tier1,tier2,tier3,follow,bits,bttv) VALUES(?,?,?,?,?,?,?,?)";
+	private static final String insert_channel_SQL = "INSERT INTO "+tabelName_channel+"(channel_id,user_sub,tier1,tier2,tier3,follow,bits) VALUES(?,?,?,?,?,?,?)";
 	private static final String update_channel_SQL = "UPDATE "+tabelName_channel+" SET channel_id = ? , channel_id = ? , user_sub = ? , tier1 = ? , tier2 = ? , tier3 = ? , follow = ? , bits = ? , bttv = ? WHERE channel_id = ?";
+	private static final String update_channel_bttv_SQL = "UPDATE "+tabelName_channel+" SET bttv = ? WHERE channel_id = ?";
 	private static final String check_channel_SQL = "SELECT channel_id FROM "+tabelName_channel+" WHERE channel_id = ?";
 	private static final String select_channel_sql = "SELECT channel_id, user_sub, channel_id, tier1, tier2, tier3, follow, bits, bttv FROM "+tabelName_channel;
+	
+	//TEMP to say if the default emotes are instald.
+	private boolean publicEmotes = false;
 	
 	public EmoteDatabase() throws SQLException {
 		super("CREATE TABLE IF NOT EXISTS "+tabelName+" (\n"
@@ -60,8 +65,22 @@ public class EmoteDatabase extends Database{
                 + ");");
 	}
 	
-	public void insert(String channel_id, String emote_id, String name, boolean isPublic, boolean favorite, String emote_type, String tier, String image_type, boolean animated, String file_location){
+	/**
+	 * 
+	 * @param channel_id
+	 * @param emote_id
+	 * @param name
+	 * @param isPublic
+	 * @param favorite
+	 * @param emote_type
+	 * @param tier
+	 * @param image_type
+	 * @param animated
+	 * @param file_location
+	 */
+	public void insert(String emote_id, String name, boolean isPublic, boolean favorite, String emote_type, String tier, String image_type, boolean animated, String file_location){
 		logger.info("Insert new database entry");
+		if(tier != null && tier.isEmpty()){tier = null;}
 
 		try{
 			Connection connection = DatabaseManager.connect();
@@ -88,12 +107,24 @@ public class EmoteDatabase extends Database{
             statement.setBoolean(8, animated);
             statement.setString(9, file_location);
             statement.executeUpdate();
-            
-            
+
+//            connection.commit();
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage(), ex);
+		}
+	}
+	
+	public void insertChannel(String channel_id, ArrayList<String> tier1, ArrayList<String> tier2, ArrayList<String> tier3, ArrayList<String> bits, ArrayList<String> follower){
+		logger.info("Insert new database entry");
+
+		try{
+			Connection connection = DatabaseManager.connect();
+			connection.setAutoCommit(false);
+
             //Write to the emote_channel table
-            statement = connection.prepareStatement(check_channel_SQL);
+			PreparedStatement statement = connection.prepareStatement(check_channel_SQL);
 			statement.setString(1, channel_id);
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
             statement = connection.prepareStatement(insert_channel_SQL);
 
             if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
@@ -103,13 +134,40 @@ public class EmoteDatabase extends Database{
             
             statement.setString(1, channel_id);
             statement.setString(2, "tier1");
-            statement.setString(3, "emotesv2_d5bd896aeb9e40739462a3080ca80dbf");
-            statement.setString(4, null);
-            statement.setString(5, null);
-            statement.setString(6, null);
-            statement.setString(7, null);
-            statement.setString(8, "607757f739b5010444cff4ac");
+            statement.setString(3, String.join("\n", tier1));
+            statement.setString(4, String.join("\n", tier2));
+            statement.setString(5, String.join("\n", tier3));
+            statement.setString(6, String.join("\n", bits));
+            statement.setString(7, String.join("\n", follower));
             statement.executeUpdate();
+
+//            connection.commit();
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage(), ex);
+		}
+	}
+	
+	public void insertChannelBttv(String channel_id, ArrayList<String> bttv){
+		logger.info("Insert new database entry");
+
+		try{
+			Connection connection = DatabaseManager.connect();
+			connection.setAutoCommit(false);
+
+            //Write to the emote_channel table
+			PreparedStatement statement = connection.prepareStatement(check_channel_SQL);
+			statement.setString(1, channel_id);
+            ResultSet resultSet = statement.executeQuery();
+            statement = connection.prepareStatement(insert_channel_SQL);
+
+            if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
+                statement = connection.prepareStatement(update_channel_bttv_SQL);
+            	statement.setString(1, String.join("\n", bttv));
+            	statement.setString(2, channel_id);
+            	statement.executeUpdate();
+            }else{
+            	logger.warn("Can´t set bttv emotes IDs for channel '"+channel_id+"'.");
+            }
 
 //            connection.commit();
 		} catch (SQLException ex) {
@@ -137,7 +195,7 @@ public class EmoteDatabase extends Database{
 		}
 	}
 	
-	private void get(String colum_name, Object value){
+	private ResultSet get(String colum_name, Object value){
 		try(Connection connection = DatabaseManager.connect(); PreparedStatement statement = connection.prepareStatement(select_sql+" WHERE "+colum_name+" = ?")) {
 			
 			switch(value.getClass().getSimpleName()) {
@@ -158,23 +216,28 @@ public class EmoteDatabase extends Database{
 
 			
 			ResultSet resultSet = statement.executeQuery();
-			
+//			if(resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()){
+//				
+//			}
+				
 			while(resultSet.next()){
-				logger.info(
-						resultSet.getString("emote_id")+" - "+
-						resultSet.getString("name")+" - "+
-						resultSet.getBoolean("public")+" - "+
-			            resultSet.getBoolean("favorite")+" - "+
-			            resultSet.getLong("emote_type")+" - "+
-			            resultSet.getLong("tier")+" - "+
-			            resultSet.getLong("image_type")+" - "+
-			            resultSet.getLong("animated")+" - "+
-			            resultSet.getLong("file_location")
-						);
+				publicEmotes = resultSet.getBoolean("public");
+//				logger.info(
+//						resultSet.getString("emote_id")+" - "+
+//						resultSet.getString("name")+" - "+
+//						resultSet.getBoolean("public")+" - "+
+//			            resultSet.getBoolean("favorite")+" - "+
+//			            resultSet.getLong("emote_type")+" - "+
+//			            resultSet.getLong("tier")+" - "+
+//			            resultSet.getLong("image_type")+" - "+
+//			            resultSet.getLong("animated")+" - "+
+//			            resultSet.getLong("file_location")
+//						);
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 		}
+		return null;
 	}
 
 
@@ -192,6 +255,11 @@ public class EmoteDatabase extends Database{
 	
 	public void getPublicEmotes(){
 		get("public", true);
+	}
+	
+	public boolean isPublicEmotesInstald(){
+		getPublicEmotes();
+		return publicEmotes;
 	}
 
 }

@@ -15,6 +15,7 @@ import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 
 public class EmoteManager {
 	private static final Logger logger = LoggerFactory.getLogger(EmoteManager.class);
+	public static final HashMap<String, Boolean> emoteFavorite = new HashMap<String, Boolean>();
 	private static final HashMap<String, Emote> globalEmotes = new HashMap<String, Emote>();
 	private static final HashMap<String, Emote> defaultEmotes = new HashMap<String, Emote>();
 	private static final HashMap<String, Emote> favoriteEmotes = new HashMap<String, Emote>();
