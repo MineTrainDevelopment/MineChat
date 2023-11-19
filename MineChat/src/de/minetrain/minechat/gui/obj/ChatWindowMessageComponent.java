@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
+import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.FlippedImageIcon;
 import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
@@ -68,13 +69,15 @@ public class ChatWindowMessageComponent extends JPanel{
 	private JTextPane messageLabel;
 	private JPanel messageContentPanel;
 	private MineButton markReadButton, replyButton;
-	private Map<String, String> emotes;
+	private Map<String, String> webEmotes = new HashMap<String, String>();
 	private long epochTime = 0;
 	private final String userName;
+	private final String channelId;
 	
-	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow, Map<String, String> emotes) {
+	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow) {
 		super(new BorderLayout());
-		this.emotes = emotes;
+//		this.webEmotes = emotes;
+		this.channelId = chatWindow.channelId;
 		this.userName = topic;
 		this.highlighted = true;
 		JPanel messagePanel = this;
@@ -123,11 +126,15 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
 		super(new BorderLayout());
-		this.emotes = twitchMessage == null ? EmoteManager.getAllEmotesByName() : twitchMessage.getEmotes();
+		this.channelId = chatWindow.channelId;
 		this.epochTime = twitchMessage == null ? epochTime : twitchMessage.getEpochTime();
 		this.userName = userName;
 		JPanel messagePanel = this;
         setBackground(ColorManager.GUI_BACKGROUND);
+        
+        if(twitchMessage != null){
+        	this.webEmotes = twitchMessage.getEmotes();
+        }
         
 		titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), userName+":");
 		titledBorder.setTitleJustification(TitledBorder.LEFT);
@@ -274,7 +281,7 @@ public class ChatWindowMessageComponent extends JPanel{
     	
     	
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
-    	emotes.clear(); //NOTE This is to improve ram usage.
+    	webEmotes.clear(); //NOTE This is to improve ram usage.
 	}
 	
 	private static final MouseAdapter replyButtonMouseAdapter(JButton button) {
@@ -316,7 +323,6 @@ public class ChatWindowMessageComponent extends JPanel{
 			previousWord = word;
 
 //			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
-			Map<String, String> emotesByName = this.emotes;
 			
 			Settings.highlightStrings.forEach(highlight -> {
 	    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
@@ -326,8 +332,18 @@ public class ChatWindowMessageComponent extends JPanel{
 	    		}
 	    	});
 			
-			String emotePath = emotesByName.get(word);
-			if (emotesByName != null && emotePath != null) {
+			Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, word);
+			if(emoteByName != null) {
+				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
+			}else{
+				emoteByName = EmoteManager.getEmoteByName(word);
+				if(emoteByName != null){
+					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
+				}
+			}
+			
+			String emotePath = webEmotes.get(word);
+			if (emotePath != null) {
 				ImageIcon emote = null;
 				
 				try {
@@ -365,7 +381,7 @@ public class ChatWindowMessageComponent extends JPanel{
         int chunkSize = 45;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
-        input = (emotes == null) ? input : encryptEmotes(input);
+        input = (webEmotes == null) ? input : encryptEmotes(input);
 
         int wordBoundary = -1; // Index of the last space character within the chunk limit
         for (int i = 0; i < input.length(); i++) {
@@ -413,7 +429,7 @@ public class ChatWindowMessageComponent extends JPanel{
     	emoteReplacements.clear();
     	
     	for (int i=0; i<split.length; i++) {
-			if(this.emotes.containsKey(split[i])){
+			if(this.webEmotes.containsKey(split[i])){
 	            String replacement = generateReplacement(split[i]);
 	            emoteReplacements.put(replacement, split[i]);
 	            split[i] = split[i].replaceAll("\\b" + Pattern.quote(split[i]) + "\\b", replacement);

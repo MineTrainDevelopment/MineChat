@@ -331,8 +331,8 @@ public class MineTextArea extends JTextArea {
 		staticChannelEmoteDictionary.clear();
 		ChannelEmotes channel = EmoteManager.getChannelEmotes(channelId);
 		if(channel != null){
-			channel.values().forEach(emote -> {
-				if(channel.hasPermission(emote) && !emote.isGlobal()){
+			channel.getAllEmotes().forEach(emote -> {
+				if((emote.isSubOnly() ? channel.isSub() : true) && !emote.isGlobal()){
 					staticChannelEmoteDictionary.add(new SuggestionObj(emote));
 				}
 			});

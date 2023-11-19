@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.gui.emotes.BackgroundImageIcon;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
@@ -51,13 +54,11 @@ public class EmoteSelector extends JDialog{
     private boolean disposed;
     private boolean disposOnSelect;
     private JTextArea textFieldToEdit;
-    HashMap<String, ChannelEmotes> emotes;
 
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
 		super(mainFrame, "Emotes", true);
 		this.disposOnSelect = disposOnSelect;
 		thisObect = this;
-		emotes = EmoteManager.getChannelEmotes();
 		
         setResizable(false);
         setUndecorated(true);
@@ -116,15 +117,17 @@ public class EmoteSelector extends JDialog{
         emotePanel.add(optionPanel);
         
 
-        if(!EmoteManager.getFavoriteEmotes().isEmpty()){
-        	addEmoteSet(EmoteManager.getFavoriteEmotes().values(), "Favorites");
+    	addEmoteSet(EmoteManager.getAllEmotes().values().stream().filter(emote -> emote.isFavorite()).collect(Collectors.toList()), "Favorites");
+    	addEmoteSet(EmoteManager.getAllEmotes().values().stream().filter(emote -> emote.getEmoteType().equals(EmoteType.DEFAULT)).collect(Collectors.toList()), "Default");
+    	
+    	
+//    	Get the list of what channels have what emotes.
+        for (Entry<String, ChannelEmotes> entry : EmoteManager.getChannelEmotes().entrySet()) {
+        	if(!entry.getValue().getAllEmotes().isEmpty()){
+        		addEmoteSet(entry.getValue().getAllEmotes(), entry.getKey());
+        	}
         }
         
-    	addEmoteSet(EmoteManager.getDefaultEmotes().values(), "Default");
-    	
-        for (ChannelEmotes channel : emotes.values()) {
-        	addEmoteSet(channel.values(), channel.getChannelName());
-        }
         
         scrollPane = new JScrollPane(emotePanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

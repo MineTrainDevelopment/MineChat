@@ -22,7 +22,6 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
@@ -165,9 +164,8 @@ public class EmoteDownlodFrame extends JDialog{
 						}
 						
 						statusBar.setProgress("Download startet...", 50);
-					    TextureManager.downloadChannelEmotes(twitchUser.getUserId(), EmoteManager.getYaml());
-					    TextureManager.downloadBttvEmotes(twitchUser.getUserId(), EmoteManager.getYaml());
-					    EmoteManager.getYaml().saveConfigToFile();
+					    TextureManager.downloadChannelEmotes(twitchUser.getUserId());
+					    TextureManager.downloadBttvEmotes(twitchUser.getUserId());
 						statusBar.setDone("Download completed!");
 						return twitchUser;
 					}

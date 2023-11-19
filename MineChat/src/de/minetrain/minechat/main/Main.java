@@ -113,9 +113,9 @@ public class Main {
 
 		CredentialsManager credentials = new CredentialsManager();
 		
-		new TwitchManager(credentials);
-		Main.LOADINGBAR.setProgress("Reading Database file.", 65);
+		Main.LOADINGBAR.setProgress("Reading Database file.", 20);
 		new DatabaseManager();
+		new TwitchManager(credentials);
 		new Settings();
 		new AutoReplyManager();
 		TextureManager.downloadPublicData();

@@ -1,30 +1,34 @@
 package de.minetrain.minechat.gui.emotes;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.swing.ImageIcon;
 
-import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class Emote {
+	private static final ImageIcon defaultBorderImage = new ImageIcon(TextureManager.texturePath+"emoteBorder.png");
+	private static final ImageIcon borderSub2 = new ImageIcon(TextureManager.texturePath+"emoteBorder2.png");
+	private static final ImageIcon borderSub3 = new ImageIcon(TextureManager.texturePath+"emoteBorder3.png");
+	private static final ImageIcon borderBits = new ImageIcon(TextureManager.texturePath+"emoteBorderBits.png");
+	private static final ImageIcon borderFollow = new ImageIcon(TextureManager.texturePath+"emoteBorderFollow.png");
+	
 	private boolean favorite;
 	private final String name;
-	private final String id;
-	private final String tier;
+//	private final String id;
+//	private final String tier;
+	private final String emoteId;
 	private final EmoteType emoteType;
 	private final String filePath;
-	private final String channelId;
 	
-	private final String key;
-	
-	public Emote(String key, YamlManager yaml, String channelId) {
-		this.key = key;
-		this.name = yaml.getString(key+".Name");
-		this.favorite = yaml.getBoolean(key+".Favorite");
-		this.id = yaml.getString(key+".Id");
-		this.tier = yaml.getString(key+".Tier", "0");
-		this.emoteType = EmoteType.get(yaml.getString(key+".EmoteType"));
-		this.filePath = yaml.getString(key+".File");
-		this.channelId = channelId;
+	public Emote(ResultSet resultSet) throws SQLException {
+		this.name = resultSet.getString("name");
+		this.emoteId = resultSet.getString("emote_id");
+		this.favorite = resultSet.getBoolean("favorite");
+		this.emoteType = EmoteType.get(resultSet.getString("emote_type"), resultSet.getString("tier"));
+		this.filePath = resultSet.getString("file_location");
 	}
 	
 	public ImageIcon getImageIcon(){
@@ -37,14 +41,15 @@ public class Emote {
 	
 	public void setFavorite(boolean state) {
 		favorite = state;
-		EmoteManager.getYaml().setBoolean(key+".Favorite", state, true);
-		
-		if(state){
-			EmoteManager.addFavoriteEmote(this);
-			return;
-		}
-
-		EmoteManager.removeFavoriteEmote(this);
+		DatabaseManager.getEmote().updateFavoriteState(emoteId, state);
+		DatabaseManager.commit();
+//		
+//		if(state){
+//			EmoteManager.addFavoriteEmote(this);
+//			return;
+//		}
+//
+//		EmoteManager.removeFavoriteEmote(this);
 	}
 	
 	public boolean isFavorite() {
@@ -59,28 +64,21 @@ public class Emote {
 		return emoteType.isGlobal();
 	}
 
-	public String getName() {
-		return name;
-	}
-	
-	public String getChannelId() {
-		return channelId;
-	}
-
-	public String getId() {
-		return id;
-	}
-	
-	public String getTier() {
-		return tier;
-	}
-
 	public EmoteType getEmoteType() {
 		return emoteType;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public String getFilePath() {
 		return filePath;
+	}
+	
+
+	public String getEmoteId() {
+		return emoteId;
 	}
 
 	public String getFileFormat() {
@@ -92,12 +90,12 @@ public class Emote {
 	}
 	
 	public ImageIcon getBorderImage(){
-		switch (emoteType) {
-			case SUB_2: return new ImageIcon(TextureManager.texturePath+"emoteBorder2.png");
-			case SUB_3: return new ImageIcon(TextureManager.texturePath+"emoteBorder3.png");
-			case BIT: return new ImageIcon(TextureManager.texturePath+"emoteBorderBits.png");
-			case FOLLOW: return new ImageIcon(TextureManager.texturePath+"emoteBorderFollow.png");
-			default: return new ImageIcon(TextureManager.texturePath+"emoteBorder.png");
+		switch (getEmoteType()) {
+			case SUB_2: return borderSub2;
+			case SUB_3: return borderSub3;
+			case BIT: return borderBits;
+			case FOLLOW: return borderFollow;
+			default: return defaultBorderImage;
 		}
 	}
 
@@ -117,12 +115,15 @@ public class Emote {
 			this.global = global;
 		}
 		
-		public static EmoteType get(String input){
+		public static EmoteType get(String input, String tier){
 			switch (input) {
-				case "subscriptions": return SUB;
-				case "subscriptions:1000": return SUB;
-				case "subscriptions:2000": return SUB_2;
-				case "subscriptions:3000": return SUB_3;
+				case "subscriptions":
+					switch (tier) {
+					case "1000": return SUB;
+					case "2000": return SUB_2;
+					case "3000": return SUB_3;
+					default: return SUB;}
+					
 				case "follower": return FOLLOW;
 				case "bitstier": return BIT;
 				case "bttv": return BTTV;
@@ -130,6 +131,13 @@ public class Emote {
 			}
 		}
 	}
+	
+	
+	@Override
+	public String toString() {
+		return getName()+" - "+getEmoteId();
+	}
+
 	
 	
 }

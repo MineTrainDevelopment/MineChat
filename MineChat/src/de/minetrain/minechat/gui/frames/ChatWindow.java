@@ -49,9 +49,11 @@ public class ChatWindow extends JLabel {
     private JScrollPane scrollPane;
     public final ChannelTab parentTab;
     public ChatStatusPanel chatStatusPanel;
+    public final String channelId;
     
     public ChatWindow(ChannelTab parentTab) {
     	this.parentTab = parentTab;
+    	this.channelId = parentTab.getConfigID();
     	greetingsManager = new GreetingsManager(parentTab);
     	greetingsManager.setMentioned(TwitchManager.ownerChannelName);
 		
@@ -185,7 +187,7 @@ public class ChatWindow extends JLabel {
     }
     
     public void displaySystemInfo(String topic, String message, Color borderColor, MineButton button){
-		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this, EmoteManager.getAllEmotesByName());
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(topic, message, borderColor, button, this);
 		
         chatPanel.add(messagePanel);
         chatPanel.revalidate();

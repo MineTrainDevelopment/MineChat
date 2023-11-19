@@ -26,13 +26,13 @@ public class SuggestionObj {
 	
 	public SuggestionObj(Emote emote) {
 		this.text = ":" + emote.getName() + (emote.getEmoteType().equals(EmoteType.BTTV) ? " -- BTTV" : "");
+		this.emote = emote;
 		this.displayText = "";
 		this.iconPath = emote.getFilePath();
 		this.borderImage = emote.getBorderImage();
-		this.emote = emote;
 		setSortPriority(emote.isFavorite());;
 	}
-
+	
 	public SuggestionObj setDisplayText(String displayText) {
 		this.displayText = this.displayText.isEmpty() ? displayText : this.displayText;
 		return this;

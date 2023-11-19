@@ -63,12 +63,14 @@ public class TwitchMessage {
 		
 		this.dummy = false;
 		
-		if(EmoteManager.getChannelEmotes().containsKey(channelId)){
-			emoteSet.putAll(EmoteManager.getChannelEmotes(channelId).values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
-		}
+		//Move this stuff to the message displaying.
+		//Store the emote channel emote paths based on a channel tab, rather then per Message.
+//		if(EmoteManager.getChannelEmotes().containsKey(channelId)){
+//			emoteSet.putAll(EmoteManager.getChannelEmotes(channelId).values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
+//		}
+//		emoteSet.putAll(EmoteManager.getGlobalEmotes().values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
 		
-		emoteSet.putAll(EmoteManager.getGlobalEmotes().values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath)));
-		colorCache.put(userName.toLowerCase(), userColorCode);
+//		colorCache.put(userName.toLowerCase(), userColorCode);
 		
 		String emotes = ircMessage.getTagValue("emotes").orElse(null);
 		List<String> emotesPaths = (emotes != null ? Arrays.asList(emotes.split("/")) : null);
@@ -87,12 +89,7 @@ public class TwitchMessage {
 					
 					//Put all emotes in there, incase its not posible to get non Static twitch emotes.
 					if(!emoteSet.containsKey(emoteName)){
-						if(EmoteManager.CACHED_WEB_EMOTES.containsKey(emoteId)){
-							emoteSet.put(emoteName, EmoteManager.CACHED_WEB_EMOTES.get(emoteId));
-						}else{
-							EmoteManager.CACHED_WEB_EMOTES.put(emoteId, emoteUrl);
-							emoteSet.put(emoteName, emoteUrl);
-						}
+						emoteSet.put(emoteName, emoteUrl);
 					}
 				});
 			});

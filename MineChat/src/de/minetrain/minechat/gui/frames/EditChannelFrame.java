@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -128,7 +130,9 @@ public class EditChannelFrame extends JDialog {
         				userTypeComboBox.setSelectedIndex(config.getString(configIndex+"ChannelRole").equalsIgnoreCase("moderator") ? 1 : 0);
         				badgesCheckBox.setSelected(false);
         				emotesCheckBox.setSelected(false);
-        				subscriberCheckBox.setSelected(EmoteManager.getYaml().getBoolean(configIndex+"sub"));
+        				
+        				ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(channelsFromConfig.get(currentInput).replace("Channel_", ""));
+						subscriberCheckBox.setSelected(channelEmotes != null ? channelEmotes.isSub() : false);
         			}else{
         				displayNameField.setText(loginNameField.getText()); //Sync display name with login name.
         				userTypeComboBox.setSelectedIndex(0);
@@ -280,7 +284,8 @@ public class EditChannelFrame extends JDialog {
 				config.setString(path + "DisplayName", (displayNameField.getText().isEmpty() ? loginNameField.getText() : displayNameField.getText()));
 				config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
 				config.setBoolean(path + "MessageLog", true);
-
+				
+				
 				if(cloneMacrosComboBox.getSelectedIndex()>0){
 					String selectedName = cloneMacrosComboBox.getSelectedItem().toString();
 					String clonePath = channelsFromConfig.get(selectedName.contains("(") ? selectedName.split("\\(")[1].replace(")", "") : selectedName)+".";
@@ -327,19 +332,19 @@ public class EditChannelFrame extends JDialog {
 				TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
 				
 				new Thread(() -> {
-					String yamlPath = "Channel_"+twitchUser.getUserId()+".";
-					YamlManager yaml = EmoteManager.getYaml();
-					yaml.setString(yamlPath+"Id", twitchUser.getUserId());
-					yaml.setString(yamlPath+"Name", twitchUser.getDisplayName());
-					yaml.setBoolean(yamlPath+"sub", subscriberCheckBox.isSelected());
-					
 					if(emotesCheckBox.isSelected()){
-						TextureManager.downloadChannelEmotes(twitchUser.getUserId(), yaml);
-						TextureManager.downloadBttvEmotes(twitchUser.getUserId(), yaml);
+						TextureManager.downloadChannelEmotes(twitchUser.getUserId());
+						TextureManager.downloadBttvEmotes(twitchUser.getUserId());
+						EmoteManager.getChannelEmotes(twitchUser.getUserId()).setSubState(subscriberCheckBox.isSelected());
 //						new EmoteDownlodFrame(Main.MAIN_FRAME, twitchUser.getLoginName());
+					}else if(EmoteManager.getChannelEmotes(twitchUser.getUserId()) == null) {
+							DatabaseManager.getEmote().insertNewChannel(twitchUser.getUserId(), subscriberCheckBox.isSelected());
+							DatabaseManager.commit();
+							DatabaseManager.getEmote().getAllChannels();
+					}else{
+						EmoteManager.getChannelEmotes(twitchUser.getUserId()).setSubState(subscriberCheckBox.isSelected());
 					}
 					
-					yaml.saveConfigToFile();
 					EmoteManager.load();
 					
 					if(badgesCheckBox.isSelected()){

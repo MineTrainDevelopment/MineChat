@@ -41,6 +41,7 @@ import com.google.gson.JsonObject;
 
 import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TabButtonType;
@@ -436,7 +437,7 @@ public class TextureManager {
 		}).start();
 	}
 	
-	public static void downloadChannelEmotes(String channelId, YamlManager yaml) {
+	public static void downloadChannelEmotes(String channelId) {
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+channelId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
 				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
 				.header("Client-Id", TwitchManager.credentials.getClientID())
@@ -483,18 +484,25 @@ public class TextureManager {
 				}
 				break;
 			}
+	    	
+	    	boolean isFavorite = false;
+	    	Emote emoteByName = EmoteManager.getEmoteByName(name);
+	    	if(emoteByName != null){
+	    		isFavorite = emoteByName.isFavorite();
+	    	}
 			
 //	    	DatabaseManager.getEmote().insert(channelId, emoteID, name, false, isFavorite, entry.get("emote_type").getAsString(), tier, format, !format.equals("static"), fileLocation);
 			DatabaseManager.getEmote().insert(
 	    			emoteID, 
 	    			name, 
 	    			false, 
-	    			EmoteManager.emoteFavorite.containsKey(emoteID) && EmoteManager.emoteFavorite.get(emoteID),
+	    			isFavorite,
 	    			emote_type, 
 	    			tier, 
 	    			format.contains("animated") ? "gif" : "png", 
 	    			!format.equals("static"), 
 	    			texturePath+fileLocation+emoteID+"_1"+fileFormat);
+			
 			
 			try {
 //				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
@@ -513,6 +521,9 @@ public class TextureManager {
 		
 		DatabaseManager.getEmote().insertChannel(channelId, tier1, tier2, tier3, bits, follower);
 		DatabaseManager.commit();
+		DatabaseManager.getEmote().getAll();
+		DatabaseManager.getEmote().getAllChannels();
+		
 
 		Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
     	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
@@ -520,7 +531,7 @@ public class TextureManager {
 	}
 	
 	
-	public static void downloadBttvEmotes(String channelId, YamlManager yaml){
+	public static void downloadBttvEmotes(String channelId){
 		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.betterttv.net/3/cached/users/twitch/"+channelId)
 //				.header("Accept", "*/*")
 				.header("User-Agent", "MineChat Client")
@@ -546,12 +557,18 @@ public class TextureManager {
 	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
 	    	
 			emoteIDs.add(emoteID);
+			
+			boolean isFavorite = false;
+	    	Emote emoteByName = EmoteManager.getEmoteByName(name);
+	    	if(emoteByName != null){
+	    		isFavorite = emoteByName.isFavorite();
+	    	}
 	    	
 	    	DatabaseManager.getEmote().insert(
 	    			emoteID, 
 	    			name, 
 	    			false, 
-	    			EmoteManager.emoteFavorite.containsKey(emoteID) && EmoteManager.emoteFavorite.get(emoteID),
+	    			isFavorite,
 	    			"bttv", 
 	    			null, 
 	    			imageType, 
@@ -577,6 +594,8 @@ public class TextureManager {
 
 		DatabaseManager.getEmote().insertChannelBttv(channelId, emoteIDs);
 		DatabaseManager.commit();
+		DatabaseManager.getEmote().getAll();
+		DatabaseManager.getEmote().getAllChannels();
 	}
 	
 	
@@ -615,11 +634,17 @@ public class TextureManager {
 
 				statusBar.setProgress("Downloading: " + name, StatusBar.getPercentage(jsonArray.size(), i));
 				
+				boolean isFavorite = false;
+		    	Emote emoteByName = EmoteManager.getEmoteByName(name);
+		    	if(emoteByName != null){
+		    		isFavorite = emoteByName.isFavorite();
+		    	}
+				
 				DatabaseManager.getEmote().insert(
 		    			emoteId, 
 		    			name, 
 		    			true, 
-		    			EmoteManager.emoteFavorite.containsKey(emoteId) && EmoteManager.emoteFavorite.get(emoteId),
+		    			isFavorite,
 		    			"default", 
 		    			null,
 		    			format.contains("animated") ? "gif" : "png", 
@@ -638,6 +663,7 @@ public class TextureManager {
 
 			statusBar.setProgress("Saving data...", 99);
 			DatabaseManager.commit();
+			DatabaseManager.getEmote().getAll();
 			statusBar.setDone("Download completed!");
 			
 			dialog.dispose();
