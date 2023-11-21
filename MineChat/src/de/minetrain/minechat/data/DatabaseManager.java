@@ -11,6 +11,7 @@ import de.minetrain.minechat.data.databases.AutoReplyDatabase;
 import de.minetrain.minechat.data.databases.ChannelsDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
 import de.minetrain.minechat.data.databases.MacroDatabase;
+import de.minetrain.minechat.data.databases.MessageHighlightDatabase;
 import de.minetrain.minechat.main.Main;
 
 public class DatabaseManager {
@@ -22,6 +23,7 @@ public class DatabaseManager {
 	private static MacroDatabase macro;
 	private static ChannelsDatabase channel;
 	private static EmoteDatabase emote;
+	private static MessageHighlightDatabase messageHighlight;
 
 	public DatabaseManager() {
 		try {
@@ -29,6 +31,7 @@ public class DatabaseManager {
 			macro = new MacroDatabase();
 			channel = new ChannelsDatabase();
 			emote = new EmoteDatabase();
+			messageHighlight = new MessageHighlightDatabase();
 		} catch (SQLException ex) {
 			logger.error("Can´t prepare all databases.", ex);
 			Main.LOADINGBAR.setError("Can´t read database file. -> logs");
@@ -77,6 +80,10 @@ public class DatabaseManager {
 
 	public static EmoteDatabase getEmote() {
 		return emote;
+	}
+
+	public static MessageHighlightDatabase getMessageHighlight() {
+		return messageHighlight;
 	}
 	
 	

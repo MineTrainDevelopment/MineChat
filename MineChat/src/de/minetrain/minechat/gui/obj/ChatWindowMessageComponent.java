@@ -216,7 +216,7 @@ public class ChatWindowMessageComponent extends JPanel{
             }
         	
 	    	if(chatWindow.greetingsManager.contains(userName)){
-		    	Settings.highlightStrings.forEach(highlight -> {
+		    	Settings.highlightStrings.values().stream().filter(highlight -> highlight.isAktiv()).forEach(highlight -> {
 		    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
 		            Matcher matcher = pattern.matcher(message);
 		            
@@ -324,7 +324,7 @@ public class ChatWindowMessageComponent extends JPanel{
 
 //			HashMap<String, TwitchEmote> emotesByName = TwitchEmote.getEmotesByName();
 			
-			Settings.highlightStrings.forEach(highlight -> {
+			Settings.highlightStrings.values().stream().filter(highlight -> highlight.isAktiv()).forEach(highlight -> {
 	    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
 	            Matcher matcher = pattern.matcher(word);
 	            if (matcher.find()) {

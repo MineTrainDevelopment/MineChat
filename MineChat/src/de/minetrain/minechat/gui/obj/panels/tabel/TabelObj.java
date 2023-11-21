@@ -1,9 +1,9 @@
 package de.minetrain.minechat.gui.obj.panels.tabel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,9 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultCaret;
 
-import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 
@@ -66,6 +64,11 @@ public class TabelObj extends JPanel{
 	
 	public TabelObj setIndex(String text){
 		indexText.setText(text.length() < 3 ? (text.length() == 1 ? "  "+text+"  " : " "+text+" ") : text);
+		return this;
+	}
+	
+	public TabelObj setIndexColor(Color color){
+		indexText.setForeground(color);
 		return this;
 	}
 	

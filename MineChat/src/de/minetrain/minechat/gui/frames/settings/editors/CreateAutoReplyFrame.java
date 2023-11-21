@@ -35,7 +35,7 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class CreateAutoReplyFrame extends MineDialog{
 	private static final long serialVersionUID = 3602274005010690308L;
-	private static final Logger logger = LoggerFactory.getLogger(AddWordHighlightFrame.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateWordHighlightFrame.class);
 	private String uuid = UUID.randomUUID().toString();
 	private JComboBox<Long> messagePerMinSelector, fireDelaySelector;
 	private JComboBox<String> channelSelector;
@@ -125,7 +125,7 @@ public class CreateAutoReplyFrame extends MineDialog{
 					messagesPerMin = Long.valueOf(String.valueOf(messagePerMinSelector.getSelectedItem()));
 					fireDelay = Long.valueOf(String.valueOf(fireDelaySelector.getSelectedItem()));
 				} catch (Exception ex) {
-					logger.debug("CanÂ´t create a new AutoReply. Invalid long values for messagePerMin or fireDelay! -> "+ex.getMessage());
+					logger.debug("Can´t create a new AutoReply. Invalid long values for messagePerMin or fireDelay! -> "+ex.getMessage());
 //					setError("Invalid number input");
 					setError(ex.getMessage());
 					return; //Display some sort of error message.
@@ -151,7 +151,7 @@ public class CreateAutoReplyFrame extends MineDialog{
 				
 				TwitchUserObj twitchUser = TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, channelName);
 				if(twitchUser.isDummy()){
-					setError("Channel dosenÂ´t exist.");
+					setError("Channel dosen´t exist.");
 					return;
 				}
 				
@@ -185,7 +185,7 @@ public class CreateAutoReplyFrame extends MineDialog{
 			}
 		});
 		
-//		setVisible(true); DONT USE, bcs of the loadPReset method.
+//		setVisible(true); DONT USE, bcs of the loadPreset method.
 	}
 	
 	public CreateAutoReplyFrame loadPreset(AutoReply preset){

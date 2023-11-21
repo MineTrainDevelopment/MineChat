@@ -22,7 +22,7 @@ import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
 import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
 import de.minetrain.minechat.gui.frames.settings.SettingsTab;
-import de.minetrain.minechat.gui.frames.settings.editors.AddWordHighlightFrame;
+import de.minetrain.minechat.gui.frames.settings.editors.CreateWordHighlightFrame;
 import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
 import de.minetrain.minechat.gui.obj.panels.tabel.TabelObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -139,7 +139,7 @@ public class SettingsTab_Chatting extends SettingsTab{
 		highlightButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {	
-				new AddWordHighlightFrame(parentFrame);
+				new CreateWordHighlightFrame(parentFrame);
 			}
 		});
 		add(highlightButton);

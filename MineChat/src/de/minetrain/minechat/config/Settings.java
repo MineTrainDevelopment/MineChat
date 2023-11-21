@@ -3,15 +3,16 @@ package de.minetrain.minechat.config;
 import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
 import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
@@ -28,7 +29,8 @@ public class Settings{
 	public static String timeFormat; //
 	public static String dateFormat; //
 	public static String dayFormat; //
-	public static List<HighlightString> highlightStrings = new ArrayList<HighlightString>();
+	/**keyWord, obj*/
+	public static HashMap<String, HighlightString> highlightStrings = new HashMap<String, HighlightString>();
 	
 	public static HighlightDefault highlightUserFirstMessages; //
 	public static HighlightDefault highlightUserGoodbyeMessages; 
@@ -69,7 +71,7 @@ public class Settings{
 		timeFormat = settings.getString("Variables.TimeFormat", "HH:mm");
 		dateFormat = settings.getString("Variables.DateFormat", "dd:MM:yyyy");
 		dayFormat = settings.getString("Variables.DayFormat", "eeee");
-		highlightStrings = new ArrayList<HighlightString>();
+		highlightStrings = new HashMap<String, HighlightString>();
 		
 		highlightUserFirstMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.FirstMessage");
 		highlightUserGoodbyeMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.GoodByeMessage");
@@ -104,7 +106,12 @@ public class Settings{
 	}
 	
 	public static void reloadHighlights(){
-		settings.getStringList("Highlights.MessageHighlights.KeyWods.List").forEach(highlight -> highlightStrings.add(new HighlightString(highlight)));
+		Settings.highlightStrings.clear();
+		DatabaseManager.getMessageHighlight().getAll();
+		generateUserNameRegex();
+	}
+
+	private static void generateUserNameRegex() {
 		if(highlightStrings.isEmpty()){
 			String twitchName = TwitchManager.ownerChannelName;
 			String[] result = twitchName.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)|(?<=\\D)(?=[_-])|(?<=[_-])(?=\\D)");
@@ -135,7 +142,15 @@ public class Settings{
 				
 			}
 			
-			HighlightString.saveNewWord(name, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT, ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+			
+			if(!highlightStrings.containsKey(name)){
+				HighlightString.saveNewWord(
+					UUID.randomUUID().toString(),
+					name,
+					ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT,
+					ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+			}
+			
 		}
 	}
 

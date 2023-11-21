@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,17 +39,20 @@ import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
 
-public class AddWordHighlightFrame extends MineDialog {
+public class CreateWordHighlightFrame extends MineDialog {
 	private static final long serialVersionUID = -4774556639413934907L;
-	private static final Logger logger = LoggerFactory.getLogger(AddWordHighlightFrame.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateWordHighlightFrame.class);
 	private Color borderColor = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT;
 	private Color wordColor = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT;
 	private JDialog thisDialog = this;
 	private JTextField inputField;
-	TitledBorder titledBorder;
+	private TitledBorder titledBorder;
+	private JLabel textLabel;
 	private static final MineStringBuilder stringBuilder = new MineStringBuilder();
+	
+	private String uuid = UUID.randomUUID().toString();
 
-	public AddWordHighlightFrame(JFrame parentFrame) {
+	public CreateWordHighlightFrame(JFrame parentFrame) {
 		super(parentFrame, "Add a word Highlight", new Dimension(400, 115));
 		
 		inputField = new JTextField();
@@ -63,7 +67,7 @@ public class AddWordHighlightFrame extends MineDialog {
 		titledBorder.setTitleColor(Color.GREEN);
 		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
 		
-        JLabel textLabel = new JLabel(getPreviewText().toString());
+        textLabel = new JLabel(getPreviewText().toString());
         textLabel.setForeground(ColorManager.FONT);
         textLabel.setFont(Settings.MESSAGE_FONT);
         
@@ -139,7 +143,7 @@ public class AddWordHighlightFrame extends MineDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				logger.debug("Try to save a new HighlightString\n  " + (inputField != null ? inputField.getText() : "null"));
-				String newWord = HighlightString.saveNewWord(inputField.getText(), wordColor, borderColor);
+				String newWord = HighlightString.saveNewWord(uuid, inputField.getText(), wordColor, borderColor);
 				if(newWord == null){
 					dispose();
 					return;
@@ -164,7 +168,18 @@ public class AddWordHighlightFrame extends MineDialog {
 			}
 		});
 		
-		setVisible(true);
+//		setVisible(true); DONT USE, bcs of the loadPreset method.
+	}
+	
+	public CreateWordHighlightFrame loadPreset(HighlightString preset){
+		uuid = preset.getUuid();
+		inputField.setText(preset.getWord());
+		borderColor = Color.decode(preset.getBorderColorCode());
+		wordColor = Color.decode(preset.getWordColorCode());
+
+		titledBorder.setBorder(BorderFactory.createLineBorder(borderColor, 2));
+		textLabel.setText(getPreviewText().toString());
+		return this;
 	}
 
 	private MineStringBuilder getPreviewText() {
