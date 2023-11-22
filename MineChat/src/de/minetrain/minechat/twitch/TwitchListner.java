@@ -122,16 +122,16 @@ public class TwitchListner {
 	}
 	
 	
-    @EventSubscriber
-    public void onFollow(FollowEvent event) {
-    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
-    	currentChannelTab.getStatistics().addFollower();
-    	if(!Settings.displayFollows.isActive()){return;}
-    	
-    	currentChannelTab.getChatWindow()
-			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", Settings.displayFollows.getColor(),
-				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
-    }
+//    @EventSubscriber
+//    public void onFollow(FollowEvent event) {
+//    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
+//    	currentChannelTab.getStatistics().addFollower();
+//    	if(!Settings.displayFollows.isActive()){return;}
+//    	
+//    	currentChannelTab.getChatWindow()
+//			.displaySystemInfo("New follower", "@"+event.getUser().getName()+" just followed!", Settings.displayFollows.getColor(),
+//				getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
+//    }
     
     @EventSubscriber
     public void onCheer(CheerEvent event) {
