@@ -31,7 +31,18 @@ public class Emote {
 		this.filePath = resultSet.getString("file_location");
 	}
 	
+	public Emote(boolean dummyData){
+		this.name = ">null<";
+		this.emoteId = ">null<";
+		this.favorite = false;
+		this.emoteType = EmoteType.DEFAULT;
+		this.filePath = ">null<";
+	}
+	
 	public ImageIcon getImageIcon(){
+		if(filePath.equalsIgnoreCase(">null<")){
+			return null;
+		}
 		return new ImageIcon(filePath);
 	}
 	
@@ -88,6 +99,7 @@ public class Emote {
 			return ".png";
 		}
 	}
+	
 	
 	public ImageIcon getBorderImage(){
 		switch (getEmoteType()) {

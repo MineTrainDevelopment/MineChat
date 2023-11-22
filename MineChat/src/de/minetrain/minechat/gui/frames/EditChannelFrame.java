@@ -12,11 +12,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
@@ -86,7 +88,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(createInputPanel("Channel login / URL:", "login"));
         panel.add(seperator0);
         panel.add(createInputPanel("Display name:", "display"));
-        panel.add(createDropdownPanel("User Typ:", new String[]{"Viewer", "Moderator"}, "type"));
+        panel.add(createDropdownPanel("User Typ:", new String[]{"Viewer", "Moderator", "VIP"}, "type"));
         panel.add(seperator1);
         panel.add(createDropdownPanel("Clone macros:", new String[]{" "}, "clone"));
         panel.add(createCheckBox("Install channel emotes:", "emote"));
@@ -95,18 +97,18 @@ public class EditChannelFrame extends JDialog {
         
         loginNameField.setText(tab.getChannelName());
         
-        YamlManager config = Main.CONFIG;
-		config.entrySet().forEach(entry -> {
-        	if(entry.getKey().startsWith("Channel_")){
-        		channelsFromConfig.put(config.getString(entry.getKey()+".Name"), entry.getKey());
-        	}
-        });
+        ResultSet resultSet = DatabaseManager.getChannel().getAll();
+        try {
+			while(resultSet.next()){
+				channelsFromConfig.put(resultSet.getString("login_name"), "Channel_"+resultSet.getString("channel_id"));
+				//Add all channels to the clone selector.
+				cloneMacrosComboBox.addItem(resultSet.getString("display_name")+" - ("+resultSet.getString("login_name")+")");
+			}
+			DatabaseManager.commit();
+		} catch (SQLException ex) {
+			logger.error("Can´t load all channel data properly.",ex);
+		}
 		
-		//Add all channels to the clone selector.
-		for(Entry<String, String> entry : channelsFromConfig.entrySet()){
-        	cloneMacrosComboBox.addItem(config.getString(entry.getValue()+".DisplayName")+" - ("+entry.getKey()+")");
-        }
-        
 		//Check if the current login input is alrady existing.
         loginChangeListner = new Thread(() -> {
         	String previousInput = "";
@@ -125,14 +127,16 @@ public class EditChannelFrame extends JDialog {
         			
 					//Set the default values, depending if there is alrady data for the inpit login name.
         			if(channelsFromConfig.containsKey(currentInput)){
-        				String configIndex = channelsFromConfig.get(currentInput)+".";
-        				displayNameField.setText(config.getString(configIndex+"DisplayName"));
-        				userTypeComboBox.setSelectedIndex(config.getString(configIndex+"ChannelRole").equalsIgnoreCase("moderator") ? 1 : 0);
-        				badgesCheckBox.setSelected(false);
-        				emotesCheckBox.setSelected(false);
-        				
-        				ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(channelsFromConfig.get(currentInput).replace("Channel_", ""));
-						subscriberCheckBox.setSelected(channelEmotes != null ? channelEmotes.isSub() : false);
+        				ChannelData channelById = DatabaseManager.getChannel().getChannelById(channelsFromConfig.get(currentInput).replace("Channel_", ""));
+        				if(channelById != null){
+        					displayNameField.setText(channelById.getDisplayName());
+        					userTypeComboBox.setSelectedIndex(channelById.getChatRole().equalsIgnoreCase("moderator") ? 1 : channelById.getChatRole().equalsIgnoreCase("vip") ? 2 : 0);
+        					badgesCheckBox.setSelected(false);
+        					emotesCheckBox.setSelected(false);
+        					
+        					ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(channelsFromConfig.get(currentInput).replace("Channel_", ""));
+        					subscriberCheckBox.setSelected(channelEmotes != null ? channelEmotes.isSub() : false);
+        				}
         			}else{
         				displayNameField.setText(loginNameField.getText()); //Sync display name with login name.
         				userTypeComboBox.setSelectedIndex(0);
@@ -160,7 +164,7 @@ public class EditChannelFrame extends JDialog {
         cancelButton.setBorder(null);
         cancelButton.addActionListener(closeWindow(true));
 
-        // HinzufÃ¼gen der Buttons am unteren Rand des JFrame
+        // Hinzufügen der Buttons am unteren Rand des JFrame
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 9, 5));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(7, 2, 2, 2));
         buttonPanel.setBackground(ColorManager.GUI_BORDER);
@@ -185,7 +189,7 @@ public class EditChannelFrame extends JDialog {
         location.setLocation(location.x+50, location.y+200);
         setLocation(location);
 
-        // HinzufÃ¼gen des Haupt-Panels zum Frame und Anzeigen des Frames
+        // Hinzufügen des Haupt-Panels zum Frame und Anzeigen des Frames
         getContentPane().add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
@@ -279,11 +283,33 @@ public class EditChannelFrame extends JDialog {
 				String path = "Channel_"+twitchUser.getUserId()+".";
 				config.setNumber(editedTab.getTabType().getConfigPath(), Long.parseLong(twitchUser.getUserId()));
 				
-				String nameSavedInConfigName = config.getString(path+"Name");
-				config.setString(path + "Name", twitchUser.getLoginName());
-				config.setString(path + "DisplayName", (displayNameField.getText().isEmpty() ? loginNameField.getText() : displayNameField.getText()));
-				config.setString(path + "ChannelRole", userTypeComboBox.getSelectedItem().toString());
-				config.setBoolean(path + "MessageLog", true);
+				ChannelData channelData = DatabaseManager.getChannel().getChannelById(twitchUser.getUserId());
+
+				String greetingList = "Hello {USER} HeyGuys\nWelcome {USER} HeyGuys";
+				String goodbyList = "By {USER}!\nHave a good one! {USER} <3";
+				String returnList = "Welcome back {USER} <3\n wb {USER} HeyGuys";
+				
+				if(channelData != null){
+					greetingList = channelData.getGreetingText();
+					goodbyList = channelData.getGoodbyText();
+					returnList = channelData.getReturnText();
+				}
+				
+				if(displayNameField.getText().isEmpty() || displayNameField.getText().equals(twitchUser.getLoginName())){
+					displayNameField.setText(twitchUser.getDisplayName());
+				}
+				
+				DatabaseManager.getChannel().insert(
+						twitchUser.getUserId(),
+						twitchUser.getLoginName(),
+						displayNameField.getText(),
+						userTypeComboBox.getSelectedItem().toString(),
+						null, //disable chat log
+						greetingList,
+						goodbyList,
+						returnList);
+				
+				DatabaseManager.commit();
 				
 				
 				if(cloneMacrosComboBox.getSelectedIndex()>0){
@@ -304,7 +330,7 @@ public class EditChannelFrame extends JDialog {
 					
 					config.setStringList(path + "GreetingText", config.getStringList(clonePath+"GreetingText"), false);
 					config.setStringList(path + "GoodbyText", config.getStringList(clonePath+"GoodbyText"), false);
-				}else if(nameSavedInConfigName.equalsIgnoreCase(">null<")){
+				}else if(channelData == null){
 					for(int i=0; i<=12; i++){
 						config.setString(path + "Macros_0.M"+i, "null%-%>null<");
 					}

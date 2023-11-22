@@ -44,5 +44,13 @@ public enum ButtonType {
 		this.configIndex = configIndex;
 	}
 	
+	public static ButtonType get(String input){
+		if(ButtonType.valueOf(input) != null){
+			return ButtonType.valueOf(input);
+		}
+		
+		return ButtonType.NON;
+	}
+	
 	
 }

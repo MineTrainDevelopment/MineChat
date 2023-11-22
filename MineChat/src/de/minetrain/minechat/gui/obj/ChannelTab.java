@@ -17,9 +17,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import de.minetrain.minechat.config.YamlManager;
+//import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.obj.ChannelMacros;
 import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
+import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -35,7 +37,7 @@ public class ChannelTab {
 	public static final Map<String, ChannelTab> byId = new HashMap<String, ChannelTab>();//channelId -> channelTab
 	private ChannelTab thisObject;
 	private TabButtonType tabType;
-	private String configID;
+	private String channelId;
 	private ImageIcon texture;
 	private JButton tabButton;
 	private String displayName;
@@ -43,6 +45,8 @@ public class ChannelTab {
 	private boolean moderator;
 	private MainFrame mainFrame;
 	private List<String> greetingTexts;
+	private List<String> goodByTexts;
+	private List<String> returnTexts;
 	private static List<ActionListener> editWindowActions = new ArrayList<ActionListener>();
 	private ChannelMacros macros;
 	private ChatWindow chatWindow;
@@ -53,8 +57,8 @@ public class ChannelTab {
 	
 	
 	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab, JLabel nameLabel) {
-		YamlManager config = Main.CONFIG;
-		configID = ""+config.getLong(tab.getConfigPath(), 0);
+//		YamlManager config = Main.CONFIG;
+		channelId = ""+Main.CONFIG.getLong(tab.getConfigPath(), 0);
 		
 		this.mainFrame = mainFrame;
 		this.chatWindow = new ChatWindow(this);
@@ -108,7 +112,7 @@ public class ChannelTab {
 			this.tabButton.addActionListener(actionListener);
 			macros = new ChannelMacros(null);
 		}else{
-			loadData(configID);
+			loadData(channelId);
 		}
 	
 		tabLabel = nameLabel;
@@ -123,14 +127,14 @@ public class ChannelTab {
 		return getDisplayName();
 	}
 
-	public void reload(String configID) {
-		loadData(configID);
+	public void reload(String channelId) {
+		loadData(channelId);
 		tabLabel.setText(getTabName());
 	}
 	
 	
-	private void loadData(String configID) {
-		this.configID = configID;
+	private void loadData(String channelId) {
+		this.channelId = channelId;
 		
 		editWindowActions.forEach(editWindowAction -> {
 			if(Arrays.asList(this.tabButton.getActionListeners()).contains(editWindowAction)){
@@ -139,7 +143,7 @@ public class ChannelTab {
 		});
 		
 		
-		if(configID.equals("0")) {
+		if(channelId.equals("0")) {
 			displayName = "";
 			moderator = false;
 			greetingTexts = null;
@@ -148,31 +152,38 @@ public class ChannelTab {
 			editWindowActions.add(actionListener);
 			this.tabButton.addActionListener(actionListener);
 		}else{
-			YamlManager config = Main.CONFIG;
-			String configPath = "Channel_"+configID+".";
-			channelName = config.getString(configPath+"Name");
-			displayName = config.getString(configPath+"DisplayName");
-			moderator = (config.getString(configPath+"ChannelRole").equalsIgnoreCase("moderator") ? true : false);
-			greetingTexts = config.getStringList(configPath+"GreetingText");
-			chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
-			this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
-			TwitchManager.joinChannel(channelName);
+			ChannelData channelById = DatabaseManager.getChannel().getChannelById(channelId);
 			
-			channelDisplayNameList.put(channelName, displayName);
-			byId.put(configID, this);
+			if(channelById != null){
+				channelName = channelById.getLoginName();
+				displayName = channelById.getDisplayName();
+				moderator = channelById.getChatRole().equalsIgnoreCase("moderator") || channelById.getChatRole().equalsIgnoreCase("vip");
+				greetingTexts = Arrays.asList(channelById.getGreetingText().split("\n"));
+				goodByTexts = Arrays.asList(channelById.getGoodbyText().split("\n"));
+				returnTexts = Arrays.asList(channelById.getReturnText().split("\n"));
+				chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
+				this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
+				TwitchManager.joinChannel(channelName);
+				
+				channelDisplayNameList.put(channelName, displayName);
+				byId.put(channelId, this);
+			}else{
+				loadData("0");
+			}
+			
 		}
 		
 		
-		loadMacros(configID);
+		loadMacros(channelId);
 	}
 
-	public void loadMacros(String configID) {
+	public void loadMacros(String channelId) {
 		if(macros == null){
-			macros = new ChannelMacros(configID);
+			macros = new ChannelMacros(channelId);
 			return;
 		}
 		
-		macros.reloadMacros(configID);
+		macros.reloadMacros(channelId);
 	}
 	
 	public void openEditFrame() {
@@ -190,13 +201,13 @@ public class ChannelTab {
 	public void loadMacroRow(MacroRow row){
 		if(row == null){row = getMacros().getCurrentMacroRow();}
 		getMacros().setCurrentMacroRow(row);
-		mainFrame.emoteButton0.setIcon(new ImageIcon(getMacros().getEmote_1(row).getEmotePath()));
-		mainFrame.emoteButton1.setIcon(new ImageIcon(getMacros().getEmote_2(row).getEmotePath()));
-		mainFrame.emoteButton2.setIcon(new ImageIcon(getMacros().getEmote_3(row).getEmotePath()));
-		mainFrame.emoteButton3.setIcon(new ImageIcon(getMacros().getEmote_4(row).getEmotePath()));
-		mainFrame.emoteButton4.setIcon(new ImageIcon(getMacros().getEmote_5(row).getEmotePath()));
-		mainFrame.emoteButton5.setIcon(new ImageIcon(getMacros().getEmote_6(row).getEmotePath()));
-		mainFrame.emoteButton6.setIcon(new ImageIcon(getMacros().getEmote_7(row).getEmotePath()));
+		mainFrame.emoteButton0.setIcon(getMacros().getEmote_1(row).getEmote().getImageIcon());
+		mainFrame.emoteButton1.setIcon(getMacros().getEmote_2(row).getEmote().getImageIcon());
+		mainFrame.emoteButton2.setIcon(getMacros().getEmote_3(row).getEmote().getImageIcon());
+		mainFrame.emoteButton3.setIcon(getMacros().getEmote_4(row).getEmote().getImageIcon());
+		mainFrame.emoteButton4.setIcon(getMacros().getEmote_5(row).getEmote().getImageIcon());
+		mainFrame.emoteButton5.setIcon(getMacros().getEmote_6(row).getEmote().getImageIcon());
+		mainFrame.emoteButton6.setIcon(getMacros().getEmote_7(row).getEmote().getImageIcon());
 //		mainFrame.emoteButton1.setIcon(getMacros().getEmote_2(row).getTwitchEmote().getImageIcon());
 //		mainFrame.emoteButton2.setIcon(getMacros().getEmote_3(row).getTwitchEmote().getImageIcon());
 //		mainFrame.emoteButton3.setIcon(getMacros().getEmote_4(row).getTwitchEmote().getImageIcon());
@@ -216,7 +227,7 @@ public class ChannelTab {
 	}
 
 	public boolean isOccupied(){
-		return !configID.equals("0");
+		return !channelId.equals("0");
 	}
 
 	public ChannelTab getThisObject() {
@@ -230,7 +241,7 @@ public class ChannelTab {
 
 
 	public String getConfigID() {
-		return configID;
+		return channelId;
 	}
 
 
@@ -259,7 +270,7 @@ public class ChannelTab {
 	}
 
 	public String getProfileImagePath() {
-		return TextureManager.texturePath+"Icons/"+configID+"/profile_75.png";
+		return TextureManager.texturePath+"Icons/"+channelId+"/profile_75.png";
 	}
 
 	public String getChannelName() {

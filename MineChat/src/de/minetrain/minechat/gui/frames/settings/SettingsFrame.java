@@ -53,8 +53,8 @@ public class SettingsFrame extends MineDialog{
 		
 		add(new SettingsTab_Chatting(parentFrame));
 		add(new SettingsTab_Appearance(parentFrame));
-		add(new SettingsTab_AutoReply(parentFrame));
 		add(new SettingsTab_Highlights(parentFrame));
+		add(new SettingsTab_AutoReply(parentFrame));
 //		mainPanel.add(new SettingsTab("Test"));
 		
 

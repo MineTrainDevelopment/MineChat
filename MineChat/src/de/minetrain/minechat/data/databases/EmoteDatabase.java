@@ -331,23 +331,9 @@ public class EmoteDatabase extends Database{
 
 			
 			ResultSet resultSet = statement.executeQuery();
-//			if(resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()){
-//				
-//			}
 				
 			while(resultSet.next()){
 				publicEmotes = resultSet.getBoolean("public");
-//				logger.info(
-//						resultSet.getString("emote_id")+" - "+
-//						resultSet.getString("name")+" - "+
-//						resultSet.getBoolean("public")+" - "+
-//			            resultSet.getBoolean("favorite")+" - "+
-//			            resultSet.getLong("emote_type")+" - "+
-//			            resultSet.getLong("tier")+" - "+
-//			            resultSet.getLong("image_type")+" - "+
-//			            resultSet.getLong("animated")+" - "+
-//			            resultSet.getLong("file_location")
-//						);
 			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);

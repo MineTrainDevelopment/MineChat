@@ -112,9 +112,9 @@ public class MineButton extends JButton{
 		
 		if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
 			MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
-			if(!macro.getMacroOutput().equals(">null<")){
+			if(!macro.getRawOutput().contains(">null<")){
 				System.out.println("send message");
-				MessageManager.sendMessage(macro.getMacroOutput());
+				MessageManager.sendMessage(macro.getOutput());
 			}
 		}
 		

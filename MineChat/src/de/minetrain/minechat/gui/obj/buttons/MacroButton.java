@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import de.minetrain.minechat.config.obj.MacroObject;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.frames.AskToAddEmoteFrame;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
@@ -60,8 +61,8 @@ public class MacroButton extends MineButton{
 		            
 		            InputFrame inputFrame;
 					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
-					if(!macro.getButtonName().equalsIgnoreCase("null")){
-			            inputFrame = new InputFrame(mainFrame, "Button text:", macro.getButtonName(), "Macro output:", macro.getMacroOutput());
+					if(!macro.getTitle().equalsIgnoreCase("null")){
+			            inputFrame = new InputFrame(mainFrame, "Button text:", macro.getTitle(), "Macro output:", macro.getOutput());
 		            }else{
 		            	inputFrame = new InputFrame(mainFrame, "Button text:", "", "Macro output:", "");
 		            }
@@ -77,7 +78,7 @@ public class MacroButton extends MineButton{
 				            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
 		            		}
 	            			
-	            			String emotePath = "";
+	            			String emoteId = null;
 	            			if(askToAddEmoteFrame.isAddEmote()){
 	            				EmoteSelector emoteSelector = new EmoteSelector(mainFrame, true);
 	            				Emote selectedEmote = emoteSelector.getSelectedEmote();
@@ -87,14 +88,26 @@ public class MacroButton extends MineButton{
 	    			            }
 	    		            	
 	    		            	if(selectedEmote != null){
-	    		            		emotePath = "%&%"+selectedEmote.getFilePath().replace("_BG.png", selectedEmote.getFileFormat());
+	    		            		emoteId = selectedEmote.getEmoteId();
 	    		            	}
 	            			}
 
 	            			String input = (inputFrame.getNameInput().length()>0) ? inputFrame.getNameInput() : "Unknown";
 	            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : "Unknown macro... - "+type.name();
 	            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
-							Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros"+macroRow+"."+type.getConfigIndex(), input+emotePath+"%-%"+output, true);
+							
+	            			System.err.println(macro.getMacroId());
+							DatabaseManager.getMacro().insert(
+									macro.getMacroId(),
+									TitleBar.currentTab.getConfigID(),
+									macro.getButtonType(),
+									type.name(),
+									TitleBar.currentTab.getMacros().getCurrentMacroRow().name(),
+									input,
+									emoteId,
+									output.strip().trim().split("\\r?\\n"));
+							
+							DatabaseManager.commit();							
 	            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
 	            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab);
 	            		}
@@ -136,9 +149,9 @@ public class MacroButton extends MineButton{
 	 * @param macro the {@link MacroObject} containing the data for the button.
 	 */
 	public void setData(MacroObject macro) {
-		setIcon(new ImageIcon(macro.getEmotePath()));
-		setText((macro.getButtonName().equalsIgnoreCase("null")) ? "" : macro.getButtonName());
-		setToolTipText(macro.getMacroOutput());
+		setIcon(macro.getEmote().getImageIcon());
+		setText((macro.getTitle().equalsIgnoreCase("null")) ? "" : macro.getTitle());
+		setToolTipText(macro.getRawOutput());
 	}
 	
 	@Override
