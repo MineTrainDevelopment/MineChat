@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Random;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
@@ -26,6 +27,9 @@ public class AutoReply {
 	private final Long messagesPerMin;
 	private final Long fireDelay;
 	private final boolean chatReply;
+	
+	private static final Random random = new Random();
+	private int previousRandom = 0;
 	
 	private Instant firedTimeStamp = Instant.now().minusSeconds(Integer.MAX_VALUE);
 
@@ -69,7 +73,7 @@ public class AutoReply {
 		firedTimeStamp = Instant.now();
 		messageCounter.clear();
 		
-		ChatMessage chatMessage = new ChatMessage(ChannelTab.getById(channelId), TwitchManager.ownerChannelName, outputs[(int) (Math.random() * outputs.length)]);
+		ChatMessage chatMessage = new ChatMessage(ChannelTab.getById(channelId), TwitchManager.ownerChannelName, getOutput());
 		chatMessage.overrideReplyMessage(isChatReply() ? message : null);
 		MessageManager.getDefaultMessageHandler().addMessage(chatMessage);
 	}
@@ -101,6 +105,20 @@ public class AutoReply {
 
 	public String[] getOutputs() {
 		return outputs;
+	}
+	
+	public String getOutput() {
+		int newRandom = 0;
+		while(this.outputs.length > 1 && (newRandom == previousRandom)){
+			newRandom = random.nextInt(this.outputs.length);
+		}
+		
+		previousRandom = newRandom;
+		return outputs[newRandom];
+	}
+
+	public String getTrulyRandomOutput() {
+		return outputs[random.nextInt(outputs.length)];
 	}
 
 	public CallCounter getMessageCounter() {

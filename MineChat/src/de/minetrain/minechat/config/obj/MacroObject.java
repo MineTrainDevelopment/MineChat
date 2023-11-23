@@ -15,6 +15,7 @@ public class MacroObject {
 	private final String emote_id;
 	private final String[] output;
 	private final Long macroId;
+	private int previousRandom = 0;
 	
 	public MacroObject(ButtonType buttonType, String emote_id, String title, String[] output) {
 		this.buttonType = buttonType;
@@ -41,6 +42,16 @@ public class MacroObject {
 	}
 
 	public String getOutput() {
+		int newRandom = 0;
+		while(this.output.length > 1 && (newRandom == previousRandom)){
+			newRandom = random.nextInt(this.output.length);
+		}
+		
+		previousRandom = newRandom;
+		return output[newRandom];
+	}
+
+	public String getTrulyRandomOutput() {
 		return output[random.nextInt(output.length)];
 	}
 
