@@ -45,7 +45,7 @@ public class MacroObject {
 	}
 
 	public String getRawOutput() {
-		return String.join("\n", output);
+		return String.join(" - ", output);
 	}
 
 	public String getEmoteId() {
