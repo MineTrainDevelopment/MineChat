@@ -7,6 +7,8 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
+import de.minetrain.minechat.config.obj.MacroObject;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
@@ -58,6 +60,7 @@ public class MacroEmoteButton extends MineButton{
 			            }
 		            	
 		            	if(selectedEmote != null){
+							MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
 //		            		selectedEmote = selectedEmote.getFilePath().replace("_BG.png", selectedEmote.getFileFormat());
 		            		
 							String selectedEmoteName = selectedEmote.getName();
@@ -71,7 +74,20 @@ public class MacroEmoteButton extends MineButton{
 		            		if(inputFrame.getOutputInput() != null){
 		            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : selectedEmoteName;
 		            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
-		            			Main.CONFIG.setString("Channel_"+TitleBar.currentTab.getConfigID()+".Macros"+macroRow+"."+type.getConfigIndex(), (selectedEmote.getFilePath().replace("_BG", ""))+"%-%"+output, true);
+		            			
+		            			System.err.println(macro.getMacroId());
+								DatabaseManager.getMacro().insert(
+										macro.getMacroId(),
+										TitleBar.currentTab.getConfigID(),
+										macro.getButtonType(),
+										type.name(),
+										TitleBar.currentTab.getMacros().getCurrentMacroRow().name(),
+										"",
+										selectedEmote.getEmoteId(),
+										output.strip().trim().split("\\r?\\n"));
+								
+								DatabaseManager.commit();							
+		            			
 		            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
 		            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab);
 		            		}

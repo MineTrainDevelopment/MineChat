@@ -73,13 +73,13 @@ public class ChannelMacros {
 		macroRow.put(ButtonType.MACRO_5, getMacroObject(macroData, ButtonType.MACRO_5));
 		macroRow.put(ButtonType.MACRO_6, getMacroObject(macroData, ButtonType.MACRO_6));
 		
-		macroRow.put(ButtonType.EMOTE_1, getDefaultMacroObject(ButtonType.EMOTE_1));
-		macroRow.put(ButtonType.EMOTE_2, getDefaultMacroObject(ButtonType.EMOTE_2));
-		macroRow.put(ButtonType.EMOTE_3, getDefaultMacroObject(ButtonType.EMOTE_3));
-		macroRow.put(ButtonType.EMOTE_4, getDefaultMacroObject(ButtonType.EMOTE_4));
-		macroRow.put(ButtonType.EMOTE_5, getDefaultMacroObject(ButtonType.EMOTE_5));
-		macroRow.put(ButtonType.EMOTE_6, getDefaultMacroObject(ButtonType.EMOTE_6));
-		macroRow.put(ButtonType.EMOTE_7, getDefaultMacroObject(ButtonType.EMOTE_7));
+		macroRow.put(ButtonType.EMOTE_1, getMacroObject(macroData, ButtonType.EMOTE_1));
+		macroRow.put(ButtonType.EMOTE_2, getMacroObject(macroData, ButtonType.EMOTE_2));
+		macroRow.put(ButtonType.EMOTE_3, getMacroObject(macroData, ButtonType.EMOTE_3));
+		macroRow.put(ButtonType.EMOTE_4, getMacroObject(macroData, ButtonType.EMOTE_4));
+		macroRow.put(ButtonType.EMOTE_5, getMacroObject(macroData, ButtonType.EMOTE_5));
+		macroRow.put(ButtonType.EMOTE_6, getMacroObject(macroData, ButtonType.EMOTE_6));
+		macroRow.put(ButtonType.EMOTE_7, getMacroObject(macroData, ButtonType.EMOTE_7));
 	}
 
 	private MacroObject getMacroObject(Map<ButtonType, MacroData> macroData, ButtonType buttonType) {
