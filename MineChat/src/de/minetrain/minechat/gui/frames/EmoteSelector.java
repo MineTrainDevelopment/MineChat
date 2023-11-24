@@ -31,6 +31,8 @@ import javax.swing.text.BadLocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.emotes.BackgroundImageIcon;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.Emote;
@@ -69,6 +71,24 @@ public class EmoteSelector extends JDialog{
         add(scrollPane, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(mainFrame);
+        setVisible(true);
+	}
+
+	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect, int scrollPositien) {
+		super(mainFrame, "Emotes", true);
+		this.disposOnSelect = disposOnSelect;
+		thisObect = this;
+		
+        setResizable(false);
+        setUndecorated(true);
+
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        createEmotePanel(mainFrame);
+        add(scrollPane, BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(mainFrame);
+        setScrollBarValue(scrollPositien);
         setVisible(true);
 	}
 	
@@ -120,11 +140,12 @@ public class EmoteSelector extends JDialog{
     	addEmoteSet(EmoteManager.getAllEmotes().values().stream().filter(emote -> emote.isFavorite()).collect(Collectors.toList()), "Favorites");
     	addEmoteSet(EmoteManager.getAllEmotes().values().stream().filter(emote -> emote.getEmoteType().equals(EmoteType.DEFAULT)).collect(Collectors.toList()), "Default");
     	
+    	HashMap<String,ChannelData> allChannels = DatabaseManager.getChannel().getAllChannels();
     	
 //    	Get the list of what channels have what emotes.
         for (Entry<String, ChannelEmotes> entry : EmoteManager.getChannelEmotes().entrySet()) {
         	if(!entry.getValue().getAllEmotes().isEmpty()){
-        		addEmoteSet(entry.getValue().getAllEmotes(), entry.getKey());
+        		addEmoteSet(entry.getValue().getAllEmotes(), allChannels.get(entry.getKey()).getDisplayName());
         	}
         }
         
@@ -177,7 +198,14 @@ public class EmoteSelector extends JDialog{
 			        if (SwingUtilities.isRightMouseButton(e)) {
 			        	emote.toggleFavorite();
 		        		dispose();
-		        		new EmoteSelector(Main.MAIN_FRAME, disposOnSelect);
+		        		new EmoteSelector(Main.MAIN_FRAME, disposOnSelect, scrollPane.getVerticalScrollBar().getValue());
+			        	
+//			        	setVisible(false);
+////			        	setScrollBarValue(scrollPane.getVerticalScrollBar().getValue());
+//			        	createEmotePanel(Main.MAIN_FRAME);
+//			        	revalidate();
+//			        	repaint();
+//			        	setVisible(true);
 			        }
 			    }
 			});
@@ -262,6 +290,10 @@ public class EmoteSelector extends JDialog{
 
 	public Emote getSelectedEmote() {
 		return selectedEmote;
+	}
+	
+	private void setScrollBarValue(int value){
+		scrollPane.getVerticalScrollBar().setValue(value);
 	}
 }
 
