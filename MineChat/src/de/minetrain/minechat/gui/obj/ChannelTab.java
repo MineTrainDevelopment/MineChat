@@ -17,7 +17,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-//import de.minetrain.minechat.config.YamlManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.minetrain.minechat.config.obj.ChannelMacros;
 import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -57,8 +59,7 @@ public class ChannelTab {
 	
 	
 	public ChannelTab(MainFrame mainFrame, JButton button, TabButtonType tab, JLabel nameLabel) {
-//		YamlManager config = Main.CONFIG;
-		channelId = ""+Main.CONFIG.getLong(tab.getConfigPath(), 0);
+		channelId = DatabaseManager.getChannelTabIndexDatabase().getChannelId(tab);
 		
 		this.mainFrame = mainFrame;
 		this.chatWindow = new ChatWindow(this);
@@ -110,7 +111,7 @@ public class ChannelTab {
 			ActionListener actionListener = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
 			editWindowActions.add(actionListener);
 			this.tabButton.addActionListener(actionListener);
-			macros = new ChannelMacros(null);
+			macros = new ChannelMacros("0");
 		}else{
 			loadData(channelId);
 		}

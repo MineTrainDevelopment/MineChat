@@ -22,6 +22,7 @@ import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 
+@Deprecated
 public class ChannelSettings extends MineDialog{
 	private JPanel mainPanel;
 	private JPanel buttonPanel;
@@ -60,7 +61,7 @@ public class ChannelSettings extends MineDialog{
 			public void actionPerformed(ActionEvent e) {
 				greetingTab.save();
 				goodbyTab.save();
-				Main.CONFIG.saveConfigToFile();
+//				Main.CONFIG.saveConfigToFile();
 				dispose();
 			}
 		});

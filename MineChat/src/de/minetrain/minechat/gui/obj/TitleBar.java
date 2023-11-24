@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -24,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.YamlManager;
+import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -121,26 +124,23 @@ public class TitleBar extends JPanel{
 			public void actionPerformed(ActionEvent e){changeTab(getThirdTab());}
 		});
         
-        YamlManager config = Main.CONFIG;
+        HashMap<TabButtonType, String> allChannelTabs = DatabaseManager.getChannelTabIndexDatabase().getAll();
 		List<TwitchUserObj> twitchUsers = TwitchManager.getTwitchUsers(TwitchApiCallType.ID, 
-    		""+config.getLong(TabButtonType.TAB_MAIN.getConfigPath(), 0),
-    		""+config.getLong(TabButtonType.TAB_SECOND.getConfigPath(), 0),
-    		""+config.getLong(TabButtonType.TAB_THIRD.getConfigPath(), 0),
-			""+config.getLong(TabButtonType.TAB_THIRD_ROW_2.getConfigPath(), 0),
-			""+config.getLong(TabButtonType.TAB_THIRD_ROW_2.getConfigPath(), 0),
-			""+config.getLong(TabButtonType.TAB_THIRD_ROW_2.getConfigPath(), 0));
+				allChannelTabs.get(TabButtonType.TAB_MAIN),
+				allChannelTabs.get(TabButtonType.TAB_SECOND),
+				allChannelTabs.get(TabButtonType.TAB_THIRD),
+				allChannelTabs.get(TabButtonType.TAB_MAIN_ROW_2),
+				allChannelTabs.get(TabButtonType.TAB_SECOND_ROW_2),
+				allChannelTabs.get(TabButtonType.TAB_THIRD_ROW_2));
+		
+		HashMap<String, ChannelData> allChannels = DatabaseManager.getChannel().getAllChannels();
         
-        twitchUsers.forEach(channel -> {
-        	String yamlPath = "Channel_"+channel.getUserId();
-			if(!channel.isDummy()){
-				if(!channel.getLoginName().equals(config.getString(yamlPath+".Name"))){
-					config.setString(yamlPath+".Name", channel.getLoginName(), true);
-				}
-			}else{
-//				config.remove(yamlPath);
-			}
-        });
-        
+		twitchUsers.stream()
+			.filter(channel -> !channel.isDummy() && allChannels.containsKey(channel.getUserId()) && !channel.getLoginName().equals(allChannels.get(channel.getUserId()).getLoginName()))
+			.forEach(channel -> DatabaseManager.getChannel().updateChannelLoginName(channel.getUserId(), channel.getLoginName()));
+		DatabaseManager.commit();
+		
+		
         this.mainTab = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN, mainTabName);
         this.channelTabRow_Main = new ChannelTab(mainFrame, tab1, TabButtonType.TAB_MAIN_ROW_2, mainTabName);
 
@@ -181,11 +181,11 @@ public class TitleBar extends JPanel{
 	}
 	
 	public void reloadTabs(){
-		YamlManager config = Main.CONFIG;
+		HashMap<TabButtonType, String> allChannelTabs = DatabaseManager.getChannelTabIndexDatabase().getAll();
 		
-		getMainTab().reload(""+config.getLong(getMainTab().getTabType().getConfigPath(), 0));
-		getSecondTab().reload(""+config.getLong(getSecondTab().getTabType().getConfigPath(), 0));
-		getThirdTab().reload(""+config.getLong(getThirdTab().getTabType().getConfigPath(), 0));
+		getMainTab().reload(allChannelTabs.get(getMainTab().getTabType()));
+		getSecondTab().reload(allChannelTabs.get(getSecondTab().getTabType()));
+		getThirdTab().reload(allChannelTabs.get(getThirdTab().getTabType()));
 		
 		changeTab(getMainTab());
 	}

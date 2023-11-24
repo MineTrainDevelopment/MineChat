@@ -14,9 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -33,7 +31,6 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
@@ -41,7 +38,6 @@ import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
@@ -279,10 +275,6 @@ public class EditChannelFrame extends JDialog {
 					return;
 				}
 				
-				YamlManager config = Main.CONFIG;
-				String path = "Channel_"+twitchUser.getUserId()+".";
-				config.setNumber(editedTab.getTabType().getConfigPath(), Long.parseLong(twitchUser.getUserId()));
-				
 				ChannelData channelData = DatabaseManager.getChannel().getChannelById(twitchUser.getUserId());
 
 				String greetingList = "Hello {USER} HeyGuys\nWelcome {USER} HeyGuys";
@@ -299,6 +291,8 @@ public class EditChannelFrame extends JDialog {
 					displayNameField.setText(twitchUser.getDisplayName());
 				}
 				
+
+				DatabaseManager.getChannelTabIndexDatabase().insert(editedTab.getTabType(), twitchUser.getUserId());
 				DatabaseManager.getChannel().insert(
 						twitchUser.getUserId(),
 						twitchUser.getLoginName(),
@@ -310,51 +304,6 @@ public class EditChannelFrame extends JDialog {
 						returnList);
 				
 				DatabaseManager.commit();
-				
-				
-				if(cloneMacrosComboBox.getSelectedIndex()>0){
-					String selectedName = cloneMacrosComboBox.getSelectedItem().toString();
-					String clonePath = channelsFromConfig.get(selectedName.contains("(") ? selectedName.split("\\(")[1].replace(")", "") : selectedName)+".";
-					
-					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros_0.M"+i, config.getString(clonePath + "Macros_0.M"+i));
-					}
-
-					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros_1.M"+i, config.getString(clonePath + "Macros_1.M"+i));
-					}
-
-					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros_2.M"+i, config.getString(clonePath + "Macros_2.M"+i));
-					}
-					
-					config.setStringList(path + "GreetingText", config.getStringList(clonePath+"GreetingText"), false);
-					config.setStringList(path + "GoodbyText", config.getStringList(clonePath+"GoodbyText"), false);
-				}else if(channelData == null){
-					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros_0.M"+i, "null%-%>null<");
-					}
-
-					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros_1.M"+i, "null%-%>null<");
-					}
-
-					for(int i=0; i<=12; i++){
-						config.setString(path + "Macros_2.M"+i, "null%-%>null<");
-					}
-	
-					List<String> greetingsList = new ArrayList<String>();
-					greetingsList.add("Hello {USER} HeyGuys");
-					greetingsList.add("Welcome {USER} HeyGuys");
-					config.setStringList(path + "GreetingText", greetingsList, false);
-					
-					List<String> goodbysList = new ArrayList<String>();
-					goodbysList.add("By {USER}!");
-					goodbysList.add("Have a good one! {USER} <3");
-					config.setStringList(path + "GoodbyText", goodbysList, false);
-				}
-
-				config.saveConfigToFile();
 				TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
 				
 				new Thread(() -> {

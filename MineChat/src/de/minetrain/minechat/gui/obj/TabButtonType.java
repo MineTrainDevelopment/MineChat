@@ -3,6 +3,8 @@ package de.minetrain.minechat.gui.obj;
 import de.minetrain.minechat.main.Main;
 
 public enum TabButtonType {
+	NON(null),
+	
 	TAB_MAIN("Tabs.first"),
 	TAB_SECOND("Tabs.second"),
 	TAB_THIRD("Tabs.thrid"),
@@ -38,5 +40,9 @@ public enum TabButtonType {
 		default:
 			return false;
 		}
+	}
+	
+	public static TabButtonType get(String buttonType){
+		return TabButtonType.valueOf(buttonType) != null ? TabButtonType.valueOf(buttonType) : NON;
 	}
 }

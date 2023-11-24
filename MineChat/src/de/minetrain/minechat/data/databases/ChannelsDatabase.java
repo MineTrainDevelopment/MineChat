@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,8 @@ public class ChannelsDatabase extends Database{
 	private static final String update_SQL = "UPDATE "+tabelName+" SET channel_id = ? , login_name = ? , display_name = ? , chat_role = ? , chatlog_level = ? , greeting_text = ? , goodby_text = ?  , return_text = ? WHERE channel_id = ?";
 	private static final String check_SQL = "SELECT channel_id FROM "+tabelName+" WHERE channel_id = ?";
 	private static final String select_sql = "SELECT channel_id, login_name, display_name, chat_role, chatlog_level, greeting_text, goodby_text, return_text FROM "+tabelName;
+	
+	private static final String update_login_name_SQL = "UPDATE "+tabelName+" SET login_name = ? WHERE channel_id = ?";
 	
 	public ChannelsDatabase() throws SQLException {
 		super("CREATE TABLE IF NOT EXISTS "+tabelName+" (\n"
@@ -67,6 +72,38 @@ public class ChannelsDatabase extends Database{
             statement.setString(7, goodby_text);
             statement.setString(8, return_text);
             statement.executeUpdate();
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage(), ex);
+		}
+	}
+	
+	/**
+	 * Warning: no auto commit.
+	 * @param channel_id
+	 * @param login_name
+	 */
+	public void updateChannelLoginName(String channel_id, String login_name){
+		logger.info("Insert new database entry");
+
+		try{
+			Connection connection = DatabaseManager.connect();
+			connection.setAutoCommit(false);
+
+            //Write to the emote_channel table
+			PreparedStatement statement = connection.prepareStatement(check_SQL);
+			statement.setString(1, channel_id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
+                statement = connection.prepareStatement(update_login_name_SQL);
+            	statement.setString(1, login_name);
+            	statement.setString(2, channel_id);
+            	statement.executeUpdate();
+            }else{
+            	logger.warn("Can´t set bttv emotes IDs for channel '"+channel_id+"'.");
+            }
+
+//            connection.commit();
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage(), ex);
 		}
@@ -131,6 +168,26 @@ public class ChannelsDatabase extends Database{
 			logger.error("Can´t read data from channel id -> "+channel_id);
 		}
 		return null;
+	}
+
+	/**
+	 * channel_id, channelData
+	 */
+	public HashMap<String, ChannelData> getAllChannels(){
+		ResultSet resultSet = getAll();
+		HashMap<String, ChannelData> channelDatas = new HashMap<String, ChannelData>();
+		try {
+			while(resultSet.next()){
+				ChannelData channelData = new ChannelData(resultSet);
+				channelDatas.put(channelData.getChannelId(), channelData);
+			}
+			
+		} catch (SQLException ex) {
+			logger.error("", ex);
+		}
+		
+		DatabaseManager.commit();
+		return channelDatas;
 	}
 	
 //	public void getById(String uuid){

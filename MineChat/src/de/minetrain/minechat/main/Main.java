@@ -40,8 +40,6 @@ public class Main {
 	public static final TextureManager TEXTURE_MANAGER = new TextureManager();
 	public static final StatusBar LOADINGBAR = new StatusBar();
 	public static final String VERSION = "V0.8";
-	public static YamlManager CONFIG;
-	public static YamlManager EMOTE_INDEX;
 	public static MainFrame MAIN_FRAME;
 	public static JFrame onboardingFrame;
 	public static Settings rftnfijdg;
@@ -67,6 +65,9 @@ public class Main {
 		
 		
 		
+//		Emote reinstall brakes BTTV emotes in auto compleet
+		
+		
 		
 		
 		LOADINGBAR.setSize(400, 50);
@@ -90,14 +91,13 @@ public class Main {
 	    onboardingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    onboardingFrame.setVisible(true);
 	    
-	    LOADINGBAR.setProgress("Reading config file.", 5);
-	    try {
-	    	CONFIG = new YamlManager("data/config.yml");
-	    	EMOTE_INDEX = new YamlManager(TextureManager.texturePath+"Icons/emoteIndex.yml");
-		} catch (Exception ex) {
-	    	LOADINGBAR.setError("config.yml or emoteIndex.yml not found!");
-	    	return;
-		}
+//	    LOADINGBAR.setProgress("Reading config file.", 5);
+//	    try {
+//	    	CONFIG = new YamlManager("data/config.yml");
+//		} catch (Exception ex) {
+//	    	LOADINGBAR.setError("config.yml or emoteIndex.yml not found!");
+//	    	return;
+//		}
 	    
 	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
 	    try {
