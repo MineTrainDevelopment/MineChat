@@ -27,6 +27,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +49,9 @@ public class EditChannelFrame extends JDialog {
 	private static final Logger logger = LoggerFactory.getLogger(EditChannelFrame.class);
 	private static final long serialVersionUID = 8773100712568642831L;
 	private Map<String, String> channelsFromConfig = new HashMap<String, String>();
-	private JTextField loginNameField, displayNameField;
-    private JComboBox<String> userTypeComboBox, cloneMacrosComboBox;
+//	private JTextField loginNameField, displayNameField;
+	private JTextField displayNameField;
+    private JComboBox<String> loginNameComboBox, userTypeComboBox, cloneMacrosComboBox;
     private JCheckBox emotesCheckBox, badgesCheckBox, subscriberCheckBox;
     private Thread loginChangeListner;
     private int mouseX, mouseY;
@@ -81,7 +85,7 @@ public class EditChannelFrame extends JDialog {
         seperator1.setForeground(Color.WHITE);
         seperator1.setHorizontalTextPosition(SwingConstants.CENTER);
 
-        panel.add(createInputPanel("Channel login / URL:", "login"));
+        panel.add(createDropdownPanel("Channel login / URL:", new String[]{" "}, "login"));
         panel.add(seperator0);
         panel.add(createInputPanel("Display name:", "display"));
         panel.add(createDropdownPanel("User Typ:", new String[]{"Viewer", "Moderator", "VIP"}, "type"));
@@ -91,57 +95,86 @@ public class EditChannelFrame extends JDialog {
         panel.add(createCheckBox("Install channel badges:", "badge"));
         panel.add(createCheckBox("Are you subscriber on this channel:", "subscriber"));
         
-        loginNameField.setText(tab.getChannelName());
-        
         ResultSet resultSet = DatabaseManager.getChannel().getAll();
         try {
 			while(resultSet.next()){
 				channelsFromConfig.put(resultSet.getString("login_name"), "Channel_"+resultSet.getString("channel_id"));
 				//Add all channels to the clone selector.
 				cloneMacrosComboBox.addItem(resultSet.getString("display_name")+" - ("+resultSet.getString("login_name")+")");
+				loginNameComboBox.addItem(resultSet.getString("login_name"));
 			}
 			DatabaseManager.commit();
 		} catch (SQLException ex) {
 			logger.error("Can´t load all channel data properly.",ex);
 		}
+        
+//        loginNameField.setText(tab.getChannelName());
+        loginNameComboBox.setEditable(true);
+        try {
+        	loginNameComboBox.setSelectedItem(tab.getChannelName());
+		} catch (Exception e) { }
+        
+        
+        //This is necessary for the loginChangeListner to get the new state from loginNameComboBox on every keystroke.
+        ((JTextComponent) loginNameComboBox.getEditor().getEditorComponent()).getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            	update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // Not needed for plain text components
+            }
+            
+            private void update(){
+            	displayNameField.requestFocusInWindow();
+                loginNameComboBox.getEditor().getEditorComponent().requestFocusInWindow();
+            }
+        });
 		
 		//Check if the current login input is alrady existing.
         loginChangeListner = new Thread(() -> {
-        	String previousInput = "";
-        	while(true){
-        		try{Thread.sleep(250);}catch(InterruptedException e){ }
-				
-        		String currentInput = loginNameField.getText().toLowerCase();
-				if(!currentInput.equals(previousInput)){
-					previousInput = currentInput;
-					
-					//format the login input, should it be a link.
-					if(currentInput.contains("https://www.twitch.tv/")){
-						loginNameField.setText(loginNameField.getText().replace("https://www.twitch.tv/", "").split("\\?")[0]);
-						currentInput = loginNameField.getText().toLowerCase();
-					}
-        			
-					//Set the default values, depending if there is alrady data for the inpit login name.
-        			if(channelsFromConfig.containsKey(currentInput)){
-        				ChannelData channelById = DatabaseManager.getChannel().getChannelById(channelsFromConfig.get(currentInput).replace("Channel_", ""));
-        				if(channelById != null){
-        					displayNameField.setText(channelById.getDisplayName());
-        					userTypeComboBox.setSelectedIndex(channelById.getChatRole().equalsIgnoreCase("moderator") ? 1 : channelById.getChatRole().equalsIgnoreCase("vip") ? 2 : 0);
-        					badgesCheckBox.setSelected(false);
-        					emotesCheckBox.setSelected(false);
-        					
-        					ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(channelsFromConfig.get(currentInput).replace("Channel_", ""));
-        					subscriberCheckBox.setSelected(channelEmotes != null ? channelEmotes.isSub() : false);
-        				}
-        			}else{
-        				displayNameField.setText(loginNameField.getText()); //Sync display name with login name.
-        				userTypeComboBox.setSelectedIndex(0);
-        				badgesCheckBox.setSelected(true);
-        				emotesCheckBox.setSelected(true);
-        				subscriberCheckBox.setSelected(false);
-        			}
-        		}
-        	}
+            String previousInput = "";
+            while(true){
+                try{Thread.sleep(250);}catch(InterruptedException e){ }
+                
+                String currentInput = (String) loginNameComboBox.getSelectedItem(); // Use JComboBox instead of JTextField
+                if(!currentInput.equals(previousInput)){
+                    previousInput = currentInput;
+                    
+                    //format the login input, should it be a link.
+                    if(currentInput.contains("https://www.twitch.tv/")){
+                        loginNameComboBox.setSelectedItem(currentInput.replace("https://www.twitch.tv/", "").split("\\?")[0]);
+                        currentInput = (String) loginNameComboBox.getSelectedItem();
+                    }
+                    
+                    //Set the default values, depending if there is already data for the input login name.
+                    if(channelsFromConfig.containsKey(currentInput.toLowerCase())){
+                        ChannelData channelById = DatabaseManager.getChannel().getChannelById(channelsFromConfig.get(currentInput.toLowerCase()).replace("Channel_", ""));
+                        if(channelById != null){
+                            displayNameField.setText(channelById.getDisplayName());
+                            userTypeComboBox.setSelectedIndex(channelById.getChatRole().equalsIgnoreCase("moderator") ? 1 : channelById.getChatRole().equalsIgnoreCase("vip") ? 2 : 0);
+                            badgesCheckBox.setSelected(false);
+                            emotesCheckBox.setSelected(false);
+                            
+                            ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(channelsFromConfig.get(currentInput.toLowerCase()).replace("Channel_", ""));
+                            subscriberCheckBox.setSelected(channelEmotes != null ? channelEmotes.isSub() : false);
+                        }
+                    } else {
+                        displayNameField.setText((String) loginNameComboBox.getSelectedItem()); // Sync display name with login name.
+                        userTypeComboBox.setSelectedIndex(0);
+                        badgesCheckBox.setSelected(true);
+                        emotesCheckBox.setSelected(true);
+                        subscriberCheckBox.setSelected(false);
+                    }
+                }
+            }
         });
         
         loginChangeListner.start();
@@ -169,7 +202,7 @@ public class EditChannelFrame extends JDialog {
         panel.add(buttonPanel);
         
         // Setzen der Breite der Buttons auf die Breite der Textfelder
-        int buttonWidth = (loginNameField.getPreferredSize().width + displayNameField.getPreferredSize().width) / 2;
+        int buttonWidth = (loginNameComboBox.getPreferredSize().width + displayNameField.getPreferredSize().width) / 2;
         cancelButton.setPreferredSize(new Dimension(buttonWidth, cancelButton.getPreferredSize().height));
         confirmButton.setPreferredSize(new Dimension(buttonWidth, confirmButton.getPreferredSize().height));
 
@@ -230,26 +263,35 @@ public class EditChannelFrame extends JDialog {
         panel.add(textField);
         panel.add(inputField);
         
-        if(type.equals("login")){loginNameField = inputField;}else{displayNameField = inputField;}
+//        if(type.equals("login")){loginNameField = inputField;}else{displayNameField = inputField;}
+        displayNameField = inputField;
 		return panel;
     }
     
     private JPanel createDropdownPanel(String title, String[] items, String type){
         JPanel panel = new JPanel(new GridLayout(1, 2));
         JLabel textField = new JLabel(" "+title);
-        JComboBox<String> inputField = new JComboBox<>(items);
+        JComboBox<String> comboBox = new JComboBox<>(items);
         
-        inputField.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-        inputField.setFont(new Font(null, Font.BOLD, fontSize));
-        inputField.setForeground(Color.WHITE);
+        comboBox.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+        comboBox.getEditor().getEditorComponent().setBackground(comboBox.getBackground());
+        comboBox.setFont(new Font(null, Font.BOLD, fontSize));
+        comboBox.setForeground(Color.WHITE);
+        comboBox.getEditor().getEditorComponent().setForeground(comboBox.getForeground());
 
         textField.setForeground(ColorManager.FONT);
         panel.setBackground(ColorManager.GUI_BACKGROUND);
         
         panel.add(textField);
-        panel.add(inputField);
+        panel.add(comboBox);
         
-        if(type.equals("type")){userTypeComboBox = inputField;}else{cloneMacrosComboBox = inputField;}
+        
+        switch (type) {
+			case "type": userTypeComboBox = comboBox; break;
+			case "clone": cloneMacrosComboBox = comboBox; break;
+			case "login": loginNameComboBox = comboBox; break;
+			default: break;
+		}
 		return panel;
     }
     
@@ -260,17 +302,17 @@ public class EditChannelFrame extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				if(isCanselt){dispose(); return;}
 				
-				TwitchUserObj twitchUser = (loginNameField.getText().isEmpty() ? new TwitchUserObj(null, null, true) : TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, loginNameField.getText().replace("!", "").replace("?", "")));
+				TwitchUserObj twitchUser = (loginNameComboBox.getSelectedItem() == null ? new TwitchUserObj(null, null, true) : TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, loginNameComboBox.getSelectedItem().toString().replace("!", "").replace("?", "")));
 				if(twitchUser.isDummy()){
-					loginNameField.setText("Invalid channel!");
+					loginNameComboBox.setSelectedItem("Invalid channel!");
 					new Thread(()->{
 						for (int i = 0; i < 10; i++) {
-							loginNameField.setForeground(Color.RED);
+							loginNameComboBox.getEditor().getEditorComponent().setForeground(Color.RED);
 							try{Thread.sleep(200);}catch(Exception ex){ }
-							loginNameField.setForeground(Color.YELLOW);
+							loginNameComboBox.getEditor().getEditorComponent().setForeground(Color.YELLOW);
 							try{Thread.sleep(200);}catch(Exception ex){ }
 						}
-						loginNameField.setForeground(Color.WHITE);
+						loginNameComboBox.getEditor().getEditorComponent().setForeground(Color.WHITE);
 					}).start();
 					return;
 				}
