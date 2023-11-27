@@ -332,16 +332,6 @@ public class ChatWindowMessageComponent extends JPanel{
 	    		}
 	    	});
 			
-			Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, word);
-			if(emoteByName != null) {
-				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
-			}else{
-				emoteByName = EmoteManager.getEmoteByName(word);
-				if(emoteByName != null){
-					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
-				}
-			}
-			
 			String emotePath = webEmotes.get(word);
 			if (emotePath != null) {
 				ImageIcon emote = null;
@@ -428,10 +418,23 @@ public class ChatWindowMessageComponent extends JPanel{
     	String output = "";
     	emoteReplacements.clear();
     	
+    	System.err.println("Emote-> "+webEmotes);
     	for (int i=0; i<split.length; i++) {
+    		
+    		Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, split[i]);
+			if(emoteByName != null) {
+				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
+			}else{
+				emoteByName = EmoteManager.getEmoteByName(split[i]);
+				if(emoteByName != null){
+					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
+				}
+			}
+    		
 			if(this.webEmotes.containsKey(split[i])){
 	            String replacement = generateReplacement(split[i]);
 	            emoteReplacements.put(replacement, split[i]);
+//	            System.err.println(emoteReplacements);
 	            split[i] = split[i].replaceAll("\\b" + Pattern.quote(split[i]) + "\\b", replacement);
 			}
 			output += split[i]+" ";
