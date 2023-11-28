@@ -27,6 +27,7 @@ import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettings;
 import de.minetrain.minechat.gui.frames.settings.editors.CreateAutoReplyFrame;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.StatusBar;
+import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
@@ -34,6 +35,7 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -65,7 +67,8 @@ public class Main {
 		
 		
 		
-//		Emote reinstall brakes BTTV emotes in auto compleet
+		//Clonign marcos don´t work anymore.
+		
 		
 		
 		
@@ -123,6 +126,7 @@ public class Main {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
+		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
 		    	TwitchManager.leaveAllChannel();
 		    }
 		});
@@ -159,7 +163,6 @@ public class Main {
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
-        
         
         
         

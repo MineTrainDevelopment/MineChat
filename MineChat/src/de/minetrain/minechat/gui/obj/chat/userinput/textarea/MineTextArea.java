@@ -284,17 +284,16 @@ public class MineTextArea extends JTextArea {
 		List<String> mentionedUsers = chat.greetingsManager.getMentionedUsers();
 		List<String> chatUsers = new ArrayList<String>();
 
-		chat.parentTab.getStatistics().getSendedMessages().entrySet().forEach(entry -> {
-			if(!chatUsers.contains(entry.getKey())){
+		chat.parentTab.getStatistics().getMessageTimestamps().entrySet().forEach(entry -> {
+//			if(!chatUsers.contains(entry.getKey())){
 				chatUsers.add(entry.getKey());
-			}
+//			}
 		});
 		
-		List<String> tempList = new ArrayList<String>(chatUsers);
-		tempList.removeAll(mentionedUsers);
+		chatUsers.removeAll(mentionedUsers);
 		
 		List<SuggestionObj> outputList = new ArrayList<>();
-		tempList.forEach(userName -> outputList.add(new SuggestionObj("@@"+userName, null)));
+		chatUsers.forEach(userName -> outputList.add(new SuggestionObj("@@"+userName, null)));
 		return outputList;
 	}
 	

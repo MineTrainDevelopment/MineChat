@@ -7,19 +7,28 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.github.twitch4j.chat.events.channel.CheerEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.twitch.TwitchManager;
 
+//dalay_stats.
+// id, channel_id, unix_timestamp, messages, total_subs, resubs, gift_subs, new_subs, bits, follower
+
+//user_stats
+// channel_user_id, messages, gifted_subs, cheerd_bits
+//  141456-54689,
+
 public class ChannelStatistics {
-	private final Map<String, Long> messageTimestamps = new HashMap<>();
-	private final Map<String, Long> sendedMessages = new HashMap<>();
-	private final Map<String, Long> giftedSubs = new HashMap<>();
-	private final Map<String, Long> cheerdBits = new HashMap<>();
-	private long streamStartupTime = 0;
+	private final Map<String, Long> messageTimestamps = new HashMap<>();//User_name
+	private final Map<String, Long> sendedMessages = new HashMap<>(); //User_id, value
+	private final Map<String, Long> giftedSubs = new HashMap<>(); //User_id, value
+	private final Map<String, Long> cheerdBits = new HashMap<>(); //User_id, value
+//	private long streamStartupTime = 0;
 	private long totalMessages = 0;
 	private long totalSubs = 0;
 	private long totalResubs = 0;
@@ -33,19 +42,19 @@ public class ChannelStatistics {
 		this.parentTab = parentTab;
 	}
 	
-	public void setStreamStartupTime(long streamStartupTime) {
-		this.streamStartupTime = streamStartupTime;
-	}
+//	public void setStreamStartupTime(long streamStartupTime) {
+//		this.streamStartupTime = streamStartupTime;
+//	}
 
-	public void addMessage(String senderName) {
+	public void addMessage(String senderName, String senderId) {
 		totalMessages++;
 		
 		if(!sendedMessages.containsKey(senderName)){
 			parentTab.getChatWindow().chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+senderName, null));
 		}
 		
-		sendedMessages.put(senderName, sendedMessages.containsKey(senderName) ? sendedMessages.get(senderName)+1 : 1l);
-		getMessageTimestamps().put(senderName, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+		sendedMessages.put(senderId, sendedMessages.containsKey(senderId) ? sendedMessages.get(senderId)+1 : 1l);
+		messageTimestamps.put(senderName, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
 	}
 
 	public void addSub(SubscriptionEvent event) {
@@ -53,43 +62,92 @@ public class ChannelStatistics {
 		
 		if(event.getGifted()){
 			totalGiftSubs++;
-			giftedSubs.put(event.getGiftedBy().getName(), giftedSubs.containsKey(event.getGiftedBy().getName()) ? giftedSubs.get(event.getGiftedBy().getName())+1 : 1);
+			giftedSubs.put(event.getGiftedBy().getId(), giftedSubs.containsKey(event.getGiftedBy().getId()) ? giftedSubs.get(event.getGiftedBy().getId())+1 : 1);
 		}else{
 			if(event.getMonths()>1){totalResubs++;}else{totalNewSubs++;}
 		}
 	}
 
-	public void addBits(long totalBits) {
-		this.totalBits = this.totalBits+totalBits;
+	public void addBits(CheerEvent event) {
+		this.totalBits = this.totalBits+event.getBits();
+		cheerdBits.put(event.getUser().getId(), giftedSubs.containsKey(event.getUser().getId()) ? giftedSubs.get(event.getUser().getId())+event.getBits() : event.getBits());
 	}
 
 	public void addFollower() {
 		totalFollower++;
 	}
 	
+	public boolean isEmpty(){
+		return totalMessages+totalSubs+totalBits+totalFollower == 0;
+	}
 	
 	
+	/**
+	 * 
+	 * @param commit weather the new database changes should be commited. 
+	 */
+	public void save(boolean commit){
+		if(isEmpty()){
+			return;
+		}
+		
+		DatabaseManager.getChannelStatistics().insert(this, parentTab.getConfigID());
+		sendedMessages.clear();
+		giftedSubs.clear();
+		cheerdBits.clear();
+		totalMessages = 0;
+		totalSubs = 0;
+		totalResubs = 0;
+		totalGiftSubs = 0;
+		totalNewSubs = 0;
+		totalBits = 0;
+		totalFollower = 0;
+		if(commit){
+			DatabaseManager.commit();
+		}
+	}
 	
 	
 	public Map<String, Long> getSendedMessages() {
 		return sendedMessages;
+	}
+
+	public Long getSendedMessages(String userId) {
+		if(sendedMessages.containsKey(userId)){
+			return sendedMessages.get(userId);
+		}
+		return 0l;
 	}
 	
 	public Map<String, Long> getGiftedSubs() {
 		return giftedSubs;
 	}
 	
+	public Long getGiftedSubs(String userId) {
+		if(giftedSubs.containsKey(userId)){
+			return giftedSubs.get(userId);
+		}
+		return 0l;
+	}
+	
 	public Map<String, Long> getCheerdBits() {
 		return cheerdBits;
+	}
+	
+	public Long getCheerdBits(String userId) {
+		if(cheerdBits.containsKey(userId)){
+			return cheerdBits.get(userId);
+		}
+		return 0l;
 	}
 	
 	public Map<String, Long> getMessageTimestamps() {
 		return messageTimestamps;
 	}
 	
-	public long getStreamStartupTime() {
-		return streamStartupTime;
-	}
+//	public long getStreamStartupTime() {
+//		return streamStartupTime;
+//	}
 	
 	public long getTotalSelfMessages() {
 		return sendedMessages.containsKey(TwitchManager.ownerChannelName) ? sendedMessages.get(TwitchManager.ownerChannelName) : 0l;
@@ -125,7 +183,7 @@ public class ChannelStatistics {
 	
 //	Das hier muss noch in die @user auswahl.
 	public String getPresenceStatus(String userName){
-		Long epochTime = getMessageTimestamps().get(userName);
+		Long epochTime = messageTimestamps.get(userName);
 		
 		if(epochTime == null){
 			return null;

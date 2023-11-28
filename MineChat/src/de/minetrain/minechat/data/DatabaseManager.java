@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.databases.AutoReplyDatabase;
+import de.minetrain.minechat.data.databases.ChannelStatisticsDatabase;
 import de.minetrain.minechat.data.databases.ChannelTabIndexDatabase;
 import de.minetrain.minechat.data.databases.ChannelsDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
@@ -26,6 +27,7 @@ public class DatabaseManager {
 	private static EmoteDatabase emote;
 	private static MessageHighlightDatabase messageHighlight;
 	private static ChannelTabIndexDatabase channelTabIndexDatabase;
+	private static ChannelStatisticsDatabase channelStatistics;
 
 	public DatabaseManager() {
 		try {
@@ -35,6 +37,7 @@ public class DatabaseManager {
 			emote = new EmoteDatabase();
 			messageHighlight = new MessageHighlightDatabase();
 			channelTabIndexDatabase = new ChannelTabIndexDatabase();
+			channelStatistics = new ChannelStatisticsDatabase();
 		} catch (SQLException ex) {
 			logger.error("Can´t prepare all databases.", ex);
 			Main.LOADINGBAR.setError("Can´t read database file. -> logs");
@@ -91,6 +94,10 @@ public class DatabaseManager {
 
 	public static ChannelTabIndexDatabase getChannelTabIndexDatabase() {
 		return channelTabIndexDatabase;
+	}
+
+	public static ChannelStatisticsDatabase getChannelStatistics() {
+		return channelStatistics;
 	}
 	
 	

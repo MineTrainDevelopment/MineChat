@@ -58,7 +58,7 @@ public class TitleBar extends JPanel{
     private JLabel secondTabName = new JLabel("", SwingConstants.CENTER);
     private JLabel thirdTabName = new JLabel("", SwingConstants.CENTER);
     
-	public int titleRowIndex = 0;
+	public static int titleRowIndex = 0;
     private int mouseX, mouseY;
 
 	public TitleBar(MainFrame mainFrame, JLabel texture) {
@@ -100,7 +100,7 @@ public class TitleBar extends JPanel{
         changeRowButton.setIcon(Main.TEXTURE_MANAGER.getRowArrowRight());
         changeRowButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	titleRowIndex = (titleRowIndex > 0) ? 0:1;
+            	toggleTitleRowIndex();
             	changeRowButton.setIcon(titleRowIndex == 0 ? Main.TEXTURE_MANAGER.getRowArrowRight() : Main.TEXTURE_MANAGER.getRowArrowLeft());
             	reloadTabs();
         	}
@@ -246,6 +246,10 @@ public class TitleBar extends JPanel{
                 mainFrame.setLocation(newX, newY);
             }
         };
+	}
+	
+	public static void toggleTitleRowIndex(){
+		titleRowIndex = (titleRowIndex > 0) ? 0:1;
 	}
 	
 	public ChannelTab getMainTab() {

@@ -45,6 +45,7 @@ public class TwitchManager {
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
 	public static String ownerChannelName = ">null<";
+	public static TwitchUserObj ownerTwitchUser = new TwitchUserObj(TwitchApiCallType.LOGIN, ownerChannelName, true);
 	public static CredentialsManager credentials;
 	protected static TwitchAccesToken accesToken;
 	
@@ -97,6 +98,7 @@ public class TwitchManager {
 		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListner()); //Register a listener for Twitch events.
 		logger.info("Connecting to channels: "+twitch.getChat().getChannels().toString()); //Print all the connected channels
 		twitch.getChat().getChannels().forEach(s -> ownerChannelName = s);
+		ownerTwitchUser = getTwitchUser(TwitchApiCallType.LOGIN, ownerChannelName);
 		new MessageManager();
 		Main.openMainFrame();
 	}
@@ -149,7 +151,7 @@ public class TwitchManager {
 	public static void sendMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
 
-		message.getChannelTab().getStatistics().addMessage(message.getSenderName());
+		message.getChannelTab().getStatistics().addMessage(message.getSenderName(), ownerTwitchUser.getUserId());
 		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
 		message.getChannelTab().getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessageRaw());
 				

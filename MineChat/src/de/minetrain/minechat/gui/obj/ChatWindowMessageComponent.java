@@ -365,10 +365,10 @@ public class ChatWindowMessageComponent extends JPanel{
     }
     
     
-    //TODO Replace emotes with 3 Chars for filtering.
+    //Replace emotes with 3 Chars for filtering.
 	private final List<String> splitString(String input) {
     	input = input.replace("\\n", "�");
-        int chunkSize = 45;
+        int chunkSize = 46;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
         input = (webEmotes == null) ? input : encryptEmotes(input);
@@ -418,7 +418,6 @@ public class ChatWindowMessageComponent extends JPanel{
     	String output = "";
     	emoteReplacements.clear();
     	
-    	System.err.println("Emote-> "+webEmotes);
     	for (int i=0; i<split.length; i++) {
     		
     		Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, split[i]);

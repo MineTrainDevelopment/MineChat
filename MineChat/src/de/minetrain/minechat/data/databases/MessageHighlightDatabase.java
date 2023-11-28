@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.features.autoreply.AutoReply;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 
 // uuid, word, word_color, border_color, sound, state
@@ -96,20 +95,6 @@ public class MessageHighlightDatabase extends Database{
 		}
 	}
 	
-	public AutoReply get(String uuid){
-		
-		try(Connection connection = DatabaseManager.connect(); PreparedStatement statement = connection.prepareStatement(select_sql+" WHERE uuid = ?")) {
-			statement.setString(1, uuid);
-			ResultSet resultSet = statement.executeQuery();
-			
-			while(resultSet.next()){
-				return new AutoReply(resultSet);
-			}
-		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
-		}
-		return null;
-	}
 	
 	public void setState(String uuid, boolean state){
 		try(Connection connection = DatabaseManager.connect()){

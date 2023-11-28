@@ -100,7 +100,7 @@ public class TwitchListner {
 			return;
 		}
 		
-		channelTab.getStatistics().addMessage(event.getUser().getName());
+		channelTab.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId());
 		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent(), event.getMessage());
 		
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
@@ -136,7 +136,7 @@ public class TwitchListner {
     @EventSubscriber
     public void onCheer(CheerEvent event) {
     	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
-    	currentChannelTab.getStatistics().addBits(event.getBits());
+    	currentChannelTab.getStatistics().addBits(event);
     	if(!Settings.displayBitsCheerd.isActive()){return;}
 
     	currentChannelTab.getChatWindow()
