@@ -36,7 +36,8 @@ import de.minetrain.minechat.twitch.TwitchManager;
 public class MineButton extends JButton{
 	private static final long serialVersionUID = -8580714214977222615L;
 	private boolean holding = false;
-	private int holdingMillisecond = 500;
+	private ButtonType type;
+	public int holdingMillisecond = 500;
 
 	/**
 	 * A custom button used in the application.
@@ -55,6 +56,7 @@ public class MineButton extends JButton{
 	public MineButton(Dimension size, Point location, ButtonType type) {
 		setSize((size != null) ? size : new Dimension(0, 0));
 		setLocation((location != null) ? location : new Point(0, 0));
+		this.type = type;
 		
 		addActionListener(new ActionListener() {
 			
@@ -77,8 +79,7 @@ public class MineButton extends JButton{
             		onButtonPressed(type);
             	}
             }
-        });
-		
+        });		
 		addMouseListener(new MouseAdapter() {
 		    @Override
             public void mousePressed(MouseEvent event) {
@@ -110,13 +111,14 @@ public class MineButton extends JButton{
 			TitleBar.currentTab.loadMacroRow((currentRow == MacroRow.ROW_0) ? MacroRow.ROW_1 : MacroRow.ROW_2);
 		}
 		
-		if((type.name().toLowerCase().startsWith("macro") || type.name().toLowerCase().startsWith("emote"))){
-			MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
-			if(!macro.getRawOutput().contains(">null<")){
-				System.out.println("send message");
-				MessageManager.sendMessage(macro.getOutput());
-			}
-		}
+//		if(type.name().toLowerCase().startsWith("emote")){
+//			MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
+//			if(!macro.getRawOutput().contains(">null<")){
+//				System.out.println("send message");
+//				MessageManager.sendMessage(macro.getOutput());
+//			}
+//		}
+
 		
 		switch (type) {
 		case STOP_QUEUE:
@@ -178,6 +180,10 @@ public class MineButton extends JButton{
         setFont(font);
 	}
 
+	public ButtonType getType(){
+		return type;
+	}
+	
 	public boolean isHolding() {
 		return holding;
 	}

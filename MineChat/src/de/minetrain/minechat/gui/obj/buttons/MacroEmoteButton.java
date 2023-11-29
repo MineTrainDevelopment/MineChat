@@ -1,11 +1,16 @@
 package de.minetrain.minechat.gui.obj.buttons;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -15,6 +20,7 @@ import de.minetrain.minechat.gui.frames.InputFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.MessageManager;
 
 /**
  * A button used for Emote macros.
@@ -31,6 +37,7 @@ import de.minetrain.minechat.main.Main;
 
 public class MacroEmoteButton extends MineButton{
 	private static final long serialVersionUID = 7041760851916874910L;
+	public JLabel textureLabel;
 
 	/**
 	 * A button used for Emote macros. 
@@ -45,11 +52,44 @@ public class MacroEmoteButton extends MineButton{
 	public MacroEmoteButton(Dimension size, Point location, ButtonType type, MainFrame mainFrame) {
 		super(size, location, type);
 		setHolding(true);
+		textureLabel = new JLabel();
+		mainFrame.add(textureLabel);
+		textureLabel.setLayout(new BorderLayout());
+		textureLabel.setSize(getSize());
+		textureLabel.setLocation(getLocation());
+		textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroEmoteKey());
+		textureLabel.add(this);
 		addMouseListener(new MouseAdapter() {
+			
+			@Override
+		    public void mouseEntered(MouseEvent evt) {
+		    	textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroEmoteKeyHover());
+		    }
+
 		    @Override
-		    public void mouseClicked(MouseEvent e) {
-		        if (SwingUtilities.isRightMouseButton(e)) {
-		            System.out.println("rechts");
+		    public void mouseExited(MouseEvent evt) {
+		        if (textureLabel.getIcon().equals(Main.TEXTURE_MANAGER.getMacroEmoteKeyHover())) {
+		        	textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroEmoteKey());
+		        }
+		    }
+		    
+		    @Override
+            public void mousePressed(MouseEvent event) {
+		    	buttonHoldTimer.start(); // Start the timer when the mouse button is pressed
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+            	buttonHoldTimer.stop(); // Stop the timer when the mouse button is released
+            }
+            
+		    @Override
+		    public void mouseClicked(MouseEvent event) {
+		    	if (SwingUtilities.isLeftMouseButton(event)) {
+		        	buttonPressed();
+		        }
+		    	
+		        if (SwingUtilities.isRightMouseButton(event)) {
 		            EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
 		            
 		            new Thread(() -> {
@@ -97,6 +137,38 @@ public class MacroEmoteButton extends MineButton{
 		    }
 		});
 	}
+	
+	
+	public void buttonPressed(){
+		if (textureLabel.getIcon().equals(Main.TEXTURE_MANAGER.getMacroEmoteKeyPressed())) {
+            return;
+        }
+    	
+    	Timer timer = new Timer(0, e -> {
+        	textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroEmoteKey());
+        });
+
+    	timer.setRepeats(false);
+    	timer.setInitialDelay(320);
+    	timer.start();
+        textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroEmoteKeyPressed());
+        
+		MacroObject macro = TitleBar.currentTab.getMacros().getMacro(getType(), TitleBar.currentTab.getMacros().getCurrentMacroRow());
+		if(!macro.getRawOutput().contains(">null<")){
+			System.out.println("send message");
+			MessageManager.sendMessage(macro.getOutput());
+		}
+	}
+	
+	Timer buttonHoldTimer = new Timer(holdingMillisecond, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        	if(isHolding()){
+        		buttonPressed();
+        	}
+        }
+    });
+	
 	
 	/**
 	 * Overrides the setInvisible method in {@link MineButton}.

@@ -3,12 +3,20 @@ package de.minetrain.minechat.main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +36,8 @@ import de.minetrain.minechat.gui.frames.settings.editors.CreateAutoReplyFrame;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
@@ -49,7 +59,10 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 //		JFrame frame = new JFrame();
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setSize(500, 500);
+//		frame.setLocationRelativeTo(null);
 //		frame.setVisible(true);
+//		frame.setLayout(new BorderLayout());
 		
 //		MineDialog dialog = new MineDialog(frame, ChatStatusPanel.getMineChatStatusText().toString(), new Dimension(500,500));
 //		dialog.setExitOnCancelButton(true);

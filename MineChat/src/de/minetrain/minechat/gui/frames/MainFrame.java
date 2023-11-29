@@ -39,18 +39,18 @@ public class MainFrame extends JFrame{
 	    getContentPane().add(profileButton);
 
         //Macro row
-	    macroButton0 = new MacroButton(new Dimension(80, 30), new Point(17, 55), ButtonType.MACRO_1, this).setInvisible(!debug);
-		macroButton1 = new MacroButton(new Dimension(80, 30), new Point(112, 55), ButtonType.MACRO_2, this).setInvisible(!debug);
-	    macroButton2 = new MacroButton(new Dimension(80, 30), new Point(207, 55), ButtonType.MACRO_3, this).setInvisible(!debug);
-	    macroButton3 = new MacroButton(new Dimension(80, 30), new Point(17, 95), ButtonType.MACRO_4, this).setInvisible(!debug);
-	    macroButton4 = new MacroButton(new Dimension(80, 30), new Point(112, 95), ButtonType.MACRO_5, this).setInvisible(!debug);
-	    macroButton5 = new MacroButton(new Dimension(80, 30), new Point(207, 95), ButtonType.MACRO_6, this).setInvisible(!debug);
-        getContentPane().add(macroButton0);
-        getContentPane().add(macroButton1);
-        getContentPane().add(macroButton2);
-        getContentPane().add(macroButton3);
-        getContentPane().add(macroButton4);
-        getContentPane().add(macroButton5);
+	    macroButton0 = new MacroButton(new Dimension(85, 35), new Point(15, 53), ButtonType.MACRO_1, this).setInvisible(!debug);
+		macroButton1 = new MacroButton(new Dimension(85, 35), new Point(110, 53), ButtonType.MACRO_2, this).setInvisible(!debug);
+	    macroButton2 = new MacroButton(new Dimension(85, 35), new Point(205, 53), ButtonType.MACRO_3, this).setInvisible(!debug);
+	    macroButton3 = new MacroButton(new Dimension(85, 35), new Point(15, 93), ButtonType.MACRO_4, this).setInvisible(!debug);
+	    macroButton4 = new MacroButton(new Dimension(85, 35), new Point(110, 93), ButtonType.MACRO_5, this).setInvisible(!debug);
+	    macroButton5 = new MacroButton(new Dimension(85, 35), new Point(205, 93), ButtonType.MACRO_6, this).setInvisible(!debug);
+//        getContentPane().add(macroButton0);
+//        getContentPane().add(macroButton1);
+//        getContentPane().add(macroButton2);
+//        getContentPane().add(macroButton3);
+//        getContentPane().add(macroButton4);
+//        getContentPane().add(macroButton5);
         
         
         statusButton = new MineButton(new Dimension(85, 35), new Point(400, 53), ButtonType.STATUS).setInvisible(!debug);
@@ -73,20 +73,20 @@ public class MainFrame extends JFrame{
 		getContentPane().add(rightRowButton);
         
         //Emote row.
-        emoteButton0 = new MacroEmoteButton(new Dimension(28, 28), new Point(19, 136), ButtonType.EMOTE_1, this).setInvisible(!debug);
-        emoteButton1 = new MacroEmoteButton(new Dimension(28, 28), new Point(59, 136), ButtonType.EMOTE_2, this).setInvisible(!debug);
-        emoteButton2 = new MacroEmoteButton(new Dimension(28, 28), new Point(99, 136), ButtonType.EMOTE_3, this).setInvisible(!debug);
-        emoteButton3 = new MacroEmoteButton(new Dimension(28, 28), new Point(139, 136), ButtonType.EMOTE_4, this).setInvisible(!debug);
-        emoteButton4 = new MacroEmoteButton(new Dimension(28, 28), new Point(179, 136), ButtonType.EMOTE_5, this).setInvisible(!debug);
-        emoteButton5 = new MacroEmoteButton(new Dimension(28, 28), new Point(219, 136), ButtonType.EMOTE_6, this).setInvisible(!debug);
-        emoteButton6 = new MacroEmoteButton(new Dimension(28, 28), new Point(259, 136), ButtonType.EMOTE_7, this).setInvisible(!debug);
-        getContentPane().add(emoteButton0);
-        getContentPane().add(emoteButton1);
-        getContentPane().add(emoteButton2);
-        getContentPane().add(emoteButton3);
-        getContentPane().add(emoteButton4);
-        getContentPane().add(emoteButton5);
-        getContentPane().add(emoteButton6);
+        emoteButton0 = new MacroEmoteButton(new Dimension(35, 35), new Point(15, 133), ButtonType.EMOTE_1, this).setInvisible(!debug);
+        emoteButton1 = new MacroEmoteButton(new Dimension(35, 35), new Point(55, 133), ButtonType.EMOTE_2, this).setInvisible(!debug);
+        emoteButton2 = new MacroEmoteButton(new Dimension(35, 35), new Point(95, 133), ButtonType.EMOTE_3, this).setInvisible(!debug);
+        emoteButton3 = new MacroEmoteButton(new Dimension(35, 35), new Point(135, 133), ButtonType.EMOTE_4, this).setInvisible(!debug);
+        emoteButton4 = new MacroEmoteButton(new Dimension(35, 35), new Point(175, 133), ButtonType.EMOTE_5, this).setInvisible(!debug);
+        emoteButton5 = new MacroEmoteButton(new Dimension(35, 35), new Point(215, 133), ButtonType.EMOTE_6, this).setInvisible(!debug);
+        emoteButton6 = new MacroEmoteButton(new Dimension(35, 35), new Point(255, 133), ButtonType.EMOTE_7, this).setInvisible(!debug);
+//        getContentPane().add(emoteButton0);
+//        getContentPane().add(emoteButton1);
+//        getContentPane().add(emoteButton2);
+//        getContentPane().add(emoteButton3);
+//        getContentPane().add(emoteButton4);
+//        getContentPane().add(emoteButton5);
+//        getContentPane().add(emoteButton6);
         
         
         //Stop QUEUE button.

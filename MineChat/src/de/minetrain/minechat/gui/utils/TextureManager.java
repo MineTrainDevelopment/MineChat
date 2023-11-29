@@ -80,6 +80,12 @@ public class TextureManager {
 	private final ImageIcon replyChainButton;
 	private final ImageIcon programClose;
 	private final ImageIcon programMinimize;
+	private final ImageIcon macroKeyPressed;
+	private final ImageIcon macroKeyHover;
+	private final ImageIcon macroKey;
+	private final ImageIcon macroEmoteKeyPressed;
+	private final ImageIcon macroEmoteKeyHover;
+	private final ImageIcon macroEmoteKey;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -109,6 +115,12 @@ public class TextureManager {
 		this.replyChainButton = new ImageIcon(texturePath + "replyChainButton.png");
 		this.programClose = new ImageIcon(texturePath + "programClose.png");
 		this.programMinimize = new ImageIcon(texturePath + "programMinimize.png");
+		this.macroKeyPressed = new ImageIcon(texturePath + "macroKeyPressed.gif");
+		this.macroKeyHover = new ImageIcon(texturePath + "macroKeyHover.png");
+		this.macroKey = new ImageIcon(texturePath + "macroKey.png");
+		this.macroEmoteKeyPressed = new ImageIcon(texturePath + "macroEmoteKeyPressed.gif");
+		this.macroEmoteKeyHover = new ImageIcon(texturePath + "macroEmoteKeyHover.png");
+		this.macroEmoteKey = new ImageIcon(texturePath + "macroEmoteKey.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -215,6 +227,30 @@ public class TextureManager {
 	
 	public ImageIcon getProgramMinimize() {
 		return programMinimize;
+	}
+	
+	public ImageIcon getMacroKeyPressed() {
+		return macroKeyPressed;
+	}
+	
+	public ImageIcon getMacroKeyHover() {
+		return macroKeyHover;
+	}
+	
+	public ImageIcon getMacroKey() {
+		return macroKey;
+	}
+	
+	public ImageIcon getMacroEmoteKeyPressed() {
+		return macroEmoteKeyPressed;
+	}
+	
+	public ImageIcon getMacroEmoteKeyHover() {
+		return macroEmoteKeyHover;
+	}
+	
+	public ImageIcon getMacroEmoteKey() {
+		return macroEmoteKey;
 	}
 
 	

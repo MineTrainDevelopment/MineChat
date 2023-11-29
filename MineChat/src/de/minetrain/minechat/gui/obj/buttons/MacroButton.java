@@ -1,15 +1,20 @@
 package de.minetrain.minechat.gui.obj.buttons;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -19,7 +24,9 @@ import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.MessageManager;
 
 /**
  * A button used for message macros. 
@@ -34,6 +41,7 @@ import de.minetrain.minechat.main.Main;
 public class MacroButton extends MineButton{
 	private static final long serialVersionUID = 1144702595268749652L;
 	private JLabel icon = new JLabel();
+	public JLabel textureLabel;
 
 	/**
 	 * A button used for message macros. 
@@ -47,17 +55,50 @@ public class MacroButton extends MineButton{
 	 */
 	public MacroButton(Dimension size, Point location, ButtonType type, MainFrame mainFrame) {
 		super(size, location, type);
-		mainFrame.add(icon);
 		setHorizontalAlignment(JTextField.RIGHT);
 		setForeground(Color.WHITE);
 		setHolding(true);
 		
+		
+		textureLabel = new JLabel();
+		mainFrame.add(textureLabel);
+		textureLabel.setLayout(new BorderLayout());
+		textureLabel.setSize(getSize());
+		textureLabel.setLocation(getLocation());
+		textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroKey());
+		textureLabel.add(icon);
+		textureLabel.add(this);
+		
 		addMouseListener(new MouseAdapter() {
+			@Override
+		    public void mouseEntered(MouseEvent evt) {
+		    	textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroKeyHover());
+		    }
+
 		    @Override
-		    public void mouseClicked(MouseEvent e) {
-		        if (SwingUtilities.isRightMouseButton(e)) {
-		            System.out.println("rechts");
-		            
+		    public void mouseExited(MouseEvent evt) {
+		        if (textureLabel.getIcon().equals(Main.TEXTURE_MANAGER.getMacroKeyHover())) {
+		        	textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroKey());
+		        }
+		    }
+		    
+		    @Override
+            public void mousePressed(MouseEvent event) {
+		    	buttonHoldTimer.start(); // Start the timer when the mouse button is pressed
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+            	buttonHoldTimer.stop(); // Stop the timer when the mouse button is released
+            }
+		    
+		    @Override
+		    public void mouseClicked(MouseEvent event) {
+		        if (SwingUtilities.isLeftMouseButton(event)) {
+		        	buttonPressed();
+		        }
+		        
+		        if (SwingUtilities.isRightMouseButton(event)) {
 		            InputFrame inputFrame;
 					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
 					if(!macro.getTitle().equalsIgnoreCase("null")){
@@ -118,6 +159,37 @@ public class MacroButton extends MineButton{
 		});
 	}
 	
+	public void buttonPressed(){
+		if (textureLabel.getIcon().equals(Main.TEXTURE_MANAGER.getMacroKeyPressed())) {
+            return;
+        }
+    	
+    	Timer timer = new Timer(0, e -> {
+        	textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroKey());
+        });
+
+    	timer.setRepeats(false);
+    	timer.setInitialDelay(330);
+    	timer.start();
+        textureLabel.setIcon(Main.TEXTURE_MANAGER.getMacroKeyPressed());
+        
+		MacroObject macro = TitleBar.currentTab.getMacros().getMacro(getType(), TitleBar.currentTab.getMacros().getCurrentMacroRow());
+		if(!macro.getRawOutput().contains(">null<")){
+			System.out.println("send message");
+			MessageManager.sendMessage(macro.getOutput());
+		}
+	}
+	
+	Timer buttonHoldTimer = new Timer(holdingMillisecond, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        	if(isHolding()){
+        		buttonPressed();
+        	}
+        }
+    });
+	
+	
 	/**
 	 * Sets the button's focusability, opacity, content area filled, and border painting based on the given state.
 	 * 
@@ -138,8 +210,15 @@ public class MacroButton extends MineButton{
 	@Override
 	public void setIcon(Icon iconImage) {
 		icon.setIcon(iconImage);
-		icon.setLocation(getX()+4, getY()-4);
+		icon.setLocation(getX()+5, getY()-2);
 		icon.setSize(EmoteSelector.BUTTON_SIZE, EmoteSelector.BUTTON_SIZE);
+	}
+	
+	/**
+	 * super.setIcon
+	 */
+	public void setBackgroundIcon(Icon iconImage) {
+		super.setIcon(iconImage);
 	}
 	
 	/**
