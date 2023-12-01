@@ -87,7 +87,8 @@ public class TwitchListner {
 	@EventSubscriber
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
 		logger.info("User: "+event.getUser().getName()+" | Message --> "+event.getMessage());
-		ChannelTab channelTab = getCurrentChannelTab(event.getChannel());
+		ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
+		ChannelTab channelTab = currentChannelTab;
 		
 //		System.out.println(event.getMessageEvent().getTagValue("badges"));
 //		System.out.println(event.getPermissions());
@@ -116,7 +117,14 @@ public class TwitchListner {
 				}
 			});
 		}
+		
 
+		if(twitchMessage.isFirstMessage()){
+			currentChannelTab.getChatWindow()
+				.displaySystemInfo("First channel Message.", "@"+event.getUser().getName()+" just left his first chat message on this channel.\n\n"+event.getMessage(), 
+					Settings.highlightUserFirstMessages.getColor(), getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
+		}
+		
 		channelTab.getChatWindow().displayMessage(twitchMessage);
 		AutoReplyManager.recordMessage(twitchMessage);
 	}

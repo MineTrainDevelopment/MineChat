@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +15,6 @@ import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.gui.emotes.Emote;
-import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.TextureManager;
 
@@ -45,6 +42,7 @@ public class TwitchMessage {
 	private final boolean emoteOnly;
 	private final boolean highlighted;
 	private final boolean dummy;
+	private final boolean firstMessages;
 
 	public TwitchMessage(ChannelTab parentTab, IRCMessageEvent ircMessage, String message) {
 		this.parentTab = parentTab;
@@ -60,6 +58,7 @@ public class TwitchMessage {
 		this.replyUser = ircMessage.getTagValue("reply-parent-display-name").orElse(null);
 		this.emoteOnly = !Boolean.parseBoolean(ircMessage.getTagValue("emote-only").orElse("true"));
 		this.highlighted = ircMessage.getTagValue("msg-id").orElse("false").equals("false") ? false : true;
+		this.firstMessages = ircMessage.getTagValue("first-msg").orElse("0").equals("1") ? true : false;
 		
 		this.dummy = false;
 		
@@ -128,6 +127,7 @@ public class TwitchMessage {
 		this.dummy = true;
 		this.highlighted = false;
 		this.emoteOnly = false;
+		this.firstMessages = false;
 	}
 
 
@@ -197,6 +197,10 @@ public class TwitchMessage {
 	
 	public boolean isHighlighted() {
 		return highlighted;
+	}
+	
+	public boolean isFirstMessage(){
+		return firstMessages;
 	}
 	
 	public boolean isParentReply() {

@@ -28,3 +28,5 @@ public class Database {
 	}
 
 }
+//owner_cache
+//channel_id, color_code, display_name, badges
