@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.enums.AutoReplyState;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -52,6 +53,8 @@ public class Settings{
 
 	public static UndoVariation UNDO_VARIATION;
 	public static long MAX_UNDO_LOG_SIZE;
+	
+	public static AutoReplyState autoReplyState;
 
 	public static Font MESSAGE_FONT;
 	
@@ -94,7 +97,9 @@ public class Settings{
 		UNDO_VARIATION = UndoVariation.get(settings.getString("Chatting.UndoMode", "WORD"));
 		MAX_UNDO_LOG_SIZE = settings.getInt("Chatting.UndoCacheSize", 100);
 		
-		boolean BUTTON_HOLD; //Implement me.
+		autoReplyState = AutoReplyState.get(settings.getString("Chatting.AutoReplyState", "ALL"));
+		
+		boolean BUTTON_HOLD; //Implement me. Holding button to send messages
 		
 		MESSAGE_FONT = new Font(
 				settings.getString("Font.Name", "Arial Unicode MS"), 
@@ -177,6 +182,11 @@ public class Settings{
 		dayFormat = newDayFormat;
 	}
 	
+	public static void setAutoReplyState(AutoReplyState state){
+		settings.setString("Chatting.AutoReplyState", state.name(), true);
+		autoReplyState = state;
+	}
+	
 	
 	private static YamlManager createNewConfig(String path){
 		logger.warn("Create new Settings file!");
@@ -240,6 +250,7 @@ public class Settings{
 		settings.setString("Chatting.ReplyType", ReplyType.THREAD.name());
 		settings.setString("Chatting.UndoMode", UndoVariation.WORD.name());
 		settings.setNumber("Chatting.UndoCacheSize", 100);
+		settings.setString("Chatting.AutoReplyState", AutoReplyState.ALL.name());
 		
 		
 

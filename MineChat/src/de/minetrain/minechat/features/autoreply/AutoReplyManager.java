@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.AutoReplyState;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 public class AutoReplyManager {
@@ -35,6 +38,10 @@ public class AutoReplyManager {
 	
 	public static void recordMessage(TwitchMessage message){
 		if(!autoReplys.containsKey(message.getChannelId())){
+			return;
+		}
+		
+		if(Settings.autoReplyState.equals(AutoReplyState.CURRENT_TAB) && !(TitleBar.currentTab.getConfigID().equals(message.getChannelId()))){
 			return;
 		}
 		

@@ -39,13 +39,31 @@ public class SettingsTab_AutoReply extends SettingsTab{
 		JPanel formatPanel = new JPanel(new BorderLayout());
 		formatPanel.setBackground(new Color(128, 128, 128));
 		formatPanel.setBorder(border);
-		formatPanel.setBounds(30, 15, 500, 500);
+		formatPanel.setBounds(30, 40, 500, 500);
 		formatPanel.setBackground(getBackground());
 		add(formatPanel);
 		
 		MineTabel tabel = new MineTabel();
 		formatPanel.add(tabel, BorderLayout.CENTER);
 		loadAutoReplys(tabel);
+		
+		JCheckBox checkBox = new JCheckBox("React only on current focused channel tab.");
+		checkBox.setToolTipText("If slected: Only reacting and sending messages, for the selectet channel Iab.");
+		checkBox.setBorder(new LineBorder(getBackground(), 4, false));
+		checkBox.setSelected(!Settings.autoReplyState.isAktiv());
+		checkBox.setBackground(checkBox.isSelected() ? Color.GREEN : Color.RED);
+//		checkBox.setPreferredSize(new Dimension(30, 30));
+		checkBox.setBounds(80, 10, 400, 30);
+		checkBox.setFont(Settings.MESSAGE_FONT);
+		checkBox.setHorizontalAlignment(SwingConstants.CENTER);
+		checkBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Settings.setAutoReplyState(Settings.autoReplyState.toggle());
+				checkBox.setBackground(checkBox.isSelected() ? Color.GREEN : Color.RED);
+			}
+		});
+		add(checkBox);
 
 		
 		JButton addButton = new JButton("--> Add a new AutoReply <--");
