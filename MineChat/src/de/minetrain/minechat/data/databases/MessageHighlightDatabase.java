@@ -12,17 +12,19 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.utils.audio.AudioVolume;
 
 // uuid, word, word_color, border_color, sound, state
+// uuid, word, word_color, border_color, sound, sound_volume, state
 
 public class MessageHighlightDatabase extends Database{
 	private static final Logger logger = LoggerFactory.getLogger(MessageHighlightDatabase.class);
 	private static final String tabelName = "message_highlight";
-	private static final String insert_SQL = "INSERT INTO "+tabelName+"(uuid,word,word_color,border_color,sound,state) VALUES(?,?,?,?,?,?)";
-	private static final String update_SQL = "UPDATE "+tabelName+" SET uuid = ? , word = ? , word_color = ? , border_color = ? , sound = ? , state = ? WHERE uuid = ?";
+	private static final String insert_SQL = "INSERT INTO "+tabelName+"(uuid,word,word_color,border_color,sound,sound_volume,state) VALUES(?,?,?,?,?,?,?)";
+	private static final String update_SQL = "UPDATE "+tabelName+" SET uuid = ? , word = ? , word_color = ? , border_color = ? , sound = ? , sound_volume = ? , state = ? WHERE uuid = ?";
 	private static final String check_SQL = "SELECT uuid FROM "+tabelName+" WHERE uuid = ?";
 	private static final String delete_SQL = "DELETE FROM "+tabelName+" WHERE uuid = ?";
-	private static final String select_sql = "SELECT uuid, word, word_color, border_color, sound, state FROM "+tabelName;
+	private static final String select_sql = "SELECT uuid, word, word_color, border_color, sound, sound_volume, state FROM "+tabelName;
 	
 	private static final String update_state_SQL = "UPDATE "+tabelName+" SET state = ? WHERE uuid = ?";
 	
@@ -33,11 +35,12 @@ public class MessageHighlightDatabase extends Database{
                 + "	word_color text NOT NULL,\n"
                 + "	border_color text NOT NULL,\n"
                 + "	sound text,\n"
+                + "	sound_volume text,\n"
                 + "	state integer NOT NULL\n"
                 + ");");
 	}
 	
-	public void insert(String uuid, String word, String word_color, String border_color, String sound, boolean state){
+	public void insert(String uuid, String word, String word_color, String border_color, String sound, AudioVolume volume, boolean state){
 		logger.info("Insert new database entry");
 		
 		try{
@@ -50,7 +53,7 @@ public class MessageHighlightDatabase extends Database{
 
             if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
                 statement = connection.prepareStatement(update_SQL);
-            	statement.setString(7, uuid);
+            	statement.setString(8, uuid);
             }
             
             statement.setString(1, uuid);
@@ -58,7 +61,8 @@ public class MessageHighlightDatabase extends Database{
             statement.setString(3, word_color);
             statement.setString(4, border_color);
             statement.setString(5, sound);
-            statement.setBoolean(6, state);
+            statement.setString(6, volume != null ? volume.name() : null);
+            statement.setBoolean(7, state);
             statement.executeUpdate();
 
 		} catch (SQLException ex) {

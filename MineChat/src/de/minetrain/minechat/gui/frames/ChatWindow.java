@@ -129,6 +129,9 @@ public class ChatWindow extends JLabel {
 //		int minimisedPanelHight = 0;
 		
         chatPanel.add(messagePanel);
+        if(messagePanel.getHighlightString() != null){
+        	messagePanel.getHighlightString().playSound();
+        }
 //		list.add(messagePanel);
 		
 		if(chatPanel.getComponentCount() > Settings.MAX_MESSAGE_DISPLAYING){

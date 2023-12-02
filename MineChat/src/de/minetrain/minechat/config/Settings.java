@@ -19,6 +19,7 @@ import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.utils.audio.AudioVolume;
 
 public class Settings{
 	private static final Logger logger = LoggerFactory.getLogger(Settings.class);
@@ -149,11 +150,16 @@ public class Settings{
 			
 			
 			if(!highlightStrings.containsKey(name)){
-				HighlightString.saveNewWord(
-					UUID.randomUUID().toString(),
-					name,
-					ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT,
-					ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+				DatabaseManager.getMessageHighlight().insert(
+						UUID.randomUUID().toString(),
+						name,
+						String.format("#%06x", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT.getRGB() & 0x00FFFFFF),
+						String.format("#%06x", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT.getRGB() & 0x00FFFFFF),
+						null,
+						null,
+						true);
+				
+				DatabaseManager.commit();
 			}
 			
 		}

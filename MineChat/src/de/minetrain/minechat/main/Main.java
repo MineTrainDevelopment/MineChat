@@ -46,6 +46,8 @@ import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
+import de.minetrain.minechat.utils.audio.AudioManager;
+import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 
 public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -55,6 +57,7 @@ public class Main {
 	public static MainFrame MAIN_FRAME;
 	public static JFrame onboardingFrame;
 	public static Settings rftnfijdg;
+	public static AudioManager audioManager = new AudioManager();;
 	
 	public static void main(String[] args) throws Exception {
 //		JFrame frame = new JFrame();
@@ -205,6 +208,10 @@ public class Main {
 //		}
 	}
 	
+	
+	public static AudioManager getAudioManager(){
+		return audioManager;
+	}
 	
 	
 	

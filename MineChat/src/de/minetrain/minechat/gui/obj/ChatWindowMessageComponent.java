@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.FlippedImageIcon;
@@ -64,6 +65,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	public static final Random random = new Random();
 	
 	private boolean highlighted = false;
+	private HighlightString highlightString = null;
 	private JPanel buttonPanel;
 	private TitledBorder titledBorder;
 	private JTextPane messageLabel;
@@ -222,6 +224,7 @@ public class ChatWindowMessageComponent extends JPanel{
 		            
 		            if (matcher.find() && !highlighted) {
 		    			titledBorder.setBorder(BorderFactory.createLineBorder(Color.decode(highlight.getBorderColorCode()), 2));
+		    			highlightString = highlight;
 		    			highlighted = true;
 		            }
 		    	});
@@ -540,5 +543,9 @@ public class ChatWindowMessageComponent extends JPanel{
 
 	public boolean isHighlighted() {
 		return highlighted;
+	}
+	
+	public HighlightString getHighlightString(){
+		return highlightString;
 	}
 }

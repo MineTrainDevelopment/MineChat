@@ -12,10 +12,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
@@ -31,13 +34,23 @@ import javax.swing.event.DocumentListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.regexp.Pattern;
+
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
+import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
+import de.minetrain.minechat.utils.audio.AudioManager;
+import de.minetrain.minechat.utils.audio.AudioPath;
+import de.minetrain.minechat.utils.audio.AudioVolume;
+import javafx.scene.media.AudioClip;
+
+import javax.swing.JComboBox;
 
 public class CreateWordHighlightFrame extends MineDialog {
 	private static final long serialVersionUID = -4774556639413934907L;
@@ -48,12 +61,17 @@ public class CreateWordHighlightFrame extends MineDialog {
 	private JTextField inputField;
 	private TitledBorder titledBorder;
 	private JLabel textLabel;
+	private JComboBox<AudioPath> soundSelector;
+	private JComboBox<AudioVolume> volumeSelector;
+	private AudioClip lastAudioClip = null;
+	/**Sound path, {@link AudioPath}*/
+	private HashMap<String, AudioPath> pathCache = new HashMap<String, AudioPath>();
 	private static final MineStringBuilder stringBuilder = new MineStringBuilder();
 	
 	private String uuid = UUID.randomUUID().toString();
 
 	public CreateWordHighlightFrame(JFrame parentFrame) {
-		super(parentFrame, "Add a word Highlight", new Dimension(400, 115));
+		super(parentFrame, "Add a word Highlight", new Dimension(400, 145));
 		
 		inputField = new JTextField();
         inputField.setText("{WORD}");
@@ -135,6 +153,9 @@ public class CreateWordHighlightFrame extends MineDialog {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		contentPanel.setBackground(ColorManager.GUI_BACKGROUND);
 		contentPanel.add(inputPanel, BorderLayout.SOUTH);
+		
+		
+		inputPanel.add(getSoundSelector(), BorderLayout.NORTH);
 		contentPanel.add(messagePreview, BorderLayout.NORTH);
 		
 		addContent(contentPanel, BorderLayout.CENTER);
@@ -143,7 +164,7 @@ public class CreateWordHighlightFrame extends MineDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				logger.debug("Try to save a new HighlightString\n  " + (inputField != null ? inputField.getText() : "null"));
-				String newWord = HighlightString.saveNewWord(uuid, inputField.getText(), wordColor, borderColor);
+				String newWord = saveNewWord();
 				if(newWord == null){
 					dispose();
 					return;
@@ -179,6 +200,11 @@ public class CreateWordHighlightFrame extends MineDialog {
 
 		titledBorder.setBorder(BorderFactory.createLineBorder(borderColor, 2));
 		textLabel.setText(getPreviewText().toString());
+
+		if(preset.isPlaySound()){
+			soundSelector.setSelectedItem(pathCache.get(preset.getSoundPath()));
+		}
+		volumeSelector.setSelectedItem(preset.getSoundVolume());
 		return this;
 	}
 
@@ -194,6 +220,77 @@ public class CreateWordHighlightFrame extends MineDialog {
 	private String getCurentTime() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat,
 				new Locale(System.getProperty("user.language"), System.getProperty("user.country"))));
+	}
+	
+	/**
+	 * Save
+	 * @return
+	 */
+	public String saveNewWord() {
+		String word = inputField.getText();
+		if(Pattern.compile("[{}.]").matcher(word).find()){
+			return "\"{\", \"}\" and \".\" are invalid chars!";
+		}
+		
+		AudioPath audioPath = (AudioPath) soundSelector.getSelectedItem();
+		
+		DatabaseManager.getMessageHighlight().insert(
+				uuid,
+				word,
+				String.format("#%06x", wordColor.getRGB() & 0x00FFFFFF),
+				String.format("#%06x", borderColor.getRGB() & 0x00FFFFFF),
+				!audioPath.isDummy() ? audioPath.getPath().subpath(2, audioPath.getPath().getNameCount()).getParent().toString()+"\\"+audioPath.getPath().getFileName() : null,
+				(AudioVolume) volumeSelector.getSelectedItem(),
+				true);
+		
+		DatabaseManager.commit();
+		Settings.reloadHighlights();
+		return null;
+	}
+	
+	private JPanel getSoundSelector(){
+		JPanel soundPanel = new JPanel(new BorderLayout());
+		
+		volumeSelector = new JComboBox<AudioVolume>();
+		volumeSelector.setToolTipText("Select a sound.");
+		for(AudioVolume volume : AudioVolume.getAll()){volumeSelector.addItem(volume);}
+		volumeSelector.setBounds(10, 10, 184, 35);
+		volumeSelector.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+		volumeSelector.setForeground(ColorManager.FONT);
+		volumeSelector.addActionListener(e -> playTestAudio());
+		
+		soundSelector = new JComboBox<AudioPath>();
+		soundSelector.setToolTipText("Select a sound.");
+		soundSelector.addItem(new AudioPath());
+		AudioManager.scrapeAudioFiles().forEach(path -> {
+			AudioPath audioPath = new AudioPath(path);
+			pathCache.put(path.getParent().toString()+"\\"+path.getFileName(), audioPath);
+			soundSelector.addItem(audioPath);
+		});
+		soundSelector.setBounds(10, 10, 184, 35);
+		((JLabel)soundSelector.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		soundSelector.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+		soundSelector.setForeground(ColorManager.FONT);
+		soundSelector.addActionListener(e -> playTestAudio());
+
+		soundPanel.add(soundSelector, BorderLayout.CENTER);
+		soundPanel.add(volumeSelector, BorderLayout.EAST);
+		return soundPanel;
+	}
+	
+	private void playTestAudio() {
+		AudioPath audioPath = (AudioPath) soundSelector.getSelectedItem();
+		if(!audioPath.isDummy()){
+			AudioManager.stopAudioClip(lastAudioClip);
+			AudioVolume audioVolume = (AudioVolume) volumeSelector.getSelectedItem();
+			lastAudioClip = Main.getAudioManager().playAudioClip(audioPath.getUri(), audioVolume);
+		}
+	}
+	
+	@Override
+	public void dispose() {
+		AudioManager.stopAudioClip(lastAudioClip);
+		super.dispose();
 	}
 	
 }

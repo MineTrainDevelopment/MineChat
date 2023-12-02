@@ -54,5 +54,10 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.44.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-media</artifactId>
+			<version>17.0.9</version>
+		</dependency>
 	</dependencies>
 </project>

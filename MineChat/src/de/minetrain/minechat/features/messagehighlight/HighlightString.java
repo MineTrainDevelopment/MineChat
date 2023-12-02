@@ -8,13 +8,17 @@ import com.google.code.regexp.Pattern;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.utils.audio.AudioManager;
+import de.minetrain.minechat.utils.audio.AudioVolume;
 
 public class HighlightString {
 	private final String uuid;
 	private final String word;
 	private final String wordColorCode;
 	private final String borderColorCode;
-	private final boolean playSound;
+	private final String soundPath;
+	private final AudioVolume soundVolume;
 	private boolean state;
 	
 	public HighlightString(ResultSet result) throws SQLException {
@@ -22,32 +26,27 @@ public class HighlightString {
 		this.word = result.getString("word");
 		this.wordColorCode = result.getString("word_color");
 		this.borderColorCode = result.getString("border_color");
-		this.playSound = (result.getString("sound") != null);
+		this.soundPath = result.getString("sound");
+		this.soundVolume = AudioVolume.get(result.getString("sound_volume"));
 		this.state = result.getBoolean("state");
 	}
 	
-	/**
-	 * 
-	 * @param word
-	 * @param wordColor
-	 * @param borderColor
-	 */
-	public static String saveNewWord(String uuid, String word, Color wordColor, Color borderColor) {
-		if(Pattern.compile("[{}.]").matcher(word).find()){
-			return "\"{\", \"}\" and \".\" are invalid chars!";
+	public void playSound(){
+		if(isPlaySound()){
+			Main.getAudioManager().playAudioClip(getSoundUri(), soundVolume);
 		}
-		
-		DatabaseManager.getMessageHighlight().insert(
-				uuid,
-				word,
-				String.format("#%06x", wordColor.getRGB() & 0x00FFFFFF),
-				String.format("#%06x", borderColor.getRGB() & 0x00FFFFFF),
-				null,
-				true);
-		
-		DatabaseManager.commit();
-		Settings.reloadHighlights();
-		return null;
+	}
+	
+	public AudioVolume getSoundVolume(){
+		return soundVolume;
+	}
+	
+	public String getSoundPath(){
+		return AudioManager.RAW_AUDIO_PATH.replace("/", "\\")+soundPath;
+	}
+	
+	public String getSoundUri(){
+		return AudioManager.createUri(soundPath);
 	}
 
 	public String getUuid() {
@@ -67,13 +66,13 @@ public class HighlightString {
 	}
 
 	public boolean isPlaySound() {
-		return playSound;
+		return soundPath != null;
 	}
 
 	public boolean isAktiv() {
 		return state;
 	}
-
+	
 	public void setAktiv(boolean state) {
 		this.state = state;
 		DatabaseManager.getMessageHighlight().setState(uuid, state);
