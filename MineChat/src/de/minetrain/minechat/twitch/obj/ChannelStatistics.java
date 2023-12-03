@@ -49,7 +49,7 @@ public class ChannelStatistics {
 	public void addMessage(String senderName, String senderId) {
 		totalMessages++;
 		
-		if(!sendedMessages.containsKey(senderName)){
+		if(!sendedMessages.containsKey(senderId)){
 			parentTab.getChatWindow().chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+senderName, null));
 		}
 		

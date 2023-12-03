@@ -371,7 +371,7 @@ public class ChatWindowMessageComponent extends JPanel{
     //Replace emotes with 3 Chars for filtering.
 	private final List<String> splitString(String input) {
     	input = input.replace("\\n", "�");
-        int chunkSize = 46;
+        int chunkSize = 45;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
         input = (webEmotes == null) ? input : encryptEmotes(input);
