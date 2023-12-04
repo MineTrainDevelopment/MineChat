@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 
 public class MacroData {
-	private final long id;
-	private final String channelId;
+	private final Long id;
+	private String channelId;
 	private final ButtonType button_type;
 	private final String button_id;
 	private final String button_row;
@@ -27,10 +27,29 @@ public class MacroData {
 		this.output = resultSet.getString("output").split("\n");
 	}
 	
-	public long getId() {
-		return id;
+	public MacroData(MacroData data){
+		this.id = null;
+		this.channelId = data.getChannelId();
+		this.button_type = data.getButton_type();
+		this.button_id = data.getButton_id();
+		this.button_row = data.getButton_row();
+		this.title = data.getTitle();
+		this.emoteId = data.getEmoteId();
+		this.output = data.getOutput();
 	}
 	
+	public MacroData fromChannelId(String channel_id){
+		return new MacroData(this).setChannelId(channel_id);
+	}
+	
+	public MacroData setChannelId(String channel_id) {
+		this.channelId = channel_id;
+		return this;
+	}
+	
+	public Long getId() {
+		return id;
+	}
 	
 	public ButtonType getButton_type() {
 		return button_type;

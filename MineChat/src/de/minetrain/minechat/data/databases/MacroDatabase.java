@@ -28,6 +28,7 @@ public class MacroDatabase extends Database {
 	private static final String update_SQL = "UPDATE "+tabelName+" SET channel_id = ? , button_type = ? , button_id = ? , button_row = ? , title = ? , emote_id = ? , output = ? WHERE id = ?";
 	private static final String check_SQL = "SELECT id FROM "+tabelName+" WHERE id = ?";
 	private static final String select_sql = "SELECT id, channel_id, button_type, button_id, button_row, title, emote_id, output FROM "+tabelName;
+	private static final String delete_sql = "DELETE FROM "+tabelName+" WHERE channel_id = ?";
 	
 	public MacroDatabase() throws SQLException {
 		super("CREATE TABLE IF NOT EXISTS "+tabelName+" (\n"
@@ -40,6 +41,14 @@ public class MacroDatabase extends Database {
                 + "	emote_id text,\n"
                 + "	output text NOT NULL\n"
                 + ");");
+	}
+	
+	
+	public void insert(MacroData data, boolean autoCommit){
+		insert(data.getId(), data.getChannelId(), data.getButton_type(), data.getButton_id(), data.getButton_row(), data.getTitle(), data.getEmoteId(), data.getOutput());
+		if(autoCommit){
+			DatabaseManager.commit();
+		}
 	}
 	
 	/**
@@ -91,22 +100,13 @@ public class MacroDatabase extends Database {
 	public void getAll(){
 		try(Connection connection = DatabaseManager.connect(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(select_sql)){
 			while(resultSet.next()){
-				logger.info(
-						resultSet.getString("emote_id")+" - "+
-						resultSet.getString("name")+" - "+
-						resultSet.getBoolean("public")+" - "+
-			            resultSet.getBoolean("favorite")+" - "+
-			            resultSet.getLong("emote_type")+" - "+
-			            resultSet.getLong("tier")+" - "+
-			            resultSet.getLong("image_type")+" - "+
-			            resultSet.getLong("animated")+" - "+
-			            resultSet.getLong("file_location")
-						);
+				// Get all macros?
 			}
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage(), ex);
 		}
 	}
+	
 	
 	private ResultSet get(String colum_name, Object value){
 		try{
@@ -136,6 +136,23 @@ public class MacroDatabase extends Database {
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 			return null;
+		}
+	}
+	
+
+	
+	public void deleteChannelDataById(String channel_id, boolean autoCommit){
+		try{
+			Connection connection = DatabaseManager.connect(); 
+			PreparedStatement statement = connection.prepareStatement(delete_sql);
+			statement.setString(1, channel_id);
+			statement.executeUpdate();
+			
+			if(autoCommit){
+				DatabaseManager.commit();
+			}
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage(), ex);
 		}
 	}
 

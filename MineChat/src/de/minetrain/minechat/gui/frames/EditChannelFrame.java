@@ -15,6 +15,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
+import de.minetrain.minechat.data.objectdata.MacroData;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
@@ -333,6 +335,8 @@ public class EditChannelFrame extends JDialog {
 					displayNameField.setText(twitchUser.getDisplayName());
 				}
 				
+				
+				
 
 				DatabaseManager.getChannelTabIndexDatabase().insert(editedTab.getTabType(), twitchUser.getUserId());
 				DatabaseManager.getChannel().insert(
@@ -344,6 +348,20 @@ public class EditChannelFrame extends JDialog {
 						greetingList,
 						goodbyList,
 						returnList);
+				
+				
+				//Cloning macros
+				String selectedUser = cloneMacrosComboBox.getSelectedItem().toString();
+				if(!selectedUser.isEmpty()){
+					selectedUser = channelsFromConfig.get(selectedUser.contains("(") ? selectedUser.split("\\(")[1].replace(")", "") : selectedUser).replace("Channel_", "");
+					System.err.println(selectedUser);
+					List<MacroData> channelDataById = DatabaseManager.getMacro().getChannelDataById(selectedUser);
+					
+					if(!channelDataById.isEmpty()){
+						DatabaseManager.getMacro().deleteChannelDataById(twitchUser.getUserId(), false);
+						channelDataById.forEach(data -> DatabaseManager.getMacro().insert(data.fromChannelId(twitchUser.getUserId()), false));
+					}
+				}
 				
 				DatabaseManager.commit();
 				TextureManager.downloadProfileImage(twitchUser.getProfileImageUrl(), twitchUser.getUserId());
