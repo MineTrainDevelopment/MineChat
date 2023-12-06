@@ -56,7 +56,11 @@ public class MacroObject {
 	}
 
 	public String getRawOutput() {
-		return String.join(" - ", output);
+		return String.join(" \n ", output);
+	}
+
+	public String[] getOutputArray() {
+		return output;
 	}
 
 	public String getEmoteId() {

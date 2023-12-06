@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
+import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
@@ -71,10 +73,42 @@ public class ChatWindowMessageComponent extends JPanel{
 	private JTextPane messageLabel;
 	private JPanel messageContentPanel;
 	private MineButton markReadButton, replyButton;
-	private Map<String, String> webEmotes = new HashMap<String, String>();
+	private Map<String, String> webEmotes = new HashMap<String, String>();//name, immage path
 	private long epochTime = 0;
 	private final String userName;
 	private final String channelId;
+	
+	private int splitChunkSize = 45;
+	
+	public ChatWindowMessageComponent(MacroObject macro, int arrayIndex) {
+		super(new BorderLayout());
+		webEmotes = EmoteManager.getChannelEmotes(TitleBar.currentTab.getConfigID())
+				.getAllEmotes()
+				.stream()
+				.collect(Collectors.toMap(Emote::getName, Emote::getFilePath,
+		            (existingValue, newValue) -> {
+		            	logger.warn("Duplicate key found for emote ID \"" + existingValue + "\". Skipping.");
+		                return existingValue;
+		            }));
+		
+		this.userName = "";
+		this.channelId = "";
+		this.splitChunkSize = Integer.MAX_VALUE;
+		
+		setMinimumSize(new Dimension(400, 25));
+		setBackground(ColorManager.GUI_BACKGROUND);
+		
+		messageLabel = new JTextPane();
+		messageLabel.setEditable(false);
+		messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+		messageLabel.setFont(Settings.MESSAGE_FONT);
+		formatText(macro.getOutputArray()[arrayIndex], messageLabel.getStyledDocument(), ColorManager.FONT, epochTime);
+		
+		messageContentPanel = new JPanel(new BorderLayout());
+		messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+		messageContentPanel.add(messageLabel, BorderLayout.CENTER);
+		add(messageContentPanel, BorderLayout.CENTER);
+	}
 	
 	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow) {
 		super(new BorderLayout());
@@ -371,7 +405,6 @@ public class ChatWindowMessageComponent extends JPanel{
     //Replace emotes with 3 Chars for filtering.
 	private final List<String> splitString(String input) {
     	input = input.replace("\\n", "�");
-        int chunkSize = 45;
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
         input = (webEmotes == null) ? input : encryptEmotes(input);
@@ -386,7 +419,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	                wordBoundary = builder.length() - 1;
 	            }
 	
-	            if (builder.length() == chunkSize) {
+	            if (builder.length() == splitChunkSize) {
 	                if (wordBoundary != -1) {
 	                    chunks.add(builder.substring(0, wordBoundary).trim());
 	                    builder.delete(0, wordBoundary + 1);

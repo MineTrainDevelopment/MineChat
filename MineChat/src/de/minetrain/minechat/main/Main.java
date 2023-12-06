@@ -15,6 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -72,6 +74,7 @@ public class Main {
 //		dialog.addContent(new MineTabel(), BorderLayout.CENTER);
 //		dialog.setVisible(true);
 
+//		new DatabaseManager();
 //		new Settings();
 //		Settings.reloadHighlights();
 		
@@ -79,12 +82,6 @@ public class Main {
 //		CreateAutoReplyFrame settings = new CreateAutoReplyFrame(frame);
 //		settings.setExitOnCancelButton(true);
 //		settings.setVisible(true);
-		
-		
-		
-		
-		//Clonign marcos don´t work anymore.
-		
 		
 		
 		

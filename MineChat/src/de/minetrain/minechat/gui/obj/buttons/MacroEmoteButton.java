@@ -7,8 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
+import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -19,6 +21,7 @@ import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.main.MacroButtonToolTip;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 
@@ -38,6 +41,8 @@ import de.minetrain.minechat.twitch.MessageManager;
 public class MacroEmoteButton extends MineButton{
 	private static final long serialVersionUID = 7041760851916874910L;
 	public JLabel textureLabel;
+	private record ToolTipCacheKey(String channelId, ButtonType type){};
+	private static final HashMap<ToolTipCacheKey, JToolTip> toolTipCache = new HashMap<ToolTipCacheKey, JToolTip>();
 
 	/**
 	 * A button used for Emote macros. 
@@ -52,6 +57,7 @@ public class MacroEmoteButton extends MineButton{
 	public MacroEmoteButton(Dimension size, Point location, ButtonType type, MainFrame mainFrame) {
 		super(size, location, type);
 		setHolding(true);
+        setToolTipText(type.name());
 		textureLabel = new JLabel();
 		mainFrame.add(textureLabel);
 		textureLabel.setLayout(new BorderLayout());
@@ -83,7 +89,7 @@ public class MacroEmoteButton extends MineButton{
             	buttonHoldTimer.stop(); // Stop the timer when the mouse button is released
             }
             
-		    @Override
+			@Override
 		    public void mouseClicked(MouseEvent event) {
 		    	if (SwingUtilities.isLeftMouseButton(event)) {
 		        	buttonPressed();
@@ -100,7 +106,7 @@ public class MacroEmoteButton extends MineButton{
 			            }
 		            	
 		            	if(selectedEmote != null){
-							MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
+							MacroObject macro = getMacroObject();
 //		            		selectedEmote = selectedEmote.getFilePath().replace("_BG.png", selectedEmote.getFileFormat());
 		            		
 							String selectedEmoteName = selectedEmote.getName();
@@ -113,9 +119,11 @@ public class MacroEmoteButton extends MineButton{
 		            		
 		            		if(inputFrame.getOutputInput() != null){
 		            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : selectedEmoteName;
-		            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
+//		            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
+
+		            			//Remove tooltip from cache.
+		            			toolTipCache.remove(new ToolTipCacheKey(TitleBar.currentTab.getConfigID(), type));
 		            			
-		            			System.err.println(macro.getMacroId());
 								DatabaseManager.getMacro().insert(
 										macro.getMacroId(),
 										TitleBar.currentTab.getConfigID(),
@@ -136,6 +144,10 @@ public class MacroEmoteButton extends MineButton{
 		        }
 		    }
 		});
+	}
+	
+	private MacroObject getMacroObject() {
+		return TitleBar.currentTab.getMacros().getMacro(getType(), TitleBar.currentTab.getMacros().getCurrentMacroRow());
 	}
 	
 	
@@ -180,6 +192,13 @@ public class MacroEmoteButton extends MineButton{
 	public MacroEmoteButton setInvisible(boolean state) {
 		super.setInvisible(state);
 		return this;
+	}
+	
+	@Override
+	public JToolTip createToolTip() {
+		return toolTipCache.computeIfAbsent(
+				new ToolTipCacheKey(TitleBar.currentTab.getConfigID(), getType()),
+				key -> new MacroButtonToolTip(super.createToolTip(), getMacroObject()));
 	}
 	
 }

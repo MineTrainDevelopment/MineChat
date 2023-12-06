@@ -8,11 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -24,7 +25,7 @@ import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.frames.InputFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.main.MacroButtonToolTip;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 
@@ -42,6 +43,8 @@ public class MacroButton extends MineButton{
 	private static final long serialVersionUID = 1144702595268749652L;
 	private JLabel icon = new JLabel();
 	public JLabel textureLabel;
+	private record ToolTipCacheKey(String channelId, ButtonType type){};
+	private static final HashMap<ToolTipCacheKey, JToolTip> toolTipCache = new HashMap<ToolTipCacheKey, JToolTip>();
 
 	/**
 	 * A button used for message macros. 
@@ -58,6 +61,7 @@ public class MacroButton extends MineButton{
 		setHorizontalAlignment(JTextField.RIGHT);
 		setForeground(Color.WHITE);
 		setHolding(true);
+        setToolTipText(type.name());
 		
 		
 		textureLabel = new JLabel();
@@ -92,7 +96,7 @@ public class MacroButton extends MineButton{
             	buttonHoldTimer.stop(); // Stop the timer when the mouse button is released
             }
 		    
-		    @Override
+			@Override
 		    public void mouseClicked(MouseEvent event) {
 		        if (SwingUtilities.isLeftMouseButton(event)) {
 		        	buttonPressed();
@@ -100,7 +104,7 @@ public class MacroButton extends MineButton{
 		        
 		        if (SwingUtilities.isRightMouseButton(event)) {
 		            InputFrame inputFrame;
-					MacroObject macro = TitleBar.currentTab.getMacros().getMacro(type, TitleBar.currentTab.getMacros().getCurrentMacroRow());
+					MacroObject macro = getMacroObject();
 					if(!macro.getTitle().equalsIgnoreCase("null")){
 			            inputFrame = new InputFrame(mainFrame, "Button text:", macro.getTitle(), "Macro output:", macro.getOutput());
 		            }else{
@@ -134,9 +138,10 @@ public class MacroButton extends MineButton{
 
 	            			String input = (inputFrame.getNameInput().length()>0) ? inputFrame.getNameInput() : "Unknown";
 	            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : "Unknown macro... - "+type.name();
-	            			String macroRow = TitleBar.currentTab.getMacros().getCurrentMacroRow().name().toLowerCase().substring(3);
 							
-	            			System.err.println(macro.getMacroId());
+	            			//Remove tooltip from cache.
+	            			toolTipCache.remove(new ToolTipCacheKey(TitleBar.currentTab.getConfigID(), type));
+	            			
 							DatabaseManager.getMacro().insert(
 									macro.getMacroId(),
 									TitleBar.currentTab.getConfigID(),
@@ -156,6 +161,7 @@ public class MacroButton extends MineButton{
 					}).start();
 		        }
 		    }
+
 		});
 	}
 	
@@ -188,6 +194,10 @@ public class MacroButton extends MineButton{
         	}
         }
     });
+	
+	private MacroObject getMacroObject() {
+		return TitleBar.currentTab.getMacros().getMacro(getType(), TitleBar.currentTab.getMacros().getCurrentMacroRow());
+	}
 	
 	
 	/**
@@ -235,6 +245,13 @@ public class MacroButton extends MineButton{
 	@Override
 	public void setText(String text) {
 		super.setText(text.length()>8 ? text.substring(0, 6)+".." : text);
+	}
+	
+	@Override
+	public JToolTip createToolTip() {
+		return toolTipCache.computeIfAbsent(
+				new ToolTipCacheKey(TitleBar.currentTab.getConfigID(), getType()),
+				key -> new MacroButtonToolTip(super.createToolTip(), getMacroObject()));
 	}
 	
 }
