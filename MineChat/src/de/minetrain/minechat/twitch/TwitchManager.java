@@ -20,7 +20,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase.OwnerCacheData;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
@@ -162,9 +165,10 @@ public class TwitchManager {
 	 */
 	public static void sendMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
+		OwnerCacheData ownerData = DatabaseManager.getOwnerCache().getById(message.getChannelTab().getConfigID());
 
 		message.getChannelTab().getStatistics().addMessage(message.getSenderName(), ownerTwitchUser.getUserId());
-		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), message.getSenderName(), Color.WHITE);
+		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), ownerData == null ? message.getSenderName() : ownerData.displa_name(), ownerData == null ? Color.WHITE : ColorManager.decode(ownerData.color_code()), null, ownerData);
 		message.getChannelTab().getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessageRaw());
 				
 		//Check if a chatter is was mentioned

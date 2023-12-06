@@ -352,7 +352,7 @@ public class EditChannelFrame extends JDialog {
 				
 				//Cloning macros
 				String selectedUser = cloneMacrosComboBox.getSelectedItem().toString();
-				if(!selectedUser.isEmpty()){
+				if(!selectedUser.isBlank()){
 					selectedUser = channelsFromConfig.get(selectedUser.contains("(") ? selectedUser.split("\\(")[1].replace(")", "") : selectedUser).replace("Channel_", "");
 					System.err.println(selectedUser);
 					List<MacroData> channelDataById = DatabaseManager.getMacro().getChannelDataById(selectedUser);

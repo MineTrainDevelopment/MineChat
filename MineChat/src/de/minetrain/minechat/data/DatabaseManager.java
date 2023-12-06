@@ -14,6 +14,7 @@ import de.minetrain.minechat.data.databases.ChannelsDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
 import de.minetrain.minechat.data.databases.MacroDatabase;
 import de.minetrain.minechat.data.databases.MessageHighlightDatabase;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase;
 import de.minetrain.minechat.main.Main;
 
 public class DatabaseManager {
@@ -28,6 +29,7 @@ public class DatabaseManager {
 	private static MessageHighlightDatabase messageHighlight;
 	private static ChannelTabIndexDatabase channelTabIndexDatabase;
 	private static ChannelStatisticsDatabase channelStatistics;
+	private static OwnerCacheDatabase ownerCacheDatabase;
 
 	public DatabaseManager() {
 		try {
@@ -38,6 +40,7 @@ public class DatabaseManager {
 			messageHighlight = new MessageHighlightDatabase();
 			channelTabIndexDatabase = new ChannelTabIndexDatabase();
 			channelStatistics = new ChannelStatisticsDatabase();
+			ownerCacheDatabase = new OwnerCacheDatabase();
 		} catch (SQLException ex) {
 			logger.error("Can´t prepare all databases.", ex);
 			Main.LOADINGBAR.setError("Can´t read database file. -> logs");
@@ -98,6 +101,10 @@ public class DatabaseManager {
 
 	public static ChannelStatisticsDatabase getChannelStatistics() {
 		return channelStatistics;
+	}
+
+	public static OwnerCacheDatabase getOwnerCache() {
+		return ownerCacheDatabase;
 	}
 	
 	

@@ -1,6 +1,7 @@
 package de.minetrain.minechat.twitch.obj;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,8 @@ public class TwitchMessage {
 	private final String userName;
 	private final String userColorCode;
 	private final Map<String, String> emoteSet = new HashMap<String, String>();
-	private final List<String> badges = new ArrayList<>();
+	private final List<Path> badges = new ArrayList<>();
+	private final String[] badgeTags;
 	
 	private final Long epochTime;
 	private final ChannelTab parentTab;
@@ -94,22 +96,29 @@ public class TwitchMessage {
 			});
 		}
 		
-    	String[] badgeTags = ircMessage.getTagValue("badges").orElse("").split(",");
+    	badgeTags = ircMessage.getTagValue("badges").orElse("").split(",");
+		badges.addAll(collectBadges(ircMessage.getChannel().getId(), badgeTags));
+	}
+
+	public static ArrayList<Path> collectBadges(String channel_id, String[] badgeTags) {
+		ArrayList<Path> paths = new ArrayList<>();
 		Arrays.asList(badgeTags).forEach(badge -> {
-			String path = TextureManager.badgePath+badge+"/1.png";
+			Path path = Path.of(TextureManager.badgePath+badge+"/1.png");
 			
 			if(badge.startsWith("subscriber") || badge.startsWith("bits")){
-				String channelBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/Channel_"+ircMessage.getChannel().getId()+"";
+				String channelBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/Channel_"+channel_id+"";
 
 				if(Files.exists(Paths.get(channelBadgePath))){
-					path = channelBadgePath+badge.substring(badge.indexOf("/"))+"/1.png";
+					path = Path.of(channelBadgePath+badge.substring(badge.indexOf("/"))+"/1.png");
 				}
 			}
 			
-			if (Files.exists(Paths.get(path))) {
-				getBadges().add(path);
+			if (Files.exists(path)) {
+				paths.add(path);
 			}
 		});
+		
+		return paths;
 	}
 	
 	public TwitchMessage(ChannelTab parentTab, String userName, String message) {
@@ -128,6 +137,7 @@ public class TwitchMessage {
 		this.highlighted = false;
 		this.emoteOnly = false;
 		this.firstMessages = false;
+		this.badgeTags = "".split("");
 	}
 
 
@@ -217,8 +227,16 @@ public class TwitchMessage {
 		return colorCache.get(userLogin);
 	}
 	
-	public List<String> getBadges() {
+	public List<Path> getBadges() {
 		return badges;
+	}
+	
+	public String[] getBadgeTags() {
+		return badgeTags;
+	}
+	
+	public String getRawBadgeTags() {
+		return String.join(", ", getBadgeTags());
 	}
 
 	public ReplyType getReplyType() {

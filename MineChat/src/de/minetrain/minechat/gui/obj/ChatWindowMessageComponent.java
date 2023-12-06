@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.obj.MacroObject;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase.OwnerCacheData;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
@@ -160,7 +162,7 @@ public class ChatWindowMessageComponent extends JPanel{
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
 	}
 	
-	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow) {
+	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow, OwnerCacheData ownerData) {
 		super(new BorderLayout());
 		this.channelId = chatWindow.channelId;
 		this.epochTime = twitchMessage == null ? epochTime : twitchMessage.getEpochTime();
@@ -181,9 +183,16 @@ public class ChatWindowMessageComponent extends JPanel{
 		
 		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
 			MineStringBuilder stringBuilder = new MineStringBuilder().setSuffix(userName+":");
-			twitchMessage.getBadges().forEach(badge -> stringBuilder.appendIcon(badge, true));
+			twitchMessage.getBadges().forEach(badge -> stringBuilder.appendIcon(badge.toString(), true));
         	titledBorder.setTitle(stringBuilder.toString());
         }
+		
+		if(ownerData != null){
+			System.err.println(Arrays.asList(ownerData.badges().split(",")));
+			MineStringBuilder stringBuilder = new MineStringBuilder().setSuffix(userName+":");
+			TwitchMessage.collectBadges(ownerData.channelId(), ownerData.badges().split(", ")).forEach(badge -> stringBuilder.appendIcon(badge.toString(), true));
+        	titledBorder.setTitle(stringBuilder.toString());
+		}
 		
 		buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);

@@ -85,7 +85,6 @@ public class Main {
 		
 		
 		
-		
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
 		LOADINGBAR.setFont(new Font(null, Font.BOLD, 10));

@@ -35,6 +35,7 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
@@ -107,6 +108,7 @@ public class TwitchListner {
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
     		channelTab.getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(event.getMessage());
     		MessageManager.setLastMessage(event.getMessage());
+    		DatabaseManager.getOwnerCache().insert(twitchMessage);
     		
 			String[] splitMessage = event.getMessage().split(" ");
 			List<String> words = Arrays.asList(splitMessage);

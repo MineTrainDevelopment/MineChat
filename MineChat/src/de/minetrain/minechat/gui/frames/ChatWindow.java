@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase.OwnerCacheData;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -120,12 +121,16 @@ public class ChatWindow extends JLabel {
     }
     
 	public void displayMessage(String message, String userName, Color userColor) {
-    	displayMessage(message, userName, userColor, null);
+    	displayMessage(message, userName, userColor, null, null);
     }
 
-//	private List<ChatWindowMessageComponent> list = new ArrayList<ChatWindowMessageComponent>();
 	public void displayMessage(String message, String userName, Color userColor, TwitchMessage twitchMessage) {
-		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(message, userName, userColor, twitchMessage, this);
+		displayMessage(message, userName, userColor, twitchMessage, null);
+	}
+
+//	private List<ChatWindowMessageComponent> list = new ArrayList<ChatWindowMessageComponent>();
+	public void displayMessage(String message, String userName, Color userColor, TwitchMessage twitchMessage, OwnerCacheData badgeData) {
+		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(message, userName, userColor, twitchMessage, this, badgeData);
 //		int minimisedPanelHight = 0;
 		
         chatPanel.add(messagePanel);
