@@ -45,6 +45,10 @@ public class GetCredentialsFrame extends MineDialog {
 	private static HttpServer server;
 	private JTextField clientIdField, clientSecretField;
 	private JDialog thisDialog = this;
+
+
+	protected static String overriddenClientId;
+	protected static String overriddenClientSecret;
 	
 	private static String clientId;
 	protected static String clientSecret;
@@ -106,8 +110,14 @@ public class GetCredentialsFrame extends MineDialog {
     }
 	
 	public void injectData(String clientId, String clientSecret){
+		overriddenClientId = clientId;
+		overriddenClientSecret = clientSecret;
+		
 		clientIdField.setText(clientId);
 		clientSecretField.setText(clientSecret);
+		clientSecretField.revalidate();
+		clientSecretField.repaint();
+		
 	}
 		
 	
@@ -116,33 +126,42 @@ public class GetCredentialsFrame extends MineDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				clientId = clientIdField.getText();
-				clientSecret = clientSecretField.getText();
-				
-				try {
-					if(clientId.isEmpty() || clientSecret.isEmpty()){
-						throw new IllegalArgumentException("Please fill out the data fields.");
-					}
-
-					setTitle("Validating your data input.");
-					TwitchManager.requestAccesToken(clientId, clientSecret);
-				} catch (IllegalArgumentException ex) {
-					setTitle(ex.getMessage());
-					return;
-				}
-				
-				try {
-					server = HttpServer.create(new InetSocketAddress(8000), 0);
-					server.createContext("/oauth_callback", new OAuthCallbackHandler(thisDialog));
-					server.start();
-					setTitle("Please register your twitch client.");
-					Desktop.getDesktop().browse(new URI(OAuth2_URL.replace("{CLIENT_ID}", clientId).replace("{REDIRECT_URL}", redirectUrl)));
-//					System.out.println("OAuth2 Server gestartet. Öffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
-				} catch (IOException | URISyntaxException ex) {
-					logger.error("Error while trying to start the Http server to get the OAuth2 token from the useres Twutch acc.", ex);
-				}
+				startServer();
 			}
 		};
+	}
+	
+	public void startServer() {
+		clientId = clientIdField.getText();
+		clientSecret = clientSecretField.getText();
+		
+		if(overriddenClientId != null){
+			clientId = overriddenClientId;
+			clientSecret = overriddenClientSecret;
+		}
+		
+		try {
+			if(clientId.isEmpty() || clientSecret.isEmpty()){
+				throw new IllegalArgumentException("Please fill out the data fields.");
+			}
+
+			setTitle("Validating your data input.");
+			TwitchManager.requestAccesToken(clientId, clientSecret);
+		} catch (IllegalArgumentException ex) {
+			setTitle(ex.getMessage());
+			return;
+		}
+		
+		try {
+			server = HttpServer.create(new InetSocketAddress(8000), 0);
+			server.createContext("/oauth_callback", new OAuthCallbackHandler(thisDialog));
+			server.start();
+			setTitle("Please register your twitch client.");
+			Desktop.getDesktop().browse(new URI(OAuth2_URL.replace("{CLIENT_ID}", clientId).replace("{REDIRECT_URL}", redirectUrl)));
+//			System.out.println("OAuth2 Server gestartet. Öffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
+		} catch (IOException | URISyntaxException ex) {
+			logger.error("Error while trying to start the Http server to get the OAuth2 token from the useres Twutch acc.", ex);
+		}
 	}
 	
 	

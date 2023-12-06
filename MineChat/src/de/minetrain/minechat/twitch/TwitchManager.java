@@ -48,6 +48,7 @@ public class TwitchManager {
 	public static TwitchUserObj ownerTwitchUser = new TwitchUserObj(TwitchApiCallType.LOGIN, ownerChannelName, true);
 	public static CredentialsManager credentials;
 	protected static TwitchAccesToken accesToken;
+	private static int reconnectCount = 0;
 	
 	/**
 	 * Creates a new Twitch client instance using the provided TwitchCredentials.
@@ -71,17 +72,28 @@ public class TwitchManager {
 	        .withEnableChat(true)
 			.build();
 		
+		//TODO Try to reconnect befor promtint to re enter credenials
+		
 		if(twitch.getChat().getChannels().isEmpty()){
-//			TODO Reask for OAuth2 Token.
-//			CredentialsManager.deleteCredentialsFile();
 			
+			//Try to reconnect 3 times, befor asking for new credentials.
+			if(reconnectCount<3){
+				reconnectCount++;
+				new TwitchManager(credentials);
+				return;
+			}
+			
+//			Asking for a new OAuth2 token.
 			Main.LOADINGBAR.setError("Requesting new OAuth2 Token.");
 			logger.error("Requesting new OAuth2 Token.");
 			
 			GetCredentialsFrame newCredentialsFrame = new GetCredentialsFrame(Main.onboardingFrame);
 			newCredentialsFrame.injectData(credentials.getClientID(), credentials.getClientSecret());
-			newCredentialsFrame.dispose();
+			newCredentialsFrame.startServer();
+			logger.warn("Start new HTTP server to get new OAuth2 key.");
 			
+			
+			//If the new OAuth2 token also don´t work, let the user Reenter there API credentials
 			try {
 				new TwitchManager(new CredentialsManager());
 			} catch (Exception ex) {
