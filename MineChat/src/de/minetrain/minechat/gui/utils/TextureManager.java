@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +77,7 @@ public class TextureManager {
 	private final ImageIcon replyChainButton;
 	private final ImageIcon programClose;
 	private final ImageIcon programMinimize;
+	private final ImageIcon programSettings;
 	private final ImageIcon macroKeyPressed;
 	private final ImageIcon macroKeyHover;
 	private final ImageIcon macroKey;
@@ -110,6 +113,7 @@ public class TextureManager {
 		this.replyChainButton = new ImageIcon(texturePath + "replyChainButton.png");
 		this.programClose = new ImageIcon(texturePath + "programClose.png");
 		this.programMinimize = new ImageIcon(texturePath + "programMinimize.png");
+		this.programSettings = new ImageIcon(texturePath + "programSettings.png");
 		this.macroKeyPressed = new ImageIcon(texturePath + "macroKeyPressed.gif");
 		this.macroKeyHover = new ImageIcon(texturePath + "macroKeyHover.png");
 		this.macroKey = new ImageIcon(texturePath + "macroKey.png");
@@ -222,6 +226,10 @@ public class TextureManager {
 	
 	public ImageIcon getProgramMinimize() {
 		return programMinimize;
+	}
+	
+	public ImageIcon getProgramSettings() {
+		return programSettings;
 	}
 	
 	public ImageIcon getMacroKeyPressed() {
@@ -419,12 +427,7 @@ public class TextureManager {
 	
 	public static void downloadPublicData() {
 		if (!Files.exists(Paths.get(badgePath + "vip/"))) {
-			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/badges/global")
-					.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
-					.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
-					JsonObject.class);
-
-			downloadBadge(fromJson, null);
+			getDefaultBadges();
 		}
 
 
@@ -630,79 +633,80 @@ public class TextureManager {
 	}
 	
 	
-	private static void getDefaultEmotes() {
-		JFrame dialog = new JFrame("emote downloading...");
-		try {
-			dialog.setSize(300, 75);
-			dialog.setLocation(Main.MAIN_FRAME.getLocation().x + 100, Main.MAIN_FRAME.getLocation().y + 400);
-			dialog.setAlwaysOnTop(true);
-			dialog.setUndecorated(true);
-			dialog.setResizable(false);
-			dialog.setShape(new RoundRectangle2D.Double(0, 0, dialog.getWidth(), dialog.getHeight(), 25, 25));
-
-			StatusBar statusBar = new StatusBar();
-			dialog.add(statusBar);
-			dialog.setVisible(true);
-
-			statusBar.setProgress("Requesting the emote set", 80);
-			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes/global")
-					.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
-					.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
-					JsonObject.class);
-
-			JsonArray jsonArray = fromJson.getAsJsonArray("data");
-
-			for (int i = 0; i < jsonArray.size(); i++) {
-				JsonElement jsonElement = jsonArray.get(i);
-				JsonObject entry = jsonElement.getAsJsonObject();
-
-				String name = entry.get("name").getAsString();
-				String emoteId = entry.get("id").getAsString();
-				String fileLocation = "Icons/default/"+emoteId+"/";
-				String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
-				String fileFormat = ((format.length()>6) ? ".gif" : ".png");
-				String downloadURL = fromJson.get("template").getAsString();
-
-				statusBar.setProgress("Downloading: " + name, StatusBar.getPercentage(jsonArray.size(), i));
-				
-				boolean isFavorite = false;
-		    	Emote emoteByName = EmoteManager.getEmoteByName(name);
-		    	if(emoteByName != null){
-		    		isFavorite = emoteByName.isFavorite();
-		    	}
-				
-				DatabaseManager.getEmote().insert(
-		    			emoteId, 
-		    			name, 
-		    			true, 
-		    			isFavorite,
-		    			"default", 
-		    			null,
-		    			format.contains("animated") ? "gif" : "png", 
-		    			!format.equals("static"), 
-		    			texturePath+fileLocation+emoteId+"_1"+fileFormat);
-
-				try {
-					for (int index = 1; index < 4; index++) {
-						TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteId).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, emoteId+"_"+index+fileFormat);
+	public static void getDefaultEmotes() {
+		new Thread(() -> {
+			try {
+				JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes/global")
+						.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
+						.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
+						JsonObject.class);
+	
+				JsonArray jsonArray = fromJson.getAsJsonArray("data");
+	
+				for (int i = 0; i < jsonArray.size(); i++) {
+					JsonElement jsonElement = jsonArray.get(i);
+					JsonObject entry = jsonElement.getAsJsonObject();
+	
+					String name = entry.get("name").getAsString();
+					String emoteId = entry.get("id").getAsString();
+					String fileLocation = "Icons/default/"+emoteId+"/";
+					String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
+					String fileFormat = ((format.length()>6) ? ".gif" : ".png");
+					String downloadURL = fromJson.get("template").getAsString();
+	
+					SwingUtilities.invokeLater(() -> {
+						Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+						Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+						Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+					});
+					
+					boolean isFavorite = false;
+			    	Emote emoteByName = EmoteManager.getEmoteByName(name);
+			    	if(emoteByName != null){
+			    		isFavorite = emoteByName.isFavorite();
+			    	}
+					
+					DatabaseManager.getEmote().insert(
+			    			emoteId, 
+			    			name, 
+			    			true, 
+			    			isFavorite,
+			    			"default", 
+			    			null,
+			    			format.contains("animated") ? "gif" : "png", 
+			    			!format.equals("static"), 
+			    			texturePath+fileLocation+emoteId+"_1"+fileFormat);
+	
+					try {
+						for (int index = 1; index < 4; index++) {
+							TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteId).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, emoteId+"_"+index+fileFormat);
+						}
+					} catch (IOException ex) {
+						logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
 					}
-				} catch (IOException ex) {
-					logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
+	
 				}
-
+	
+				DatabaseManager.commit();
+				DatabaseManager.getEmote().getAll();
+				Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
+		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
+		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
+				
+				EmoteManager.load();
+			} catch (Exception ex) {
+				logger.error("Something went wrong while downloading an emote!", ex);
 			}
+		}).start();
+	}
+	
+	public static void getDefaultBadges(){
+		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/badges/global")
+				.header("Authorization", "Bearer " + TwitchManager.getAccesToken())
+				.header("Client-Id", TwitchManager.credentials.getClientID()).asString().getBody(),
+				JsonObject.class);
 
-			statusBar.setProgress("Saving data...", 99);
-			DatabaseManager.commit();
-			DatabaseManager.getEmote().getAll();
-			statusBar.setDone("Download completed!");
-			
-			dialog.dispose();
-			EmoteManager.load();
-		} catch (Exception ex) {
-			logger.error("Something went wrong while downloading an emote!", ex);
-			dialog.dispose();
-		}
+		downloadBadge(fromJson, null);
 	}
 
 }

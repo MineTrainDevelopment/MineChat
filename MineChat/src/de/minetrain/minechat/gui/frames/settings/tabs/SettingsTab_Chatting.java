@@ -26,6 +26,7 @@ import de.minetrain.minechat.gui.frames.settings.editors.CreateWordHighlightFram
 import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
 import de.minetrain.minechat.gui.obj.panels.tabel.TabelObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class SettingsTab_Chatting extends SettingsTab{
 	private static final long serialVersionUID = -2903086341948789185L;
@@ -132,17 +133,27 @@ public class SettingsTab_Chatting extends SettingsTab{
 		addHighlightLabel("Follows.", 236, Settings.displayFollows);
 		addHighlightLabel("Bits Cheerd.", 275, Settings.displayBitsCheerd);
 		addHighlightLabel("Twitch Highlighted.", 314, Settings.displayTwitchHighlighted);
+
 		
-		
-		JButton highlightButton = new JButton("Add new Highlight word");
-		highlightButton.setBounds(200, 579, 170, 30);
-		highlightButton.addActionListener(new ActionListener() {
+		JButton emoteButton = new JButton("Download public emotes.");
+		emoteButton.setBounds(430, 300, 170, 30);
+		emoteButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {	
-				new CreateWordHighlightFrame(parentFrame);
+			public void actionPerformed(ActionEvent e) {
+				TextureManager.getDefaultEmotes();
 			}
 		});
-		add(highlightButton);
+		add(emoteButton);
+		
+		JButton badgesButton = new JButton("Download public badges.");
+		badgesButton.setBounds(430, 340, 170, 30);
+		badgesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TextureManager.getDefaultBadges();
+			}
+		});
+		add(badgesButton);
 	}
 	
 	

@@ -81,9 +81,10 @@ public class TitleBar extends JPanel{
             public void actionPerformed(ActionEvent e){System.exit(0);}
         });
         
-        JButton settingsButton = new MineButton(new Dimension(25, 25), null, ButtonType.SETTINGS);
-        settingsButton.setBackground(Color.YELLOW);
-        settingsButton.setBounds(15, 10, 30, 30);
+        JButton settingsButton = new MineButton(new Dimension(25, 25), null, ButtonType.SETTINGS).setInvisible(!MainFrame.debug);
+//        settingsButton.setBackground(Color.YELLOW);
+        settingsButton.setBounds(12, 9, 30, 30);
+        settingsButton.setIcon(Main.TEXTURE_MANAGER.getProgramSettings());
         settingsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
             	System.err.println("TODO: Settings Menü.");
