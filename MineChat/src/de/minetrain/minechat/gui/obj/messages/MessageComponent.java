@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.utils;
+package de.minetrain.minechat.gui.obj.messages;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,8 +50,8 @@ import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.main.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
@@ -99,7 +99,7 @@ public class MessageComponent extends JPanel {
     			.setPrefix(stringBuilder.getRawContent())
     			.setSuffix(":", HTMLColors.WHITE)
     			.clearContent()
-    			.appendString(content.getUserName(), content.getUserColor())
+    			.appendString(content.getUserName(), content.getUserColorCode())
     			.toString());
 		
     	JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -410,6 +410,59 @@ public class MessageComponent extends JPanel {
     	}
         return input.trim();
     }
+    
+//    java.lang.reflect.InvocationTargetException
+//	at jdk.internal.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+//	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+//	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:131)
+//	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:128)
+//	at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:127)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:101)
+//	at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
+//	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+//	at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
+//	at com.github.twitch4j.chat.events.IRCEventHandler.onChannelMessage(IRCEventHandler.java:128)
+//	at com.github.twitch4j.chat.events.IRCEventHandler.handle(IRCEventHandler.java:68)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$3(SimpleEventHandler.java:113)
+//	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$4(SimpleEventHandler.java:113)
+//	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+//	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleConsumerHandlers(SimpleEventHandler.java:110)
+//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
+//	at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
+//	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+//	at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
+//	at com.github.twitch4j.chat.TwitchChat.lambda$onTextMessage$16(TwitchChat.java:578)
+//	at com.github.twitch4j.chat.util.MessageParser.consumeLines(MessageParser.java:143)
+//	at com.github.twitch4j.chat.TwitchChat.onTextMessage(TwitchChat.java:544)
+//	at com.github.twitch4j.client.websocket.WebsocketConnection$1.onTextMessage(WebsocketConnection.java:123)
+//	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
+//	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
+//	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
+//	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
+//	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
+//	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
+//	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
+//	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
+//Caused by: java.util.regex.PatternSyntaxException: Unmatched closing ')' near index 2
+//\b:)\b
+//  ^
+//	at java.base/java.util.regex.Pattern.error(Pattern.java:2028)
+//	at java.base/java.util.regex.Pattern.compile(Pattern.java:1787)
+//	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1430)
+//	at java.base/java.util.regex.Pattern.compile(Pattern.java:1069)
+//	at java.base/java.lang.String.replaceAll(String.java:2939)
+//	at de.minetrain.minechat.gui.obj.messages.MessageComponent.encryptEmotes(MessageComponent.java:409)
+//	at de.minetrain.minechat.gui.obj.messages.MessageComponent.splitString(MessageComponent.java:342)
+//	at de.minetrain.minechat.gui.obj.messages.MessageComponent.formatText(MessageComponent.java:279)
+//	at de.minetrain.minechat.gui.obj.messages.MessageComponent.<init>(MessageComponent.java:172)
+//	at de.minetrain.minechat.gui.frames.ChatWindow.displayMessage(ChatWindow.java:126)
+//	at de.minetrain.minechat.twitch.TwitchListner.onAbstractChannelMessage(TwitchListner.java:151)
+//	... 36 more
     
     private static final String decryptEmotes(String input) {
         for (Entry<String, String> entry : emoteReplacements.entrySet()) {

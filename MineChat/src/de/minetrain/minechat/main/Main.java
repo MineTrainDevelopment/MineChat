@@ -52,6 +52,7 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -94,8 +95,6 @@ public class Main {
 		
 //		JPanel contentPanel = new JPanel();
 //        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-		
-		
 		
 		
 		LOADINGBAR.setSize(400, 50);

@@ -1,4 +1,4 @@
-package de.minetrain.minechat.main;
+package de.minetrain.minechat.gui.obj.messages;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -51,7 +51,15 @@ public record MessageComponentContent(
 	}
 	
 	public Color getUserColor(){
-		return ColorManager.decode(userData != null ? userData.color_code() : twitchMessage.getUserColorCode());
+		return ColorManager.decode(userData != null ? userData.color_code() : twitchMessage.getUserColorCode(), ColorManager.encode(ColorManager.GUI_BACKGROUND));
+	}
+	
+	/**
+	 * Adjust colors based on background color.
+	 * @return
+	 */
+	public String getUserColorCode(){
+		return ColorManager.adjustHexcode(userData != null ? userData.color_code() : twitchMessage.getUserColorCode(), ColorManager.encode(ColorManager.GUI_BACKGROUND));
 	}
 	
 	public String[] getBadges(){

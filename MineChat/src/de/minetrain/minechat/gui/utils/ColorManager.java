@@ -1,6 +1,8 @@
 package de.minetrain.minechat.gui.utils;
 
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,11 @@ import de.minetrain.minechat.config.YamlManager;
 //import javax.swing.JColorChooser;
 
 public class ColorManager {
+	/**hexcode, adjustedColor*/
+	public static final HashMap<String, Color> adjustedColors = new HashMap<String, Color>();
+	/**hexcode, adjustedHexcode*/
+	public static final HashMap<String, String> adjustedHexcodes = new HashMap<String, String>();
+	
 	public static YamlManager settings;
 	public static final Color FONT_DEFAULT = Color.WHITE;
 	public static final Color GUI_BORDER_DEFAULT = new Color(14, 14, 14);
@@ -74,6 +81,19 @@ public class ColorManager {
 		}
 	}
 	
+	public static Color decode(String hexCode, String backgroundAdjustmentHexCode){
+		return adjustedColors.computeIfAbsent(hexCode+backgroundAdjustmentHexCode, key -> {
+			return new HSLColor(hexCode).adjustForBackground(new HSLColor(backgroundAdjustmentHexCode)).getColor();
+		});
+	}
+	
+	public static String adjustHexcode(String hexCode, String backgroundAdjustmentHexCode){
+		return adjustedHexcodes.computeIfAbsent(hexCode+backgroundAdjustmentHexCode, key -> {
+			System.err.println("new hex color");
+			return new HSLColor(hexCode).adjustForBackground(new HSLColor(backgroundAdjustmentHexCode)).getHex();
+		});
+	}
+	
 	public static String encode(Color color) {
 		return "#"+String.format("%06x", 0xFFFFFF & color.getRGB());
 	}
@@ -81,5 +101,17 @@ public class ColorManager {
 	public static YamlManager getSettingsConfig(){
 		return settings;
 	}
-
+	
+	public static float[] hexToRGB(String hexCode){
+		hexCode = hexCode.replace("#", "");
+		int red = Integer.valueOf(hexCode.substring(0, 2), 16);
+	    int green = Integer.valueOf(hexCode.substring(2, 4), 16);
+	    int blue = Integer.valueOf(hexCode.substring(4, 6), 16);
+	    return new float[]{red/255f, green/255f, blue/255f};
+	}
+	
+	
+	public static  void test(){
+		System.err.println(encode(new HSLColor("#150080").adjustForBackground(new HSLColor(0, 0, 16)).getColor()));
+	}
 }
