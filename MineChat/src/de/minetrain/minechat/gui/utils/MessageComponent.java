@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.obj;
+package de.minetrain.minechat.gui.utils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -10,12 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,7 +21,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -35,186 +31,100 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.config.obj.MacroObject;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.FlippedImageIcon;
 import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
 import de.minetrain.minechat.gui.frames.ChatWindow;
+import de.minetrain.minechat.gui.obj.ChatStatusPanel;
+import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
-import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.main.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
 
-public class ChatWindowMessageComponent extends JPanel{
+//https://stackoverflow.com/questions/29962886/cloning-jpanel-into-another-jframe
+public class MessageComponent extends JPanel {
 	private static final Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
 	private static final Logger logger = LoggerFactory.getLogger(ChatWindowMessageComponent.class);
 	private static final long serialVersionUID = -3116239050269500823L;
+	private static final HashMap<String, Document> documentCache = new HashMap<String, Document>();//Channel_id+message, document
 	
-	private static final Map<String, String> emoteReplacements = new HashMap<>();
+	private static final Map<String, String> emoteReplacements = new HashMap<>(); //emoteName, enryped replacement.
+	private static MineStringBuilder stringBuilder = new MineStringBuilder();
 	private static final Dimension buttonSize = new Dimension(28, 28);
 	public static final Random random = new Random();
+	private static final Document CLEAR_DOCUMENT = new JTextPane().getDocument();
 	
 	private boolean highlighted = false;
 	private HighlightString highlightString = null;
-	private JPanel buttonPanel;
 	private TitledBorder titledBorder;
-	private JTextPane messageLabel;
-	private JPanel messageContentPanel;
-	private MineButton markReadButton, replyButton;
 	private Map<String, String> webEmotes = new HashMap<String, String>();//name, immage path
-	private long epochTime = 0;
-	private final String userName;
-	private final String channelId;
+	private MessageComponentContent messageContent;
+	private JTextPane messageLabel;
 	
 	private int splitChunkSize = 45;
 	
-	public ChatWindowMessageComponent(MacroObject macro, int arrayIndex) {
+	public MessageComponent(MessageComponentContent content) {
 		super(new BorderLayout());
-		webEmotes = EmoteManager.getChannelEmotes(TitleBar.currentTab.getConfigID())
-				.getAllEmotes()
-				.stream()
-				.collect(Collectors.toMap(Emote::getName, Emote::getFilePath,
-		            (existingValue, newValue) -> {
-		            	logger.warn("Duplicate key found for emote ID \"" + existingValue + "\". Skipping.");
-		                return existingValue;
-		            }));
-		
-		this.userName = "";
-		this.channelId = "";
-		this.splitChunkSize = Integer.MAX_VALUE;
-		
-		setMinimumSize(new Dimension(400, 25));
-		setBackground(ColorManager.GUI_BACKGROUND);
-		
-		messageLabel = new JTextPane();
-		messageLabel.setEditable(false);
-		messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		messageLabel.setFont(Settings.MESSAGE_FONT);
-		formatText(macro.getOutputArray()[arrayIndex], messageLabel.getStyledDocument(), ColorManager.FONT, epochTime);
-		
-		messageContentPanel = new JPanel(new BorderLayout());
-		messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		messageContentPanel.add(messageLabel, BorderLayout.CENTER);
-		add(messageContentPanel, BorderLayout.CENTER);
-	}
-	
-	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow) {
-		super(new BorderLayout());
-//		this.webEmotes = emotes;
-		this.channelId = chatWindow.channelId;
-		this.userName = topic;
-		this.highlighted = true;
-		JPanel messagePanel = this;
-		setMinimumSize(new Dimension(400, 25));
-		setBackground(ColorManager.GUI_BACKGROUND);
-		
-		messageLabel = new JTextPane();
-		messageLabel.setEditable(false);
-		messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		messageLabel.setFont(Settings.MESSAGE_FONT);
-		formatText(message, messageLabel.getStyledDocument(), new Color(30, 30, 30), epochTime);
-		
-		messageContentPanel = new JPanel(new BorderLayout());
-		messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		messageContentPanel.add(messageLabel, BorderLayout.CENTER);
-		add(messageContentPanel, BorderLayout.CENTER);
-		  
-		titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(borderColor, 2, true), "  "+topic+"  ");
-		titledBorder.setTitleJustification(TitledBorder.CENTER);
-		titledBorder.setTitleColor(borderColor); //Color.CYAN
-		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
-		setBorder(titledBorder);
-		
-		markReadButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-		markReadButton.setPreferredSize(buttonSize);
-		markReadButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		markReadButton.setBorderPainted(false);
-		markReadButton.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
-		markReadButton.setToolTipText("Mark this message as read.");
-		markReadButton.addActionListener(new ActionListener() {
-			@Override 
-			public void actionPerformed(ActionEvent e){
-				chatWindow.chatPanel.remove(messagePanel); 
-				chatWindow.chatPanel.revalidate(); 
-				chatWindow.chatPanel.repaint();
-			}
-		});
-		
-		if(actionButton != null){
-			add(actionButton, BorderLayout.EAST);
-		}
-		
-		add(markReadButton, BorderLayout.WEST);
-    	setPreferredSize(new Dimension(485, getPreferredSize().height));
-	}
-	
-	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow, UserChatData ownerData) {
-		super(new BorderLayout());
-		this.channelId = chatWindow.channelId;
-		this.epochTime = twitchMessage == null ? epochTime : twitchMessage.getEpochTime();
-		this.userName = userName;
 		JPanel messagePanel = this;
         setBackground(ColorManager.GUI_BACKGROUND);
+        webEmotes.putAll(content.getEmoteSet());
         
-        if(twitchMessage != null){
-        	this.webEmotes = twitchMessage.getEmotes();
-        }
+        TwitchMessage twitchMessage = content.twitchMessage();
+        ChatWindow chatWindow = content.chatWindow();
+        messageContent = content;
         
-		titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), userName+":");
+		titledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(ColorManager.GUI_BACKGROUND_LIGHT, 2, true), "");
 		titledBorder.setTitleJustification(TitledBorder.LEFT);
-		titledBorder.setTitleColor(userColor);
+//		titledBorder.setTitleColor(content.getUserColor());
 		titledBorder.setTitleFont(new Font(null, Font.BOLD, 20));
 		setBorder(titledBorder);
 		
+		TwitchMessage.collectBadges(content.getChannelId(), content.getBadges()).forEach(badge -> stringBuilder.appendIcon(badge.toString(), true));
+    	titledBorder.setTitle(stringBuilder
+    			.setPrefix(stringBuilder.getRawContent())
+    			.setSuffix(":", HTMLColors.WHITE)
+    			.clearContent()
+    			.appendString(content.getUserName(), content.getUserColor())
+    			.toString());
 		
-		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
-			MineStringBuilder stringBuilder = new MineStringBuilder().setSuffix(userName+":");
-			twitchMessage.getBadges().forEach(badge -> stringBuilder.appendIcon(badge.toString(), true));
-        	titledBorder.setTitle(stringBuilder.toString());
-        }
-		
-		if(ownerData != null){
-			System.err.println(Arrays.asList(ownerData.badges().split(",")));
-			MineStringBuilder stringBuilder = new MineStringBuilder().setSuffix(userName+":");
-			TwitchMessage.collectBadges(ownerData.channelId(), ownerData.badges().split(", ")).forEach(badge -> stringBuilder.appendIcon(badge.toString(), true));
-        	titledBorder.setTitle(stringBuilder.toString());
-		}
-		
-		buttonPanel = new JPanel(new BorderLayout());
+    	JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
 		buttonPanel.setMinimumSize(new Dimension(26, 26));
 		add(buttonPanel, BorderLayout.WEST);
         
-		markReadButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
+		MineButton markReadButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 		markReadButton.setPreferredSize(buttonSize);
 		markReadButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		markReadButton.setBorderPainted(false);
 		markReadButton.setIcon(Main.TEXTURE_MANAGER.getMarkReadButton());
 		markReadButton.setToolTipText("Mark this message as read.");
-		markReadButton.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e){chatWindow.chatPanel.remove(messagePanel); chatWindow.chatPanel.revalidate(); chatWindow.chatPanel.repaint();}
+		markReadButton.addActionListener(event -> {
+			chatWindow.chatPanel.remove(messagePanel);
+			content.chatWindow().chatPanel.revalidate();
+			content.chatWindow().chatPanel.repaint();
 		});
 
-		replyButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
+		MineButton replyButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 		replyButton.setPreferredSize(buttonSize);
 		replyButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		replyButton.setBorderPainted(false);
 		replyButton.setToolTipText("Replay to this message.");
-		replyButton.setIcon((twitchMessage != null && twitchMessage.isReply()) ? Main.TEXTURE_MANAGER.getReplyChainButton() : Main.TEXTURE_MANAGER.getReplyButton());
+		replyButton.setIcon((twitchMessage != null && content.twitchMessage().isReply()) ? Main.TEXTURE_MANAGER.getReplyChainButton() : Main.TEXTURE_MANAGER.getReplyButton());
 		replyButton.addMouseListener(replyButtonMouseAdapter(replyButton));
 		replyButton.setVisible(false);
 
@@ -242,17 +152,29 @@ public class ChatWindowMessageComponent extends JPanel{
 		}
 		
         //Right panel with message label
-		messageContentPanel = new JPanel(new BorderLayout());
+		JPanel messageContentPanel = new JPanel(new BorderLayout());
         messageContentPanel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         add(messageContentPanel, BorderLayout.CENTER);
 
-		messageLabel = new JTextPane();
+        messageLabel = new JTextPane();
         messageLabel.setEditable(false);
 		messageLabel.setFont(Settings.MESSAGE_FONT);
         messageLabel.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
 		messageLabel.addMouseListener(replyButtonMouseAdapter(replyButton));
-		formatText(message, messageLabel.getStyledDocument(), ColorManager.FONT, epochTime);
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
+        
+        String documentCacheKey = content.getChannelId()+content.message();
+        
+        if(documentCache.containsKey(documentCacheKey)){
+        	messageLabel.setDocument(documentCache.get(documentCacheKey));
+//    		System.err.println("reuse - "+emoteReplacements.size());
+        }else{
+        	formatText(content.message(), messageLabel.getDocument(), ColorManager.FONT, content.getTimeStamp());
+//    		System.err.println("new content");
+        }
+
+//        System.out.println(ClassLayout.parseInstance(documentCacheKey).toPrintable());
+//        System.out.println(ClassLayout.parseInstance(messageLabel.getDocument()).toPrintable());
         
         
         if(twitchMessage != null){
@@ -260,10 +182,10 @@ public class ChatWindowMessageComponent extends JPanel{
         		messageLabel.setBackground(Settings.displayTwitchHighlighted.getColor());
             }
         	
-	    	if(chatWindow.greetingsManager.contains(userName)){
+	    	if(chatWindow.greetingsManager.contains(content.getUserName())){
 		    	Settings.highlightStrings.values().stream().filter(highlight -> highlight.isAktiv()).forEach(highlight -> {
 		    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
-		            Matcher matcher = pattern.matcher(message);
+		            Matcher matcher = pattern.matcher(content.message());
 		            
 		            if (matcher.find() && !highlighted) {
 		    			titledBorder.setBorder(BorderFactory.createLineBorder(Color.decode(highlight.getBorderColorCode()), 2));
@@ -272,14 +194,14 @@ public class ChatWindowMessageComponent extends JPanel{
 		            }
 		    	});
 	    	}else{
-	    		chatWindow.greetingsManager.add(userName);
+	    		chatWindow.greetingsManager.add(content.getUserName());
 	    		if(Settings.highlightUserFirstMessages.isActive()){
 					titledBorder.setBorder(BorderFactory.createLineBorder(Settings.highlightUserFirstMessages.getColor(), 2));
-					highlighted = true;
+					highlighted = false;
 	    		}
 	    	}
 	    	
-	    	if(!chatWindow.greetingsManager.isMentioned(userName)){
+	    	if(!chatWindow.greetingsManager.isMentioned(content.getUserName())){
 		    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
 				waveButton.setPreferredSize(buttonSize);
 				waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
@@ -311,7 +233,7 @@ public class ChatWindowMessageComponent extends JPanel{
 				    @Override
 				    public void mouseClicked(MouseEvent event) {
 				        if (SwingUtilities.isRightMouseButton(event)) {
-				        	chatWindow.greetingsManager.setMentioned(userName);
+				        	chatWindow.greetingsManager.setMentioned(content.getUserName());
 				        	buttonPanel.remove(waveButton);
 							buttonPanel.setMinimumSize(new Dimension(26, 26));
 							chatWindow.chatPanel.revalidate();
@@ -328,6 +250,8 @@ public class ChatWindowMessageComponent extends JPanel{
     	
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
     	webEmotes.clear(); //NOTE This is to improve ram usage.
+    	messageContent = null;
+    	stringBuilder.clear();
 	}
 	
 	private static final MouseAdapter replyButtonMouseAdapter(JButton button) {
@@ -340,19 +264,16 @@ public class ChatWindowMessageComponent extends JPanel{
 
             @Override
             public void mouseExited(MouseEvent e) {
-                // Wenn die Maus das Panel verlÃ¤sst, blende den Knopf aus
+                // Wenn die Maus das Panel verlässt, blende den Knopf aus
             	button.setVisible(false);
             }
         };
 	}
 	
-	private final void formatText(String input, StyledDocument document, Color fontColor, long epochTime) {
+	private final void formatText(String input, Document document, Color fontColor, LocalDateTime timeStamp) {
     	String newInput="";
     	if(fontColor == ColorManager.FONT){
-			LocalDateTime dateTime = epochTime > 0
-					? LocalDateTime.ofEpochSecond(epochTime/ 1000, 0, ZoneId.systemDefault().getRules().getOffset(Instant.now()))
-					: LocalDateTime.now();
-    		input = "["+dateTime.format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
+    		input = "["+timeStamp.format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
     	}
     	
         for(String string : splitString(input)){newInput += string.trim()+" \n ";}
@@ -405,9 +326,11 @@ public class ChatWindowMessageComponent extends JPanel{
 					document.insertString(document.getLength(), " ", null);
 				}
 			} catch (BadLocationException ex) {
-				logger.error("CanÂ´t modify styledDocument! ", ex);
+				logger.error("Can´t modify styledDocument! ", ex);
 			}
 		}
+		
+		documentCache.put(messageContent.getChannelId()+messageContent.message(), document);
     }
     
     
@@ -460,89 +383,37 @@ public class ChatWindowMessageComponent extends JPanel{
     
     private final String encryptEmotes(String input) {
     	String[] split = input.split(" ");
-    	String output = "";
     	emoteReplacements.clear();
     	
-    	for (int i=0; i<split.length; i++) {
-    		
-    		Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, split[i]);
-			if(emoteByName != null) {
-				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
-			}else{
-				emoteByName = EmoteManager.getEmoteByName(split[i]);
-				if(emoteByName != null){
-					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
-				}
-			}
-    		
-			if(this.webEmotes.containsKey(split[i])){
-	            String replacement = generateReplacement(split[i]);
-	            emoteReplacements.put(replacement, split[i]);
-//	            System.err.println(emoteReplacements);
-	            split[i] = split[i].replaceAll("\\b" + Pattern.quote(split[i]) + "\\b", replacement);
-			}
-			output += split[i]+" ";
+    	for(int i=0; i<split.length; i++){
+    		String word = split[i];
+			emoteReplacements.computeIfAbsent(word, key -> {
+    			Emote emoteByName = EmoteManager.getChannelEmoteByName(messageContent.getChannelId(), word);
+    			if(emoteByName != null) {
+    				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
+    			}else{
+    				emoteByName = EmoteManager.getEmoteByName(word);
+    				if(emoteByName != null){
+    					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
+    				}
+    			}
+        		
+    			if(this.webEmotes.containsKey(word)){
+    	            return generateReplacement(word);
+    			}
+    			return null;
+    		});
 		}
     	
-        return output.trim();
+    	for (Entry<String, String> entry : emoteReplacements.entrySet()) {
+    		input = input.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue());
+    	}
+        return input.trim();
     }
     
-//    java.lang.reflect.InvocationTargetException
-//	at jdk.internal.reflect.GeneratedMethodAccessor12.invoke(Unknown Source)
-//	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-//	at java.base/java.lang.reflect.Method.invoke(Method.java:564)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$5(SimpleEventHandler.java:130)
-//	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleAnnotationHandlers$6(SimpleEventHandler.java:127)
-//	at java.base/java.util.concurrent.ConcurrentHashMap.forEach(ConcurrentHashMap.java:1603)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleAnnotationHandlers(SimpleEventHandler.java:126)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:100)
-//	at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//	at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//	at com.github.twitch4j.chat.events.IRCEventHandler.onChannelMessage(IRCEventHandler.java:124)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$3(SimpleEventHandler.java:112)
-//	at java.base/java.util.concurrent.CopyOnWriteArrayList.forEach(CopyOnWriteArrayList.java:807)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.lambda$handleConsumerHandlers$4(SimpleEventHandler.java:112)
-//	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
-//	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1087)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.handleConsumerHandlers(SimpleEventHandler.java:109)
-//	at com.github.philippheuer.events4j.simple.SimpleEventHandler.publish(SimpleEventHandler.java:99)
-//	at com.github.philippheuer.events4j.core.EventManager.lambda$publish$0(EventManager.java:157)
-//	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-//	at com.github.philippheuer.events4j.core.EventManager.publish(EventManager.java:157)
-//	at com.github.twitch4j.chat.TwitchChat.lambda$onTextMessage$16(TwitchChat.java:572)
-//	at java.base/java.util.Arrays$ArrayList.forEach(Arrays.java:4203)
-//	at com.github.twitch4j.chat.TwitchChat.onTextMessage(TwitchChat.java:544)
-//	at com.github.twitch4j.client.websocket.WebsocketConnection$1.onTextMessage(WebsocketConnection.java:123)
-//	at com.neovisionaries.ws.client.ListenerManager.callOnTextMessage(ListenerManager.java:353)
-//	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:266)
-//	at com.neovisionaries.ws.client.ReadingThread.callOnTextMessage(ReadingThread.java:244)
-//	at com.neovisionaries.ws.client.ReadingThread.handleTextFrame(ReadingThread.java:969)
-//	at com.neovisionaries.ws.client.ReadingThread.handleFrame(ReadingThread.java:752)
-//	at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
-//	at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
-//	at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
-//Caused by: java.util.regex.PatternSyntaxException: Unmatched closing ')' near index 2
-//\b:)\b
-//  ^
-//	at java.base/java.util.regex.Pattern.error(Pattern.java:2028)
-//	at java.base/java.util.regex.Pattern.compile(Pattern.java:1787)
-//	at java.base/java.util.regex.Pattern.<init>(Pattern.java:1430)
-//	at java.base/java.util.regex.Pattern.compile(Pattern.java:1069)
-//	at java.base/java.lang.String.replaceAll(String.java:2142)
-//	at de.minetrain.minechat.gui.obj.ChatWindowMessageComponent.encryptEmotes(ChatWindowMessageComponent.java:395)
-//	at de.minetrain.minechat.gui.obj.ChatWindowMessageComponent.splitString(ChatWindowMessageComponent.java:344)
-//	at de.minetrain.minechat.gui.obj.ChatWindowMessageComponent.formatText(ChatWindowMessageComponent.java:281)
-//	at de.minetrain.minechat.gui.obj.ChatWindowMessageComponent.<init>(ChatWindowMessageComponent.java:193)
-//	at de.minetrain.minechat.gui.frames.ChatWindow.displayMessage(ChatWindow.java:127)
-//	at de.minetrain.minechat.gui.frames.ChatWindow.displayMessage(ChatWindow.java:118)
-//	at de.minetrain.minechat.twitch.TwitchListner.onAbstractChannelMessage(TwitchListner.java:111)
-//	... 35 more
-
     private static final String decryptEmotes(String input) {
         for (Entry<String, String> entry : emoteReplacements.entrySet()) {
-            input = input.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue());
+            input = input.replaceAll("\\b" + entry.getValue() + "\\b", entry.getKey());
         }
         return input;
     }
@@ -557,7 +428,7 @@ public class ChatWindowMessageComponent extends JPanel{
         }
         
         //Check if the replacement is alrady taken.
-        if(emoteReplacements.containsKey(builder.toString())){
+        if(emoteReplacements.containsValue(builder.toString())){
         	return generateReplacement(input);
         }
         
@@ -565,22 +436,8 @@ public class ChatWindowMessageComponent extends JPanel{
     }
 	
 	
-	public JPanel getMinimised(){
-		if(!isHighlighted()){
-			
-			if(messageLabel.getMouseListeners().length>0){
-				messageLabel.removeMouseListener(messageLabel.getMouseListeners()[0]);
-			}
-			
-			messageLabel.setText("["+userName+"] - "+messageLabel.getText());
-			
-			buttonPanel = null;
-			titledBorder = null;
-			markReadButton = null;
-			replyButton = null;
-			return messageContentPanel;
-		}
-		return this;
+	public void clear(){
+		messageLabel.setDocument(CLEAR_DOCUMENT);
 	}
 
 	public boolean isHighlighted() {

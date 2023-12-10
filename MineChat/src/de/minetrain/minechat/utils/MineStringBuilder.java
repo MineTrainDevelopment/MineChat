@@ -79,7 +79,7 @@ public class MineStringBuilder {
      */
 	public MineStringBuilder appendIcon(String iconPath, boolean withPlaceholder){
 		output += "<img src='file:"+iconPath+"'>" + (withPlaceholder ? "&nbsp;" : "");
-		if(fontSize == 0){setFontSize(iconPath);}
+//		if(fontSize == 0){setFontSize(iconPath);}
 		wordCount++;
 		return this;
 	}
@@ -110,6 +110,16 @@ public class MineStringBuilder {
 		this.prefix = prefix;
 		return this;
 	}
+	
+	/**
+     * @param prefix the prefix string to be set
+     * @param color {@link htmlColors}
+     * @return the IconStringBuilder object for method chaining
+     */
+	public MineStringBuilder setPrefix(String prefix, HTMLColors color){
+		this.prefix = "<font color="+color+"%FONT-SIZE%>"+prefix.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
+		return this;
+	}
 
 	/**
      * @param suffix the suffix string to be set
@@ -117,6 +127,16 @@ public class MineStringBuilder {
      */
 	public MineStringBuilder setSuffix(String suffix){
 		this.suffix = suffix;
+		return this;
+	}
+
+	/**
+     * @param suffix the suffix string to be set
+     * @param color {@link htmlColors}
+     * @return the IconStringBuilder object for method chaining
+     */
+	public MineStringBuilder setSuffix(String suffix, HTMLColors color){
+		this.suffix = "<font color="+color+"%FONT-SIZE%>"+suffix.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
 		return this;
 	}
 
@@ -143,6 +163,15 @@ public class MineStringBuilder {
 	}
 	
 	/**
+	 * Clear only the raw content string.
+     * @return the IconStringBuilder object for method chaining
+	 */
+	public MineStringBuilder clearContent(){
+		this.output = "";
+		return this;
+	}
+	
+	/**
      * Returns the HTML representation of the constructed string.
      * <br> The string is enclosed in HTML and body tags.
      *
@@ -150,8 +179,7 @@ public class MineStringBuilder {
      */
 	@Override
 	public String toString() {
-		output = output.replace("%FONT-SIZE%", (fontSize>0 ? " size="+fontSize : ""));
-		return "<html><body>"+prefix+output+suffix+"</body></html>";
+		return "<html><body>"+prefix+output+suffix+"</body></html>".replace("%FONT-SIZE%", fontSize>0 ? " size="+fontSize : "");
 	}
 	
 	/**
@@ -161,4 +189,12 @@ public class MineStringBuilder {
 	public int getWordCount() {
 		return wordCount;
 	}
+	
+	/**
+	 * @return the current content string without html hader and Pre/suffix.
+	 */
+	public String getRawContent(){
+		return output;
+	}
+	
 }

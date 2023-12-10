@@ -21,12 +21,13 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.OwnerCacheData;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.utils.MessageComponent;
+import de.minetrain.minechat.main.MessageComponentContent;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
@@ -116,21 +117,13 @@ public class ChatWindow extends JLabel {
     	}
 	}
     
-    public void displayMessage(TwitchMessage message) {
-    	displayMessage(message.getMessage(), message.getUserName(), Color.decode(message.getUserColorCode()), message);
-    }
-    
-	public void displayMessage(String message, String userName, Color userColor) {
-    	displayMessage(message, userName, userColor, null, null);
-    }
-
-	public void displayMessage(String message, String userName, Color userColor, TwitchMessage twitchMessage) {
-		displayMessage(message, userName, userColor, twitchMessage, null);
-	}
-
-//	private List<ChatWindowMessageComponent> list = new ArrayList<ChatWindowMessageComponent>();
-	public void displayMessage(String message, String userName, Color userColor, TwitchMessage twitchMessage, OwnerCacheData badgeData) {
-		ChatWindowMessageComponent messagePanel = new ChatWindowMessageComponent(message, userName, userColor, twitchMessage, this, badgeData);
+	public void displayMessage(MessageComponentContent content) {
+		if(!content.isValid()){
+			logger.warn("Can´t build a message bcs of nullpointer risks. -> ["+(content.message() != null ? content.message() : "message text is null.")+"]");
+			return;
+		}
+		
+		MessageComponent messagePanel = new MessageComponent(content);
 //		int minimisedPanelHight = 0;
 		
         chatPanel.add(messagePanel);
@@ -156,10 +149,19 @@ public class ChatWindow extends JLabel {
 //		}
         
         if(chatPanel.getComponentCount() >= MAX_MESSAGE_SICE) {
-        	ChatWindowMessageComponent component = (ChatWindowMessageComponent) chatPanel.getComponent(chatPanel.getComponentCount() - (MAX_MESSAGE_SICE-1));
-        	if(!component.isHighlighted()){
-        		chatPanel.remove(component);
-        	}
+        	int componentIndex = chatPanel.getComponentCount() - (MAX_MESSAGE_SICE-1);
+			try {
+        		MessageComponent component = (MessageComponent) chatPanel.getComponent(componentIndex);
+        		if(!component.isHighlighted()){
+        			component.clear();
+        			chatPanel.remove(componentIndex);
+        		}
+			} catch (Exception e) {
+				ChatWindowMessageComponent component = (ChatWindowMessageComponent) chatPanel.getComponent(componentIndex);
+				if(!component.isHighlighted()){
+					chatPanel.remove(componentIndex);
+				}
+			}
         }
     	
         messagesPerDay++;

@@ -39,4 +39,9 @@ public enum HTMLColors {
         HTMLColors[] values = HTMLColors.values();
         return values[random.nextInt(values.length)];
     }
+    
+    @Override
+    public String toString() {
+    	return getColorCode();
+    }
 }

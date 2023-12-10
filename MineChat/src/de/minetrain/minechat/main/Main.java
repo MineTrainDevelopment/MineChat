@@ -9,13 +9,20 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -26,8 +33,10 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -83,6 +92,10 @@ public class Main {
 //		settings.setExitOnCancelButton(true);
 //		settings.setVisible(true);
 		
+//		JPanel contentPanel = new JPanel();
+//        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+		
+		
 		
 		
 		LOADINGBAR.setSize(400, 50);
@@ -130,8 +143,15 @@ public class Main {
 		
 		Main.LOADINGBAR.setProgress("Reading Database file.", 20);
 		new DatabaseManager();
-		new TwitchManager(credentials);
 		new Settings();
+		
+		//This try is temp bcs of a stack trace thats to long for eclipse.
+		try {
+			new TwitchManager(credentials);
+		} catch (Exception ex) {
+			logger.error("test", ex);
+		}
+		
 		new AutoReplyManager();
 		TextureManager.downloadPublicData();
 		Settings.reloadHighlights();
@@ -142,7 +162,36 @@ public class Main {
 		    	TwitchManager.leaveAllChannel();
 		    }
 		});
+		
+		
+//		dataModel = new TestTableModel<>();
+//		JList<MessageRendererContent> contentPanel = new JList<MessageRendererContent>(dataModel);
+//		contentPanel.setCellRenderer(new TestCellRenderer());
+		
+		
+//		dataModel = new TestTableModel<>();
+//		JTable contentPanel = new JTable(dataModel);
+////		contentPanel.setCellRenderer(new TestCellRenderer());
+//		contentPanel.setCellEditor(new TestCellEditor());
+//		
+//		RecyclingViewTest recyclingViewTest = new RecyclingViewTest(contentPanel);
+//		
+//		recyclingViewTest.revalidate();
+//		recyclingViewTest.repaint();
+//		frame.add(recyclingViewTest);
+		
+//		for(int i=0; i<100; i++){
+//			dataModel.addItem(new MessageRendererContent(
+//					TitleBar.currentTab.getChatWindow(),
+//					new UserChatData("0", "#468f93", "MineTrainLP - "+(i+1), ""),
+//					"test message",
+//					0l,
+//					null,
+//					new HashMap<String, String>()));
+//			Thread.sleep(100);
+//		}
 	}
+//	public static TestTableModel<MessageRendererContent> dataModel;
 	
 	public static void openMainFrame(){
 		LOADINGBAR.setProgress("Loading auto suggestion and emotes.", 60);
@@ -169,6 +218,7 @@ public class Main {
         
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
 		MAIN_FRAME = new MainFrame();
+		MAIN_FRAME.getTitleBar().reloadTabs();
         
 		if(!MAIN_FRAME.getTitleBar().getMainTab().isOccupied()){
 			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
@@ -177,6 +227,19 @@ public class Main {
         MessageManager.updateQueueButton();
         
         
+        
+//		for (int i=0; i<10000; i++) {
+////			try { Thread.sleep(500); } catch (InterruptedException e) { }
+//			ChatWindow chatWindow = MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow();
+//			chatWindow.displayMessage(new MessageComponentContent(
+//					chatWindow,
+//					new UserChatData("0", "#00cd03", "name - "+i, ""),
+//					"SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty SinticaEskalation SinticaParty ", 
+//					null,
+//					null));
+//			
+//			System.err.println(Runtime.getRuntime().totalMemory());
+//		}
         
         
         

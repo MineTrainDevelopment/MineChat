@@ -1,4 +1,4 @@
-package de.minetrain.minechat.main;
+package de.minetrain.minechat.gui.obj.buttons;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

@@ -48,12 +48,12 @@ public class Settings{
 	public static HighlightDefault displayUserRewards; //
 	public static HighlightDefault displayTwitchHighlighted; //
 
-	public static long MAX_MESSAGE_DISPLAYING;
+	public static int MAX_MESSAGE_DISPLAYING;
 	public static ReplyType GREETING_TYPE; //
 	public static ReplyType REPLY_TYPE; //
 
 	public static UndoVariation UNDO_VARIATION;
-	public static long MAX_UNDO_LOG_SIZE;
+	public static int MAX_UNDO_LOG_SIZE;
 	
 	public static AutoReplyState autoReplyState;
 

@@ -2,8 +2,6 @@ package de.minetrain.minechat.utils.audio;
 
 import java.nio.file.Path;
 
-import javafx.scene.media.AudioClip;
-
 public enum DefaultAudioFiles {
 	MESSAGE_0("message0.mp3"),
 	MESSAGE_1("message1.mp3"),
@@ -19,7 +17,10 @@ public enum DefaultAudioFiles {
 	PING_1("ping1.mp3"),
 	PING_2("ping2.mp3"),
 	PING_3("ping3.mp3"),
-	PING_4("ping4.mp3");
+	PING_4("ping4.mp3"),
+	
+	LIVE_0("live0.mp3"),
+	LIVE_1("live1.mp3");
 	
 	
 	private String filePath;

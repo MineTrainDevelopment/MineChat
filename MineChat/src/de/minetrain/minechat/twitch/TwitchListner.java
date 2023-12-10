@@ -3,7 +3,6 @@ package de.minetrain.minechat.twitch;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import com.github.twitch4j.chat.events.channel.ChannelModEvent;
 import com.github.twitch4j.chat.events.channel.CheerEvent;
 import com.github.twitch4j.chat.events.channel.ClearChatEvent;
 import com.github.twitch4j.chat.events.channel.DeleteMessageEvent;
-import com.github.twitch4j.chat.events.channel.FollowEvent;
 import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
 import com.github.twitch4j.chat.events.channel.ModAnnouncementEvent;
 import com.github.twitch4j.chat.events.channel.RaidCancellationEvent;
@@ -36,7 +34,9 @@ import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -45,8 +45,10 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.main.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.audio.AudioVolume;
+import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
@@ -69,6 +71,7 @@ public class TwitchListner {
 	public void onStreamUp(ChannelGoLiveEvent event){
 		logger.info("Twtich livestram startet: "+event.getStream().getUserName()+" | "+event.getStream().getViewerCount()+" | "+event.getStream().getTitle());
 		//TODO Call a sound event and display a red dott next to the name inside a channels tab.
+		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
 	}
 
 	/**
@@ -105,6 +108,24 @@ public class TwitchListner {
 		channelTab.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId());
 		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent(), event.getMessage());
 		
+//		Main.dataModel.addItem(new MessageRendererContent(
+//				TitleBar.currentTab.getChatWindow(),
+//				new UserChatData("0", twitchMessage.getUserColorCode(), twitchMessage.getUserName(), twitchMessage.getRawBadgeTags()),
+//				twitchMessage.getMessage(),
+//				twitchMessage.getEpochTime(),
+//				twitchMessage,
+//				twitchMessage.getEmotes()));
+		
+		
+//		MineStringBuilder nameBuilder = new MineStringBuilder();
+//		twitchMessage.getBadges().forEach(badge -> nameBuilder.appendIcon(badge.toString(), true));
+//		nameBuilder.appendString(twitchMessage.getUserName(), ColorManager.decode(twitchMessage.getUserColorCode()));
+//		nameBuilder.appendString(":", HTMLColors.WHITE);
+//		Document document = new JTextPane().getDocument();
+//		MessageFormater.formatText(twitchMessage.getMessage(), document, 0, twitchMessage.getEmotes(), twitchMessage.getChannelId());
+//		Main.dataModel.addItem(new MessageRendererContent(nameBuilder.toString(), document));
+		
+		
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
     		channelTab.getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(event.getMessage());
     		MessageManager.setLastMessage(event.getMessage());
@@ -127,7 +148,13 @@ public class TwitchListner {
 					Settings.highlightUserFirstMessages.getColor(), getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
 		}
 		
-		channelTab.getChatWindow().displayMessage(twitchMessage);
+		channelTab.getChatWindow().displayMessage(new MessageComponentContent(
+				channelTab.getChatWindow(),
+				null,
+				twitchMessage.getMessage(), 
+				null,
+				twitchMessage));
+		
 		AutoReplyManager.recordMessage(twitchMessage);
 	}
 	

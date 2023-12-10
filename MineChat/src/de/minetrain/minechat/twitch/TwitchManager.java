@@ -21,16 +21,19 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.OwnerCacheData;
+import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
+import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.main.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.HTMLColors;
 import io.github.bucket4j.Bandwidth;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -165,16 +168,27 @@ public class TwitchManager {
 	 */
 	public static void sendMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getReplyMessage();
-		OwnerCacheData ownerData = DatabaseManager.getOwnerCache().getById(message.getChannelTab().getConfigID());
+		ChatWindow chatWindow = message.getChannelTab().getChatWindow();
+		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(message.getChannelTab().getConfigID());
+		
+		if(ownerData == null){
+			ownerData = new UserChatData(message.getChannelTab().getConfigID(), HTMLColors.WHITE.getColorCode(), message.getSenderName(), "");
+		}
 
 		message.getChannelTab().getStatistics().addMessage(message.getSenderName(), ownerTwitchUser.getUserId());
-		message.getChannelTab().getChatWindow().displayMessage(((replyMessage != null) ? "@"+replyMessage.getParentReplyUser().toLowerCase()+" " :"")+message.getMessage(), ownerData == null ? message.getSenderName() : ownerData.displa_name(), ownerData == null ? Color.WHITE : ColorManager.decode(ownerData.color_code()), null, ownerData);
-		message.getChannelTab().getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessageRaw());
+		chatWindow.chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessageRaw());
+		chatWindow.displayMessage(new MessageComponentContent(
+				chatWindow,
+				ownerData,
+				message.getMessage(),
+				null,
+				replyMessage));
+		
 				
 		//Check if a chatter is was mentioned
 		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {
 			if(word.startsWith("@")){
-				message.getChannelTab().getChatWindow().greetingsManager.setMentioned(word.replace("@", ""));
+				chatWindow.greetingsManager.setMentioned(word.replace("@", ""));
 			}
 		});
 		

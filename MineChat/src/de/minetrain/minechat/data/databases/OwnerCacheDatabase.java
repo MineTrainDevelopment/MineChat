@@ -22,8 +22,8 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 public class OwnerCacheDatabase extends Database {
 	private static final Logger logger = LoggerFactory.getLogger(OwnerCacheDatabase.class);
-	public record OwnerCacheData(String channelId, String color_code, String displa_name, String badges){};
-	private static HashMap<String, OwnerCacheData> cache = new HashMap<String, OwnerCacheData>();//Channel_id, data
+	public record UserChatData(String channelId, String color_code, String displa_name, String badges){};
+	private static HashMap<String, UserChatData> cache = new HashMap<String, UserChatData>();//Channel_id, data
 	
 	private static final String tabelName = "owner_cache";
 	private static final String insert_SQL = "INSERT INTO "+tabelName+"(channel_id, color_code, display_name, badges) VALUES(?,?,?,?)";
@@ -49,12 +49,10 @@ public class OwnerCacheDatabase extends Database {
 	public void insert(TwitchMessage message){
 		logger.info("Insert new database entry");
 		
-		OwnerCacheData ownerCacheData = new OwnerCacheData(message.getChannelId(), message.getUserColorCode(), message.getUserName(), message.getRawBadgeTags());
+		UserChatData ownerCacheData = new UserChatData(message.getChannelId(), message.getUserColorCode(), message.getUserName(), message.getRawBadgeTags());
 		if(cache.values().contains(ownerCacheData)){
-			System.err.println("old");
 			return;
 		}
-		System.err.println("new");
 		cache.put(message.getChannelId(), ownerCacheData);
 
 		try{
@@ -85,7 +83,7 @@ public class OwnerCacheDatabase extends Database {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(select_sql);
 			while(resultSet.next()){
-				cache.put(resultSet.getString("channel_id"), new OwnerCacheData(
+				cache.put(resultSet.getString("channel_id"), new UserChatData(
 						resultSet.getString("channel_id"),
 						resultSet.getString("display_name"),
 						resultSet.getString("color_code"),
@@ -130,7 +128,7 @@ public class OwnerCacheDatabase extends Database {
 	}
 
 
-	public OwnerCacheData getById(String channel_id){
+	public UserChatData getById(String channel_id){
 		if(cache.containsKey(channel_id)){
 			return cache.get(channel_id);
 		}
@@ -138,7 +136,7 @@ public class OwnerCacheDatabase extends Database {
 		ResultSet resultSet = get("channel_id", channel_id);
 		try {
 			while(resultSet.next()){
-				OwnerCacheData ownerData = new OwnerCacheData(
+				UserChatData ownerData = new UserChatData(
 						resultSet.getString("channel_id"),
 						resultSet.getString("display_name"),
 						resultSet.getString("color_code"),
