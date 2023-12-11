@@ -17,6 +17,7 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
 import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 
@@ -55,8 +56,9 @@ public class Settings{
 	public static int MAX_UNDO_LOG_SIZE;
 	
 	public static AutoReplyState autoReplyState;
-	
+
 	public static boolean holdToSendMessages;
+	public static boolean emoteBlendinOnDisplaying;
 
 	public static Font MESSAGE_FONT;
 	
@@ -99,6 +101,7 @@ public class Settings{
 		MAX_UNDO_LOG_SIZE = settings.getInt("Chatting.UndoCacheSize", 100);
 		autoReplyState = AutoReplyState.get(settings.getString("Chatting.AutoReplyState", "ALL"));
 		holdToSendMessages = settings.getBoolean("Chatting.HoltToSendMessages", true);
+		emoteBlendinOnDisplaying = settings.getBoolean("Chatting.emoteBlendinOnDisplaying", false);
 		
 		MESSAGE_FONT = new Font(
 				settings.getString("Font.Name", "Arial Unicode MS"), 
@@ -196,6 +199,12 @@ public class Settings{
 		holdToSendMessages = state;
 	}
 	
+	public static void setEmoteBlendinOnDisplaying(boolean state){
+		settings.setBoolean("Chatting.emoteBlendinOnDisplaying",  state, true);
+		emoteBlendinOnDisplaying = state;
+		MessageComponent.clearDocumentCache();
+	}
+	
 	
 	private static YamlManager createNewConfig(String path){
 		logger.warn("Create new Settings file!");
@@ -261,6 +270,7 @@ public class Settings{
 		settings.setNumber("Chatting.UndoCacheSize", 100);
 		settings.setString("Chatting.AutoReplyState", AutoReplyState.ALL.name());
 		settings.setBoolean("Chatting.HoltToSendMessages", true);
+		settings.setBoolean("Chatting.emoteBlendinOnDisplaying", false);
 		
 		
 

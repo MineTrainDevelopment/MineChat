@@ -32,7 +32,6 @@ public record MessageComponentContent(
 		String message, // not null
 		Long timeStamp, //nullable
 		TwitchMessage twitchMessage //nullable
-//		Map<String, String> emoteSet //nullable
 		){
 	
 	private static final Logger logger = LoggerFactory.getLogger(MessageComponentContent.class);
@@ -82,7 +81,7 @@ public record MessageComponentContent(
 	 * @return EmoteName, ImagePath
 	 */
 	public Map<String, String> getEmoteSet(){
-		return EmoteManager.getChannelEmotes(getChannelId())
+		Map<String, String> map = EmoteManager.getChannelEmotes(getChannelId())
 			.getAllEmotes()
 			.stream()
 			.collect(Collectors.toMap(Emote::getName, Emote::getFilePath,
@@ -90,11 +89,11 @@ public record MessageComponentContent(
 	            	logger.warn("Duplicate key found for emote ID \"" + existingValue + "\". Skipping.");
 	                return existingValue;
 	            }));
-//		
-//		if(emoteSet != null && !emoteSet.isEmpty()){
-//			map.putAll(emoteSet);
-//		}
-//		return map;
+		
+		if(twitchMessage != null){
+			map.putAll(twitchMessage.getEmotes());
+		}
+		return map;
 	}
 	
 }

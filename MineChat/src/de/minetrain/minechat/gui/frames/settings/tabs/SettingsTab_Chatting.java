@@ -104,12 +104,29 @@ public class SettingsTab_Chatting extends SettingsTab{
 			}
 		});
 		
+		JCheckBox nonChannelEmotesBox = new JCheckBox();
+		nonChannelEmotesBox.setBorder(new LineBorder(getBackground(), 4, false));
+		nonChannelEmotesBox.setSelected(Settings.emoteBlendinOnDisplaying);
+		nonChannelEmotesBox.setBackground(nonChannelEmotesBox.isSelected() ? Color.GREEN : Color.RED);
+		nonChannelEmotesBox.setFont(Settings.MESSAGE_FONT);
+		nonChannelEmotesBox.setToolTipText("Activate to blend non channel-specific emotes in with all others. Enables display of emotes like \"modCheck\" even if not present in the current channel.");
+		nonChannelEmotesBox.setHorizontalAlignment(SwingConstants.CENTER);
+		nonChannelEmotesBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Settings.setEmoteBlendinOnDisplaying(nonChannelEmotesBox.isSelected());
+				nonChannelEmotesBox.setBackground(nonChannelEmotesBox.isSelected() ? Color.GREEN : Color.RED);
+			}
+		});
+		
 
 		generalTabel.add(new TabelObj("Reply type:", generalTabel).overrideOptionPanel(replyDropDown));
 		generalTabel.add(new TabelObj("Greeting type:", generalTabel).overrideOptionPanel(greetDropDown));
 		generalTabel.add(new TabelObj("Undo Variation:", generalTabel).overrideOptionPanel(undoDropDown));
 		generalTabel.add(new TabelObj("Undo cache size.", generalTabel).overrideOptionPanel(new JTextArea("[TODO] - 100")));
 		generalTabel.add(new TabelObj("Hold to send multiple messages:", generalTabel).overrideOptionPanel(holdToSendBox));
+		generalTabel.add(new TabelObj("Display non channel specific emotes:", generalTabel).overrideOptionPanel(nonChannelEmotesBox));
+		generalTabel.setVerticalScrollPosition(0);
 		
 		
 		

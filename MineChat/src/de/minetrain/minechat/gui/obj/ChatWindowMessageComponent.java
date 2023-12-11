@@ -468,7 +468,7 @@ public class ChatWindowMessageComponent extends JPanel{
     		Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, split[i]);
 			if(emoteByName != null) {
 				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
-			}else{
+			}else if(Settings.emoteBlendinOnDisplaying){
 				emoteByName = EmoteManager.getEmoteByName(split[i]);
 				if(emoteByName != null){
 					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());

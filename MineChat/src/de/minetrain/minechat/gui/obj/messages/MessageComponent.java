@@ -42,6 +42,7 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.FlippedImageIcon;
 import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
@@ -391,7 +392,7 @@ public class MessageComponent extends JPanel {
     			Emote emoteByName = EmoteManager.getChannelEmoteByName(messageContent.getChannelId(), word);
     			if(emoteByName != null) {
     				webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
-    			}else{
+    			}else if(Settings.emoteBlendinOnDisplaying){
     				emoteByName = EmoteManager.getEmoteByName(word);
     				if(emoteByName != null){
     					webEmotes.put(emoteByName.getName(), emoteByName.getFilePath());
@@ -492,12 +493,16 @@ public class MessageComponent extends JPanel {
 	public void clear(){
 		messageLabel.setDocument(CLEAR_DOCUMENT);
 	}
-
+	
 	public boolean isHighlighted() {
 		return highlighted;
 	}
 	
 	public HighlightString getHighlightString(){
 		return highlightString;
+	}
+	
+	public static void clearDocumentCache(){
+		documentCache.clear();
 	}
 }

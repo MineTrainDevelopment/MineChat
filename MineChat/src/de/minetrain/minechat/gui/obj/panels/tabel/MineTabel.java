@@ -20,11 +20,11 @@ public class MineTabel extends JPanel{
 	private static final long serialVersionUID = 38501554803967353L;
 	public long itemIndex = 0;
 	public JPanel contentPanel = new JPanel();
+	private JScrollPane scrollPane = new JScrollPane();
 	
 	public MineTabel() {
 		setLayout(new BorderLayout(0, 0));
 		
-		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBackground(ColorManager.GUI_BACKGROUND);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -63,6 +63,10 @@ public class MineTabel extends JPanel{
 	public MineTabel add(TabelObj tabelObj) {
 		contentPanel.add(tabelObj);
 		return this;
+	}
+	
+	public void setVerticalScrollPosition(int value){
+		scrollPane.getVerticalScrollBar().setValue(value);
 	}
 	
 	@Override
