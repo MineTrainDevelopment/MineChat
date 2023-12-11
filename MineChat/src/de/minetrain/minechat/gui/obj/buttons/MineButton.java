@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.Timer;
 
 import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
-import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;

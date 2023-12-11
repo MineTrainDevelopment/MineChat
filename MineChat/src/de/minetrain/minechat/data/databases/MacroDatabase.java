@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.data.objectdata.MacroData;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 

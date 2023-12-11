@@ -1,65 +1,31 @@
 package de.minetrain.minechat.main;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.naming.directory.InvalidAttributesException;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JToolTip;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
-import de.minetrain.minechat.gui.frames.parant.MineDialog;
-import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
-import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettings;
-import de.minetrain.minechat.gui.frames.settings.editors.CreateAutoReplyFrame;
-import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.StatusBar;
-import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.gui.obj.buttons.ButtonType;
-import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
-import de.minetrain.minechat.gui.obj.panels.tabel.MineTabel;
-import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioManager;
-import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 
 public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);

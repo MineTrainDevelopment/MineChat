@@ -16,11 +16,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,7 +39,6 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
-import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.HTMLColors;
@@ -49,8 +47,6 @@ import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.audio.AudioPath;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import javafx.scene.media.AudioClip;
-
-import javax.swing.JComboBox;
 
 public class CreateWordHighlightFrame extends MineDialog {
 	private static final long serialVersionUID = -4774556639413934907L;

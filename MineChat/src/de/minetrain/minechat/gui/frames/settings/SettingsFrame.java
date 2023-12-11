@@ -1,33 +1,24 @@
 package de.minetrain.minechat.gui.frames.settings;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_Appearance;
 import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_AutoReply;
 import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_Chatting;
 import de.minetrain.minechat.gui.frames.settings.tabs.SettingsTab_Highlights;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.Main;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.JButton;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
 
 public class SettingsFrame extends MineDialog{
+	private static final long serialVersionUID = 3348990449783641970L;
 	private JPanel mainPanel;
 	private JPanel buttonPanel;
 

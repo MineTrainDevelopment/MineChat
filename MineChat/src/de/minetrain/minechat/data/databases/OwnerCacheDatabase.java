@@ -5,16 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.objectdata.MacroData;
-import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 //Table name: owner_cache

@@ -9,7 +9,6 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;

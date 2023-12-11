@@ -1,6 +1,5 @@
 package de.minetrain.minechat.data.objectdata;
 
-import java.awt.Button;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

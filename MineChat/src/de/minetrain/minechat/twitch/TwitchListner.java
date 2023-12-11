@@ -34,9 +34,7 @@ import com.github.twitch4j.events.ChannelGoOfflineEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
-import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;

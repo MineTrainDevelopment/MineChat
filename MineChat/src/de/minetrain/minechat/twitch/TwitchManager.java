@@ -1,6 +1,5 @@
 package de.minetrain.minechat.twitch;
 
-import java.awt.Color;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +24,6 @@ import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
-import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;

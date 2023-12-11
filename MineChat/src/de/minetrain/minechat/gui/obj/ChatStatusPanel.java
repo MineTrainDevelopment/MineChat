@@ -6,16 +6,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import com.github.twitch4j.client.websocket.domain.WebsocketConnectionState;
@@ -25,13 +22,12 @@ import de.minetrain.minechat.gui.frames.EmoteSelector;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
-import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.HTMLColors;
-import de.minetrain.minechat.utils.MineStringBuilder;
 import de.minetrain.minechat.utils.MessageHistory;
+import de.minetrain.minechat.utils.MineStringBuilder;
 
 public class ChatStatusPanel extends JPanel{
 	private static final long serialVersionUID = -1247943509194239246L;

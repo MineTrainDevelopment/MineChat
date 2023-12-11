@@ -1,7 +1,6 @@
 package de.minetrain.minechat.gui.utils;
 
 import java.awt.Color;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.slf4j.LoggerFactory;

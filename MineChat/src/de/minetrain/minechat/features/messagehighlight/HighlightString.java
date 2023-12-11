@@ -1,10 +1,7 @@
 package de.minetrain.minechat.features.messagehighlight;
 
-import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.google.code.regexp.Pattern;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;

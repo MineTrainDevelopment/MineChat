@@ -1,7 +1,5 @@
 package de.minetrain.minechat.config.obj;
 
-import java.sql.ResultSet;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +9,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.twitch4j.pubsub.domain.Leaderboard.Identifier;
-
-import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.MacroData;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
-import de.minetrain.minechat.main.Main;
 
 public class ChannelMacros {
 	private static final Logger logger = LoggerFactory.getLogger(ChannelMacros.class);

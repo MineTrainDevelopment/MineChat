@@ -1,10 +1,6 @@
 package de.minetrain.minechat.gui.utils;
 
 import java.awt.Color;
-import java.util.Arrays;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * NOTE: I stole this code from <a href="https://github.com/jeffjianzhao/DAViewer/blob/master/src/daviewer/HSLColor.java">GitHub</a> and modified it a bit to my needs.

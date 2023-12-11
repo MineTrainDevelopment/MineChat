@@ -19,7 +19,6 @@ import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.utils.audio.AudioVolume;
 
 public class Settings{
 	private static final Logger logger = LoggerFactory.getLogger(Settings.class);

@@ -11,24 +11,17 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TabButtonType;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
@@ -55,7 +48,7 @@ public class ChannelStatisticsDatabase extends Database {
 	private static final String insert_user_SQL = "INSERT INTO "+userTabelName+"(channel_user_id, messages, gifted_subs, cheerd_bits) VALUES(?,?,?,?)";
 	private static final String update_user_SQL = "UPDATE "+userTabelName+" SET messages = ? , gifted_subs = ? , cheerd_bits = ? WHERE channel_user_id = ?";
 	private static final String check_user_SQL = "SELECT channel_user_id, messages, gifted_subs, cheerd_bits FROM "+userTabelName+" WHERE channel_user_id = ?";
-	private static final String select_user_sql = "SELECT channel_user_id, messages, gifted_subs, cheerd_bits FROM "+userTabelName;
+	//private static final String select_user_sql = "SELECT channel_user_id, messages, gifted_subs, cheerd_bits FROM "+userTabelName;
 	
 	public ChannelStatisticsDatabase() throws SQLException {
 		super("CREATE TABLE IF NOT EXISTS "+tabelName+" (\n"
