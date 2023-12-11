@@ -14,6 +14,7 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
+import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.twitch.TwitchManager;
 
 //dalay_stats.
@@ -28,6 +29,7 @@ public class ChannelStatistics {
 	private final Map<String, Long> sendedMessages = new HashMap<>(); //User_id, value
 	private final Map<String, Long> giftedSubs = new HashMap<>(); //User_id, value
 	private final Map<String, Long> cheerdBits = new HashMap<>(); //User_id, value
+	private long uniqueMessages = 0;
 //	private long streamStartupTime = 0;
 	private long totalMessages = 0;
 	private long totalSubs = 0;
@@ -107,6 +109,9 @@ public class ChannelStatistics {
 		}
 	}
 	
+	public String getChannelId(){
+		return parentTab.getConfigID();
+	}
 	
 	public Map<String, Long> getSendedMessages() {
 		return sendedMessages;
@@ -179,6 +184,14 @@ public class ChannelStatistics {
 
 	public long getTotalFollower() {
 		return totalFollower;
+	}
+	
+	public long getTotalUniqueMessages(){
+		return uniqueMessages + MessageComponent.getDocumentCacheSize(getChannelId());
+	}
+	
+	public void updateUniqueMessages(long count){
+		uniqueMessages = uniqueMessages + count;
 	}
 	
 //	Das hier muss noch in die @user auswahl.

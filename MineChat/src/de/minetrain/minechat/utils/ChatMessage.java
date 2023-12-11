@@ -59,6 +59,7 @@ public class ChatMessage {
 					.replace("{TITLE}", "{TODO - TITLE}")
 					.replace("{MY_MESSAGES}", ""+statistics.getTotalSelfMessages())
 					.replace("{TOTAL_MESSAGES}", ""+statistics.getTotalMessages())
+					.replace("{TOTAL_UNIQUE_MESSAGES}", ""+statistics.getTotalUniqueMessages())
 					.replace("{TOTAL_SUBS}", ""+statistics.getTotalSubs())
 					.replace("{TOTAL_RESUBS}", ""+statistics.getTotalResubs())
 					.replace("{TOTAL_GIFTSUB}", ""+statistics.getTotalGiftSubs())

@@ -33,7 +33,7 @@ import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
 public class ChannelTab {
 	public static final Map<String, String> channelDisplayNameList = new HashMap<String, String>();
-	public static final Map<String, ChannelTab> byId = new HashMap<String, ChannelTab>();//channelId -> channelTab
+	private static final Map<String, ChannelTab> byId = new HashMap<String, ChannelTab>();//channelId -> channelTab
 	private ChannelTab thisObject;
 	private TabButtonType tabType;
 	private String channelId;

@@ -18,9 +18,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -42,11 +44,11 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.FlippedImageIcon;
 import de.minetrain.minechat.gui.emotes.MirroredImageIcon;
 import de.minetrain.minechat.gui.frames.ChatWindow;
+import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -164,7 +166,7 @@ public class MessageComponent extends JPanel {
 		messageLabel.addMouseListener(replyButtonMouseAdapter(replyButton));
         messageContentPanel.add(messageLabel, BorderLayout.CENTER);
         
-        String documentCacheKey = content.getChannelId()+content.message();
+        String documentCacheKey = content.getChannelId()+"%"+content.message();
         
         if(documentCache.containsKey(documentCacheKey)){
         	messageLabel.setDocument(documentCache.get(documentCacheKey));
@@ -331,7 +333,7 @@ public class MessageComponent extends JPanel {
 			}
 		}
 		
-		documentCache.put(messageContent.getChannelId()+messageContent.message(), document);
+		documentCache.put(messageContent.getChannelId()+"%"+messageContent.message(), document);
     }
     
     
@@ -502,7 +504,22 @@ public class MessageComponent extends JPanel {
 		return highlightString;
 	}
 	
+	public static long getDocumentCacheSize(String channelId){
+		return documentCache.entrySet().stream().filter(entry -> entry.getKey().startsWith(channelId)).collect(Collectors.toList()).size();
+	}
+	
 	public static void clearDocumentCache(){
+		System.err.println(documentCache);
+		documentCache.keySet().stream()
+				.map(key -> key = key.split("%")[0])
+				.map(ChannelTab::getById)
+				.filter(Objects::nonNull)
+				.map(ChannelTab::getStatistics)
+				.forEach(statistic -> {
+					System.err.println("Collect for channel -> "+statistic.getChannelId());
+					statistic.updateUniqueMessages(getDocumentCacheSize(statistic.getChannelId()));
+				});
+		
 		documentCache.clear();
 	}
 }
