@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import de.minetrain.minechat.config.Settings;
@@ -29,7 +30,7 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class SettingsTab_Chatting extends SettingsTab{
 	private static final long serialVersionUID = -2903086341948789185L;
-	private JPanel generalFormatConentPanel, highlightFormatConentPanel;
+	private JPanel highlightFormatConentPanel;
 	
 	public SettingsTab_Chatting(JFrame parentFrame) {
 		super(parentFrame, "Chatting");
@@ -87,17 +88,28 @@ public class SettingsTab_Chatting extends SettingsTab{
 			}
 		});
 		
-
-//		addDropDownLabel("Reply type:", 2, replyDropDown);
-//		addDropDownLabel("Greeting type:", 41, greetDropDown);
-//		addDropDownLabel("Undo Variation:", 80, undoDropDown);
-//		addInputLabel("Undo cache size.", 119, new JTextArea("[TODO] - 100"));
+		JCheckBox holdToSendBox = new JCheckBox();
+		holdToSendBox.setBorder(new LineBorder(getBackground(), 4, false));
+		holdToSendBox.setSelected(Settings.holdToSendMessages);
+		holdToSendBox.setBackground(holdToSendBox.isSelected() ? Color.GREEN : Color.RED);
+//		holdToSendBox.setPreferredSize(new Dimension(36, 28));
+		holdToSendBox.setFont(Settings.MESSAGE_FONT);
+		holdToSendBox.setToolTipText("Press and hold to send multiple messages.");
+		holdToSendBox.setHorizontalAlignment(SwingConstants.CENTER);
+		holdToSendBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Settings.setHoltToSendMessages(holdToSendBox.isSelected());
+				holdToSendBox.setBackground(holdToSendBox.isSelected() ? Color.GREEN : Color.RED);
+			}
+		});
+		
 
 		generalTabel.add(new TabelObj("Reply type:", generalTabel).overrideOptionPanel(replyDropDown));
 		generalTabel.add(new TabelObj("Greeting type:", generalTabel).overrideOptionPanel(greetDropDown));
 		generalTabel.add(new TabelObj("Undo Variation:", generalTabel).overrideOptionPanel(undoDropDown));
 		generalTabel.add(new TabelObj("Undo cache size.", generalTabel).overrideOptionPanel(new JTextArea("[TODO] - 100")));
-
+		generalTabel.add(new TabelObj("Hold to send multiple messages:", generalTabel).overrideOptionPanel(holdToSendBox));
 		
 		
 		
@@ -201,33 +213,5 @@ public class SettingsTab_Chatting extends SettingsTab{
 			}
 		});
 		highlightFormatConentPanel.add(checkBox);
-	}
-
-	private void addDropDownLabel(String title, int y, JComboBox<String> dropDown){
-		JLabel titleLabel = new JLabel(title);
-		titleLabel.setFont(Settings.MESSAGE_FONT);
-		titleLabel.setForeground(ColorManager.FONT);
-		titleLabel.setBounds(2, y, 200, 32);
-		generalFormatConentPanel.add(titleLabel);
-		
-		dropDown.setBounds(204, y, 180, 32);
-		dropDown.setFont(Settings.MESSAGE_FONT);
-		dropDown.setForeground(ColorManager.FONT);
-		dropDown.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-		generalFormatConentPanel.add(dropDown);
-	}
-	
-	private void addInputLabel(String title, int y, JTextArea textArea){
-		JLabel titleLabel = new JLabel(title);
-		titleLabel.setFont(Settings.MESSAGE_FONT);
-		titleLabel.setForeground(ColorManager.FONT);
-		titleLabel.setBounds(2, y, 200, 32);
-		generalFormatConentPanel.add(titleLabel);
-		
-		textArea.setBounds(204, y, 180, 32);
-		textArea.setFont(Settings.MESSAGE_FONT);
-		textArea.setForeground(ColorManager.FONT);
-		textArea.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-		generalFormatConentPanel.add(textArea);
 	}
 }

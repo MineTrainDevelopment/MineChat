@@ -55,6 +55,8 @@ public class Settings{
 	public static int MAX_UNDO_LOG_SIZE;
 	
 	public static AutoReplyState autoReplyState;
+	
+	public static boolean holdToSendMessages;
 
 	public static Font MESSAGE_FONT;
 	
@@ -93,13 +95,10 @@ public class Settings{
 		MAX_MESSAGE_DISPLAYING = settings.getInt("Chatting.MaxMessageDisplaying", 500);
 		GREETING_TYPE = ReplyType.get(settings.getString("Chatting.GreetingType", "MESSAGE"));
 		REPLY_TYPE = ReplyType.get(settings.getString("Chatting.ReplyType", "ReplyType"));
-
 		UNDO_VARIATION = UndoVariation.get(settings.getString("Chatting.UndoMode", "WORD"));
 		MAX_UNDO_LOG_SIZE = settings.getInt("Chatting.UndoCacheSize", 100);
-		
 		autoReplyState = AutoReplyState.get(settings.getString("Chatting.AutoReplyState", "ALL"));
-		
-		boolean BUTTON_HOLD; //Implement me. Holding button to send messages
+		holdToSendMessages = settings.getBoolean("Chatting.HoltToSendMessages", true);
 		
 		MESSAGE_FONT = new Font(
 				settings.getString("Font.Name", "Arial Unicode MS"), 
@@ -192,6 +191,11 @@ public class Settings{
 		autoReplyState = state;
 	}
 	
+	public static void setHoltToSendMessages(boolean state){
+		settings.setBoolean("Chatting.HoltToSendMessages",  state, true);
+		holdToSendMessages = state;
+	}
+	
 	
 	private static YamlManager createNewConfig(String path){
 		logger.warn("Create new Settings file!");
@@ -256,6 +260,7 @@ public class Settings{
 		settings.setString("Chatting.UndoMode", UndoVariation.WORD.name());
 		settings.setNumber("Chatting.UndoCacheSize", 100);
 		settings.setString("Chatting.AutoReplyState", AutoReplyState.ALL.name());
+		settings.setBoolean("Chatting.HoltToSendMessages", true);
 		
 		
 

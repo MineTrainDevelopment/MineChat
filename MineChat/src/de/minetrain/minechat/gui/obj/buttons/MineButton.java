@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.Timer;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -184,7 +185,7 @@ public class MineButton extends JButton{
 	}
 	
 	public boolean isHolding() {
-		return holding;
+		return Settings.holdToSendMessages ? holding : false;
 	}
 
 	public void setHolding(boolean holding) {

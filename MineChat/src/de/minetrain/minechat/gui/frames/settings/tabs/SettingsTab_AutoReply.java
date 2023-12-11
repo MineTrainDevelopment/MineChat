@@ -72,7 +72,7 @@ public class SettingsTab_AutoReply extends SettingsTab{
 		addButton.setFont(Settings.MESSAGE_FONT);
 		addButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		addButton.setVerticalTextPosition(SwingConstants.CENTER);
-		addButton.setBounds(80, 530, 400, 50);
+		addButton.setBounds(80, 540, 400, 50);
 		addButton.addActionListener(new ActionListener() {
 			
 			@Override

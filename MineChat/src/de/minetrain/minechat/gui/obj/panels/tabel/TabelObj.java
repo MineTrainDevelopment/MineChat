@@ -161,4 +161,9 @@ public class TabelObj extends JPanel{
 		parentTabel.contentPanel.repaint();
 	}
 	
+	public TabelObj setToolTip(String text) {
+		super.setToolTipText(text);
+		return this;
+	}
+	
 }

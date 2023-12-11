@@ -88,7 +88,6 @@ public class ColorManager {
 	
 	public static String adjustHexcode(String hexCode, String backgroundAdjustmentHexCode){
 		return adjustedHexcodes.computeIfAbsent(hexCode+backgroundAdjustmentHexCode, key -> {
-			System.err.println("new hex color");
 			return new HSLColor(hexCode).adjustForBackground(new HSLColor(backgroundAdjustmentHexCode)).getHex();
 		});
 	}
@@ -109,8 +108,4 @@ public class ColorManager {
 	    return new float[]{red/255f, green/255f, blue/255f};
 	}
 	
-	
-	public static  void test(){
-		System.err.println(encode(new HSLColor("#150080").adjustForBackground(new HSLColor(0, 0, 16)).getColor()));
-	}
 }

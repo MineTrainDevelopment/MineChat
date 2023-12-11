@@ -183,7 +183,6 @@ public class HSLColor {
         	}
         }
 
-        System.err.println(backgroundLuminance);
         if(backgroundLuminance > 50){
         	adjustShade(toneAjustmint);
         }
@@ -191,8 +190,6 @@ public class HSLColor {
         if(isOver25 && getLuminance() <= 25){
     		setLuminance(25);
     	}
-        
-        System.err.println(getHue()+" - "+getSaturation()+" - "+getLuminance());
     	return this;
     }
 
