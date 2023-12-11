@@ -161,7 +161,6 @@ public class Main {
 	public static void openMainFrame(){
 		LOADINGBAR.setProgress("Loading auto suggestion and emotes.", 60);
 		new EmoteManager();
-		EmoteManager.load();
 		
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));// TODO
         MineTextArea.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));// TODO

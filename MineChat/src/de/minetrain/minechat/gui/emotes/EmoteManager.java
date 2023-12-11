@@ -1,7 +1,6 @@
 package de.minetrain.minechat.gui.emotes;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +22,12 @@ public class EmoteManager {
 	/**channelId, ChannelEmotes*/
 	private static final HashMap<String, ChannelEmotes> channelEmotes = new HashMap<String, ChannelEmotes>();
 	
-	public static Map<String, String> emoteCache = new HashMap<String, String>(); //max lengh?
-	
 	public EmoteManager() {
+		logger.info("Initiating EmoteManager");
 		DatabaseManager.getEmote().getAll();
 		DatabaseManager.getEmote().getAllChannels();
+		load();
+		logger.info("Emotes loaded...");
 	}
 	
 	public static void load(){
@@ -44,29 +44,17 @@ public class EmoteManager {
 	}
 	
 	public static void addEmote(Emote emote){
+		logger.debug("Adding emote -> "+emote.getName()+":"+emote.getEmoteId());
 		emotes.put(emote.getEmoteId(), emote);
 		emoteIdToName.put(emote.getEmoteId(), emote.getName());
 		emoteNameToId.put(emote.getName(), emote.getEmoteId());
 	}
 	
 	public static void addChannel(String channelId, ChannelEmotes channelEmote){
+		logger.debug("Adding channel emote set -> "+channelId);
 		channelEmotes.put(channelId, channelEmote);
 	}
 	
-//	/**
-//	 * id - imagePath
-//	 * @return
-//	 */
-//	public static Map<String, String> getAllEmotesByName(){
-//		if(!emoteCache.isEmpty()){
-//			return emoteCache;
-//		}
-//		
-//		Map<String, String> map = getAllEmotes().values().stream().collect(Collectors.toMap(Emote::getName, Emote::getFilePath));
-//		emoteCache = map;
-//		return map;
-//	}
-
 	public static HashMap<String, Emote> getAllEmotes(){
 		return emotes;
 	}
