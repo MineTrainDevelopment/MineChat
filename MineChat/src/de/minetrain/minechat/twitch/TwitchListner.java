@@ -31,6 +31,9 @@ import com.github.twitch4j.chat.events.channel.UserTimeoutEvent;
 import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
+import com.github.twitch4j.eventsub.events.ChannelChatNotificationEvent;
+import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
+import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -102,6 +105,8 @@ public class TwitchListner {
 		if(channelTab == null){
 			return;
 		}
+		
+		int tier = event.getSubscriptionTier();// TODO Use this to automaticly change the channel sub state.
 		
 		channelTab.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId());
 		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent(), event.getMessage());
@@ -297,10 +302,17 @@ public class TwitchListner {
     }
     
     @EventSubscriber
-    public void onChannelMod(ChannelModEvent event){
+    public void onChannelMod(ChannelModeratorAddEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	getCurrentChannelTab(event.getChannel()).getChatWindow()
-			.displaySystemInfo("Mod status changed", event.getUser().getName()+" Gained or lost the mod status!", Settings.displayModActions.getColor(), null);
+    	getCurrentChannelTab(event.getBroadcasterUserId()).getChatWindow()
+			.displaySystemInfo("Mod status changed", event.getUserName()+" Gained the mod status!", Settings.displayModActions.getColor(), null);
+    }
+    
+    @EventSubscriber
+    public void onChannelMod(ChannelModeratorRemoveEvent event){
+    	if(!Settings.displayModActions.isActive()){return;}
+    	getCurrentChannelTab(event.getBroadcasterUserId()).getChatWindow()
+			.displaySystemInfo("Mod status changed", event.getUserName()+" Lost the mod status!", Settings.displayModActions.getColor(), null);
     }
 
     @EventSubscriber
@@ -356,31 +368,35 @@ public class TwitchListner {
     }
 
 	private ChannelTab getCurrentChannelTab(EventChannel eventChannel) {
+		return getCurrentChannelTab(eventChannel.getId());
+	}
+
+	private ChannelTab getCurrentChannelTab(String channelId) {
 		if(Main.MAIN_FRAME == null){return null;}
 		
 		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
 		ChannelTab channelTab = null;
-		if(titleBar.mainTab.getConfigID().equals(eventChannel.getId())){
+		if(titleBar.mainTab.getConfigID().equals(channelId)){
 			channelTab = titleBar.mainTab;
 		}
 		
-		if(titleBar.secondTab.getConfigID().equals(eventChannel.getId())){
+		if(titleBar.secondTab.getConfigID().equals(channelId)){
 			channelTab = titleBar.secondTab;
 		}
 		
-		if(titleBar.thirdTab.getConfigID().equals(eventChannel.getId())){
+		if(titleBar.thirdTab.getConfigID().equals(channelId)){
 			channelTab = titleBar.thirdTab;
 		}
 		
-		if(titleBar.channelTabRow_Main.getConfigID().equals(eventChannel.getId())){
+		if(titleBar.channelTabRow_Main.getConfigID().equals(channelId)){
 			channelTab = titleBar.channelTabRow_Main;
 		}
 		
-		if(titleBar.channelTabRow_Second.getConfigID().equals(eventChannel.getId())){
+		if(titleBar.channelTabRow_Second.getConfigID().equals(channelId)){
 			channelTab = titleBar.channelTabRow_Second;
 		}
 		
-		if(titleBar.channelTabRow_Third.getConfigID().equals(eventChannel.getId())){
+		if(titleBar.channelTabRow_Third.getConfigID().equals(channelId)){
 			channelTab = titleBar.channelTabRow_Third;
 		}
 		
