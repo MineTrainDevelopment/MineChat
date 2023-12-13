@@ -25,7 +25,7 @@ public class MineStringBuilder {
      * Appends the specified string to the output string.
      *
      * @param string the string to be appended
-     * @param color hex color code.
+     * @param hexColorCode hex color code.
      * @return the IconStringBuilder object for method chaining
      */
 	public MineStringBuilder appendString(String string, String hexColorCode){
@@ -120,6 +120,16 @@ public class MineStringBuilder {
 		this.prefix = "<font color="+color+"%FONT-SIZE%>"+prefix.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
 		return this;
 	}
+	
+	/**
+     * @param prefix the prefix string to be set
+     * @param hexColorCode hex color code.
+     * @return the IconStringBuilder object for method chaining
+     */
+	public MineStringBuilder setPrefix(String prefix, String hexcode){
+		this.prefix = "<font color="+hexcode+"%FONT-SIZE%>"+prefix.replace("<", "&lt;").replace(">", "&gt;")+"</font>";
+		return this;
+	}
 
 	/**
      * @param suffix the suffix string to be set
@@ -146,6 +156,15 @@ public class MineStringBuilder {
      */
 	public MineStringBuilder setFontSize(String iconPath){
 		fontSize = new ImageIcon(iconPath).getIconHeight()/3;
+		return this;
+	}
+
+	/**
+	 * Set the font size based on image height.
+	 * @param iconPath system path only.
+     */
+	public MineStringBuilder setFontSize(int size){
+		fontSize = size;
 		return this;
 	}
 

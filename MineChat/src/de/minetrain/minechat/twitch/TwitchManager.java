@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.IncompleteArgumentException;
 import org.slf4j.Logger;
@@ -126,6 +127,7 @@ public class TwitchManager {
 				logger.info("Joining channel: "+name);
 				twitch.getChat().joinChannel(name);
 				twitch.getClientHelper().enableFollowEventListener(name);
+				twitch.getClientHelper().enableStreamEventListener(name);
 			}
 		}
 	}
@@ -147,6 +149,7 @@ public class TwitchManager {
 			logger.info("Leaving channel: "+name);
 			twitch.getChat().leaveChannel(name);
 			twitch.getClientHelper().disableFollowEventListener(name);
+			twitch.getClientHelper().disableStreamEventListener(name);
 		}
 	}
 	
@@ -266,6 +269,25 @@ public class TwitchManager {
 		
 		return response.getBody();
 	}
+
+	public static List<String> getLiveStates(){
+		return getLiveStates(TwitchApiCallType.ID, twitchUsers.stream()
+				.filter(user -> !user.isDummy())
+				.map(TwitchUserObj::getUserId)
+				.collect(Collectors.toList()).toArray(String[]::new));
+	}
+	
+	public static List<String> getLiveStates(TwitchApiCallType callType, String... channels){
+		if(channels == null || channels.length == 0){return List.of();}
+		List<String> idList = new ArrayList<String>();
+		
+		channels = Arrays.copyOfRange(channels, 0, Math.min(channels.length, 100));
+		String url = "https://api.twitch.tv/helix/streams?"+callType.getUrl()+"="+String.join("&"+callType.getUrl()+"=", channels)+"&type=live&first=100";
+		newApiCall(url).getAsJsonArray("data").forEach(data -> {
+			idList.add(data.getAsJsonObject().get("user_id").getAsString().replace("\"", ""));
+		});
+		return idList;
+	}
 	
 	/**
 	 * Makes an API call to Twitch API and returns the resulting JSON object.
@@ -277,27 +299,19 @@ public class TwitchManager {
 	 * @see <a href="https://dev.twitch.tv/docs/api/reference/#get-users">Twitch API Dokumentation</a>
 	 */
 	public static JsonObject newApiCall(TwitchApiCallType callType, String... channels) {
-		String type = callType.name().toLowerCase()+"=";
-		String url = "https://api.twitch.tv/helix/users?";
-		int index = 0;
-
-		for(String channel : channels){
-			for(String splitChannels : channel.split(",")){
-				if(index<100){
-					url += type+splitChannels.strip().trim()+"&";
-					index++;
-				}else{
-					logger.error("To manny channels for one API call!", new IncompleteArgumentException("To many channels!", channels));
-				}
-			}
+		if(channels != null && channels.length > 100){
+			logger.error("To manny channels for one API call! Limiting to 100 items.", new IncompleteArgumentException("To many channels!", channels));
 		}
-			
-		url = (url.endsWith("&")) ? url.substring(0, url.length()-1) : url;
-		
-		return new Gson().fromJson(Unirest.get(url)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
+		return newApiCall(
+				"https://api.twitch.tv/helix/users?"+callType.getShortUrl()+"="+String.join("&"+callType.getShortUrl()+"=", 
+				Arrays.copyOfRange(channels, 0, Math.min(channels.length, 100))));
+	}
+
+	private static JsonObject newApiCall(String url) {
+		return new Gson().fromJson(Unirest.get(url)
 			.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
 			.header("Client-Id", credentials.getClientID())
-//			.queryString(callType.name().toLowerCase(), channel)
+			.header("User-Agent", "MineChat Client")
 			.asString()
 			.getBody(), JsonObject.class);
 	}

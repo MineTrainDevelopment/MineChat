@@ -3,6 +3,7 @@ package de.minetrain.minechat.twitch;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,14 +33,15 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
+import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.gui.frames.LiveNotification;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
-import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
@@ -61,6 +63,15 @@ public class TwitchListner {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchListner.class);
 	private static final Dimension buttonSize = new Dimension(28, 28);
 	public static int messagesTEMP = 0;
+	private LiveNotification liveNotification = new LiveNotification();
+	
+	@EventSubscriber
+	public void onMidrollRequest(MidrollRequestEvent event){
+		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_0, AudioVolume.VOLUME_100);
+		for(int i=0; i>50; i++){
+			System.err.println("Ad brake - "+event.getChannelId());
+		}
+	}
 	
 	/**
 	 * Handles the event when a stream goes live and sends a message to the channel with a randomized stream-up sentence.
@@ -71,6 +82,17 @@ public class TwitchListner {
 		logger.info("Twtich livestram startet: "+event.getStream().getUserName()+" | "+event.getStream().getViewerCount()+" | "+event.getStream().getTitle());
 		//TODO Call a sound event and display a red dott next to the name inside a channels tab.
 		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
+		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
+		if(channelTab != null){
+			channelTab.setLiveState(true);
+			liveNotification.setData(
+					channelTab,
+					event.getStream().getGameName(),
+					event.getStream().getTitle(),
+					event.getStream().getThumbnailUrl(80, 80));
+			
+			Instant startedAtInstant = event.getStream().getStartedAtInstant();
+		}
 	}
 
 	/**
@@ -81,6 +103,10 @@ public class TwitchListner {
 	public void onStreamDown(ChannelGoOfflineEvent event){
 		logger.info("Twtich livestram Offline: "+event.getChannel().getName());
 		//remove the red dot next to chennel name in tab
+		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
+		if(channelTab != null){
+			channelTab.setLiveState(false);
+		}
 	}
 	
 	/**
@@ -371,34 +397,7 @@ public class TwitchListner {
 
 	private ChannelTab getCurrentChannelTab(String channelId) {
 		if(Main.MAIN_FRAME == null){return null;}
-		
-		TitleBar titleBar = Main.MAIN_FRAME.getTitleBar();
-		ChannelTab channelTab = null;
-		if(titleBar.mainTab.getConfigID().equals(channelId)){
-			channelTab = titleBar.mainTab;
-		}
-		
-		if(titleBar.secondTab.getConfigID().equals(channelId)){
-			channelTab = titleBar.secondTab;
-		}
-		
-		if(titleBar.thirdTab.getConfigID().equals(channelId)){
-			channelTab = titleBar.thirdTab;
-		}
-		
-		if(titleBar.channelTabRow_Main.getConfigID().equals(channelId)){
-			channelTab = titleBar.channelTabRow_Main;
-		}
-		
-		if(titleBar.channelTabRow_Second.getConfigID().equals(channelId)){
-			channelTab = titleBar.channelTabRow_Second;
-		}
-		
-		if(titleBar.channelTabRow_Third.getConfigID().equals(channelId)){
-			channelTab = titleBar.channelTabRow_Third;
-		}
-		
-		return channelTab;
+		return ChannelTab.getById(channelId);
 	}
 
 	

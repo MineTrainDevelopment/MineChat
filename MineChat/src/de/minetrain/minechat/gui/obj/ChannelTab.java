@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -34,7 +36,6 @@ import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 public class ChannelTab {
 	public static final Map<String, String> channelDisplayNameList = new HashMap<String, String>();
 	private static final Map<String, ChannelTab> byId = new HashMap<String, ChannelTab>();//channelId -> channelTab
-	private ChannelTab thisObject;
 	private TabButtonType tabType;
 	private String channelId;
 	private ImageIcon texture;
@@ -42,6 +43,7 @@ public class ChannelTab {
 	private String displayName;
 	private String channelName;
 	private boolean moderator;
+	private boolean liveState = false; //NOTE: This may not me synct with the current twitch state.
 	private MainFrame mainFrame;
 	private List<String> greetingTexts;
 	private List<String> goodByTexts;
@@ -66,7 +68,6 @@ public class ChannelTab {
 		
 		this.texture = Main.TEXTURE_MANAGER.getMainFrame_Blank();
 		this.tabType = tab;
-		this.thisObject = this;
 		this.tabButton = button;
 		
 		if(tab.isFirstRow()){
@@ -128,6 +129,7 @@ public class ChannelTab {
 	public void reload(String channelId) {
 		loadData(channelId);
 		tabLabel.setText(getTabName());
+		tabLabel.setForeground(liveState ? Color.RED : ColorManager.FONT);
 	}
 	
 	
@@ -185,7 +187,7 @@ public class ChannelTab {
 	}
 	
 	public void openEditFrame() {
-		new EditChannelFrame(Main.MAIN_FRAME, thisObject);
+		new EditChannelFrame(Main.MAIN_FRAME, this);
 	}
 	
 	public ChannelTab offsetButton(TabButtonType offset){
@@ -228,10 +230,6 @@ public class ChannelTab {
 		return !channelId.equals("0");
 	}
 
-	public ChannelTab getThisObject() {
-		return thisObject;
-	}
-
 
 	public TabButtonType getTabType() {
 		return tabType;
@@ -267,8 +265,12 @@ public class ChannelTab {
 		return tabLabel;
 	}
 
-	public String getProfileImagePath() {
-		return TextureManager.texturePath+"Icons/"+channelId+"/profile_75.png";
+	public Path getProfileImagePath() {
+		return Path.of(TextureManager.texturePath+"Icons/"+channelId+"/profile_75.png");
+	}
+
+	public Path getProfileImagePath80() {
+		return Path.of(TextureManager.texturePath+"Icons/"+channelId+"/profile_80.png");
 	}
 
 	public String getChannelName() {
@@ -297,6 +299,21 @@ public class ChannelTab {
 	
 	public static ChannelTab getById(String channelId){
 		return byId.get(channelId);
+	}
+	
+	/**
+	 * Channel_id, ChannelTab
+	 * @return
+	 */
+	public static Map<String, ChannelTab> getAll(){
+		return byId;
+	}
+	
+	public void setLiveState(boolean state){
+		this.liveState = state;
+		if(tabLabel.getText().equals(getDisplayName())){
+			reload(channelId);
+		}
 	}
 	
 }

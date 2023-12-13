@@ -104,6 +104,8 @@ public class MessageComponent extends JPanel {
     			.clearContent()
     			.appendString(content.getUserName(), content.getUserColorCode())
     			.toString());
+    	
+    	stringBuilder.clear();
 		
     	JPanel buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.setBackground(ColorManager.GUI_BACKGROUND);
@@ -254,7 +256,7 @@ public class MessageComponent extends JPanel {
     	setPreferredSize(new Dimension(485, getPreferredSize().height));
     	webEmotes.clear(); //NOTE This is to improve ram usage.
     	messageContent = null;
-    	stringBuilder.clear();
+//    	stringBuilder.clear();
 	}
 	
 	private static final MouseAdapter replyButtonMouseAdapter(JButton button) {
@@ -409,7 +411,7 @@ public class MessageComponent extends JPanel {
 		}
     	
     	for (Entry<String, String> entry : emoteReplacements.entrySet()) {
-    		input = input.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue());
+    		input = input.replaceAll("\\b" + Pattern.quote(entry.getKey()) + "\\b", entry.getValue());
     	}
         return input.trim();
     }
@@ -505,7 +507,11 @@ public class MessageComponent extends JPanel {
 	}
 	
 	public static long getDocumentCacheSize(String channelId){
-		return documentCache.entrySet().stream().filter(entry -> entry.getKey().startsWith(channelId)).collect(Collectors.toList()).size();
+		try {
+			return documentCache.entrySet().stream().filter(entry -> entry.getKey().startsWith(channelId)).collect(Collectors.toList()).size();
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 	
 	public static void clearDocumentCache(){

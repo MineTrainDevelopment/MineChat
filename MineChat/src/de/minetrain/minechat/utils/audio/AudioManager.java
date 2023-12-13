@@ -65,7 +65,7 @@ public class AudioManager {
 	 */
 	public AudioClip playAudioClip(AudioClip clip, AudioVolume volume){
 		try {
-			clip.setVolume(volume.getValue());
+			clip.setVolume(volume != null ? volume.getValue() : AudioVolume.VOLUME_100.getValue());
 			clip.play();
 			return clip;
 		} catch (MediaException | NullPointerException ex) {

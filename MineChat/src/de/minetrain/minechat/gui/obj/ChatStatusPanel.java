@@ -131,11 +131,9 @@ public class ChatStatusPanel extends JPanel{
         
         sendButton = createNewButton(Main.TEXTURE_MANAGER.getEnterButton(), "Send message", new Dimension(62, 28), ColorManager.GUI_BACKGROUND_LIGHT);
         MineButton emoteButton = createNewButton(Main.TEXTURE_MANAGER.getEmoteButton(), "Send message", new Dimension(28, 28), ColorManager.GUI_BACKGROUND_LIGHT);
-        emoteButton.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e){
-				EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
-				emoteSelector.addSelectetEmoteToText(inputArea);
-			}
+        emoteButton.addActionListener(e -> {
+			EmoteSelector emoteSelector = new EmoteSelector(Main.MAIN_FRAME, true);
+			emoteSelector.addSelectetEmoteToText(inputArea);
 		});
 		
 		JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -333,6 +331,10 @@ public class ChatStatusPanel extends JPanel{
 	
 	public MineTextArea getinputArea(){
 		return inputArea;
+	}
+	
+	public void requestFocus(){
+		inputArea.requestFocus();
 	}
 
 }

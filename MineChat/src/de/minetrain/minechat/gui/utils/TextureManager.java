@@ -80,6 +80,9 @@ public class TextureManager {
 	private final ImageIcon macroEmoteKeyPressed;
 	private final ImageIcon macroEmoteKeyHover;
 	private final ImageIcon macroEmoteKey;
+	private final ImageIcon liveIcon;
+	private final ImageIcon notificationButton;
+	private final ImageIcon notificationButtonHover;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -116,6 +119,9 @@ public class TextureManager {
 		this.macroEmoteKeyPressed = new ImageIcon(texturePath + "macroEmoteKeyPressed.gif");
 		this.macroEmoteKeyHover = new ImageIcon(texturePath + "macroEmoteKeyHover.png");
 		this.macroEmoteKey = new ImageIcon(texturePath + "macroEmoteKey.png");
+		this.liveIcon = new ImageIcon(texturePath + "LiveIcon.png");
+		this.notificationButton = new ImageIcon(texturePath + "NotificationButton.png");
+		this.notificationButtonHover = new ImageIcon(texturePath + "NotificationButtonHover.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -251,8 +257,22 @@ public class TextureManager {
 	public ImageIcon getMacroEmoteKey() {
 		return macroEmoteKey;
 	}
-
 	
+	public ImageIcon getLiveIcon() {
+		return liveIcon;
+	}
+	
+	
+	public ImageIcon getNotificationButton() {
+		return notificationButton;
+	}
+
+
+	public ImageIcon getNotificationButtonHover() {
+		return notificationButtonHover;
+	}
+
+
 	public ImageIcon getByTabButton(TabButtonType tab){
 		switch (tab) {
 		case TAB_MAIN:
@@ -286,6 +306,7 @@ public class TextureManager {
 			downloadImage(uri, "Icons/"+channelId, "/profile_18.png", new Dimension(18, 18));
 			downloadImage(uri, "Icons/"+channelId, "/profile_25.png", new Dimension(25, 25));
 			downloadImage(uri, "Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
+			downloadImage(uri, "Icons/"+channelId, "/profile_80.png", new Dimension(80, 80));
 		} catch (IOException ex) {
 			logger.warn("Can´t download profile image. \n URL: " + uri, ex);
 		}
@@ -297,7 +318,6 @@ public class TextureManager {
 	
 	public static void downloadImage(String uri, String fileLocation, String fileName, Dimension dimension) throws MalformedURLException, IOException, ProtocolException, FileNotFoundException {
 		try {
-			System.out.println("New fileName --> "+fileName + " | "+fileLocation);
 	         URL url = new URL(uri);
 	         HttpURLConnection httpVerbindung = (HttpURLConnection) url.openConnection();
 	         httpVerbindung.setRequestMethod("GET");
@@ -324,7 +344,6 @@ public class TextureManager {
 	        	 reformatGif(texturePath + fileLocation + fileName, texturePath + fileLocation + fileName);
 	         }
 	         
-	         System.out.println("Bild erfolgreich heruntergeladen.");
 	      } catch (Exception ex) {
 	    	  logger.error("Errer while downloading an emote", ex);
 	      }
@@ -362,7 +381,6 @@ public class TextureManager {
 	
 	public static void mergeEmoteImages(String fileLocation, String fileName, String background, String format){
 		format = format.replace(".", "");
-		System.out.println("merge -- "+fileLocation+fileName+" ---> "+background+"  <---> "+format);
 		try {
 			File path = new File(texturePath + fileLocation); // base path of the images
 			System.out.println(texturePath + fileLocation);

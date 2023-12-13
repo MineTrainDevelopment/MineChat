@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -46,7 +44,6 @@ import de.minetrain.minechat.main.Main;
 public class EmoteSelector extends JDialog{
 	private static final long serialVersionUID = 8337999985260635877L;
 	private static final Logger logger = LoggerFactory.getLogger(EmoteSelector.class);
-	private final EmoteSelector thisObect;
     private JPanel emotePanel;
     private JScrollPane scrollPane;
     private static final int MAX_EMOTES_PER_ROW = 10;
@@ -60,7 +57,6 @@ public class EmoteSelector extends JDialog{
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
 		super(mainFrame, "Emotes", true);
 		this.disposOnSelect = disposOnSelect;
-		thisObect = this;
 		
         setResizable(false);
         setUndecorated(true);
@@ -77,7 +73,6 @@ public class EmoteSelector extends JDialog{
 	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect, int scrollPositien) {
 		super(mainFrame, "Emotes", true);
 		this.disposOnSelect = disposOnSelect;
-		thisObect = this;
 		
         setResizable(false);
         setUndecorated(true);
@@ -104,28 +99,19 @@ public class EmoteSelector extends JDialog{
         installButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         installButton.setForeground(Color.WHITE);
         installButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
-        installButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){new EmoteDownlodFrame(thisObect);}
-		});
+        installButton.addActionListener(e -> new EmoteDownlodFrame(this));
 
         JButton refreshButton = new JButton("refresh");
         refreshButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         refreshButton.setForeground(Color.WHITE);
         refreshButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
-        refreshButton.addActionListener(new ActionListener(){
-        	public void actionPerformed(ActionEvent e){
-        		dispose();
-        		new EmoteSelector(mainFrame, disposOnSelect);
-        	}
-		});
+        refreshButton.addActionListener(e -> {dispose(); new EmoteSelector(mainFrame, disposOnSelect);});
         
         JButton cancelButton = new JButton("Close");
         cancelButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 3));
-        cancelButton.addActionListener(new ActionListener(){
-        	public void actionPerformed(ActionEvent e){disposed = true; dispose();}
-		});
+        cancelButton.addActionListener(e -> {disposed = true; dispose();});
 
         // Hinzufügen der Buttons am unteren Rand des JFrame
         JPanel optionPanel = new JPanel(new GridLayout(1, 2));

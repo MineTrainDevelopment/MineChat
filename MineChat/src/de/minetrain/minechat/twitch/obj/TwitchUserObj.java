@@ -68,7 +68,20 @@ public class TwitchUserObj {
 	}
 	
 	public static enum TwitchApiCallType{
-		LOGIN, ID;
+		LOGIN("login"),
+		ID("id");
+
+		private String url;
+		public String getUrl(){
+			return "user_"+url;
+		}
+		public String getShortUrl(){
+			return url;
+		}
+		
+		private TwitchApiCallType(String url) {
+			this.url = url;
+		}
 	}
 
 	public String getUserId() {

@@ -17,7 +17,9 @@ import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
+import de.minetrain.minechat.gui.frames.LiveNotification;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
@@ -61,7 +63,6 @@ public class Main {
 		
 //		JPanel contentPanel = new JPanel();
 //        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-		
 		
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
@@ -183,15 +184,22 @@ public class Main {
         
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
 		MAIN_FRAME = new MainFrame();
+		
+		TwitchManager.getLiveStates().forEach(channelId -> {
+			ChannelTab channelTab = ChannelTab.getById(channelId);
+			if(channelTab != null){channelTab.setLiveState(true);}
+		});
+		
 		MAIN_FRAME.getTitleBar().reloadTabs();
         
+		//TODO make the owner channel as default.
 		if(!MAIN_FRAME.getTitleBar().getMainTab().isOccupied()){
 			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
-        
-        
+
+
         
 //		for (int i=0; i<10000; i++) {
 ////			try { Thread.sleep(500); } catch (InterruptedException e) { }

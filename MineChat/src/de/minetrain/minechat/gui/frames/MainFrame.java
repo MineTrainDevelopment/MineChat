@@ -14,6 +14,7 @@ import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
 import de.minetrain.minechat.gui.obj.buttons.MacroEmoteButton;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 
 public class MainFrame extends JFrame{
@@ -107,7 +108,8 @@ public class MainFrame extends JFrame{
 		setLayout(null);
 		setResizable(false);
 		setLocationRelativeTo(null);
-		getContentPane().setBackground(new Color(173, 96, 164));
+//		getContentPane().setBackground(new Color(173, 96, 164));
+		getContentPane().setBackground(ColorManager.GUI_BACKGROUND);
 		setShape(new RoundRectangle2D.Double(0, 0, 500, 700, 50, 50));
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
