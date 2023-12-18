@@ -4,12 +4,14 @@ import java.awt.Color;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
@@ -81,6 +83,12 @@ public record MessageComponentContent(
 	 * @return EmoteName, ImagePath
 	 */
 	public Map<String, String> getEmoteSet(){
+		if(EmoteManager.getChannelEmotes(getChannelId()).getAllEmotes() == null){
+			DatabaseManager.getEmote().getAllChannels();
+			EmoteManager.load();
+			return new HashMap<String, String>();
+		}
+		
 		Map<String, String> map = EmoteManager.getChannelEmotes(getChannelId())
 			.getAllEmotes()
 			.stream()
