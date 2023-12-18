@@ -50,7 +50,7 @@ public class TwitchManager {
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
 	public static String ownerChannelName = ">null<";
-	public static TwitchUserObj ownerTwitchUser = new TwitchUserObj(TwitchApiCallType.LOGIN, ownerChannelName, true);
+	public static TwitchUserObj ownerTwitchUser;
 	public static CredentialsManager credentials;
 	protected static TwitchAccesToken accesToken;
 	private static int reconnectCount = 0;
@@ -107,6 +107,7 @@ public class TwitchManager {
 				logger.error("Invalid twitch credentials!", ex);
 			}
 			
+			ownerTwitchUser = new TwitchUserObj(TwitchApiCallType.LOGIN, ownerChannelName, true);
 			return;
 		}
 		
@@ -377,12 +378,15 @@ public class TwitchManager {
 		
 		// If there are channels to retrieve via API call, retrieve the data
 		if (callMe.size() > 0) {
-			newApiCall(callType, callMe.toArray(new String[0])).getAsJsonArray("data").forEach(obj -> {
-				TwitchUserObj newTwitchUser = new TwitchUserObj(obj.getAsJsonObject());
-				twitchUsers.add(newTwitchUser);
-				users.add(newTwitchUser);
-				notCalledChannels.remove(newTwitchUser.getIdentifier(callType));
-			});
+			JsonObject apiCall = newApiCall(callType, callMe.toArray(new String[0]));
+			if(apiCall != null && apiCall.getAsJsonArray("data") != null){
+				apiCall.getAsJsonArray("data").forEach(obj -> {
+					TwitchUserObj newTwitchUser = new TwitchUserObj(obj.getAsJsonObject());
+					twitchUsers.add(newTwitchUser);
+					users.add(newTwitchUser);
+					notCalledChannels.remove(newTwitchUser.getIdentifier(callType));
+				});
+			}
 		}
 
 		// For each remaining channel that was not retrieved via API call, create a new "placeholder" TwitchUserObj

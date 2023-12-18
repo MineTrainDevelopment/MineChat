@@ -235,7 +235,7 @@ public class CreateWordHighlightFrame extends MineDialog {
 				word,
 				String.format("#%06x", wordColor.getRGB() & 0x00FFFFFF),
 				String.format("#%06x", borderColor.getRGB() & 0x00FFFFFF),
-				!audioPath.isDummy() ? audioPath.getPath().subpath(2, audioPath.getPath().getNameCount()).getParent().toString()+"\\"+audioPath.getPath().getFileName() : null,
+				!audioPath.isDummy() ? audioPath.getFilePathAsString() : null,
 				(AudioVolume) volumeSelector.getSelectedItem(),
 				true);
 		

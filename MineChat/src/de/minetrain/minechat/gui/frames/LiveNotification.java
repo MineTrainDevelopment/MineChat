@@ -3,10 +3,7 @@ package de.minetrain.minechat.gui.frames;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
 import java.awt.Taskbar;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -30,6 +27,7 @@ import javax.swing.Timer;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.emotes.RoundetImageIcon;
+import de.minetrain.minechat.gui.frames.parant.RoundedJPanel;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
@@ -48,17 +46,17 @@ public class LiveNotification extends JDialog {
 	public LiveNotification() {
 		super(Main.MAIN_FRAME, "<title>", false);
 
-		Color backgroundColor = Color.decode("#2e2e2e");
-		Color borderColor = Color.BLACK;
-		Color fontColor = Color.WHITE;
+		Color backgroundColor = ColorManager.GUI_BACKGROUND;
+		Color borderColor = ColorManager.GUI_BORDER;
+		Color fontColor = ColorManager.FONT;
 		
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBackground(borderColor);
         setUndecorated(true);
         setSize(510, 110);
         setShape(new RoundRectangle2D.Double(0, 0, 510, 110, 25, 25));
-		addMouseListener(MoiseListner());
-		addMouseMotionListener(mouseMotionListner());
+//		addMouseListener(MoiseListner()); Disable mouse movement listner.
+//		addMouseMotionListener(mouseMotionListner());
 		setAlwaysOnTop(true);
 		
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -75,7 +73,7 @@ public class LiveNotification extends JDialog {
         getContentPane().add(borderPanel);
         borderPanel.setLayout(null);
         
-		JPanel contentPanel = createRoundetJPanel(backgroundColor, borderColor, 500, 100);
+		JPanel contentPanel = new RoundedJPanel(backgroundColor, borderColor, 500, 100);
 		contentPanel.setBackground(backgroundColor);
 		contentPanel.setBounds(5, 5, 500, 100);
 		contentPanel.setLayout(null);
@@ -96,7 +94,7 @@ public class LiveNotification extends JDialog {
 		contentPanel.add(channelName);
 		
 		strut = new JPanel();
-		strut.setForeground(fontColor);
+		strut.setBackground(fontColor);
 		contentPanel.add(strut);
 		setName("<ChannelName>");
 		
@@ -146,6 +144,7 @@ public class LiveNotification extends JDialog {
 		contentPanel.add(button);
 		
 		timer = new Timer(15_000, e -> setVisible(false));
+		timer.setRepeats(false);
 		addMouseListener(new MouseAdapter() {
 		    public void mouseEntered(MouseEvent event) {timer.stop();}
 		    public void mouseExited(MouseEvent event) {timer.restart();}
@@ -223,27 +222,6 @@ public class LiveNotification extends JDialog {
 	@Override
 	public void setVisible(boolean b) {
 		super.setVisible(b == true ? true : update());
-	}
-
-	private JPanel createRoundetJPanel(Color backgroundColor, Color borderColor, int width, int height) {
-		return new JPanel() {
-			private static final long serialVersionUID = -5890628878821325626L;
-
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Dimension arcs = new Dimension(15, 15);
-				Graphics2D graphics = (Graphics2D) g;
-				graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-				// Draws the rounded opaque panel with borders.
-				graphics.setColor(backgroundColor);
-				graphics.fillRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);// paint background
-				graphics.setColor(borderColor);
-				graphics.drawRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);// paint border
-				this.setOpaque(false);
-			}
-		};
 	}
 
 	

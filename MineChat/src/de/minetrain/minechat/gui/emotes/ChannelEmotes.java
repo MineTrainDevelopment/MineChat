@@ -16,8 +16,8 @@ import de.minetrain.minechat.data.DatabaseManager;
 
 public class ChannelEmotes {
 	private static final Logger logger = LoggerFactory.getLogger(ChannelEmotes.class);
-	private String subLevel;
-	private final String channelId;
+	private String subLevel = "tier0";
+	private String channelId;
 	private final HashMap<String, String> nameToId = new HashMap<String, String>();
 	private final List<String> tier1;
 	private final List<String> tier2;
@@ -41,6 +41,11 @@ public class ChannelEmotes {
 			this.bttv = new ArrayList<String>();
 		}
 		
+		if(subLevel == null || channelId == null){
+			subLevel = "tier0";
+			channelId = "0";
+		}
+		
 //		nameToId.putAll(getAllEmotes().stream().collect(Collectors.toMap(Emote::getName, Emote::getEmoteId)));
 		
 		nameToId.putAll(getAllEmotes().stream().collect(Collectors.toMap(Emote::getName, Emote::getEmoteId,
@@ -54,16 +59,12 @@ public class ChannelEmotes {
 	}
 	
 	public boolean isSub(){
-		return !subLevel.isEmpty();
+		return subLevel != null ? !subLevel.isEmpty() : false;
 	}
 	
-	public void toggleSub(){
-		setSubState(!isSub());
-	}
-	
-	public void setSubState(boolean state){
-		subLevel = state ? "tier3" : "";
-		DatabaseManager.getEmote().updateSubscriptionState(channelId, state);
+	public void setSubTier(String tier){
+		DatabaseManager.getEmote().updateSubscriptionState(channelId, tier);
+		subLevel = tier;
 	}
 	
 //	public void setState(String state){

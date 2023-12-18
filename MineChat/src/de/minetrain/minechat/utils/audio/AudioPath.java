@@ -12,7 +12,12 @@ public class AudioPath {
 	private final Path path;
 
 	public AudioPath(String path) {
-		this.path = Path.of(path);
+		if(path == null){
+			this.path = null;
+			return;
+		}
+		
+		this.path = Path.of(path.startsWith("data\\sounds") ? path : "data\\sounds\\"+path);
 	}
 	
 	public AudioPath(Path path) {
@@ -42,9 +47,15 @@ public class AudioPath {
 		return path==null;
 	}
 	
+	public String getFilePathAsString(){
+		return getPath().subpath(2, getPath().getNameCount()).getParent().toString()+"\\"+getPath().getFileName();
+	}
+	
 	@Override
 	public String toString() {
-		return path != null ? path.getFileName() + " - ("+path.subpath(1, path.getNameCount()).getParent()+")" : "->> no sound <--";//.toString().replace("\\", "/")
+		String string = path != null ? path.getFileName() + " - ("+path.subpath(2, path.getNameCount()).getParent()+")" : "->> no sound <--";//.toString().replace("\\", "/")
+		string = string.substring(0, string.length() > 43 ? 43 : string.length());
+		return string;
 	}
 	
 }

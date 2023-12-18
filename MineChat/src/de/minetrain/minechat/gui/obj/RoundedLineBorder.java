@@ -16,7 +16,7 @@ public class RoundedLineBorder extends AbstractBorder {
 	int lineSize, cornerSize;
     Paint fill;
     Stroke stroke;
-    private Object aaHint;
+    private Object aaHint = RenderingHints.VALUE_ANTIALIAS_OFF;
 
     public RoundedLineBorder(Paint fill, int lineSize, int cornerSize) {
         this.fill = fill;
@@ -29,7 +29,10 @@ public class RoundedLineBorder extends AbstractBorder {
         this.lineSize = lineSize;
         this.cornerSize = cornerSize;
         stroke = new BasicStroke(lineSize);
-        aaHint = antiAlias? RenderingHints.VALUE_ANTIALIAS_ON: RenderingHints.VALUE_ANTIALIAS_OFF;
+        
+        if(antiAlias){
+        	aaHint = RenderingHints.VALUE_ANTIALIAS_ON;
+        }
     }
 
     @Override

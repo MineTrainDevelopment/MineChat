@@ -1,6 +1,8 @@
 package de.minetrain.minechat.utils.audio;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
 
@@ -38,33 +40,16 @@ public enum AudioVolume {
 		return "Volume: "+this.name().replace("VOLUME_", "")+"%";
 	}
 	
+	public int getIntValue(){
+		return Integer.valueOf(this.name().replace("VOLUME_", ""));
+	}
+	
 	public Double getValue(){
 		return volume;
 	}
 	
-	public static final ArrayList<AudioVolume> getAll(){
-		ArrayList<AudioVolume> list = new ArrayList<AudioVolume>();
-		list.add(VOLUME_100);
-		list.add(VOLUME_95);
-		list.add(VOLUME_90);
-		list.add(VOLUME_85);
-		list.add(VOLUME_80);
-		list.add(VOLUME_75);
-		list.add(VOLUME_70);
-		list.add(VOLUME_65);
-		list.add(VOLUME_60);
-		list.add(VOLUME_55);
-		list.add(VOLUME_50);
-		list.add(VOLUME_45);
-		list.add(VOLUME_40);
-		list.add(VOLUME_35);
-		list.add(VOLUME_30);
-		list.add(VOLUME_25);
-		list.add(VOLUME_20);
-		list.add(VOLUME_15);
-		list.add(VOLUME_10);
-		list.add(VOLUME_5);
-		return list;
+	public static final List<AudioVolume> getAll(){
+		return Arrays.asList(values());
 	}
 	
 	public static AudioVolume get(String name) {
@@ -80,6 +65,24 @@ public enum AudioVolume {
 		}
 	}
 	
+	public static AudioVolume get(int value) {
+		if(value > 100 || value <5){
+			return value > 100 ? VOLUME_100 : VOLUME_5;
+		}
+
+		try {
+			return get(getAll().stream()
+					.map(AudioVolume::name)
+					.filter(name -> name.contains(String.valueOf(((Math.round((value / 10.0) * 2) / 2.0) * 10.0)).replace(".0", "")))
+					.collect(Collectors.toList())
+					.get(0));
+			
+		} catch (IllegalArgumentException | IndexOutOfBoundsException ex) {
+			LoggerFactory.getLogger(AutoReplyState.class).warn("Invalid AudioVolume -> "+value);
+			return VOLUME_100;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return getText();

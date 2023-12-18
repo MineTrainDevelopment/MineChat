@@ -83,6 +83,7 @@ public class TextureManager {
 	private final ImageIcon liveIcon;
 	private final ImageIcon notificationButton;
 	private final ImageIcon notificationButtonHover;
+	private final ImageIcon profilePicLoading;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -122,6 +123,7 @@ public class TextureManager {
 		this.liveIcon = new ImageIcon(texturePath + "LiveIcon.png");
 		this.notificationButton = new ImageIcon(texturePath + "NotificationButton.png");
 		this.notificationButtonHover = new ImageIcon(texturePath + "NotificationButtonHover.png");
+		this.profilePicLoading = new ImageIcon(texturePath + "profilePicLoading.gif");
 		logger.debug("Loading textures done.");
 	}
 
@@ -270,6 +272,11 @@ public class TextureManager {
 
 	public ImageIcon getNotificationButtonHover() {
 		return notificationButtonHover;
+	}
+	
+
+	public ImageIcon getProfilePicLoading() {
+		return profilePicLoading;
 	}
 
 
@@ -486,164 +493,173 @@ public class TextureManager {
 	}
 	
 	public static void downloadChannelEmotes(String channelId) {
-		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+channelId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
-				.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
-				.header("Client-Id", TwitchManager.credentials.getClientID())
-				.asString()
-				.getBody(), JsonObject.class);
-		
-		JsonArray jsonArray = fromJson.getAsJsonArray("data");
-		String downloadURL = fromJson.get("template").getAsString();
-
-		ArrayList<String> tier1 = new ArrayList<String>();
-		ArrayList<String> tier2 = new ArrayList<String>();
-		ArrayList<String> tier3 = new ArrayList<String>();
-		ArrayList<String> follower = new ArrayList<String>();
-		ArrayList<String> bits = new ArrayList<String>();
-		
-		for (int i=0; i < jsonArray.size(); i++) {
-			JsonElement jsonElement = jsonArray.get(i);
-			JsonObject entry = jsonElement.getAsJsonObject();
+		new Thread(() -> {
+			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.twitch.tv/helix/chat/emotes?broadcaster_id="+channelId)// 'https://api.twitch.tv/helix/users?id=141981764&id=4845668'
+					.header("Authorization", "Bearer "+TwitchManager.getAccesToken())
+					.header("Client-Id", TwitchManager.credentials.getClientID())
+					.asString()
+					.getBody(), JsonObject.class);
 			
-			String emoteID = entry.get("id").getAsString();
-			String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
-			String fileFormat = ((format.length()>6) ? ".gif" : ".png");
-			String fileLocation = "Icons/"+channelId+"/"+emoteID+"/";
-			String name = entry.get("name").getAsString();
-			String tier = entry.get("tier").getAsString();
-			String emote_type = entry.get("emote_type").getAsString();
+			JsonArray jsonArray = fromJson.getAsJsonArray("data");
+			String downloadURL = fromJson.get("template").getAsString();
+	
+			ArrayList<String> tier1 = new ArrayList<String>();
+			ArrayList<String> tier2 = new ArrayList<String>();
+			ArrayList<String> tier3 = new ArrayList<String>();
+			ArrayList<String> follower = new ArrayList<String>();
+			ArrayList<String> bits = new ArrayList<String>();
 			
-		    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-	    	
-	    	switch (tier) {
-			case "1000": tier1.add(emoteID); break;
-			case "2000": tier2.add(emoteID); break;
-			case "3000": tier3.add(emoteID); break;
-
-			default:
-				if(emote_type.startsWith("bitstier")){
-					bits.add(emoteID);
+			for (int i=0; i < jsonArray.size(); i++) {
+				JsonElement jsonElement = jsonArray.get(i);
+				JsonObject entry = jsonElement.getAsJsonObject();
+				
+				String emoteID = entry.get("id").getAsString();
+				String format = (entry.get("format").toString().contains("animated") ? "animated" : "static");
+				String fileFormat = ((format.length()>6) ? ".gif" : ".png");
+				String fileLocation = "Icons/"+channelId+"/"+emoteID+"/";
+				String name = entry.get("name").getAsString();
+				String tier = entry.get("tier").getAsString();
+				String emote_type = entry.get("emote_type").getAsString();
+				
+			    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+		    	
+		    	switch (tier) {
+				case "1000": tier1.add(emoteID); break;
+				case "2000": tier2.add(emoteID); break;
+				case "3000": tier3.add(emoteID); break;
+	
+				default:
+					if(emote_type.startsWith("bitstier")){
+						bits.add(emoteID);
+					}
+					
+					if(emote_type.startsWith("follower")){
+						follower.add(emoteID);
+					}
+					break;
+				}
+		    	
+		    	boolean isFavorite = false;
+		    	Emote emoteByName = EmoteManager.getEmoteByName(name);
+		    	if(emoteByName != null){
+		    		isFavorite = emoteByName.isFavorite();
+		    	}
+				
+	//	    	DatabaseManager.getEmote().insert(channelId, emoteID, name, false, isFavorite, entry.get("emote_type").getAsString(), tier, format, !format.equals("static"), fileLocation);
+				DatabaseManager.getEmote().insert(
+		    			emoteID, 
+		    			name, 
+		    			false, 
+		    			isFavorite,
+		    			emote_type, 
+		    			tier, 
+		    			format.contains("animated") ? "gif" : "png", 
+		    			!format.equals("static"), 
+		    			texturePath+fileLocation+emoteID+"_1"+fileFormat);
+				
+				
+				try {
+	//				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
+	//				downloadURL = downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark");
+					System.out.println("Emote -> "+name+" --- "+downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark"));
+					for (int index = 1; index < 4; index++) {
+						TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, emoteID+"_"+index+fileFormat);
+					}
+					
+	//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1"+fileFormat, "emoteBorder"+borderImageTyp+".png", fileFormat);
+				} catch (IOException ex) {
+					logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
 				}
 				
-				if(emote_type.startsWith("follower")){
-					follower.add(emoteID);
-				}
-				break;
-			}
-	    	
-	    	boolean isFavorite = false;
-	    	Emote emoteByName = EmoteManager.getEmoteByName(name);
-	    	if(emoteByName != null){
-	    		isFavorite = emoteByName.isFavorite();
-	    	}
-			
-//	    	DatabaseManager.getEmote().insert(channelId, emoteID, name, false, isFavorite, entry.get("emote_type").getAsString(), tier, format, !format.equals("static"), fileLocation);
-			DatabaseManager.getEmote().insert(
-	    			emoteID, 
-	    			name, 
-	    			false, 
-	    			isFavorite,
-	    			emote_type, 
-	    			tier, 
-	    			format.contains("animated") ? "gif" : "png", 
-	    			!format.equals("static"), 
-	    			texturePath+fileLocation+emoteID+"_1"+fileFormat);
-			
-			
-			try {
-//				"https://static-cdn.jtvnw.net/emoticons/v2/{{id}}/{{format}}/{{theme_mode}}/{{scale}}"
-//				downloadURL = downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark");
-				System.out.println("Emote -> "+name+" --- "+downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark"));
-				for (int index = 1; index < 4; index++) {
-					TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteID).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, emoteID+"_"+index+fileFormat);
-				}
-				
-//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1"+fileFormat, "emoteBorder"+borderImageTyp+".png", fileFormat);
-			} catch (IOException ex) {
-				logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
 			}
 			
-		}
-		
-		DatabaseManager.getEmote().insertChannel(channelId, tier1, tier2, tier3, bits, follower);
-		DatabaseManager.commit();
-		DatabaseManager.getEmote().getAll();
-		DatabaseManager.getEmote().getAllChannels();
-		
-
-		Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
-    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
-    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
+			String tierlevel = EmoteManager.getChannelEmotes().containsKey(channelId) ? EmoteManager.getChannelEmotes(channelId).getSubLevel() : "tier0";
+			DatabaseManager.getEmote().insertChannel(channelId, tierlevel, tier1, tier2, tier3, bits, follower);
+			DatabaseManager.commit();
+			DatabaseManager.getEmote().getAll();
+			DatabaseManager.getEmote().getAllChannels();
+			
+	
+			Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
+	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
+	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
+		}).start();
 	}
 	
 	
 	public static void downloadBttvEmotes(String channelId){
-		JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.betterttv.net/3/cached/users/twitch/"+channelId)
-//				.header("Accept", "*/*")
-				.header("User-Agent", "MineChat Client")
-				.asString()
-				.getBody(), JsonObject.class);
-		
-		JsonArray channelArray = fromJson.getAsJsonArray("channelEmotes");
-		JsonArray sharedArray = fromJson.getAsJsonArray("sharedEmotes");
-		channelArray.addAll(sharedArray);
-		
-		ArrayList<String> emoteIDs = new ArrayList<String>();
-		
-		for (int i=0; i < channelArray.size(); i++) {
-			JsonObject entry = channelArray.get(i).getAsJsonObject();
-
-			String emoteID = entry.get("id").getAsString();
-			String name = entry.get("code").getAsString();
-			String imageType = entry.get("imageType").getAsString();
-			String fileLocation = "Icons/bttv/"+emoteID+"/";
+		new Thread(() -> {
+			JsonObject fromJson = new Gson().fromJson(Unirest.get("https://api.betterttv.net/3/cached/users/twitch/"+channelId)
+	//				.header("Accept", "*/*")
+					.header("User-Agent", "MineChat Client")
+					.asString()
+					.getBody(), JsonObject.class);
 			
-			Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-	    	
-			emoteIDs.add(emoteID);
-			
-			boolean isFavorite = false;
-	    	Emote emoteByName = EmoteManager.getEmoteByName(name);
-	    	if(emoteByName != null){
-	    		isFavorite = emoteByName.isFavorite();
-	    	}
-	    	
-	    	DatabaseManager.getEmote().insert(
-	    			emoteID, 
-	    			name, 
-	    			false, 
-	    			isFavorite,
-	    			"bttv", 
-	    			null, 
-	    			imageType, 
-	    			entry.get("animated").getAsBoolean(), 
-	    			texturePath+fileLocation+emoteID+"_1."+imageType);
-	    	
-			try {
-				String downloadURL = "https://cdn.betterttv.net/emote/{{id}}/{{scale}}";
-				for (int index = 1; index < 4; index++) {
-					TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteID).replace("{{scale}}", index+"x"), fileLocation, emoteID+"_"+index+"."+imageType);
-				}
-				
-//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1."+imageType, "emoteBorder.png", imageType);
-			} catch (IOException ex) {
-				logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
+			if(fromJson.toString().equals("{\"message\":\"user not found\"}")){
+				return;
 			}
 			
-			Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
-	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
-	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
-		}
-		
-
-		DatabaseManager.getEmote().insertChannelBttv(channelId, emoteIDs);
-		DatabaseManager.commit();
-		DatabaseManager.getEmote().getAll();
-		DatabaseManager.getEmote().getAllChannels();
+			JsonArray channelArray = fromJson.getAsJsonArray("channelEmotes");
+			JsonArray sharedArray = fromJson.getAsJsonArray("sharedEmotes");
+			channelArray.addAll(sharedArray);
+			
+			ArrayList<String> emoteIDs = new ArrayList<String>();
+			
+			for (int i=0; i < channelArray.size(); i++) {
+				JsonObject entry = channelArray.get(i).getAsJsonObject();
+	
+				String emoteID = entry.get("id").getAsString();
+				String name = entry.get("code").getAsString();
+				String imageType = entry.get("imageType").getAsString();
+				String fileLocation = "Icons/bttv/"+emoteID+"/";
+				
+				Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
+		    	
+				emoteIDs.add(emoteID);
+				
+				boolean isFavorite = false;
+		    	Emote emoteByName = EmoteManager.getEmoteByName(name);
+		    	if(emoteByName != null){
+		    		isFavorite = emoteByName.isFavorite();
+		    	}
+		    	
+		    	DatabaseManager.getEmote().insert(
+		    			emoteID, 
+		    			name, 
+		    			false, 
+		    			isFavorite,
+		    			"bttv", 
+		    			null, 
+		    			imageType, 
+		    			entry.get("animated").getAsBoolean(), 
+		    			texturePath+fileLocation+emoteID+"_1."+imageType);
+		    	
+				try {
+					String downloadURL = "https://cdn.betterttv.net/emote/{{id}}/{{scale}}";
+					for (int index = 1; index < 4; index++) {
+						TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteID).replace("{{scale}}", index+"x"), fileLocation, emoteID+"_"+index+"."+imageType);
+					}
+					
+	//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1."+imageType, "emoteBorder.png", imageType);
+				} catch (IOException ex) {
+					logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
+				}
+				
+				Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
+		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
+		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
+			}
+			
+	
+			DatabaseManager.getEmote().insertChannelBttv(channelId, emoteIDs);
+			DatabaseManager.commit();
+			DatabaseManager.getEmote().getAll();
+			DatabaseManager.getEmote().getAllChannels();
+		}).start();
 	}
 	
 	

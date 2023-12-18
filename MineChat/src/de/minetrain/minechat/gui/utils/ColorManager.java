@@ -21,7 +21,8 @@ public class ColorManager {
 	public static final Color GUI_BACKGROUND_DEFAULT = new Color(40, 40, 40);
 	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = new Color(80, 80, 80);
 	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = new Color(30, 30, 30);
-	
+	public static final Color GUI_ACCENT_DEFAULT = Color.GREEN;
+
 	public static final Color CHAT_UNIMPORTANT_DEFAULT = Color.GRAY;
     public static final Color CHAT_MODERATION_DEFAULT = Color.CYAN;
     public static final Color CHAT_SPENDING_SMALL_DEFAULT = new Color(180, 80, 0);

@@ -120,40 +120,8 @@ public class EmoteDatabase extends Database{
 		}
 	}
 	
-	public void insertNewChannel(String channel_id, boolean sub_state){
-		logger.info("Insert new database entry");
-
-		try{
-			Connection connection = DatabaseManager.connect();
-			connection.setAutoCommit(false);
-
-            //Write to the emote_channel table
-			PreparedStatement statement = connection.prepareStatement(check_channel_SQL);
-			statement.setString(1, channel_id);
-            ResultSet resultSet = statement.executeQuery();
-            statement = connection.prepareStatement(insert_channel_SQL);
-
-            if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
-                statement = connection.prepareStatement(update_channel_SQL);
-            	statement.setString(9, channel_id);
-            }
-            
-            statement.setString(1, channel_id);
-            statement.setString(2, sub_state ? "tier3" : "");
-            statement.setString(3, "");
-            statement.setString(4, "");
-            statement.setString(5, "");
-            statement.setString(6, "");
-            statement.setString(7, "");
-            statement.executeUpdate();
-
-//            connection.commit();
-		} catch (SQLException ex) {
-			logger.error(ex.getMessage(), ex);
-		}
-	}
 	
-	public void insertChannel(String channel_id, ArrayList<String> tier1, ArrayList<String> tier2, ArrayList<String> tier3, ArrayList<String> bits, ArrayList<String> follower){
+	public void insertChannel(String channel_id, String subTier, ArrayList<String> tier1, ArrayList<String> tier2, ArrayList<String> tier3, ArrayList<String> bits, ArrayList<String> follower){
 		logger.info("Insert new database entry");
 
 		try{
@@ -170,14 +138,14 @@ public class EmoteDatabase extends Database{
                 statement = connection.prepareStatement(update_channel_SQL);
             	statement.setString(9, channel_id);
             }
-            
+
             statement.setString(1, channel_id);
-            statement.setString(2, "");
+            statement.setString(2, subTier);
             statement.setString(3, String.join("\n", tier1));
             statement.setString(4, String.join("\n", tier2));
             statement.setString(5, String.join("\n", tier3));
-            statement.setString(6, String.join("\n", bits));
-            statement.setString(7, String.join("\n", follower));
+            statement.setString(6, String.join("\n", follower));
+            statement.setString(7, String.join("\n", bits));
             statement.executeUpdate();
 
 //            connection.commit();
@@ -240,7 +208,12 @@ public class EmoteDatabase extends Database{
 		}
 	}
 	
-	public void updateSubscriptionState(String chanelId, boolean state){
+	/**
+	 * Autocomit.
+	 * @param chanelId
+	 * @param tier
+	 */
+	public void updateSubscriptionState(String chanelId, String tier){
 		logger.info("Updating sub state state for -> "+chanelId);
 
 		try{
@@ -251,15 +224,16 @@ public class EmoteDatabase extends Database{
 			PreparedStatement statement = connection.prepareStatement(check_channel_SQL);
 			statement.setString(1, chanelId);
             ResultSet resultSet = statement.executeQuery();
+            
 
             if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
                 statement = connection.prepareStatement(update_subscription_state_SQL);
-            	statement.setString(1, state ? "tier3" : "");
+            	statement.setString(1, tier);
             	statement.setString(2, chanelId);
             	statement.executeUpdate();
             	connection.commit();
             }else{
-            	logger.warn("Can´t update favorite state for emote -> '"+chanelId+"'.");
+            	logger.warn("Can´t update sub tier for channel -> '"+chanelId+"'.");
             }
 
 //            connection.commit();

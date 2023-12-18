@@ -12,20 +12,21 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
+import de.minetrain.minechat.utils.audio.AudioVolume;
 
 
 //Table channels:
-// channel_id, login_name, display_name, chat_role, chatlog_level, greeting_text, goodby_text, return_text
+// channel_id, login_name, display_name, chat_role, chatlog_level, greeting_text, goodby_text, return_text, audio_path, audio_volume
 
 public class ChannelsDatabase extends Database{
 	private static final Logger logger = LoggerFactory.getLogger(ChannelsDatabase.class);
 	
 	private static final String tabelName = "channels";
-	private static final String insert_SQL = "INSERT INTO "+tabelName+"(channel_id,login_name,display_name,chat_role,chatlog_level,greeting_text,goodby_text,return_text) VALUES(?,?,?,?,?,?,?,?)";
-	private static final String update_SQL = "UPDATE "+tabelName+" SET channel_id = ? , login_name = ? , display_name = ? , chat_role = ? , chatlog_level = ? , greeting_text = ? , goodby_text = ?  , return_text = ? WHERE channel_id = ?";
+	private static final String insert_SQL = "INSERT INTO "+tabelName+"(channel_id,login_name,display_name,chat_role,chatlog_level,greeting_text,goodby_text,return_text,audio_path,audio_volume) VALUES(?,?,?,?,?,?,?,?,?,?)";
+	private static final String update_SQL = "UPDATE "+tabelName+" SET channel_id = ? , login_name = ? , display_name = ? , chat_role = ? , chatlog_level = ? , greeting_text = ? , goodby_text = ?  , return_text = ? , audio_path = ? , audio_volume = ?  WHERE channel_id = ?";
 	private static final String check_SQL = "SELECT channel_id FROM "+tabelName+" WHERE channel_id = ?";
-	private static final String select_sql = "SELECT channel_id, login_name, display_name, chat_role, chatlog_level, greeting_text, goodby_text, return_text FROM "+tabelName;
-	
+	private static final String select_sql = "SELECT channel_id, login_name, display_name, chat_role, chatlog_level, greeting_text, goodby_text, return_text, audio_path, audio_volume FROM "+tabelName;
+
 	private static final String update_login_name_SQL = "UPDATE "+tabelName+" SET login_name = ? WHERE channel_id = ?";
 	
 	public ChannelsDatabase() throws SQLException {
@@ -37,11 +38,13 @@ public class ChannelsDatabase extends Database{
                 + "	chatlog_level text,\n"
                 + "	greeting_text text NOT NULL,\n"
                 + "	goodby_text text NOT NULL,\n"
-                + "	return_text text NOT NULL\n"
+                + "	return_text text NOT NULL,\n"
+                + "	audio_path text NOT NULL,\n"
+                + "	audio_volume text NOT NULL\n"
                 + ");");
 	}
 	
-	public void insert(String channel_id, String login_name, String display_name, String chat_role, String chatlog_level, String greeting_text, String goodby_text, String return_text){
+	public void insert(String channel_id, String login_name, String display_name, String chat_role, String chatlog_level, String greeting_text, String goodby_text, String return_text, String audio_path, AudioVolume audio_volume){
 		logger.info("Insert new database entry");
 
 		try {
@@ -55,7 +58,7 @@ public class ChannelsDatabase extends Database{
 
             if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
                 statement = connection.prepareStatement(update_SQL);
-            	statement.setString(9, channel_id);
+            	statement.setString(11, channel_id);
             }
             
 			
@@ -69,6 +72,8 @@ public class ChannelsDatabase extends Database{
             statement.setString(6, greeting_text);
             statement.setString(7, goodby_text);
             statement.setString(8, return_text);
+            statement.setString(9, audio_path);
+            statement.setString(10, audio_volume.name());
             statement.executeUpdate();
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage(), ex);

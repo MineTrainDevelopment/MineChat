@@ -15,10 +15,10 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.LiveNotification;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettingsFrame;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
@@ -27,6 +27,8 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioManager;
 
 public class Main {
@@ -63,6 +65,8 @@ public class Main {
 		
 //		JPanel contentPanel = new JPanel();
 //        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+		
+//		new ChannelSettingsFrame().setVisible(true);
 		
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
@@ -115,7 +119,7 @@ public class Main {
 		try {
 			new TwitchManager(credentials);
 		} catch (Exception ex) {
-			logger.error("test", ex);
+			logger.error(ex.getMessage(), ex);
 		}
 		
 		new AutoReplyManager();
@@ -194,12 +198,12 @@ public class Main {
         
 		//TODO make the owner channel as default.
 		if(!MAIN_FRAME.getTitleBar().getMainTab().isOccupied()){
-			new EditChannelFrame(MAIN_FRAME, MAIN_FRAME.getTitleBar().getMainTab());
+			MAIN_FRAME.getTitleBar().getMainTab().openEditFrame().setData(TwitchManager.ownerTwitchUser).collectData();
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
 
-
+        
         
 //		for (int i=0; i<10000; i++) {
 ////			try { Thread.sleep(500); } catch (InterruptedException e) { }

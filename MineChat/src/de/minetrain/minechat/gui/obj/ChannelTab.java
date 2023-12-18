@@ -23,8 +23,8 @@ import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.frames.ChatWindow;
-import de.minetrain.minechat.gui.frames.EditChannelFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
+import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettingsFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -36,6 +36,7 @@ import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 public class ChannelTab {
 	public static final Map<String, String> channelDisplayNameList = new HashMap<String, String>();
 	private static final Map<String, ChannelTab> byId = new HashMap<String, ChannelTab>();//channelId -> channelTab
+	private static final ChannelSettingsFrame channelSettingsFrame = new ChannelSettingsFrame();
 	private TabButtonType tabType;
 	private String channelId;
 	private ImageIcon texture;
@@ -186,8 +187,8 @@ public class ChannelTab {
 		macros.reloadMacros(channelId);
 	}
 	
-	public void openEditFrame() {
-		new EditChannelFrame(Main.MAIN_FRAME, this);
+	public ChannelSettingsFrame openEditFrame() {
+		return channelSettingsFrame.setData(this);
 	}
 	
 	public ChannelTab offsetButton(TabButtonType offset){
@@ -258,6 +259,14 @@ public class ChannelTab {
 
 	public List<String> getGreetingTexts() {
 		return greetingTexts;
+	}
+
+	public List<String> getGoodbyTexts() {
+		return goodByTexts;
+	}
+
+	public List<String> getReturnTexts() {
+		return returnTexts;
 	}
 
 
