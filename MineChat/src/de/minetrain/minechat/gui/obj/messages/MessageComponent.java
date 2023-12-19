@@ -2,6 +2,7 @@ package de.minetrain.minechat.gui.obj.messages;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,8 +37,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +58,7 @@ import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 import de.minetrain.minechat.gui.obj.buttons.MineButton;
+import de.minetrain.minechat.gui.obj.messages.MessageHyperLinks.HyperLink;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -172,11 +178,36 @@ public class MessageComponent extends JPanel {
         
         if(documentCache.containsKey(documentCacheKey)){
         	messageLabel.setDocument(documentCache.get(documentCacheKey));
-//    		System.err.println("reuse - "+emoteReplacements.size());
         }else{
         	formatText(content.message(), messageLabel.getDocument(), ColorManager.FONT, content.getTimeStamp());
-//    		System.err.println("new content");
         }
+        
+//        String textWithLink = "Besuchen Sie meine Webseite: <a href=\"https://www.example.com\">www.example.com</a>";
+//        messageLabel.setContentType("text/html");
+//        messageLabel.setText(textWithLink);
+        
+        messageLabel.addMouseListener(new MouseAdapter() {
+
+        	@Override
+        	public void mouseClicked(MouseEvent event) {
+        	    if (event == null || event.isConsumed() || messageLabel == null ||
+        	        !SwingUtilities.isLeftMouseButton(event) || event.getClickCount() > 1 ||
+        	        !messageLabel.equals(event.getComponent())) {
+        	        return;
+        	    }
+        	    
+        	    int pos = messageLabel.viewToModel2D(event.getPoint());
+        	    Element elem = ((StyledDocument) messageLabel.getDocument()).getCharacterElement(pos);
+
+        	    try {
+        	    	String url = MessageHyperLinks.getHyperLink(messageLabel.getDocument(), elem.getStartOffset());
+        	        if(!url.isBlank()){
+        	        	Desktop.getDesktop().browse(new URI(url));
+        	        }
+        	    } catch (IOException | URISyntaxException ignored) { }
+        	}
+
+		});
 
 //        System.out.println(ClassLayout.parseInstance(documentCacheKey).toPrintable());
 //        System.out.println(ClassLayout.parseInstance(messageLabel.getDocument()).toPrintable());
@@ -281,7 +312,7 @@ public class MessageComponent extends JPanel {
     		input = "["+timeStamp.format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat, locale))+"] "+input;
     	}
     	
-        for(String string : splitString(input)){newInput += string.trim()+" \n ";}
+        for(String string : splitString(input, document)){newInput += string.trim()+" \n ";}
         input = (newInput.contains("\n") ? newInput.substring(0, newInput.lastIndexOf("\n")).trim() : newInput.trim());
         
         String previousWord = "";
@@ -321,30 +352,73 @@ public class MessageComponent extends JPanel {
 					logger.warn("Failed to load an emote!\nPath: "+emotePath, ex);
 				}
 			}
+			
+	    	try {
+	    		if(!previousWord.equals("h!") && !previousWord.equals("v!")){
+	    			
+	    			//Hyperlink
+	    			if (word.contains(".") && !word.endsWith(".")) {
+	    		        try {
+	    		            StyleConstants.setUnderline(attributeSet, true);
+	    		            StyleConstants.setForeground(attributeSet, ColorManager.FONT_HYPERTEXT);
 
-			try {
-				if(!previousWord.equals("h!") && !previousWord.equals("v!")){
-					document.insertString(document.getLength(), word + " ", attributeSet);
-				}
+	    					document.insertString(document.getLength(), Main.extractDomain(word), attributeSet);
+	    					document.insertString(document.getLength(), " ", null);
+	    		            
+	    		        } catch (BadLocationException ex) {
+	    		            logger.error("Can't modify styledDocument! ", ex);
+	    				}
+	    			}else{
+	    				//Normal word.
+	    				document.insertString(document.getLength(), word + " ", attributeSet);
+	    			}
+	    		}
+	    		
+	    		if (isEmote) {
+	    			document.insertString(document.getLength(), " ", null);
+	    		}
+	    	} catch (BadLocationException ex) {
+	    		logger.error("Can´t modify styledDocument! ", ex);
+	    	}
 
-				if (isEmote) {
-					document.insertString(document.getLength(), " ", null);
-				}
-			} catch (BadLocationException ex) {
-				logger.error("Can´t modify styledDocument! ", ex);
-			}
 		}
 		
+		
+		messageLabel.setToolTipText(MessageHyperLinks.getToolTipText(document));
 		documentCache.put(messageContent.getChannelId()+"%"+messageContent.message(), document);
     }
     
     
     //Replace emotes with 3 Chars for filtering.
-	private final List<String> splitString(String input) {
+	private final List<String> splitString(String input, Document document) {
     	input = input.replace("\\n", "�");
         List<String> chunks = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
-        input = (webEmotes == null) ? input : encryptEmotes(input);
+        
+        //Convert links to Hypertext.
+        List<HyperLink> hyperLinks = new ArrayList<HyperLink>();
+        if(input.contains(".")){
+        	ArrayList<String> words = new ArrayList<String>();
+        	int hyperTextOffset = 0;
+        	encryptEmotes(input); //This is necessary for hyperTextOffset.
+        	
+        	for(String word : input.split(" ")){
+        		if(emoteReplacements.containsKey(word)){
+        			hyperTextOffset++;
+        		}
+        		
+        		if(word.contains(".") && !word.endsWith(".")){
+        			hyperLinks.add(MessageHyperLinks.addHyperLink(document, String.join(" ", words).length()+1+hyperTextOffset, word));
+        			words.add(Main.extractDomain(word));
+        		}else{
+        			words.add(word);
+        		}
+        	}
+        	input = String.join(" ", words);
+        }
+        
+        input = encryptEmotes(input);
+        
 
         int wordBoundary = -1; // Index of the last space character within the chunk limit
         for (int i = 0; i < input.length(); i++) {
@@ -382,6 +456,17 @@ public class MessageComponent extends JPanel {
         for (int i=0; i<chunks.size(); i++) {
 			chunks.set(i, decryptEmotes(chunks.get(i)));
 		}
+        
+        
+        //Adjust text posionen vor Hyperlinks, this is necessary for line splits.
+        for(HyperLink link : hyperLinks){
+        	for (int i = 1; i < chunks.size(); i++) {
+				String chunk = chunks.get(i);
+				if(chunk.contains(link.domain())){
+        			MessageHyperLinks.increaseHyperLinkPoint(document, link, (i*2));
+				}
+			}
+        }
         
         return chunks;
     }
@@ -515,14 +600,12 @@ public class MessageComponent extends JPanel {
 	}
 	
 	public static void clearDocumentCache(){
-		System.err.println(documentCache);
 		documentCache.keySet().stream()
 				.map(key -> key = key.split("%")[0])
 				.map(ChannelTab::getById)
 				.filter(Objects::nonNull)
 				.map(ChannelTab::getStatistics)
 				.forEach(statistic -> {
-					System.err.println("Collect for channel -> "+statistic.getChannelId());
 					statistic.updateUniqueMessages(getDocumentCacheSize(statistic.getChannelId()));
 				});
 		

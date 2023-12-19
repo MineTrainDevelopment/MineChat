@@ -3,6 +3,8 @@ package de.minetrain.minechat.main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
+import java.net.URI;
+import java.util.Arrays;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.JFrame;
@@ -247,6 +249,25 @@ public class Main {
 	
 	public static AudioManager getAudioManager(){
 		return audioManager;
+	}
+	
+	/**
+	 * Extracts the domain from a given URL.
+	 *
+	 * @param input The input URL to extract the domain from.
+	 * @return The extracted domain or the original input if the domain can´t be extracted.
+	 */
+	public static String extractDomain(String input) {
+        try {
+        	String url = input.replace("https://", "");
+	        String host = url.substring(0, url.contains("/") ? url.indexOf("/") : url.length());
+	        String[] split = host.split("\\.");
+	        String domain = split[split.length - 2] + "." + split[split.length - 1];
+	        return domain;
+		} catch (Exception ex) {
+			logger.warn("Can´t extract the domain from -> "+input);
+			return input;
+		}
 	}
 	
 	

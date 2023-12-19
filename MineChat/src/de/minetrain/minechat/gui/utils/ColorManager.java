@@ -16,7 +16,9 @@ public class ColorManager {
 	public static final HashMap<String, String> adjustedHexcodes = new HashMap<String, String>();
 	
 	public static YamlManager settings;
+	private String TODO_Against_settings = "";
 	public static final Color FONT_DEFAULT = Color.WHITE;
+	public static final Color FONT_HYPERTEXT = decode("#1000FF");
 	public static final Color GUI_BORDER_DEFAULT = new Color(14, 14, 14);
 	public static final Color GUI_BACKGROUND_DEFAULT = new Color(40, 40, 40);
 	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = new Color(80, 80, 80);
