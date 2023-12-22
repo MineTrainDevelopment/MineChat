@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
+import de.minetrain.minechat.gui.emotes.RoundetImageIcon;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.settings.SettingsFrame;
 import de.minetrain.minechat.gui.obj.buttons.ButtonType;
@@ -193,7 +193,7 @@ public class TitleBar extends JPanel{
 	public void changeTab(ChannelTab tab) {
 		currentTab = tab;
 		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
-		mainFrame.profileButton.setIcon(new ImageIcon(tab.getProfileImagePath().toString()));
+		mainFrame.profileButton.setIcon(new RoundetImageIcon(tab.getProfileImagePath(), 20));
 		
 		tab.loadMacroRow(null);
 		
