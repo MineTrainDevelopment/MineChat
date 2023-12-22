@@ -38,7 +38,10 @@ public class EmoteManager {
 			System.err.println("Channel sub -> "+channel.getSubLevel());
 			channel.getAllEmotes().stream()
 				.filter(emote -> emote.isGlobal())
-				.forEach(emote -> MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote)));
+				.filter(emote -> emote.isSubOnly() ? channel.isSub() : false)
+				.forEach(emote -> {
+					MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote));
+				});
 			
 		});
 	}

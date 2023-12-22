@@ -59,7 +59,7 @@ public class ChannelEmotes {
 	}
 	
 	public boolean isSub(){
-		return subLevel != null ? !subLevel.isEmpty() : false;
+		return subLevel != null ? !(subLevel.isEmpty() || subLevel.equals("tier0")) : false;
 	}
 	
 	public void setSubTier(String tier){
