@@ -193,7 +193,7 @@ public class TitleBar extends JPanel{
 	public void changeTab(ChannelTab tab) {
 		currentTab = tab;
 		mainFrame.setTitle(tab.getDisplayName()+" -- MineChat "+Main.VERSION);
-		mainFrame.profileButton.setIcon(new RoundetImageIcon(tab.getProfileImagePath(), 20));
+		mainFrame.profileButton.setIcon(tab.isOccupied() ? new RoundetImageIcon(tab.getProfileImagePath(), 20) : null);
 		
 		tab.loadMacroRow(null);
 		

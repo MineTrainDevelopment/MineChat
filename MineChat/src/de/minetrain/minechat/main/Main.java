@@ -1,11 +1,8 @@
 package de.minetrain.minechat.main;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
-import java.net.URI;
-import java.util.Arrays;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.JFrame;
@@ -15,16 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.config.obj.ChannelMacros;
-import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
-import de.minetrain.minechat.gui.frames.LiveNotification;
-import de.minetrain.minechat.gui.frames.MacroEditFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
-import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettingsFrame;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.StatusBar;
 import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
@@ -33,8 +25,6 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioManager;
 
 public class Main {

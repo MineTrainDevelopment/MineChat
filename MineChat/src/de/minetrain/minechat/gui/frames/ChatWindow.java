@@ -50,11 +50,9 @@ public class ChatWindow extends JLabel {
     private JScrollPane scrollPane;
     public final ChannelTab parentTab;
     public ChatStatusPanel chatStatusPanel;
-    public final String channelId;
     
     public ChatWindow(ChannelTab parentTab) {
     	this.parentTab = parentTab;
-    	this.channelId = parentTab.getConfigID();
     	greetingsManager = new GreetingsManager(parentTab);
     	greetingsManager.setMentioned(TwitchManager.ownerChannelName);
 		
@@ -67,14 +65,6 @@ public class ChatWindow extends JLabel {
         chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
         scrollPane = new JScrollPane(chatPanel);
         add(scrollPane, BorderLayout.CENTER);
-
-        JPanel placeholder = new JPanel();
-		placeholder.setBackground(ColorManager.GUI_BACKGROUND);
-		placeholder.setBorder(BorderFactory.createEmptyBorder(205, 200, 205, 200));
-//		placeholder.setMinimumSize(new Dimension(480, 500));
-		chatPanel.add(placeholder);
-		chatPanel.revalidate();
-        chatPanel.repaint();
         
         chatStatusPanel = new ChatStatusPanel(this);
         add(chatStatusPanel, BorderLayout.SOUTH);
@@ -237,7 +227,24 @@ public class ChatWindow extends JLabel {
 	public JScrollPane getScrollPane() {
 		return scrollPane;
 	}
+
 	
+	public String getChannelId() {
+		return parentTab.getConfigID();
+	}
+	
+	public void clear() {
+		chatPanel.removeAll();
+		JPanel placeholder = new JPanel();
+		placeholder.setBackground(ColorManager.GUI_BACKGROUND);
+		placeholder.setBorder(BorderFactory.createEmptyBorder(205, 200, 205, 200));
+		chatPanel.add(placeholder);
+		chatPanel.add(placeholder);
+		chatPanel.add(placeholder);
+		chatPanel.revalidate();
+        chatPanel.repaint();
+	}
+
 	@Override
 	public void setVisible(boolean aFlag) {
 		super.setVisible(aFlag);

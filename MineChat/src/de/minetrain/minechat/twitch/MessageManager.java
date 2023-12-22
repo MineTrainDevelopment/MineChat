@@ -32,7 +32,7 @@ public class MessageManager {
 //	private static final String spamProtector = "᲼"; //The spam protector character.
 	private static final String spamProtector = "󠀀"; //The spam protector character.
 	private static String lastMessage = ">null<"; //The last message sent by this manager.
-    private static Instant lastSentTime; //The time when the last message was sent.
+    private static Instant lastSentTime = Instant.now(); //The time when the last message was sent.
     private static final int MAX_MESSAGE_LENGTH = 490; 
     
     public MessageManager() {

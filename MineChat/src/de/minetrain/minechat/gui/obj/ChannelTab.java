@@ -163,6 +163,7 @@ public class ChannelTab {
 				goodByTexts = Arrays.asList(channelById.getGoodbyText().split("\n"));
 				returnTexts = Arrays.asList(channelById.getReturnText().split("\n"));
 				chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
+				chatWindow.clear();
 				this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
 				TwitchManager.joinChannel(channelName);
 				

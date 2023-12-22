@@ -44,7 +44,7 @@ public record MessageComponentContent(
 	}
 	
 	public String getChannelId(){
-		return chatWindow.channelId;
+		return chatWindow.getChannelId();
 	}
 	
 	public String getUserName(){

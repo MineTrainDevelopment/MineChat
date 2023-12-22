@@ -115,7 +115,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	public ChatWindowMessageComponent(String topic, String message, Color borderColor, MineButton actionButton, ChatWindow chatWindow) {
 		super(new BorderLayout());
 //		this.webEmotes = emotes;
-		this.channelId = chatWindow.channelId;
+		this.channelId = chatWindow.getChannelId();
 		this.userName = topic;
 		this.highlighted = true;
 		JPanel messagePanel = this;
@@ -164,7 +164,7 @@ public class ChatWindowMessageComponent extends JPanel{
 	
 	public ChatWindowMessageComponent(String message, String userName, Color userColor, TwitchMessage twitchMessage, ChatWindow chatWindow, UserChatData ownerData) {
 		super(new BorderLayout());
-		this.channelId = chatWindow.channelId;
+		this.channelId = chatWindow.getChannelId();
 		this.epochTime = twitchMessage == null ? epochTime : twitchMessage.getEpochTime();
 		this.userName = userName;
 		JPanel messagePanel = this;
