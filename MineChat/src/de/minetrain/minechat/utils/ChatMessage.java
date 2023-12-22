@@ -33,9 +33,7 @@ public class ChatMessage {
 		this.senderNamem = senderNamem;
 		this.channelTab = tab;
 		this.messageRaw = message;
-		
 
-		message = ((replyMessage != null) ? "@" + replyMessage.getParentReplyUser() + " " : "")+ message;
 		
 //		https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 		if(message.contains("{")){

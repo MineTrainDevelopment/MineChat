@@ -182,7 +182,7 @@ public class TwitchManager {
 		chatWindow.displayMessage(new MessageComponentContent(
 				chatWindow,
 				ownerData,
-				message.getMessage(),
+				((replyMessage != null) ? "@" + replyMessage.getParentReplyUser() + " " : "")+ message.getMessage(),
 				null,
 				replyMessage));
 		
