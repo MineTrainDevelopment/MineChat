@@ -18,11 +18,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import de.minetrain.minechat.config.obj.MacroObject;
-import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.emotes.Emote;
-import de.minetrain.minechat.gui.frames.AskToAddEmoteFrame;
 import de.minetrain.minechat.gui.frames.EmoteSelector;
-import de.minetrain.minechat.gui.frames.InputFrame;
+import de.minetrain.minechat.gui.frames.MacroEditFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.main.Main;
@@ -44,6 +41,7 @@ public class MacroButton extends MineButton{
 	public JLabel textureLabel;
 	private record ToolTipCacheKey(String channelId, ButtonType type){};
 	private static final HashMap<ToolTipCacheKey, JToolTip> toolTipCache = new HashMap<ToolTipCacheKey, JToolTip>();
+	private final MacroEditFrame macroEditFrame;
 
 	/**
 	 * A button used for message macros. 
@@ -62,7 +60,7 @@ public class MacroButton extends MineButton{
 		setHolding(true);
         setToolTipText(type.name());
 		
-		
+        macroEditFrame = new MacroEditFrame(mainFrame, "Configure this emote macro.");
 		textureLabel = new JLabel();
 		mainFrame.add(textureLabel);
 		textureLabel.setLayout(new BorderLayout());
@@ -102,62 +100,7 @@ public class MacroButton extends MineButton{
 		        }
 		        
 		        if (SwingUtilities.isRightMouseButton(event)) {
-		            InputFrame inputFrame;
-					MacroObject macro = getMacroObject();
-					if(!macro.getTitle().equalsIgnoreCase("null")){
-			            inputFrame = new InputFrame(mainFrame, "Button text:", macro.getTitle(), "Macro output:", macro.getOutput());
-		            }else{
-		            	inputFrame = new InputFrame(mainFrame, "Button text:", "", "Macro output:", "");
-		            }
-					
-					new Thread(() -> {
-						while(!inputFrame.isDispose() && inputFrame.getOutputInput() == null){
-			            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
-	            		}
-	            		
-	            		if(inputFrame.getOutputInput() != null){
-	            			AskToAddEmoteFrame askToAddEmoteFrame = new AskToAddEmoteFrame(mainFrame);
-	            			while(!askToAddEmoteFrame.isDispose()){
-				            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
-		            		}
-	            			
-	            			String emoteId = null;
-	            			if(askToAddEmoteFrame.isAddEmote()){
-	            				EmoteSelector emoteSelector = new EmoteSelector(mainFrame, true);
-	            				Emote selectedEmote = emoteSelector.getSelectedEmote();
-	            				
-	    						while(!emoteSelector.isDisposed() && selectedEmote == null){
-	    			            	try{Thread.sleep(250);}catch(InterruptedException ex){ }
-	    			            }
-	    		            	
-	    		            	if(selectedEmote != null){
-	    		            		emoteId = selectedEmote.getEmoteId();
-	    		            	}
-	            			}
-
-	            			String input = (inputFrame.getNameInput().length()>0) ? inputFrame.getNameInput() : "Unknown";
-	            			String output = (inputFrame.getOutputInput().length()>0) ? inputFrame.getOutputInput() : "Unknown macro... - "+type.name();
-							
-	            			//Remove tooltip from cache.
-	            			toolTipCache.remove(new ToolTipCacheKey(TitleBar.currentTab.getConfigID(), type));
-	            			
-							DatabaseManager.getMacro().insert(
-									macro.getMacroId(),
-									TitleBar.currentTab.getConfigID(),
-									macro.getButtonType(),
-									type.name(),
-									TitleBar.currentTab.getMacros().getCurrentMacroRow().name(),
-									input,
-									emoteId,
-									output.strip().trim().split("\\r?\\n"));
-							
-							DatabaseManager.commit();							
-	            			TitleBar.currentTab.loadMacros(TitleBar.currentTab.getConfigID());
-	            			Main.MAIN_FRAME.getTitleBar().changeTab(TitleBar.currentTab);
-	            		}
-						
-						
-					}).start();
+		        	macroEditFrame.setData(getMacroObject(), false);
 		        }
 		    }
 

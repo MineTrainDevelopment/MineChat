@@ -165,7 +165,7 @@ public class MineDialog extends JDialog{
 				if(isCanselt){
 					dispose(); 
 					if(exitOnCancelButton){
-						System.exit(1);
+						System.exit(0);
 					}
 				}
 			}

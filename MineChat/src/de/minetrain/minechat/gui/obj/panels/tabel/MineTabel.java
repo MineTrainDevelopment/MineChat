@@ -20,6 +20,7 @@ public class MineTabel extends JPanel{
 	private static final long serialVersionUID = 38501554803967353L;
 	public long itemIndex = 0;
 	public JPanel contentPanel = new JPanel();
+	private JLabel titleText; //Title from colum header.
 	private JScrollPane scrollPane = new JScrollPane();
 	
 	public MineTabel() {
@@ -34,6 +35,7 @@ public class MineTabel extends JPanel{
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(10, 10));
         scrollPane.setColumnHeaderView(createColumnHeaderView());
         scrollPane.getVerticalScrollBar().setBorder(null);
+        scrollPane.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2, true));
 		add(scrollPane, BorderLayout.CENTER);
 		
 		contentPanel.setBackground(new Color(255, 0, 255));
@@ -69,6 +71,10 @@ public class MineTabel extends JPanel{
 		scrollPane.getVerticalScrollBar().setValue(value);
 	}
 	
+	public void setTitleText(String text){
+		titleText.setText(text);
+	}
+	
 	@Override
 	public Component add(Component comp) {
 		return contentPanel.add(comp);
@@ -94,7 +100,7 @@ public class MineTabel extends JPanel{
 		
 		
 		
-		JLabel titleText = new JLabel(" Values ");
+		titleText = new JLabel(" Values ");
 		titleText.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
 		titleText.setForeground(ColorManager.FONT);
 		titleText.setFont(new Font(null, Font.BOLD, 15));

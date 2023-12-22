@@ -54,6 +54,7 @@ public class MacroDatabase extends Database {
 	 * 
 	 * @param id
 	 * @param channel_id
+	 * @param button_type
 	 * @param button_id
 	 * @param button_row
 	 * @param title

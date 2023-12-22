@@ -23,11 +23,19 @@ public class RoundetImageIcon extends ImageIcon {
 	int cornerRadius = 0;
 
 	public RoundetImageIcon(Path path, int cornerRadius) {
-        super(makeRoundedCorner(createBufferedImage(path), cornerRadius));
+        super(makeRoundedCorner(createBufferedImage(path), cornerRadius, Color.WHITE));
     }
 
     public RoundetImageIcon(ImageIcon icon, int cornerRadius) {
-        super(makeRoundedCorner(convertImageToBufferedImage(icon), cornerRadius));
+        super(makeRoundedCorner(convertImageToBufferedImage(icon), cornerRadius, Color.WHITE));
+    }
+
+	public RoundetImageIcon(Path path, int cornerRadius, Color background) {
+        super(makeRoundedCorner(createBufferedImage(path), cornerRadius, background));
+    }
+
+    public RoundetImageIcon(ImageIcon icon, int cornerRadius, Color background) {
+        super(makeRoundedCorner(convertImageToBufferedImage(icon), cornerRadius, background));
     }
     
     private static BufferedImage createBufferedImage(Path path) {
@@ -38,6 +46,7 @@ public class RoundetImageIcon extends ImageIcon {
 			return new BufferedImage(1, 1, 1);
 		}
 	}
+    
     
     /**
      * Converts an Image object to a BufferedImage.
@@ -61,7 +70,7 @@ public class RoundetImageIcon extends ImageIcon {
         return bufferedImage;
     }
     
-    public static BufferedImage makeRoundedCorner(BufferedImage image, int cornerRadius) {
+    public static BufferedImage makeRoundedCorner(BufferedImage image, int cornerRadius, Color background) {
         int w = image.getWidth();
         int h = image.getHeight();
         BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -75,7 +84,7 @@ public class RoundetImageIcon extends ImageIcon {
         // in fully opaque white with antialiasing enabled...
         g2.setComposite(AlphaComposite.Src);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.WHITE);
+        g2.setColor(background);
         g2.fill(new RoundRectangle2D.Float(0, 0, w, h, cornerRadius, cornerRadius));
         
         // ... then compositing the image on top,

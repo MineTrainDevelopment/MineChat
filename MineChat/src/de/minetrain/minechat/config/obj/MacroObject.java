@@ -41,6 +41,9 @@ public class MacroObject {
 		return title;
 	}
 
+	/**
+	 * @return a random output from the {@link MacroObject#getOutputArray()}
+	 */
 	public String getOutput() {
 		int newRandom = 0;
 		while(this.output.length > 1 && (newRandom == previousRandom)){
@@ -56,7 +59,7 @@ public class MacroObject {
 	}
 
 	public String getRawOutput() {
-		return String.join(" \n ", output);
+		return String.join(" \n", output);
 	}
 
 	public String[] getOutputArray() {

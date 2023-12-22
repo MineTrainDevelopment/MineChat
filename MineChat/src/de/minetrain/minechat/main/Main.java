@@ -1,5 +1,6 @@
 package de.minetrain.minechat.main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.RoundRectangle2D;
@@ -14,11 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.obj.ChannelMacros;
+import de.minetrain.minechat.config.obj.ChannelMacros.MacroRow;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.LiveNotification;
+import de.minetrain.minechat.gui.frames.MacroEditFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
 import de.minetrain.minechat.gui.frames.settings.channel.ChannelSettingsFrame;
 import de.minetrain.minechat.gui.obj.ChannelTab;
@@ -57,6 +61,7 @@ public class Main {
 //		dialog.setVisible(true);
 
 //		new DatabaseManager();
+//		new EmoteManager();
 //		new Settings();
 //		Settings.reloadHighlights();
 		
@@ -68,7 +73,13 @@ public class Main {
 //		JPanel contentPanel = new JPanel();
 //        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 		
-//		new ChannelSettingsFrame().setVisible(true);
+		
+//		if(true){
+//			new MacroEditFrame(frame, "Macro 0")
+//				.setData(new ChannelMacros("177849882").getMacro_1(MacroRow.ROW_0));
+//			return;
+//		}
+		
 		
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);

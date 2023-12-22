@@ -16,12 +16,14 @@ public class Emote {
 	private static final ImageIcon borderFollow = new ImageIcon(TextureManager.texturePath+"emoteBorderFollow.png");
 	
 	private boolean favorite;
+	private boolean dummyData = false;
 	private final String name;
 //	private final String id;
 //	private final String tier;
 	private final String emoteId;
 	private final EmoteType emoteType;
 	private final String filePath;
+	private final String fileFormat;
 	
 	public Emote(ResultSet resultSet) throws SQLException {
 		this.name = resultSet.getString("name");
@@ -29,21 +31,32 @@ public class Emote {
 		this.favorite = resultSet.getBoolean("favorite");
 		this.emoteType = EmoteType.get(resultSet.getString("emote_type"), resultSet.getString("tier"));
 		this.filePath = resultSet.getString("file_location");
+		this.fileFormat = resultSet.getString("image_type");
 	}
 	
 	public Emote(boolean dummyData){
+		this.dummyData = true;
 		this.name = ">null<";
 		this.emoteId = ">null<";
 		this.favorite = false;
 		this.emoteType = EmoteType.DEFAULT;
 		this.filePath = ">null<";
+		this.fileFormat = "png";
+	}
+
+	
+	/**
+	 * @return {@link ImageIcon} on the {@link EmoteSize#SMALL} scale.
+	 */
+	public ImageIcon getImageIcon(){
+		return getImageIcon(EmoteSize.SMALL);
 	}
 	
-	public ImageIcon getImageIcon(){
+	public ImageIcon getImageIcon(EmoteSize size){
 		if(filePath.equalsIgnoreCase(">null<")){
 			return null;
 		}
-		return new ImageIcon(filePath);
+		return new ImageIcon(filePath.replace("1"+getFileFormat(), size.getFileEnding(this)));
 	}
 	
 	public void toggleFavorite() {
@@ -92,15 +105,18 @@ public class Emote {
 		return emoteId;
 	}
 
+	/**
+	 * Returns the file format with a leading dot.
+	 * <br> This is due to the previews implementation.
+	 */
 	public String getFileFormat() {
-		try {
-			return filePath.substring(filePath.lastIndexOf("."));
-		} catch (Exception e) {
-			return ".png";
-		}
+		return "."+fileFormat;
 	}
 	
-	
+	public boolean isDummyData() {
+		return dummyData;
+	}
+
 	public ImageIcon getBorderImage(){
 		switch (getEmoteType()) {
 			case SUB_2: return borderSub2;
@@ -143,6 +159,18 @@ public class Emote {
 			}
 		}
 	}
+	
+	public enum EmoteSize {
+		SMALL("1"), MEDIUM("2"), BIG("3");
+		
+		private String size;
+		public String getFileEnding(Emote emote){
+			return size + emote.getFileFormat();
+		}
+		private EmoteSize(String size) {
+			this.size = size;
+		}
+	};
 	
 	
 	@Override

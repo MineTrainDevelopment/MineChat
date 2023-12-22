@@ -19,6 +19,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -54,7 +55,7 @@ public class EmoteSelector extends JDialog{
     private boolean disposOnSelect;
     private JTextArea textFieldToEdit;
 
-	public EmoteSelector(MainFrame mainFrame, boolean disposOnSelect) {
+	public EmoteSelector(JFrame mainFrame, boolean disposOnSelect) {
 		super(mainFrame, "Emotes", true);
 		this.disposOnSelect = disposOnSelect;
 		
@@ -87,7 +88,7 @@ public class EmoteSelector extends JDialog{
         setVisible(true);
 	}
 	
-	private void createEmotePanel(MainFrame mainFrame) {
+	private void createEmotePanel(JFrame mainFrame) {
         emotePanel = new JPanel();
         emotePanel.setSize(new Dimension(400, 400));
         emotePanel.setLayout(new BoxLayout(emotePanel, BoxLayout.Y_AXIS)); 
