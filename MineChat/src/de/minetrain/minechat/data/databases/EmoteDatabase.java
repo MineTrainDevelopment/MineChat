@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class EmoteDatabase extends Database{
 	private static final String update_channel_bttv_SQL = "UPDATE "+tabelName_channel+" SET bttv = ? WHERE channel_id = ?";
 	private static final String update_favorite_state_SQL = "UPDATE "+tabelName+" SET favorite = ? WHERE emote_id = ?";
 	private static final String update_subscription_state_SQL = "UPDATE "+tabelName_channel+" SET user_sub = ? WHERE channel_id = ?";
+	
+	/**channel_id,   subLevel*/
+	private static final HashMap<String, String> subLevelCache = new HashMap<String, String>();
 	
 	//TEMP to say if the default emotes are instald.
 	private boolean publicEmotes = false;
@@ -210,12 +214,19 @@ public class EmoteDatabase extends Database{
 	
 	/**
 	 * Autocomit.
+	 * <br> NOTE: If the sub level is eual to the preview one, it simply cacnsels it.
 	 * @param chanelId
 	 * @param tier
 	 */
 	public void updateSubscriptionState(String chanelId, String tier){
 		logger.info("Updating sub state state for -> "+chanelId);
+		
+		if(subLevelCache.containsKey(chanelId) && subLevelCache.get(chanelId).equals(tier)){
+			return;
+		}
 
+		subLevelCache.put(chanelId, tier);
+		
 		try{
 			Connection connection = DatabaseManager.connect();
 			connection.setAutoCommit(false);
@@ -232,6 +243,7 @@ public class EmoteDatabase extends Database{
             	statement.setString(2, chanelId);
             	statement.executeUpdate();
             	connection.commit();
+            	EmoteManager.load();
             }else{
             	logger.warn("Can´t update sub tier for channel -> '"+chanelId+"'.");
             }
@@ -267,6 +279,7 @@ public class EmoteDatabase extends Database{
 		try(Connection connection = DatabaseManager.connect(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(select_channel_sql)){
 			while(resultSet.next()){
 				EmoteManager.addChannel(resultSet.getString("channel_id"), new ChannelEmotes(resultSet));
+				subLevelCache.put(resultSet.getString("channel_id"), resultSet.getString("user_sub"));
 //				logger.info(
 //						resultSet.getString("emote_id")+" - "+
 //						resultSet.getString("name")+" - "+

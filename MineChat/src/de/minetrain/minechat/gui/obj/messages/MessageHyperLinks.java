@@ -23,12 +23,10 @@ public class MessageHyperLinks{
 	public static HyperLink addHyperLink(Document document, int point, String url){
 		HyperLink hyperLink = new HyperLink(point, url);
 		hyperLinkCache.computeIfAbsent(document, key -> new ArrayList<HyperLink>()).add(hyperLink);
-		System.err.println(hyperLinkCache);
 		return hyperLink;
 	}
 	
 	public static String getHyperLink(Document document, int point){
-		System.err.println(hyperLinkCache);
 		Optional<String> url = hyperLinkCache.getOrDefault(document, Collections.emptyList()).stream()
 		        .filter(hyperLink -> hyperLink.point == point)
 		        .map(HyperLink::url)
@@ -38,10 +36,8 @@ public class MessageHyperLinks{
 	}
 	
 	public static void increaseHyperLinkPoint(Document document, HyperLink link, int amound){
-		System.err.println(hyperLinkCache);
 		hyperLinkCache.get(document).remove(link);
 		hyperLinkCache.get(document).add(new HyperLink(link.point+amound, link.url));
-		System.err.println(hyperLinkCache);
 	};
 	
 	public static String getToolTipText(Document document){

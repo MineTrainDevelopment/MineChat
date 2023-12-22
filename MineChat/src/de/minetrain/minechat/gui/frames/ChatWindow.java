@@ -66,6 +66,8 @@ public class ChatWindow extends JLabel {
         scrollPane = new JScrollPane(chatPanel);
         add(scrollPane, BorderLayout.CENTER);
         
+        clear();
+        
         chatStatusPanel = new ChatStatusPanel(this);
         add(chatStatusPanel, BorderLayout.SOUTH);
         

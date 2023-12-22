@@ -38,6 +38,8 @@ import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.gui.emotes.ChannelEmotes;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.LiveNotification;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
@@ -130,8 +132,6 @@ public class TwitchListner {
 			return;
 		}
 		
-		int tier = event.getSubscriptionTier();// TODO Use this to automaticly change the channel sub state.
-		
 		channelTab.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId());
 		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent(), event.getMessage());
 		
@@ -157,6 +157,11 @@ public class TwitchListner {
     		channelTab.getChatWindow().chatStatusPanel.getMessageHistory().addSendedMessages(event.getMessage());
     		MessageManager.setLastMessage(event.getMessage());
     		DatabaseManager.getOwnerCache().insert(twitchMessage);
+    		
+    		ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getChannel().getId());
+    		if(channelEmotes != null){
+    			channelEmotes.setSubTier("tier"+event.getSubscriptionTier());
+    		}
     		
 			String[] splitMessage = event.getMessage().split(" ");
 			List<String> words = Arrays.asList(splitMessage);

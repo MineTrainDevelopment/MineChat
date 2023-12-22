@@ -72,7 +72,6 @@ public class ChannelTab {
 		this.tabButton = button;
 		
 		if(tab.isFirstRow()){
-			System.err.println("Add mouseListner - " + tabButton);
 			tabButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -162,8 +161,8 @@ public class ChannelTab {
 				greetingTexts = Arrays.asList(channelById.getGreetingText().split("\n"));
 				goodByTexts = Arrays.asList(channelById.getGoodbyText().split("\n"));
 				returnTexts = Arrays.asList(channelById.getReturnText().split("\n"));
-				chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);
-				chatWindow.clear();
+				chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);// TODO Only if he is not alrady in there.
+//				chatWindow.clear();
 				this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
 				TwitchManager.joinChannel(channelName);
 				
