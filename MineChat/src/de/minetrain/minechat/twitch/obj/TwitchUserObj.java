@@ -1,6 +1,11 @@
 package de.minetrain.minechat.twitch.obj;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import com.google.gson.JsonObject;
+
+import de.minetrain.minechat.twitch.TwitchManager.LiveMetaData;
 
 public class TwitchUserObj {
 	private static final String placeHolder = ">null<";
@@ -14,6 +19,13 @@ public class TwitchUserObj {
 	private final String profileImageUrl;
 	private final String offlineImageUrl;
 	private final String userAge;
+
+	private String streamTitle = ">null<";
+	private String streamGame = ">null<";
+	private Instant streamStartTimeStamp = Instant.ofEpochSecond(0);
+	private int streamViewer = 0;
+	private String[] streamTags = new String[]{""};
+	
 	
 	public TwitchUserObj(JsonObject data) {
 		String offlineImageUrl = data.get("offline_image_url").getAsString().replace("\"", "");
@@ -132,6 +144,59 @@ public class TwitchUserObj {
 		return dummy;
 	}
 	
+	/**
+	 * @param streamTitle
+	 * @param streamGame
+	 * @param streamStartTimeStamp
+	 * @param streamViwer
+	 * @param streamTags
+	 * @return true
+	 */
+	public boolean setLiveData(LiveMetaData metaData){
+		this.streamTitle = metaData.title();
+		this.streamGame = metaData.game();
+		this.streamStartTimeStamp = metaData.startTime();
+		this.streamViewer = metaData.viewer();
+		this.streamTags = metaData.tags();
+		return true;
+	}
+	
+	
+	public String getStreamTitle() {
+		return streamTitle;
+	}
+
+	public String getStreamGame() {
+		return streamGame;
+	}
+
+	public Instant getStreamStartTimeStamp() {
+		return streamStartTimeStamp;
+	}
+
+	public String getStreamLiveSince() {
+		Duration duration = Duration.between(getStreamStartTimeStamp(), Instant.now());
+		
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
+        
+        if(days == 0){
+        	return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        }
+
+        return String.format("%d days and %02d:%02d:%02d", days, hours, minutes, seconds);
+	}
+
+	public int getStreamViewer() {
+		return streamViewer;
+	}
+
+	public String[] getStreamTags() {
+		return streamTags;
+	}
+
 	@Override
 	public String toString() {
 		return loginName;

@@ -170,23 +170,24 @@ public class Main {
 		LOADINGBAR.setProgress("Loading auto suggestion and emotes.", 60);
 		new EmoteManager();
 		
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{DAY}", null, "{DAY} ---> Monday"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{MYSELF}", null, "{MYSELF} ---> @"+TwitchManager.ownerChannelName));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{STREAMER}", null, "{STREAMER} ---> @STREAMER"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{VIEWER}", null, "{VIEWER} - NOT WORKING"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{UPTIME}", null, "{UPTIME} - NOT WORKING"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{GAME}", null, "{GAME} - NOT WORKING"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TITLE}", null, "{TITLE} - NOT WORKING"));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{MY_MESSAGES}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_MESSAGES}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_UNIQUE_MESSAGES}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_SUBS}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_RESUBS}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TIME}", null, "{TIME} ---> 14:03"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{DATE}", null, "{DATE} ---> 29.06.2023"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{DAY}", null, "{DAY} ---> Monday"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{MYSELF}", null, "{MYSELF} ---> @"+TwitchManager.ownerChannelName));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{STREAMER}", null, "{STREAMER} ---> @STREAMER"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{VIEWER}", null, "{VIEWER} - Amount of viewers"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{UPTIME}", null, "{UPTIME} - Time since stream start"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{GAME}", null, "{GAME} - Current game"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TITLE}", null, "{TITLE} - Current title"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TAGS}", null, "{TAGS} - Current Tags"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{MY_MESSAGES}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_MESSAGES}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_UNIQUE_MESSAGES}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_SUBS}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_RESUBS}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{CLIP_BOARD}", null, "{CLIP_BOARD} - WARNING!"));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{C_<NAME>}", null, "{C_<NAME>} - Replace <NAME>"));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{C_D_<NAME>}", null, "{C_D_<NAME>} - Replace <NAME>"));

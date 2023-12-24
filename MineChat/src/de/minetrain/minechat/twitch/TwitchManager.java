@@ -1,9 +1,19 @@
 package de.minetrain.minechat.twitch;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -48,6 +58,7 @@ import kong.unirest.Unirest;
 public class TwitchManager {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchManager.class);
 	public static TwitchClient twitch; //The static TwitchClient instance for managing Twitch interactions.
+	public record LiveMetaData(String title, String game, Instant startTime, int viewer, String[] tags){};
 	public static final List<TwitchUserObj> twitchUsers = new ArrayList<>();
 	public static String ownerChannelName = ">null<";
 	public static TwitchUserObj ownerTwitchUser;
@@ -271,23 +282,43 @@ public class TwitchManager {
 		return response.getBody();
 	}
 
+	/**
+	 * @return a list of channel IDs that are currently live.
+	 */
 	public static List<String> getLiveStates(){
-		return getLiveStates(TwitchApiCallType.ID, twitchUsers.stream()
+		return getLiveUseres(TwitchApiCallType.ID, twitchUsers.stream()
 				.filter(user -> !user.isDummy())
 				.map(TwitchUserObj::getUserId)
-				.collect(Collectors.toList()).toArray(String[]::new));
+				.collect(Collectors.toList()).toArray(String[]::new))
+				.stream().map(TwitchUserObj::getUserId).toList();
 	}
 	
-	public static List<String> getLiveStates(TwitchApiCallType callType, String... channels){
+	public static List<TwitchUserObj> getLiveUseres(TwitchApiCallType callType, String... channels){
 		if(channels == null || channels.length == 0){return List.of();}
 		List<String> idList = new ArrayList<String>();
 		
 		channels = Arrays.copyOfRange(channels, 0, Math.min(channels.length, 100));
 		String url = "https://api.twitch.tv/helix/streams?"+callType.getUrl()+"="+String.join("&"+callType.getUrl()+"=", channels)+"&type=live&first=100";
+		HashMap<String, LiveMetaData> liveDataCache = new HashMap<String, LiveMetaData>();//ChannelId, data
+		
 		newApiCall(url).getAsJsonArray("data").forEach(data -> {
-			idList.add(data.getAsJsonObject().get("user_id").getAsString().replace("\"", ""));
+			idList.add(data.getAsJsonObject().get("user_id").getAsString());
+			
+			liveDataCache.put(data.getAsJsonObject().get("user_id").getAsString(), new LiveMetaData(
+					data.getAsJsonObject().get("title").getAsString(),
+					data.getAsJsonObject().get("game_name").getAsString(),
+					
+					
+					Instant.parse(data.getAsJsonObject().get("started_at").getAsString()),
+					
+					
+					data.getAsJsonObject().get("viewer_count").getAsInt(),
+					data.getAsJsonObject().get("tags").getAsJsonArray().toString().replace("\"", "").split(",")));
 		});
-		return idList;
+		
+		System.err.println(liveDataCache);
+		return getTwitchUsers(TwitchApiCallType.ID, idList.toArray(String[]::new)).stream()
+				.filter(user -> !user.isDummy() && user.setLiveData(liveDataCache.get(user.getUserId()))).toList();
 	}
 	
 	/**

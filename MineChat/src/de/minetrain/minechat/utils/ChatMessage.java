@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +24,8 @@ import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class ChatMessage {
 	private static final Logger logger = LoggerFactory.getLogger(ChatMessage.class);
@@ -53,16 +56,33 @@ public class ChatMessage {
 				logger.info("Can´t readout the System ClipBoard. It may be empty.");
 			} 
 			
+			if(message.contains("{VIEWER}") || message.contains("{UPTIME}") || message.contains("{GAME}") || message.contains("{TITLE}") || message.contains("{TAGS}")){
+				String channelId = channelTab.getConfigID();
+				List<TwitchUserObj> liveUseres = TwitchManager.getLiveUseres(TwitchApiCallType.ID, channelId).stream()
+						.filter(user -> user.getUserId().equals(channelId)).toList();
+				
+				if(!liveUseres.isEmpty()){
+					TwitchUserObj channel = liveUseres.get(0);
+					message = message
+						.replace("{VIEWER}", String.valueOf(channel.getStreamViewer()))
+						.replace("{UPTIME}", channel.getStreamLiveSince())
+						.replace("{GAME}", channel.getStreamGame())
+						.replace("{TITLE}", channel.getStreamTitle())
+						.replace("{TAGS}", String.join(", ", channel.getStreamTags()));
+				}
+			}
+			
 			message = message
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
 					.replace("{DAY}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat, locale)))
 					.replace("{STREAMER}", "@"+channelTab.getChannelName())
 					.replace("{MYSELF}", "@"+TwitchManager.ownerChannelName)
-					.replace("{VIEWER}", "{TODO - VIEWER}")
-					.replace("{UPTIME}", "{TODO - UPTIME}")
-					.replace("{GAME}", "{TODO - GAME}")
-					.replace("{TITLE}", "{TODO - TITLE}")
+					.replace("{VIEWER}", "0")
+					.replace("{UPTIME}", "0")
+					.replace("{GAME}", "\"\"")
+					.replace("{TITLE}", "\"\"")
+					.replace("{TAGS}", "\"\"")
 					.replace("{MY_MESSAGES}", ""+statistics.getTotalSelfMessages())
 					.replace("{TOTAL_MESSAGES}", ""+statistics.getTotalMessages())
 					.replace("{TOTAL_UNIQUE_MESSAGES}", ""+statistics.getTotalUniqueMessages())
@@ -75,6 +95,7 @@ public class ChatMessage {
 					.replace("{CLIP_BOARD}", clipBoard)
 					.replace("{Clip}", clipBoard)
 					.replace("{CLIP}", clipBoard);
+			
 
 			//{C_TEST}
 			//{C_D_TEST}
