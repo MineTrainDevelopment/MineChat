@@ -7,12 +7,17 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.TitleBar;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -48,7 +53,7 @@ public class ChatMessage {
 				logger.info("Can´t readout the System ClipBoard. It may be empty.");
 			} 
 			
-			this.message = message
+			message = message
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
 					.replace("{DAY}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat, locale)))
@@ -70,6 +75,32 @@ public class ChatMessage {
 					.replace("{CLIP_BOARD}", clipBoard)
 					.replace("{Clip}", clipBoard)
 					.replace("{CLIP}", clipBoard);
+
+			//{C_TEST}
+			//{C_D_TEST}
+			//{C_123_TEST}
+			//{COUNT_TEST}
+			//{COUNT_DISPLAY_TEST}
+			//{COUNT_123_TEST}
+			//NOTE: 123 stands for any nummber to increase the value.
+			
+			if(message.contains("{C_") || message.contains("{COUNT_")){
+				Map<String, Long> counterVariables = Arrays.stream(message.split(" "))
+					.filter(word -> word.startsWith("{C_") || word.startsWith("{COUNT_"))
+					.collect(Collectors.toMap(var -> var, var -> {
+						return var.startsWith("{C_D_") || var.startsWith("{COUNT_DISPLAY_")
+								? DatabaseManager.getCountVariableDatabase().getValue(var)
+								: DatabaseManager.getCountVariableDatabase().increaseValue(var);
+						},(existingValue, newValue) -> newValue
+					));
+				
+				
+				for(Entry<String, Long> entry : counterVariables.entrySet()){
+					message = message.replace(entry.getKey(), String.valueOf(entry.getValue()));
+				}
+			}
+			
+			this.message = message;
 		}else{
 			this.message = message;
 		}

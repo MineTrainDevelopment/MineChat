@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -96,6 +97,14 @@ public class TabelObj extends JPanel{
 	public TabelObj overrideOptionPanel(Component component) {
 		buttonPanal.removeAll();
 		buttonPanal.add(component);
+		contentPanel.revalidate();
+		contentPanel.repaint();
+		return this;
+	}
+	
+	public TabelObj overrideEditButton(ImageIcon icon, String toolTip) {
+		editButton.setIcon(icon);
+		editButton.setToolTipText(toolTip);
 		contentPanel.revalidate();
 		contentPanel.repaint();
 		return this;

@@ -77,7 +77,7 @@ public class SettingsTab_Highlights extends SettingsTab{
 		
 		JLabel titleLabel = new JLabel("  "+highlightString.getWord());
 		titleLabel.setFont(Settings.MESSAGE_FONT);
-		titleLabel.setForeground(Color.decode(highlightString.getWordColorCode()));
+		titleLabel.setForeground(ColorManager.decode(highlightString.getWordColorCode()));
 		contentPanel.add(titleLabel, BorderLayout.CENTER);
 		
 		JCheckBox checkBox = new JCheckBox();

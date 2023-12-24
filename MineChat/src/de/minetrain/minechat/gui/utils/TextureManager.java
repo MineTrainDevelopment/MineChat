@@ -84,6 +84,7 @@ public class TextureManager {
 	private final ImageIcon notificationButton;
 	private final ImageIcon notificationButtonHover;
 	private final ImageIcon profilePicLoading;
+	private final ImageIcon copyButton;
 	
 	public TextureManager() {
 		logger.debug("Loading textures...");
@@ -124,6 +125,7 @@ public class TextureManager {
 		this.notificationButton = new ImageIcon(texturePath + "NotificationButton.png");
 		this.notificationButtonHover = new ImageIcon(texturePath + "NotificationButtonHover.png");
 		this.profilePicLoading = new ImageIcon(texturePath + "profilePicLoading.gif");
+		this.copyButton = new ImageIcon(texturePath + "copyButton.png");
 		logger.debug("Loading textures done.");
 	}
 
@@ -277,6 +279,10 @@ public class TextureManager {
 
 	public ImageIcon getProfilePicLoading() {
 		return profilePicLoading;
+	}
+
+	public ImageIcon getCopyButton() {
+		return copyButton;
 	}
 
 

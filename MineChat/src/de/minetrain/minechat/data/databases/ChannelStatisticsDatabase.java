@@ -219,6 +219,9 @@ public class ChannelStatisticsDatabase extends Database {
 	}
 	
 
+	/**
+	 * Also saves all data drom {@link CountVariableDatabase}.
+	 */
 	public void saveAllChannelStatistics() {
 		MessageComponent.clearDocumentCache();
 		Main.MAIN_FRAME.getTitleBar().getMainTab().getStatistics().save(false);
@@ -229,6 +232,7 @@ public class ChannelStatisticsDatabase extends Database {
 		Main.MAIN_FRAME.getTitleBar().getSecondTab().getStatistics().save(false);
 		Main.MAIN_FRAME.getTitleBar().getThirdTab().getStatistics().save(false);
 		TitleBar.toggleTitleRowIndex();
+		DatabaseManager.getCountVariableDatabase().saveAll();
 		DatabaseManager.commit();
 	}
 	

@@ -187,7 +187,9 @@ public class Main {
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));// TODO
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));// TODO
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));// TODO
-        MineTextArea.addToStaticDictionary(new SuggestionObj("{CLIP_BOARD}", null, "{CLIP_BOARD} - WARNING!"));// TODO
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{CLIP_BOARD}", null, "{CLIP_BOARD} - WARNING!"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{C_<NAME>}", null, "{C_<NAME>} - Replace <NAME>"));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{C_D_<NAME>}", null, "{C_D_<NAME>} - Replace <NAME>"));
         
 		LOADINGBAR.setProgress("Launching MainFrame", 70);
 		MAIN_FRAME = new MainFrame();
