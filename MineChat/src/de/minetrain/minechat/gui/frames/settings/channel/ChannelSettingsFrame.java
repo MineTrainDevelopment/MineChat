@@ -21,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -469,7 +468,10 @@ public class ChannelSettingsFrame extends JFrame{
 		resetSubscriptionTier();
 
 		if(!tab.isOccupied()){
+			System.err.println("??????");
+			this.channelId = "0";
 			subscriptionTier0.setBackground(acentColor);
+			try{channelSelector.setSelectedItem("");}catch(Exception e){ }
 			settingsTabGeneral.setData(new ChannelSettingsGeneralData(
 					"Hello {USER} HeyGuys\nWelcome {USER} HeyGuys",
 					"By {USER}!\nHave a good one! {USER} <3",

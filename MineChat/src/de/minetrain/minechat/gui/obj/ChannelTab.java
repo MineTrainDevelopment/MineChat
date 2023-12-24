@@ -148,6 +148,11 @@ public class ChannelTab {
 			moderator = false;
 			greetingTexts = null;
 			
+			if(channelName != null){
+				TwitchManager.leaveChannel(channelName);
+				channelName = "";
+			}
+			
 			ActionListener actionListener = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
 			editWindowActions.add(actionListener);
 			this.tabButton.addActionListener(actionListener);

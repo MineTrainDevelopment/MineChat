@@ -1,19 +1,11 @@
 package de.minetrain.minechat.twitch;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -307,16 +299,11 @@ public class TwitchManager {
 			liveDataCache.put(data.getAsJsonObject().get("user_id").getAsString(), new LiveMetaData(
 					data.getAsJsonObject().get("title").getAsString(),
 					data.getAsJsonObject().get("game_name").getAsString(),
-					
-					
 					Instant.parse(data.getAsJsonObject().get("started_at").getAsString()),
-					
-					
 					data.getAsJsonObject().get("viewer_count").getAsInt(),
 					data.getAsJsonObject().get("tags").getAsJsonArray().toString().replace("\"", "").split(",")));
 		});
 		
-		System.err.println(liveDataCache);
 		return getTwitchUsers(TwitchApiCallType.ID, idList.toArray(String[]::new)).stream()
 				.filter(user -> !user.isDummy() && user.setLiveData(liveDataCache.get(user.getUserId()))).toList();
 	}
