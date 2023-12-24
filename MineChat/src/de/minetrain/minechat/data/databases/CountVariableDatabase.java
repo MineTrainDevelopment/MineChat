@@ -27,6 +27,7 @@ public class CountVariableDatabase extends Database {
 	private static final String update_SQL = "UPDATE "+tabelName+" SET name = ? , value = ? WHERE name = ?";
 	private static final String check_SQL = "SELECT name FROM "+tabelName+" WHERE name = ?";
 	private static final String select_sql = "SELECT name, value FROM "+tabelName;
+	private static final String delete_sql = "DELETE FROM "+tabelName+" WHERE name = ?";
 	
 	public CountVariableDatabase() throws SQLException {
 		super("CREATE TABLE IF NOT EXISTS "+tabelName+" (\n"
@@ -76,6 +77,25 @@ public class CountVariableDatabase extends Database {
 		
 		return 0l;
 	}
+
+	/**
+	 * NOTE: Auto commit.
+	 * @param variableName
+	 */
+	private static void deleteEntry(String variableName){
+		logger.info("Insert new database entry");
+		
+		try{
+			Connection connection = DatabaseManager.connect();
+			PreparedStatement statement = connection.prepareStatement(delete_sql);
+			statement.setString(1, variableName);
+			statement.executeUpdate();
+            DatabaseManager.commit();
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage(), ex);
+		}
+		
+	}
 	
 	public void saveAll(){
 		cache.entrySet().forEach(entry -> insert(entry.getKey(), entry.getValue()));
@@ -94,6 +114,14 @@ public class CountVariableDatabase extends Database {
 			logger.error(ex.getMessage(), ex);
 		}
 		
+	}
+	
+	/**
+	 * Delete a specific variable.
+	 */
+	public void delete(String name) {
+		cache.remove(name);
+		deleteEntry(name);
 	}
 	
 	/**

@@ -66,7 +66,12 @@ public class SettingsTab_CountVariables extends SettingsTab{
 		tabelObj.setDeleteButtonAction(true, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DatabaseManager.getCountVariableDatabase().clearValue(name);
+				if(DatabaseManager.getCountVariableDatabase().getValue(name) == 0){
+					DatabaseManager.getCountVariableDatabase().delete(name);
+				}else{
+					DatabaseManager.getCountVariableDatabase().clearValue(name);
+				}
+				
 				loadMessageHighlights(mineTabel);
 			}
 		});
