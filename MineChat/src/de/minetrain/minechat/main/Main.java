@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
-import de.minetrain.minechat.features.events.EventManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -27,6 +26,7 @@ import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.utils.audio.AudioManager;
+import de.minetrain.minechat.utils.events.EventManager;
 
 public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -208,7 +208,7 @@ public class Main {
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
         
-//        eventManager.addListener(new EventTest(), MineChatEventType.getAllEvents());
+//        eventManager.addListener(new EventTest());
 
         
         

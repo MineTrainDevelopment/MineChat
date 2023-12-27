@@ -1,4 +1,4 @@
-package de.minetrain.minechat.features.events;
+package de.minetrain.minechat.utils.events;
 
 import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;

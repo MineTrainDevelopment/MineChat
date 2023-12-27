@@ -1,4 +1,4 @@
-package de.minetrain.minechat.features.events;
+package de.minetrain.minechat.utils.events;
 
 import org.slf4j.LoggerFactory;
 

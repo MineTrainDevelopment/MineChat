@@ -1,11 +1,11 @@
-package de.minetrain.minechat.features.events;
+package de.minetrain.minechat.utils.events;
 
 import de.minetrain.minechat.config.obj.MacroObject;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.ChatMessage;
 
-abstract class EventListner implements MineChatEvents{
+abstract class EventListener implements MineChatEvents{
 
 	@Override
 	public void onIncomingMessageEvent(TwitchMessage message){}

@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
-import de.minetrain.minechat.features.events.MineChatEventType;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -35,6 +34,7 @@ import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.CallCounter;
+import de.minetrain.minechat.utils.events.MineChatEventType;
 
 public class ChatWindow extends JLabel {
 	private static final long serialVersionUID = -8392586696866883591L;

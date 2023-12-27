@@ -24,7 +24,6 @@ import com.google.gson.JsonSyntaxException;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
-import de.minetrain.minechat.features.events.MineChatEventType;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
@@ -36,6 +35,7 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.HTMLColors;
+import de.minetrain.minechat.utils.events.MineChatEventType;
 import io.github.bucket4j.Bandwidth;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;

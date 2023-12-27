@@ -38,7 +38,6 @@ import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
-import de.minetrain.minechat.features.events.MineChatEventType;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.LiveNotification;
@@ -53,6 +52,7 @@ import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
+import de.minetrain.minechat.utils.events.MineChatEventType;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
