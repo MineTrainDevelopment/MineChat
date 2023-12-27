@@ -159,7 +159,7 @@ public class ChannelSettingsChannel extends RoundedJPanel{
 		volumeContainer.setLayout(null);
 		add(volumeContainer);
 		
-		JLabel volumeIconPanel = new JLabel(new ImageIcon(TextureManager.texturePath + "volume.png"));
+		JLabel volumeIconPanel = new JLabel(new ImageIcon(TextureManager.texturePath + "settingsMenu/volume.png"));
 		volumeIconPanel.setBounds(4, 1, 30, 30);
 		volumeIconPanel.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e){playTestSound();}
@@ -222,7 +222,7 @@ public class ChannelSettingsChannel extends RoundedJPanel{
 	            arrowButton.setOpaque(false);
 	            arrowButton.setContentAreaFilled(false);
 	            arrowButton.setBorderPainted(false);
-	            arrowButton.setIcon(new ImageIcon(Path.of(TextureManager.texturePath+"/dropdownButton.png").toString()));
+	            arrowButton.setIcon(new ImageIcon(Path.of(TextureManager.texturePath+"/settingsMenu/dropdownButton.png").toString()));
 	        }
 		});
 		

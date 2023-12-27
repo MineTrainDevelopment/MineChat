@@ -9,11 +9,11 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 
 public class Emote {
-	private static final ImageIcon defaultBorderImage = new ImageIcon(TextureManager.texturePath+"emoteBorder.png");
-	private static final ImageIcon borderSub2 = new ImageIcon(TextureManager.texturePath+"emoteBorder2.png");
-	private static final ImageIcon borderSub3 = new ImageIcon(TextureManager.texturePath+"emoteBorder3.png");
-	private static final ImageIcon borderBits = new ImageIcon(TextureManager.texturePath+"emoteBorderBits.png");
-	private static final ImageIcon borderFollow = new ImageIcon(TextureManager.texturePath+"emoteBorderFollow.png");
+	private static final ImageIcon defaultBorderImage = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorder.png");
+	private static final ImageIcon borderSub2 = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorder2.png");
+	private static final ImageIcon borderSub3 = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorder3.png");
+	private static final ImageIcon borderBits = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorderBits.png");
+	private static final ImageIcon borderFollow = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorderFollow.png");
 	
 	private boolean favorite;
 	private boolean dummyData = false;
