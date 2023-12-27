@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.features.events.EventManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.frames.MainFrame;
@@ -36,6 +37,7 @@ public class Main {
 	public static JFrame onboardingFrame;
 	public static Settings rftnfijdg;
 	public static AudioManager audioManager = new AudioManager();;
+	public static EventManager eventManager = new EventManager();
 	
 	public static void main(String[] args) throws Exception {
 //		JFrame frame = new JFrame();
@@ -65,11 +67,8 @@ public class Main {
 		
 		
 //		if(true){
-//			new MacroEditFrame(frame, "Macro 0")
-//				.setData(new ChannelMacros("177849882").getMacro_1(MacroRow.ROW_0));
 //			return;
 //		}
-		
 		
 		LOADINGBAR.setSize(400, 50);
 		LOADINGBAR.setLocation(50, 600);
@@ -208,6 +207,8 @@ public class Main {
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
+        
+//        eventManager.addListener(new EventTest(), MineChatEventType.getAllEvents());
 
         
         
@@ -250,9 +251,13 @@ public class Main {
 //		}
 	}
 	
-	
+
 	public static AudioManager getAudioManager(){
 		return audioManager;
+	}
+	
+	public static EventManager getEventManager(){
+		return eventManager;
 	}
 	
 	/**

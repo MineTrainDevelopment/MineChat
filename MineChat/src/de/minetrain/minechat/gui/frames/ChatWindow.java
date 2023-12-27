@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.ReplyType;
+import de.minetrain.minechat.features.events.MineChatEventType;
 import de.minetrain.minechat.gui.obj.ChannelTab;
 import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.obj.ChatWindowMessageComponent;
@@ -28,6 +29,7 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
@@ -121,6 +123,8 @@ public class ChatWindow extends JLabel {
         chatPanel.add(messagePanel);
         if(messagePanel.getHighlightString() != null){
         	messagePanel.getHighlightString().playSound();
+        	
+        	Main.getEventManager().fireEvent(MineChatEventType.MESSAGE_HIGHLITE, content);
         }
 //		list.add(messagePanel);
 		

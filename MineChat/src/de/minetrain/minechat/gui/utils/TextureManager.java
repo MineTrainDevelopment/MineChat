@@ -92,7 +92,7 @@ public class TextureManager {
 		this.mainFrame_TAB_2 =new ImageIcon(texturePath + "program/MineChatTextur2.png");
 		this.mainFrame_TAB_3 = new ImageIcon(texturePath + "program/MineChatTextur3.png");
 		this.mainFrame_Blank = new ImageIcon(texturePath + "program/MineChatTextur_Blank.png");
-		this.onboarding = new ImageIcon(texturePath + "MineChatTexturOnboarding.png");
+		this.onboarding = new ImageIcon(texturePath + "program/MineChatTexturOnboarding.png");
 		this.emoteBorder = new ImageIcon(texturePath + "emoteBorder/emoteBorder.png");
 		this.programIcon = new ImageIcon(texturePath + "program/programIcon.png");
 		this.replyButton = new ImageIcon(texturePath + "chatInput/replyButton.png");

@@ -24,6 +24,7 @@ import com.google.gson.JsonSyntaxException;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
+import de.minetrain.minechat.features.events.MineChatEventType;
 import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
@@ -197,12 +198,15 @@ public class TwitchManager {
 			}
 		});
 		
+		
 		if(replyMessage != null){
 			replyMessage(message);
-			return;
+		}else{
+			sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
 		}
 		
-		sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
+		//Fire the MineChatEvent.
+		Main.eventManager.fireEvent(MineChatEventType.SENT_MESSAGE, message);
 	}
 	
 	

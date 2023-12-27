@@ -38,6 +38,7 @@ import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.features.events.MineChatEventType;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.LiveNotification;
@@ -134,6 +135,7 @@ public class TwitchListner {
 		
 		channelTab.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId());
 		TwitchMessage twitchMessage = new TwitchMessage(channelTab, event.getMessageEvent(), event.getMessage());
+		Main.eventManager.fireEvent(MineChatEventType.INCOMING_MESSAGE, twitchMessage);
 		
 //		Main.dataModel.addItem(new MessageRendererContent(
 //				TitleBar.currentTab.getChatWindow(),
