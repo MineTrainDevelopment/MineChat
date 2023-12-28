@@ -128,6 +128,7 @@ public class TwitchManager {
 	
 	
 	public static void joinChannel(String... names){
+		if(names == null || names.length == 0 || String.join("", names).isBlank()){return;}
 		for(String name : names) {
 			if(!twitch.getChat().getChannels().contains(name)){
 				logger.info("Joining channel: "+name);
@@ -151,6 +152,7 @@ public class TwitchManager {
 	
 	
 	public static void leaveChannel(String... names){
+		if(names == null || names.length == 0 || String.join("", names).isBlank()){return;}
 		for(String name : names) {
 			logger.info("Leaving channel: "+name);
 			twitch.getChat().leaveChannel(name);

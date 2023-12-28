@@ -134,7 +134,11 @@ public class ChannelTab {
 	
 	
 	private void loadData(String channelId) {
-		this.channelId = channelId;
+		if(!this.channelId.equals(channelId)){
+			statistics.save(true);
+			chatWindow.clear();
+			this.channelId = channelId;
+		}
 		
 		editWindowActions.forEach(editWindowAction -> {
 			if(Arrays.asList(this.tabButton.getActionListeners()).contains(editWindowAction)){
@@ -142,16 +146,19 @@ public class ChannelTab {
 			}
 		});
 		
-		
 		if(channelId.equals("0")) {
-			displayName = "";
-			moderator = false;
-			greetingTexts = null;
-			
-			if(channelName != null){
+			if(channelName != null || channelId.equals("")){
 				TwitchManager.leaveChannel(channelName);
-				channelName = "";
 			}
+			
+			channelId = "0";
+			displayName = null;
+			channelName = null;
+			moderator = false;
+			liveState = false;
+			greetingTexts = null;
+			goodByTexts = null;
+			returnTexts = null;
 			
 			ActionListener actionListener = new ActionListener(){public void actionPerformed(ActionEvent e){openEditFrame();}};
 			editWindowActions.add(actionListener);
@@ -167,7 +174,6 @@ public class ChannelTab {
 				goodByTexts = Arrays.asList(channelById.getGoodbyText().split("\n"));
 				returnTexts = Arrays.asList(channelById.getReturnText().split("\n"));
 				chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);// TODO Only if he is not alrady in there.
-//				chatWindow.clear();
 				this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
 				TwitchManager.joinChannel(channelName);
 				

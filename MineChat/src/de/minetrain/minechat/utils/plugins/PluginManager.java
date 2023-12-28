@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -17,8 +17,9 @@ import org.yaml.snakeyaml.Yaml;
 
 import de.minetrain.minechat.config.YamlManager;
 
-public class PluginManager extends ArrayList<MinePlugin>{
+public class PluginManager extends HashMap<MinePlugin, de.minetrain.minechat.utils.plugins.PluginManager.PluginMetaData>{
 	private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
+	record PluginMetaData(String name, String author, String version, String main){};
 	private static final long serialVersionUID = 9018932615425049118L;
 	
 	public PluginManager() {
@@ -26,8 +27,8 @@ public class PluginManager extends ArrayList<MinePlugin>{
 		executeAllPlugins();
 	}
 
-	public void loadPlugin(MinePlugin plugin) {
-        add(plugin);
+	public void loadPlugin(MinePlugin plugin, PluginMetaData metaData) {
+        put(plugin, metaData);
         // Implement loading logic as needed
     }
 
@@ -37,8 +38,13 @@ public class PluginManager extends ArrayList<MinePlugin>{
     }
 
     public void executeAllPlugins() {
-        for (MinePlugin plugin : this) {
-            plugin.load();
+        for (MinePlugin plugin : this.keySet()) {
+            try {
+            	plugin.load();
+			} catch (AbstractMethodError ex) {
+				PluginMetaData metaData = this.get(plugin);
+				logger.warn("Unload plugin \""+metaData.name+"\" by \""+metaData.author+"\" because \"plugin.load();\" Can´t be executet.");
+			}
         }
     }
     
@@ -90,7 +96,7 @@ public class PluginManager extends ArrayList<MinePlugin>{
             			
             			if (MinePlugin.class.isAssignableFrom(clazz)) {
             				MinePlugin plugin = (MinePlugin) clazz.getDeclaredConstructor().newInstance();
-            				add(plugin);
+            				put(plugin, metaData);
             				success = true;
             				logger.info("Loaded plugin -> \""+metaData.name+" - "+metaData.version+"\" by \""+metaData.author+"\" successfully!");
             			}
@@ -107,8 +113,6 @@ public class PluginManager extends ArrayList<MinePlugin>{
             logger.error("Failed to load plugin from file: "+file.getName());
         }
     }
-
-	private record PluginMetaData(String name, String author, String version, String main){};
 
 	private PluginMetaData extraktPluginYamlData(JarFile jarFile) throws FileNotFoundException, IOException {
         Enumeration<JarEntry> entries = jarFile.entries();
