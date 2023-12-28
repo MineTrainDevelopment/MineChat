@@ -25,8 +25,10 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
+import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
+import de.minetrain.minechat.utils.plugins.PluginManager;
 
 public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -38,6 +40,7 @@ public class Main {
 	public static Settings rftnfijdg;
 	public static AudioManager audioManager = new AudioManager();;
 	public static EventManager eventManager = new EventManager();
+	public static PluginManager pluginManager;
 	
 	public static void main(String[] args) throws Exception {
 //		JFrame frame = new JFrame();
@@ -91,13 +94,8 @@ public class Main {
 	    onboardingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    onboardingFrame.setVisible(true);
 	    
-//	    LOADINGBAR.setProgress("Reading config file.", 5);
-//	    try {
-//	    	CONFIG = new YamlManager("data/config.yml");
-//		} catch (Exception ex) {
-//	    	LOADINGBAR.setError("config.yml or emoteIndex.yml not found!");
-//	    	return;
-//		}
+	    LOADINGBAR.setProgress("Loading plugins...", 5);
+	    pluginManager = new PluginManager();
 	    
 	    LOADINGBAR.setProgress("Loading Twitch credentials.", 15);
 	    try {
@@ -207,8 +205,9 @@ public class Main {
 		}
 		onboardingFrame.dispose();
         MessageManager.updateQueueButton();
-        
 //        eventManager.addListener(new EventTest());
+        
+//        TwitchManager.getChatSettings(TwitchManager.getTwitchUser(TwitchApiCallType.ID, "99351845"));
 
         
         

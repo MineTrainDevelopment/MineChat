@@ -28,11 +28,13 @@ import com.github.twitch4j.chat.events.channel.RewardGiftEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.chat.events.channel.UserBanEvent;
 import com.github.twitch4j.chat.events.channel.UserTimeoutEvent;
+import com.github.twitch4j.chat.events.roomstate.SlowModeEvent;
 import com.github.twitch4j.common.events.domain.EventChannel;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
+import com.github.twitch4j.pubsub.events.ChatModerationEvent;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
@@ -366,6 +368,12 @@ public class TwitchListner {
     	getCurrentChannelTab(event.getChannel()).getChatWindow()
 			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" \nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), Settings.displayModActions.getColor(), null);
     }
+    
+    @EventSubscriber
+    public void onSlowMode(SlowModeEvent event){
+    	logger.info("Change slow mode to -> "+event.getTime());
+    }
+    
     
     @EventSubscriber
     public void onChatConnectionState(ChatConnectionStateEvent event){

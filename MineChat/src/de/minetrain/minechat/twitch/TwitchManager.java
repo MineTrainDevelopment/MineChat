@@ -19,6 +19,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
@@ -276,6 +277,15 @@ public class TwitchManager {
 		}
 		
 		return response.getBody();
+	}
+	
+	public static List<Object> getChatSettings(TwitchUserObj user) {
+		if(user == null || user.isDummy()){return List.of();}
+		
+		JsonArray asJsonArray = newApiCall("https://api.twitch.tv/helix/chat/settings?broadcaster_id="+user.getUserId()).getAsJsonArray("data");
+		System.err.println(asJsonArray);
+		asJsonArray.forEach(data -> System.err.println(data));
+		return null;
 	}
 
 	/**

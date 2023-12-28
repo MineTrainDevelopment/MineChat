@@ -42,6 +42,13 @@ public class YamlManager extends HashMap<String, Object>{
      */
     public YamlManager(String filePath) {
     	super(new HashMap<String, Object>());
+    	
+    	if(filePath == null){
+    		this.yaml = new Yaml();
+    		this.filePath = "";
+    		return;
+    	}
+    	
     	if(!filePath.endsWith(".yml")){
     		logger.warn("Tryed to load a non yaml file! - Automatically appending a '.yml'...", new IllegalArgumentException(filePath+" does not end with '.yml'!"));
     		filePath = filePath+".yml";
@@ -75,19 +82,29 @@ public class YamlManager extends HashMap<String, Object>{
     
     /**
      * Method for reloading the configuration file.
+     * @return 
      * @throws FileNotFoundException If the configuration file is not found.
      */
-    public void reloadConfig() throws FileNotFoundException{
+    public YamlManager reloadConfig() throws FileNotFoundException{
+    	return reloadConfig(yaml.load(new FileInputStream(filePath)));
+    }
+    
+    /**
+     * Method for reloading the configuration file.
+     * @return 
+     * @throws FileNotFoundException If the configuration file is not found.
+     */
+    public YamlManager reloadConfig(Map<String, Object> yamlLoad) throws FileNotFoundException{
     	logger.info("Reload config file! - ["+filePath+"]");
-    	Map<String, Object> yamlLoad = yaml.load(new FileInputStream(filePath));
     	if(yamlLoad != null){
     		clear();
     		putAll(yamlLoad);
     		logger.info("Config reloadet...");
-    		return;
+    		return this;
     	}
     	
 		logger.info("Can´t reload the config file...");
+		return this;
     }
     
     /**
