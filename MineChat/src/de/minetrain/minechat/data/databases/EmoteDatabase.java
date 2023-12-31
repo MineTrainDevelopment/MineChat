@@ -219,12 +219,11 @@ public class EmoteDatabase extends Database{
 	 * @param tier
 	 */
 	public void updateSubscriptionState(String chanelId, String tier){
-		logger.info("Updating sub state state for -> "+chanelId);
-		
 		if(subLevelCache.containsKey(chanelId) && subLevelCache.get(chanelId).equals(tier)){
 			return;
 		}
-
+		
+		logger.info("Updating sub state state for -> "+chanelId);
 		subLevelCache.put(chanelId, tier);
 		
 		try{

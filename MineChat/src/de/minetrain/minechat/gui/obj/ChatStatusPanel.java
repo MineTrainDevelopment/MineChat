@@ -315,6 +315,9 @@ public class ChatStatusPanel extends JPanel{
 		return getCurrentUserInput();
 	}
 
+	/**
+	 * @param force
+	 */
 	public void overrideCurrentInputCache(boolean force) {
 		if(force || currentlyCachedInput.isEmpty()){
 			this.currentlyCachedInput = getCurrentUserInput();

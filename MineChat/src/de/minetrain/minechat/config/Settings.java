@@ -36,6 +36,8 @@ public class Settings{
 	
 	public static HighlightDefault highlightUserFirstMessages; //
 	public static HighlightDefault highlightUserGoodbyeMessages; 
+	public static HighlightDefault highlightUserReturnMessages; 
+	public static long highlightUserReturnThreshold;
 	public static boolean highlightKeywords;
 	
 	public static HighlightDefault displayModActions; //
@@ -60,6 +62,7 @@ public class Settings{
 	public static boolean holdToSendMessages;
 	public static boolean emoteBlendinOnDisplaying;
 
+
 	public static Font MESSAGE_FONT;
 	
 	public Settings() {
@@ -82,6 +85,8 @@ public class Settings{
 		
 		highlightUserFirstMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.FirstMessage");
 		highlightUserGoodbyeMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.GoodByeMessage");
+		highlightUserReturnMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.ReturnMessage");
+		highlightUserReturnThreshold = settings.getLong("Highlights.MessageHighlights.ReturnMessage.ThresholdSeconds", 3600);
 		highlightKeywords = settings.getBoolean("Highlights.MessageHighlights.KeyWods.Active");
 		
 		displayModActions = new HighlightDefault(settings, "Highlights.EventHighlights.Moderaion");
@@ -225,6 +230,10 @@ public class Settings{
 		
 		settings.setBoolean("Highlights.MessageHighlights.GoodByeMessage.Active", false);
 		settings.setString("Highlights.MessageHighlights.GoodByeMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
+		
+		settings.setBoolean("Highlights.MessageHighlights.ReturnMessage.Active", false);
+		settings.setString("Highlights.MessageHighlights.ReturnMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
+		settings.setNumber("Highlights.MessageHighlights.ReturnMessage.ThresholdSeconds", 3600);
 		
 		settings.setBoolean("Highlights.EventHighlights.Moderaion.Active", true);
 		settings.setString("Highlights.EventHighlights.Moderaion.Color", ColorManager.encode(ColorManager.CHAT_MODERATION_DEFAULT));

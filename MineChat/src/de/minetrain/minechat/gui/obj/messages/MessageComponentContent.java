@@ -104,4 +104,13 @@ public record MessageComponentContent(
 		return map;
 	}
 	
+	/**
+	 * WARNING: This returns null, if the {@link TwitchMessage} is null.
+	 */
+	@Override
+	public UserChatData userData(){
+		return userData;
+		
+	}
+	
 }

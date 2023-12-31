@@ -26,6 +26,7 @@ import de.minetrain.minechat.twitch.TwitchManager;
 
 public class ChannelStatistics {
 	private final Map<String, Long> messageTimestamps = new HashMap<>();//User_name
+	private final Map<String, Long> previousMessageTimestamps = new HashMap<>();//User_name
 	private final Map<String, Long> sendedMessages = new HashMap<>(); //User_id, value
 	private final Map<String, Long> giftedSubs = new HashMap<>(); //User_id, value
 	private final Map<String, Long> cheerdBits = new HashMap<>(); //User_id, value
@@ -56,7 +57,12 @@ public class ChannelStatistics {
 		}
 		
 		sendedMessages.put(senderId, sendedMessages.containsKey(senderId) ? sendedMessages.get(senderId)+1 : 1l);
-		messageTimestamps.put(senderName, LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+		messageTimestamps.compute(senderName, (key, value) -> {
+		    if (value != null) {
+		        previousMessageTimestamps.put(key, value);
+		    }
+		    return LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+		});
 	}
 
 	public void addSub(SubscriptionEvent event) {
@@ -146,8 +152,20 @@ public class ChannelStatistics {
 		return 0l;
 	}
 	
+	/**
+	 * NOTE: Timestamps are in {@link ZoneOffset#UTC}
+	 * @return
+	 */
 	public Map<String, Long> getMessageTimestamps() {
 		return messageTimestamps;
+	}
+	
+	/**
+	 * NOTE: Timestamps are in {@link ZoneOffset#UTC}
+	 * @return
+	 */
+	public Map<String, Long> getPreviousMessageTimestamps() {
+		return previousMessageTimestamps;
 	}
 	
 //	public long getStreamStartupTime() {

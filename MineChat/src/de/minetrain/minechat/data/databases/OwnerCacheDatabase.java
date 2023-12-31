@@ -43,12 +43,12 @@ public class OwnerCacheDatabase extends Database {
 	 * @param message
 	 */
 	public void insert(TwitchMessage message){
-		logger.info("Insert new database entry");
-		
 		UserChatData ownerCacheData = new UserChatData(message.getChannelId(), message.getUserColorCode(), message.getUserName(), message.getRawBadgeTags());
 		if(cache.values().contains(ownerCacheData)){
 			return;
 		}
+		
+		logger.info("Updating owner cache state state for -> "+message.getChannelId());
 		cache.put(message.getChannelId(), ownerCacheData);
 
 		try{

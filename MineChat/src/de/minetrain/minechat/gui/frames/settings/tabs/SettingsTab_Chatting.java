@@ -124,6 +124,7 @@ public class SettingsTab_Chatting extends SettingsTab{
 		generalTabel.add(new TabelObj("Greeting type:", generalTabel).overrideOptionPanel(greetDropDown));
 		generalTabel.add(new TabelObj("Undo Variation:", generalTabel).overrideOptionPanel(undoDropDown));
 		generalTabel.add(new TabelObj("Undo cache size.", generalTabel).overrideOptionPanel(new JTextArea("[TODO] - 100")));
+		generalTabel.add(new TabelObj("Return wave button after sec:", generalTabel).overrideOptionPanel(new JTextArea("[TODO] - 3600")));
 		generalTabel.add(new TabelObj("Hold to send multiple messages:", generalTabel).overrideOptionPanel(holdToSendBox));
 		generalTabel.add(new TabelObj("Display non channel specific emotes:", generalTabel).overrideOptionPanel(nonChannelEmotesBox));
 		generalTabel.setVerticalScrollPosition(0);

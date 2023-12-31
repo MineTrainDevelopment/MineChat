@@ -234,9 +234,13 @@ public class ChatWindow extends JLabel {
 		return scrollPane;
 	}
 
-	
+
 	public String getChannelId() {
 		return parentTab.getConfigID();
+	}
+	
+	public ChannelTab getParentTab() {
+		return parentTab;
 	}
 	
 	public void clear() {

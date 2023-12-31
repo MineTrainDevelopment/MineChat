@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ import de.minetrain.minechat.gui.obj.buttons.MineButton;
 import de.minetrain.minechat.gui.obj.messages.MessageHyperLinks.HyperLink;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MineStringBuilder;
@@ -237,50 +239,56 @@ public class MessageComponent extends JPanel {
 	    		}
 	    	}
 	    	
-	    	if(!chatWindow.greetingsManager.isMentioned(content.getUserName())){
-		    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
-				waveButton.setPreferredSize(buttonSize);
-				waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
-				waveButton.setBorderPainted(false);
-				waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
-				waveButton.setToolTipText("Wellcome this user!");
-				waveButton.addActionListener(new ActionListener() {
-					@Override public void actionPerformed(ActionEvent e){
-						chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
-						chatWindow.chatStatusPanel.getinputArea().requestFocus();
-						
-						String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
-						chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
-						twitchMessage.setReplyType(Settings.GREETING_TYPE);
-						
-						if(twitchMessage.getReplyType() == ReplyType.THREAD){
-							twitchMessage.setReply(twitchMessage.getReplyId(), twitchMessage.getUserName());
-						}
-						
-						if(twitchMessage.getReplyType() == ReplyType.MESSAGE){
-							twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
-						}
-						
-						chatWindow.setMessageToReply(twitchMessage);
-					}
-				});
-				
-				waveButton.addMouseListener(new MouseAdapter() {
-				    @Override
-				    public void mouseClicked(MouseEvent event) {
-				        if (SwingUtilities.isRightMouseButton(event)) {
-				        	chatWindow.greetingsManager.setMentioned(content.getUserName());
-				        	buttonPanel.remove(waveButton);
-							buttonPanel.setMinimumSize(new Dimension(26, 26));
-							chatWindow.chatPanel.revalidate();
-				        	chatWindow.chatPanel.repaint();
-				        }
-				    }
-				});
-				
-				buttonPanel.add(waveButton, BorderLayout.WEST);
+	    	JButton waveButton = getWaveButton(content, buttonPanel);
+	    	if(waveButton != null){
+	    		buttonPanel.add(waveButton, BorderLayout.WEST);
 				buttonPanel.setMinimumSize(new Dimension(52, 26));
 	    	}
+	    	
+//	    	if(!chatWindow.greetingsManager.isMentioned(content.getUserName())){
+//		    	JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);//.setInvisible(!MainFrame.debug);
+//				waveButton.setPreferredSize(buttonSize);
+//				waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+//				waveButton.setBorderPainted(false);
+//				waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
+//				waveButton.setToolTipText("Wellcome this user!");
+//				waveButton.addActionListener(new ActionListener() {
+//					@Override public void actionPerformed(ActionEvent e){
+//						chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
+//						chatWindow.chatStatusPanel.getinputArea().requestFocus();
+//						
+//						String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
+//						chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
+//						twitchMessage.setReplyType(Settings.GREETING_TYPE);
+//						
+//						if(twitchMessage.getReplyType() == ReplyType.THREAD){
+//							twitchMessage.setReply(twitchMessage.getReplyId(), twitchMessage.getUserName());
+//						}
+//						
+//						if(twitchMessage.getReplyType() == ReplyType.MESSAGE){
+//							twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
+//						}
+//						
+//						chatWindow.setMessageToReply(twitchMessage);
+//					}
+//				});
+//				
+//				waveButton.addMouseListener(new MouseAdapter() {
+//				    @Override
+//				    public void mouseClicked(MouseEvent event) {
+//				        if (SwingUtilities.isRightMouseButton(event)) {
+//				        	chatWindow.greetingsManager.setMentioned(content.getUserName());
+//				        	buttonPanel.remove(waveButton);
+//							buttonPanel.setMinimumSize(new Dimension(26, 26));
+//							chatWindow.chatPanel.revalidate();
+//				        	chatWindow.chatPanel.repaint();
+//				        }
+//				    }
+//				});
+//				
+//				buttonPanel.add(waveButton, BorderLayout.WEST);
+//				buttonPanel.setMinimumSize(new Dimension(52, 26));
+//	    	}
 	    }
     	
     	
@@ -288,6 +296,85 @@ public class MessageComponent extends JPanel {
     	webEmotes.clear(); //NOTE This is to improve ram usage.
     	messageContent = null;
 //    	stringBuilder.clear();
+	}
+	
+	public JButton getWaveButton(MessageComponentContent content, JPanel buttonPanel){
+		ChatWindow chatWindow = content.chatWindow();
+		TwitchMessage twitchMessage = content.twitchMessage();
+		
+		content.userData();
+		if(twitchMessage == null || TwitchManager.ownerChannelName.toLowerCase().equals(content.getUserName().toLowerCase())){
+			return null;
+		}
+		
+		JButton waveButton = new MineButton(buttonSize, null, ButtonType.NON);
+		waveButton.setPreferredSize(buttonSize);
+		waveButton.setBackground(ColorManager.GUI_BACKGROUND_LIGHT);
+		waveButton.setBorderPainted(false);
+		waveButton.setIcon(Main.TEXTURE_MANAGER.getWaveButton());
+		
+		waveButton.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent event) {
+		        if (SwingUtilities.isLeftMouseButton(event)) {
+		        	if(twitchMessage.getReplyType() == ReplyType.THREAD){
+						twitchMessage.setReply(twitchMessage.getReplyId(), twitchMessage.getUserName());
+					}
+					
+					if(twitchMessage.getReplyType() == ReplyType.MESSAGE){
+						twitchMessage.setReply(twitchMessage.getMessageId(), twitchMessage.getUserName());
+					}
+					
+					chatWindow.setMessageToReply(twitchMessage);
+		        }
+		        
+		        
+		        if (SwingUtilities.isRightMouseButton(event)) {
+		        	chatWindow.greetingsManager.setMentioned(content.getUserName());
+		        	buttonPanel.remove(waveButton);
+					buttonPanel.setMinimumSize(new Dimension(26, 26));
+					chatWindow.chatPanel.revalidate();
+		        	chatWindow.chatPanel.repaint();
+		        }
+		    }
+		});
+		
+//		if(Settings.highlightUserGoodbyeMessages.isActive()){
+//			waveButton.setToolTipText("Say goodbye to the user.");
+//			return waveButton;
+//		}
+		
+		if(Settings.highlightUserFirstMessages.isActive() && !chatWindow.greetingsManager.isMentioned(content.getUserName())){
+			waveButton.setToolTipText("Welcome this user.");
+			waveButton.addActionListener(event -> {
+				String greeting = chatWindow.parentTab.getGreetingTexts().get(random.nextInt(chatWindow.parentTab.getGreetingTexts().size()));
+				
+				chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
+				chatWindow.chatStatusPanel.getinputArea().requestFocus();
+				chatWindow.chatStatusPanel.overrideUserInput(greeting.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
+				twitchMessage.setReplyType(Settings.GREETING_TYPE);
+			});
+			return waveButton;
+		}
+		
+		
+		if(Settings.highlightUserReturnMessages.isActive()){
+			Long lastUserMessage = content.chatWindow().getParentTab().getStatistics().getPreviousMessageTimestamps().get(content.getUserName().toLowerCase());
+			if(lastUserMessage != null && ((LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - lastUserMessage) < Settings.highlightUserReturnThreshold)){return null;}
+			
+			waveButton.setToolTipText("Welcome the user back.");
+			waveButton.addActionListener(event -> {
+				String returning = chatWindow.parentTab.getReturnTexts().get(random.nextInt(chatWindow.parentTab.getReturnTexts().size()));
+				
+				chatWindow.chatStatusPanel.overrideCurrentInputCache(false);
+				chatWindow.chatStatusPanel.getinputArea().requestFocus();
+				chatWindow.chatStatusPanel.overrideUserInput(returning.replace("{USER}", Settings.GREETING_TYPE == ReplyType.USER_NAME ? "@"+twitchMessage.getUserName() : "").trim().replaceAll(" +", " "));
+				twitchMessage.setReplyType(Settings.GREETING_TYPE);
+			});
+			return waveButton;
+		}
+
+		return null;
 	}
 	
 	private static final MouseAdapter replyButtonMouseAdapter(JButton button) {

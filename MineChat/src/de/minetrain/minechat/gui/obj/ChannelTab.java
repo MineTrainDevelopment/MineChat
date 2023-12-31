@@ -167,15 +167,21 @@ public class ChannelTab {
 			ChannelData channelById = DatabaseManager.getChannel().getChannelById(channelId);
 			
 			if(channelById != null){
+				
+				if(channelName == null || !channelName.equals(channelById.getLoginName())){
+					channelName = channelById.getLoginName();
+					chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);// TODO Only if he is not alrady in there.
+					TwitchManager.joinChannel(channelName);
+				}
+				
 				channelName = channelById.getLoginName();
 				displayName = channelById.getDisplayName();
 				moderator = channelById.getChatRole().equalsIgnoreCase("moderator") || channelById.getChatRole().equalsIgnoreCase("vip");
 				greetingTexts = Arrays.asList(channelById.getGreetingText().split("\n"));
 				goodByTexts = Arrays.asList(channelById.getGoodbyText().split("\n"));
 				returnTexts = Arrays.asList(channelById.getReturnText().split("\n"));
-				chatWindow.chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+getChannelName(), null), 0);// TODO Only if he is not alrady in there.
 				this.texture = Main.TEXTURE_MANAGER.getByTabButton(tabType);
-				TwitchManager.joinChannel(channelName);
+				
 				
 				channelDisplayNameList.put(channelName, displayName);
 				byId.put(channelId, this);
