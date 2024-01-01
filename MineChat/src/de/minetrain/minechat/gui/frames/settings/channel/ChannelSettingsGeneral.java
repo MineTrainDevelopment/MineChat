@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.frames.parant.RoundedJPanel;
+import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -137,6 +138,7 @@ public class ChannelSettingsGeneral extends RoundedJPanel{
 				case "Emotes":
 					System.err.println("TODO - Emotes");
 					SwingUtilities.invokeLater(() -> {
+						MineTextArea.clearStaticEmoteDictionary(); // clear static emote cache
 						TextureManager.downloadChannelEmotes(channelId);
 						TextureManager.downloadBttvEmotes(channelId);
 					});

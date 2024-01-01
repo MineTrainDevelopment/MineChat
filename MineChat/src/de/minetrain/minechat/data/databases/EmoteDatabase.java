@@ -255,6 +255,7 @@ public class EmoteDatabase extends Database{
 	
 	public void getAll(){
 		try(Connection connection = DatabaseManager.connect(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(select_sql)){
+			EmoteManager.clear();
 			while(resultSet.next()){
 				EmoteManager.addEmote(new Emote(resultSet));
 //				logger.info(
@@ -276,6 +277,7 @@ public class EmoteDatabase extends Database{
 	
 	public void getAllChannels(){
 		try(Connection connection = DatabaseManager.connect(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(select_channel_sql)){
+			EmoteManager.clearChannel();
 			while(resultSet.next()){
 				EmoteManager.addChannel(resultSet.getString("channel_id"), new ChannelEmotes(resultSet));
 				subLevelCache.put(resultSet.getString("channel_id"), resultSet.getString("user_sub"));

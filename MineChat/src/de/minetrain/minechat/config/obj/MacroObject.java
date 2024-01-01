@@ -79,7 +79,8 @@ public class MacroObject {
 			return dummyEmote;
 		}
 		
-		return EmoteManager.getEmoteById(emote_id);
+		Emote emoteById  = EmoteManager.getEmoteById(emote_id);
+		return emoteById == null ? dummyEmote : emoteById;
 	}
 	
 }

@@ -43,6 +43,18 @@ public class EmoteManager {
 		});
 	}
 	
+	public static void clear(){
+		logger.debug("Clear all emotes from cache.");
+		emotes.clear();
+		emoteIdToName.clear();
+		emoteNameToId.clear();
+	}
+	
+	public static void clearChannel(){
+		logger.debug("Clear all channel emotes from cache.");
+		channelEmotes.clear();
+	}
+	
 	public static void addEmote(Emote emote){
 		logger.debug("Adding emote -> "+emote.getName()+":"+emote.getEmoteId());
 		emotes.put(emote.getEmoteId(), emote);
