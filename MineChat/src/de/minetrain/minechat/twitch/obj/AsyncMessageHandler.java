@@ -1,5 +1,7 @@
 package de.minetrain.minechat.twitch.obj;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -27,10 +29,11 @@ public class AsyncMessageHandler {
 	private static final Logger logger = LoggerFactory.getLogger(AsyncMessageHandler.class); //system logger
 	private BlockingQueue<ChatMessage> messageQueue; //The message queue to store the incoming messages.
     private ScheduledExecutorService executorService; //The executor service responsible for scheduling and executing message sending tasks.
-    private int messageCount; //The count of messages in the message queue.
     private final long defaultDelayMilliseconds = 1500; //The default time between messages.
     private final long messageDelayMilliseconds; //The time between messages.
     private static final CallCounter callCounter = new CallCounter(30);
+    private Instant lastSendMessage; //Timestamp when the last message was send.
+    private int messageCount; //The count of messages in the message queue.
 
     /**
      * Constructs a new AsyncMessageHandler with an empty message queue,
@@ -99,7 +102,45 @@ public class AsyncMessageHandler {
             logger.debug("Sending message: {" + chatMessage.getMessage()+"}");
             
         	TwitchManager.sendMessage(chatMessage);
-            try{Thread.sleep((callCounter.getCallCount() > 19) ? defaultDelayMilliseconds : messageDelayMilliseconds); callCounter.recordCallTime();}catch(InterruptedException e){ }
+        	lastSendMessage = Instant.now();
+        	
+			try {
+				long i = 1000;
+				while(i > 0){
+					i = getSleepTime(chatMessage.getChannelTab().getConfigID());
+					Thread.sleep(i);
+				}
+				callCounter.recordCallTime();
+			} catch (InterruptedException e) {}
         }
     }
+    
+    /**
+     * Calculates the sleep time based on the {@link AsyncMessageHandler#getCurrentDelay()}.
+     * Sleep time is capped at 1000 milliseconds.
+     *
+     * @return The sleep time in milliseconds.
+     */
+    private long getSleepTime(String channel_id){
+    	long currentDelay = getCurrentDelay(channel_id);
+		return currentDelay > 1000 ? 1000 : currentDelay;
+    }
+    
+    
+
+	/**
+	 * Gets the current delay for message sending, considering slow mode.
+	 * @return The current delay in milliseconds.
+	 */
+    private long getCurrentDelay(String channel_id){
+    	long delay = (callCounter.getCallCount() > 19) ? defaultDelayMilliseconds : messageDelayMilliseconds;
+    	Long slowMode = MessageManager.channelSlowMods.get(channel_id);
+    	if(slowMode != null && slowMode > delay){
+    		delay = slowMode;
+    	}
+    	
+    	Duration duration = Duration.between(lastSendMessage.plusMillis(delay), Instant.now());
+    	return Math.abs(duration.getSeconds() > 0 ? 0 : duration.getSeconds() * 1000);
+    }
+    
 }

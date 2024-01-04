@@ -21,6 +21,7 @@ import com.github.twitch4j.chat.events.channel.CheerEvent;
 import com.github.twitch4j.chat.events.channel.ClearChatEvent;
 import com.github.twitch4j.chat.events.channel.DeleteMessageEvent;
 import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
+import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.ModAnnouncementEvent;
 import com.github.twitch4j.chat.events.channel.RaidCancellationEvent;
 import com.github.twitch4j.chat.events.channel.RaidEvent;
@@ -34,7 +35,6 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
-import com.github.twitch4j.pubsub.events.ChatModerationEvent;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
@@ -369,9 +369,25 @@ public class TwitchListner {
 			.displaySystemInfo("User Timeout", "User: "+event.getUser().getName()+" \nDuration: "+event.getDuration()+".sec! \nReason: "+event.getReason(), Settings.displayModActions.getColor(), null);
     }
     
+    /**
+     * NOTE: This is currently broken in Twitch4J:1.18
+     */
     @EventSubscriber
     public void onSlowMode(SlowModeEvent event){
     	logger.info("Change slow mode to -> "+event.getTime());
+    	MessageManager.channelSlowMods.put(event.getChannel().getId(), event.getTime()*1000);
+    }
+    
+    /**
+     * This is temporary, untill the {@link SlowModeEvent} is patched.
+     * @param event
+     */
+    @EventSubscriber
+    public void onIRCMessageMode(IRCMessageEvent event){
+    	if(event.getEscapedTags().containsKey("slow")){
+        	MessageManager.channelSlowMods.put(event.getChannel().getId(), Long.valueOf(String.valueOf(event.getEscapedTags().get("slow")))*1000);
+        	System.err.println(event.getEscapedTags());
+    	}
     }
     
     

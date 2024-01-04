@@ -2,6 +2,7 @@ package de.minetrain.minechat.twitch;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -33,7 +34,8 @@ public class MessageManager {
 	private static final String spamProtector = "󠀀"; //The spam protector character.
 	private static String lastMessage = ">null<"; //The last message sent by this manager.
     private static Instant lastSentTime = Instant.now(); //The time when the last message was sent.
-    private static final int MAX_MESSAGE_LENGTH = 490; 
+    private static final int MAX_MESSAGE_LENGTH = 490;
+    public static HashMap<String, Long> channelSlowMods = new HashMap<String, Long>(); //Channel_id, miliseconds
     
     public MessageManager() {
     	defaultMessageHandler = new AsyncMessageHandler(0);
