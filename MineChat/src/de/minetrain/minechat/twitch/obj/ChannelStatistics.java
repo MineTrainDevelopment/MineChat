@@ -6,9 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.twitch4j.chat.events.channel.CheerEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
+import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -28,14 +30,13 @@ public class ChannelStatistics {
 	private final Map<String, Long> messageTimestamps = new HashMap<>();//User_name
 	private final Map<String, Long> previousMessageTimestamps = new HashMap<>();//User_name
 	private final Map<String, Long> sendedMessages = new HashMap<>(); //User_id, value
-	private final Map<String, Long> giftedSubs = new HashMap<>(); //User_id, value
+	private final Map<SubscriptionPlan, Map<String, Long>> giftedSubs = new HashMap<>(); //subPlan - User_id, value
 	private final Map<String, Long> cheerdBits = new HashMap<>(); //User_id, value
 	private long uniqueMessages = 0;
 //	private long streamStartupTime = 0;
 	private long totalMessages = 0;
 	private long totalSubs = 0;
 	private long totalResubs = 0;
-	private long totalGiftSubs = 0;
 	private long totalNewSubs = 0;
 	private long totalBits = 0;
 	private long totalFollower = 0;
@@ -69,8 +70,7 @@ public class ChannelStatistics {
 		totalSubs++;
 		
 		if(event.getGifted()){
-			totalGiftSubs++;
-			giftedSubs.put(event.getGiftedBy().getId(), giftedSubs.containsKey(event.getGiftedBy().getId()) ? giftedSubs.get(event.getGiftedBy().getId())+1 : 1);
+			giftedSubs.computeIfAbsent(event.getSubPlan(), key -> new HashMap<>()).compute(event.getUser().getId(), (key, value) -> value == null ? 1 : value+1);
 		}else{
 			if(event.getMonths()>1){totalResubs++;}else{totalNewSubs++;}
 		}
@@ -78,7 +78,7 @@ public class ChannelStatistics {
 
 	public void addBits(CheerEvent event) {
 		this.totalBits = this.totalBits+event.getBits();
-		cheerdBits.put(event.getUser().getId(), giftedSubs.containsKey(event.getUser().getId()) ? giftedSubs.get(event.getUser().getId())+event.getBits() : event.getBits());
+		cheerdBits.put(event.getUser().getId(), cheerdBits.containsKey(event.getUser().getId()) ? cheerdBits.get(event.getUser().getId())+event.getBits() : event.getBits());
 	}
 
 	public void addFollower() {
@@ -106,7 +106,6 @@ public class ChannelStatistics {
 		totalMessages = 0;
 		totalSubs = 0;
 		totalResubs = 0;
-		totalGiftSubs = 0;
 		totalNewSubs = 0;
 		totalBits = 0;
 		totalFollower = 0;
@@ -130,15 +129,62 @@ public class ChannelStatistics {
 		return 0l;
 	}
 	
+	/**
+	 * Gets the total gifted subscriptions for each user across all subscription plans.
+	 * @return Returns a map where keys are user IDs and values are the total gifted subscriptions of that user.
+	 */
 	public Map<String, Long> getGiftedSubs() {
-		return giftedSubs;
+		return giftedSubs.values().stream()
+				.flatMap(map -> map.entrySet().stream())
+				.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingLong(Map.Entry::getValue)));
 	}
 	
+	/**
+	 * Gets the total gifted subscriptions for a specific user.
+	 *
+	 * @param userId The user ID for whom to retrieve gifted subscriptions.
+	 * @return Total gifted subscriptions for the specified user.
+	 */
 	public Long getGiftedSubs(String userId) {
-		if(giftedSubs.containsKey(userId)){
-			return giftedSubs.get(userId);
+		return giftedSubs.values().stream()
+				.flatMap(map -> map.entrySet().stream())
+				.filter(entry -> userId.equals(entry.getKey()))
+				.collect(Collectors.summingLong(Map.Entry::getValue));
+	}
+	
+	/**
+	 * Gets the total gifted subscriptions for a specific subscription plan.
+	 * <br>If the plan is {@link SubscriptionPlan#NONE}, returns the total across all plans.
+	 *
+	 * @param plan The subscription plan for which to retrieve total gifted subscriptions.
+	 * @return Total amount of gifted subscriptions for the specified plan or across all plans.
+	 */
+	public Long getTotalGiftedSubs(SubscriptionPlan plan){
+		if(plan.equals(SubscriptionPlan.NONE)){
+			return getGiftedSubs().values().stream().collect(Collectors.summingLong(Long::longValue));
 		}
-		return 0l;
+		
+		giftedSubs.computeIfAbsent(plan, k -> new HashMap<>());
+		return giftedSubs.get(plan).values().stream().collect(Collectors.summingLong(Long::longValue));
+	}
+
+	/**
+	 * Gets the total gifted subscriptions for a specific subscription plan and user.
+	 * If the plan is SubscriptionPlan.NONE, returns the total for the specified user across all plans.
+	 *
+	 * @param plan   The subscription plan for which to retrieve total gifted subscriptions.
+	 * @param userId The user ID for whom to retrieve gifted subscriptions.
+	 * @return Total amount of gifted subscriptions for the specified plan and user or across all plans for the user.
+	 */
+	public Long getTotalGiftedSubs(SubscriptionPlan plan, String userId){
+		if(plan.equals(SubscriptionPlan.NONE)){
+			return getGiftedSubs(userId);
+		}
+		
+		giftedSubs.computeIfAbsent(plan, k -> new HashMap<>());
+		return giftedSubs.get(plan).entrySet().stream()
+				.filter(entry -> userId.equals(entry.getKey()))
+				.collect(Collectors.summingLong(Map.Entry::getValue));
 	}
 	
 	public Map<String, Long> getCheerdBits() {
@@ -186,10 +232,6 @@ public class ChannelStatistics {
 	
 	public long getTotalResubs() {
 		return totalResubs;
-	}
-	
-	public long getTotalGiftSubs() {
-		return totalGiftSubs;
 	}
 	
 	public long getTotalNewSubs() {

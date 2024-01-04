@@ -25,7 +25,6 @@ import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
@@ -183,6 +182,9 @@ public class Main {
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_SUBS}", null));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_RESUBS}", null));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB_1}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB_2}", null));
+        MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_GIFTSUB_3}", null));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_NEWSUB}", null));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{TOTAL_BITS}", null));
         MineTextArea.addToStaticDictionary(new SuggestionObj("{CLIP_BOARD}", null, "{CLIP_BOARD} - WARNING!"));

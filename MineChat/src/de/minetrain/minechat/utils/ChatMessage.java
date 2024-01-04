@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.twitch4j.common.enums.SubscriptionPlan;
+
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.obj.ChannelTab;
@@ -88,7 +90,10 @@ public class ChatMessage {
 					.replace("{TOTAL_UNIQUE_MESSAGES}", ""+statistics.getTotalUniqueMessages())
 					.replace("{TOTAL_SUBS}", ""+statistics.getTotalSubs())
 					.replace("{TOTAL_RESUBS}", ""+statistics.getTotalResubs())
-					.replace("{TOTAL_GIFTSUB}", ""+statistics.getTotalGiftSubs())
+					.replace("{TOTAL_GIFTSUB}", ""+statistics.getTotalGiftedSubs(SubscriptionPlan.NONE))
+					.replace("{TOTAL_GIFTSUB_1}", ""+statistics.getTotalGiftedSubs(SubscriptionPlan.TIER1))
+					.replace("{TOTAL_GIFTSUB_2}", ""+statistics.getTotalGiftedSubs(SubscriptionPlan.TIER2))
+					.replace("{TOTAL_GIFTSUB_3}", ""+statistics.getTotalGiftedSubs(SubscriptionPlan.TIER3))
 					.replace("{TOTAL_NEWSUB}", ""+statistics.getTotalNewSubs())
 					.replace("{TOTAL_BITS}", ""+statistics.getTotalBits())
 					.replace("{ClipBoard}", clipBoard)
