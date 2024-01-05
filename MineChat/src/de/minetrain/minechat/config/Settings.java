@@ -17,7 +17,6 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
 import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
-import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 
@@ -206,7 +205,7 @@ public class Settings{
 	public static void setEmoteBlendinOnDisplaying(boolean state){
 		settings.setBoolean("Chatting.emoteBlendinOnDisplaying",  state, true);
 		emoteBlendinOnDisplaying = state;
-		MessageComponent.clearDocumentCache();
+//		MessageComponent.clearDocumentCache();
 	}
 	
 	

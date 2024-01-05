@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +36,6 @@ import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.obj.TabButtonType;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import kong.unirest.Unirest;
 
@@ -284,32 +281,6 @@ public class TextureManager {
 		return copyButton;
 	}
 
-
-	public ImageIcon getByTabButton(TabButtonType tab){
-		switch (tab) {
-		case TAB_MAIN:
-			return mainFrame_TAB_1;
-			
-		case TAB_SECOND:
-			return mainFrame_TAB_2;
-			
-		case TAB_THIRD:
-			return mainFrame_TAB_3;
-			
-		case TAB_MAIN_ROW_2:
-			return mainFrame_TAB_1;
-			
-		case TAB_SECOND_ROW_2:
-			return mainFrame_TAB_2;
-			
-		case TAB_THIRD_ROW_2:
-			return mainFrame_TAB_3;
-			
-		default:
-			logger.warn("Invalid boolean.", new IllegalArgumentException("Can´t fine a vaule for: "+tab));
-			return null;
-		}
-	}
 	
 	
 	public static void downloadProfileImage(String uri, String channelId) {
@@ -479,9 +450,7 @@ public class TextureManager {
 					config.saveConfigToFile();
 
 					try {
-						Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("badge", version.get("title").getAsString()+".png", false);
-				    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("badge", version.get("title").getAsString()+".png", false);
-				    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("badge", version.get("title").getAsString()+".png", false);
+						//TODO: Update GUI info 
 						downloadImage(version.get("image_url_1x").getAsString(), path, "1.png");
 						downloadImage(version.get("image_url_2x").getAsString(), path, "2.png");
 						downloadImage(version.get("image_url_4x").getAsString(), path, "3.png");
@@ -491,9 +460,6 @@ public class TextureManager {
 				});
 			});
 			
-			Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
-	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
-	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
 		}).start();
 	}
 	
@@ -526,10 +492,6 @@ public class TextureManager {
 				String tier = entry.get("tier").getAsString();
 				String emote_type = entry.get("emote_type").getAsString();
 				
-			    Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-		    	
 		    	switch (tier) {
 				case "1000": tier1.add(emoteID); break;
 				case "2000": tier2.add(emoteID); break;
@@ -586,10 +548,6 @@ public class TextureManager {
 			DatabaseManager.getEmote().getAll();
 			DatabaseManager.getEmote().getAllChannels();
 			
-	
-			Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
-	    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
-	    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
 		}).start();
 	}
 	
@@ -620,10 +578,6 @@ public class TextureManager {
 				String imageType = entry.get("imageType").getAsString();
 				String fileLocation = "Icons/bttv/"+emoteID+"/";
 				
-				Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-		    	
 				emoteIDs.add(emoteID);
 				
 				boolean isFavorite = false;
@@ -654,9 +608,6 @@ public class TextureManager {
 					logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
 				}
 				
-				Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
-		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
-		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
 			}
 			
 	
@@ -689,12 +640,6 @@ public class TextureManager {
 					String fileFormat = ((format.length()>6) ? ".gif" : ".png");
 					String downloadURL = fromJson.get("template").getAsString();
 	
-					SwingUtilities.invokeLater(() -> {
-						Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-						Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-						Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDownloadStatus("emote", name+".png", false);
-					});
-					
 					boolean isFavorite = false;
 			    	Emote emoteByName = EmoteManager.getEmoteByName(name);
 			    	if(emoteByName != null){
@@ -724,11 +669,6 @@ public class TextureManager {
 	
 				DatabaseManager.commit();
 				DatabaseManager.getEmote().getAll();
-				Main.MAIN_FRAME.getTitleBar().getMainTab().getChatWindow().chatStatusPanel.setDefault(false);
-		    	Main.MAIN_FRAME.getTitleBar().getSecondTab().getChatWindow().chatStatusPanel.setDefault(false);
-		    	Main.MAIN_FRAME.getTitleBar().getThirdTab().getChatWindow().chatStatusPanel.setDefault(false);
-				
-				EmoteManager.load();
 			} catch (Exception ex) {
 				logger.error("Something went wrong while downloading an emote!", ex);
 			}

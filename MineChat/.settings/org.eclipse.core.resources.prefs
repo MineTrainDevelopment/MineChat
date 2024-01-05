@@ -1,8 +1,3 @@
 eclipse.preferences.version=1
-encoding//src/de/minetrain/minechat/gui/frames/ChatWindow.java=UTF-8
-encoding//src/de/minetrain/minechat/gui/obj/ChatWindowMessageComponent.java=UTF-8
-encoding//src/de/minetrain/minechat/gui/obj/messages/MessageComponent.java=UTF-8
 encoding//src/de/minetrain/minechat/main/Main.java=UTF-8
-encoding//src/de/minetrain/minechat/main/backup/MessageFormater.java=UTF-8
-encoding//src/de/minetrain/minechat/main/test/MessageFormater.java=UTF-8
 encoding//src/de/minetrain/minechat/twitch/MessageManager.java=UTF-8

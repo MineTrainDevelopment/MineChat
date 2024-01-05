@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import javax.swing.JFrame;
+
 import org.apache.commons.lang.IncompleteArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +70,9 @@ public class TwitchManager {
 		TwitchManager.credentials = credentials;
 		TwitchClientBuilder twitchBuilder = TwitchClientBuilder.builder();
 
-		Main.LOADINGBAR.setProgress("Requesting new API AccesToken", 20);
+//		Main.LOADINGBAR.setProgress("Requesting new API AccesToken", 20);
 		accesToken = getAccesToken();
-		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 25);
+//		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 25);
 		
 		//Configure the TwitchClientBuilder with the provided credentials.
 		twitch=twitchBuilder
@@ -94,10 +96,12 @@ public class TwitchManager {
 			}
 			
 //			Asking for a new OAuth2 token.
-			Main.LOADINGBAR.setError("Requesting new OAuth2 Token.");
+//			Main.LOADINGBAR.setError("Requesting new OAuth2 Token.");
 			logger.error("Requesting new OAuth2 Token.");
 			
-			GetCredentialsFrame newCredentialsFrame = new GetCredentialsFrame(Main.onboardingFrame);
+			JFrame tempFrame = new JFrame();
+			tempFrame.setVisible(false);
+			GetCredentialsFrame newCredentialsFrame = new GetCredentialsFrame(tempFrame);
 			newCredentialsFrame.injectData(credentials.getClientID(), credentials.getClientSecret());
 			newCredentialsFrame.startServer();
 			logger.warn("Start new HTTP server to get new OAuth2 key.");
@@ -108,7 +112,7 @@ public class TwitchManager {
 				new TwitchManager(new CredentialsManager());
 			} catch (Exception ex) {
 				CredentialsManager.deleteCredentialsFile();
-				Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
+//				Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
 				logger.error("Invalid twitch credentials!", ex);
 			}
 			
@@ -117,13 +121,11 @@ public class TwitchManager {
 		}
 		
 		
-		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
+//		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
 		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListner()); //Register a listener for Twitch events.
 		logger.info("Connecting to channels: "+twitch.getChat().getChannels().toString()); //Print all the connected channels
 		twitch.getChat().getChannels().forEach(s -> ownerChannelName = s);
 		ownerTwitchUser = getTwitchUser(TwitchApiCallType.LOGIN, ownerChannelName);
-		new MessageManager();
-		Main.openMainFrame();
 	}
 	
 	

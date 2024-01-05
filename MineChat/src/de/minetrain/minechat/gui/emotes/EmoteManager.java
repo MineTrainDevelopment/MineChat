@@ -6,9 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
-import de.minetrain.minechat.gui.obj.chat.userinput.textarea.MineTextArea;
-import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
 
 public class EmoteManager {
 	private static final Logger logger = LoggerFactory.getLogger(EmoteManager.class);
@@ -26,22 +23,23 @@ public class EmoteManager {
 		logger.info("Initiating EmoteManager");
 		DatabaseManager.getEmote().getAll();
 		DatabaseManager.getEmote().getAllChannels();
-		load();
+//		load();
 		logger.info("Emotes loaded...");
 	}
 	
-	public static void load(){
-		MineTextArea.clearStaticEmoteDictionary();
-		emotes.values().stream().filter(emote -> emote.getEmoteType().equals(EmoteType.DEFAULT)).forEach(emote -> MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote)));
-		
-		getChannelEmotes().values().stream().filter(channel -> channel.isSub()).forEach(channel -> {
-			System.err.println("Channel sub -> "+channel.getSubLevel());
-			channel.getAllEmotes().stream()
-				.filter(emote -> emote.isGlobal())
-				.filter(emote -> emote.isSubOnly() ? channel.isSub() : false)
-				.forEach(emote -> MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote)));
-		});
-	}
+	//This used to load the emote autocompetion.
+//	public static void load(){
+//		MineTextArea.clearStaticEmoteDictionary();
+//		emotes.values().stream().filter(emote -> emote.getEmoteType().equals(EmoteType.DEFAULT)).forEach(emote -> MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote)));
+//		
+//		getChannelEmotes().values().stream().filter(channel -> channel.isSub()).forEach(channel -> {
+//			System.err.println("Channel sub -> "+channel.getSubLevel());
+//			channel.getAllEmotes().stream()
+//				.filter(emote -> emote.isGlobal())
+//				.filter(emote -> emote.isSubOnly() ? channel.isSub() : false)
+//				.forEach(emote -> MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote)));
+//		});
+//	}
 	
 	public static void clear(){
 		logger.debug("Clear all emotes from cache.");

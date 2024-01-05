@@ -22,9 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.gui.obj.messages.MessageComponent;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
 //dalay_stats.
@@ -244,15 +241,15 @@ public class ChannelStatisticsDatabase extends Database {
 	 * Also saves all data drom {@link CountVariableDatabase}.
 	 */
 	public void saveAllChannelStatistics() {
-		MessageComponent.clearDocumentCache();
-		Main.MAIN_FRAME.getTitleBar().getMainTab().getStatistics().save(false);
-		Main.MAIN_FRAME.getTitleBar().getSecondTab().getStatistics().save(false);
-		Main.MAIN_FRAME.getTitleBar().getThirdTab().getStatistics().save(false);
-		TitleBar.toggleTitleRowIndex();
-		Main.MAIN_FRAME.getTitleBar().getMainTab().getStatistics().save(false);
-		Main.MAIN_FRAME.getTitleBar().getSecondTab().getStatistics().save(false);
-		Main.MAIN_FRAME.getTitleBar().getThirdTab().getStatistics().save(false);
-		TitleBar.toggleTitleRowIndex();
+//		MessageComponent.clearDocumentCache();
+//		Main.MAIN_FRAME.getTitleBar().getMainTab().getStatistics().save(false);
+//		Main.MAIN_FRAME.getTitleBar().getSecondTab().getStatistics().save(false);
+//		Main.MAIN_FRAME.getTitleBar().getThirdTab().getStatistics().save(false);
+//		TitleBar.toggleTitleRowIndex();
+//		Main.MAIN_FRAME.getTitleBar().getMainTab().getStatistics().save(false);
+//		Main.MAIN_FRAME.getTitleBar().getSecondTab().getStatistics().save(false);
+//		Main.MAIN_FRAME.getTitleBar().getThirdTab().getStatistics().save(false);
+//		TitleBar.toggleTitleRowIndex();
 		DatabaseManager.getCountVariableDatabase().saveAll();
 		DatabaseManager.commit();
 	}

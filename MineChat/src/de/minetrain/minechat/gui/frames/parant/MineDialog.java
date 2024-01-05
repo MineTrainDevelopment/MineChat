@@ -22,13 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import de.minetrain.minechat.gui.obj.ChatStatusPanel;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.Main;
 
 public class MineDialog extends JDialog{
 	private static final long serialVersionUID = 4562021738118686842L;
-	private final JLabel titleText = new JLabel(ChatStatusPanel.getMineChatStatusText().toString());;
+	private final JLabel titleText = new JLabel("MineDialog");;
 	private JButton infoButton;
 	private JButton confirmButton;
 	private JPanel contentPanel;
@@ -100,8 +98,7 @@ public class MineDialog extends JDialog{
 		buttonPanal.setBackground(titleBar.getBackground());
 		titleBar.add(buttonPanal, BorderLayout.EAST);
 		
-		JButton cancelButton = new JButton("");
-		cancelButton.setIcon(Main.TEXTURE_MANAGER.getCancelButton());
+		JButton cancelButton = new JButton("X");
 		cancelButton.setBackground(titleBar.getBackground());
 		cancelButton.setMinimumSize(new Dimension(30, 30));
 		cancelButton.setBorder(null);
@@ -112,8 +109,7 @@ public class MineDialog extends JDialog{
 		confirmButtonPanal.setBorder(new EmptyBorder(0, 3, 0, 3));
 		confirmButtonPanal.setBackground(titleBar.getBackground());
 		
-		confirmButton = new JButton("");
-		confirmButton.setIcon(Main.TEXTURE_MANAGER.getConfirmButton());
+		confirmButton = new JButton("Y");
 		confirmButton.setBackground(titleBar.getBackground());
 		confirmButton.setMinimumSize(new Dimension(30, 30));
 		confirmButton.setBorder(null);
@@ -121,8 +117,7 @@ public class MineDialog extends JDialog{
 		confirmButton.addActionListener(getDefaultWindowCloseAction(false));
 		confirmButtonPanal.add(confirmButton, BorderLayout.CENTER);
 		
-		infoButton = new JButton("");
-		infoButton.setIcon(Main.TEXTURE_MANAGER.getInfoButton());
+		infoButton = new JButton("I");
 		infoButton.setBackground(titleBar.getBackground());
 		infoButton.setMinimumSize(new Dimension(30, 30));
 		infoButton.setBorder(null);
