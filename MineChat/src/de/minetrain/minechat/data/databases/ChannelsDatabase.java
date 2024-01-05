@@ -39,7 +39,7 @@ public class ChannelsDatabase extends Database{
                 + "	greeting_text text NOT NULL,\n"
                 + "	goodby_text text NOT NULL,\n"
                 + "	return_text text NOT NULL,\n"
-                + "	audio_path text NOT NULL,\n"
+                + "	audio_path text,\n"
                 + "	audio_volume text NOT NULL\n"
                 + ");");
 	}

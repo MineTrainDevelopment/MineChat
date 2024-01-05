@@ -117,6 +117,7 @@ public class Main {
 		//This try is temp bcs of a stack trace thats to long for eclipse.
 		try {
 			new TwitchManager(credentials);
+			Settings.reloadHighlights();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 		}

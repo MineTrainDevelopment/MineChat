@@ -113,7 +113,6 @@ public class Settings{
 				settings.getInt("Font.Style", 1), 
 				settings.getInt("Font.Size", 17));
 		
-		reloadHighlights();
 		new ColorManager(settings);
 	}
 	
