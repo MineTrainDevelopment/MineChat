@@ -1,6 +1,9 @@
 package de.minetrain.minechat.gui.emotes;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,5 +95,9 @@ public class EmoteManager {
 		
 		HashMap<String, String> emotesByName = getChannelEmotes(channelId).getEmotesByName();
 		return emotesByName.containsKey(emoteName) ? getEmoteById(emotesByName.get(emoteName)) : null;
+	}
+	
+	public static Map<String, Emote> getPublicEmotes(){
+		return getAllEmotes().entrySet().stream().filter(entry -> entry.getValue().isGlobal()).collect(Collectors.toMap(Entry::getKey, Entry::getValue, (old, neew) -> old));
 	}
 }

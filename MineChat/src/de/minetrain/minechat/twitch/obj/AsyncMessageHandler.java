@@ -107,7 +107,7 @@ public class AsyncMessageHandler {
 			try {
 				long i = 1000;
 				while(i > 0){
-					i = getSleepTime(chatMessage.getChannelTab().getConfigID());
+					i = getSleepTime(chatMessage.getChannel().getChannelId());
 					Thread.sleep(i);
 				}
 				callCounter.recordCallTime();

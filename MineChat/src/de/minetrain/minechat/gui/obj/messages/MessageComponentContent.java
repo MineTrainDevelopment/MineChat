@@ -4,18 +4,14 @@ import java.awt.Color;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
@@ -29,7 +25,7 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
  * @param twitchMessage - nullable
  */
 public record MessageComponentContent(
-		ChatWindow chatWindow, //not null
+//		ChatWindow chatWindow, //not null
 		UserChatData userData, //DisplayName, NameColor, BadgesSet - nullable if twitchMessage is not null
 		String message, // not null
 		Long timeStamp, //nullable
@@ -40,12 +36,13 @@ public record MessageComponentContent(
 	
 	
 	public boolean isValid(){
-		return chatWindow != null && (twitchMessage == null ? userData != null : true) && message != null && !message.isBlank();
+//		return chatWindow != null && (twitchMessage == null ? userData != null : true) && message != null && !message.isBlank();
+		return (twitchMessage == null ? userData != null : true) && message != null && !message.isBlank();
 	}
 	
-	public String getChannelId(){
-		return chatWindow.getChannelId();
-	}
+//	public String getChannelId(){
+//		return chatWindow.getChannelId();
+//	}
 	
 	public String getUserName(){
 		return userData != null ? userData.displa_name() : twitchMessage.getUserName();
@@ -79,29 +76,14 @@ public record MessageComponentContent(
 	}
 	
 	/**
-	 * 
-	 * @return EmoteName, ImagePath
+	 * @return All public emotes should twitchmessage be null.
 	 */
-	public Map<String, String> getEmoteSet(){
-		if(EmoteManager.getChannelEmotes(getChannelId()).getAllEmotes() == null){
-			DatabaseManager.getEmote().getAllChannels();
-			EmoteManager.load();
-			return new HashMap<String, String>();
+	public Collection<Emote> getEmoteSet(){
+		if(twitchMessage == null){
+			return EmoteManager.getPublicEmotes().values();
 		}
 		
-		Map<String, String> map = EmoteManager.getChannelEmotes(getChannelId())
-			.getAllEmotes()
-			.stream()
-			.collect(Collectors.toMap(Emote::getName, Emote::getFilePath,
-	            (existingValue, newValue) -> {
-	            	logger.warn("Duplicate key found for emote ID \"" + existingValue + "\". Skipping.");
-	                return existingValue;
-	            }));
-		
-		if(twitchMessage != null){
-			map.putAll(twitchMessage.getEmotes());
-		}
-		return map;
+		return twitchMessage.getEmotes();
 	}
 	
 	/**

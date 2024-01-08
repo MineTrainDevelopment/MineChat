@@ -6,8 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.gui.obj.ChannelTab;
-
 /**
  * The GreetingsManager class is a specialized String list class that stores
  * usernames of ungreetsed users and marks them as greeted when mentioned.
@@ -21,19 +19,8 @@ import de.minetrain.minechat.gui.obj.ChannelTab;
 public class GreetingsManager extends ArrayList<String>{
 	private static final Logger logger = LoggerFactory.getLogger(GreetingsManager.class);
 	private static final long serialVersionUID = -6152772888792843950L;
-//	private static final Random random = new Random();
-	
 	private final List<String> mentionedUsers = new ArrayList<String>();
-	protected final ChannelTab parentTab;
-//	private String greetingsText = "";
 	
-	/**
-     * Constructs a new GreetingsManager object with the specified ChannelTab.
-     * @param tab the ChannelTab associated with this GreetingsManager
-     */
-	public GreetingsManager(ChannelTab tab) {
-		this.parentTab = tab;
-	}
 	
 	/**
      * Adds the specified name to the list of users to greet.
@@ -109,29 +96,6 @@ public class GreetingsManager extends ArrayList<String>{
 	public boolean isMentioned(String name){
 		return mentionedUsers.contains(formatUserName(name));
 	}
-	
-//	/**
-//     * Sends greetings to all useres that warned mentioned befor.
-//     * <br>If the list is empty, no greetings will be sent.
-//     * 
-//     * <p>A random greeting message gets chosen.
-//     * The greetings message is sent using the TwitchManager.
-//     */
-//	public void sendGreetingToAll(){
-//		if(isEmpty()){return;}
-//		String greeting = parentTab.getGreetingTexts().get(random.nextInt(parentTab.getGreetingTexts().size()));
-//		
-//		forEach(name -> {
-//			if(greetingsText.length() + greeting.length() + name.length() < 490){
-//				greetingsText += "@"+name+", ";
-//			}
-//		});
-//
-//		String greetingsTextSubstring = greetingsText.substring(0, greetingsText.lastIndexOf(","));
-//		String message = (greeting.contains("{USER}") ? greeting.replace("{USER}", greetingsTextSubstring) : greetingsTextSubstring+" - "+greeting);
-//		TwitchManager.sendMessage(new ChatMessage(parentTab, TwitchManager.ownerChannelName, message));
-//		greetingsText = "";
-//	}
 	
 	/**
      * Formats the specified name by converting it to lowercase and removing certain characters.

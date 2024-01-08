@@ -1,7 +1,6 @@
 package de.minetrain.minechat.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import de.minetrain.minechat.twitch.MessageManager;
@@ -20,7 +19,7 @@ public class MessageHistory extends ArrayList<String>{
 	}
 
 	public void addSendedMessages(String... messages) {
-		Arrays.asList(messages).forEach(message -> add(message));
+		addAll(List.of(messages));
 	}
 
 	public void addSendedMessages(String message) {

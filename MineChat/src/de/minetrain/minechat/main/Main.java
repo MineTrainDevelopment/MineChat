@@ -1,31 +1,138 @@
 package de.minetrain.minechat.main;
 
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.DecimalFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class Main {
+public class Main extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	public static final String VERSION = "V0.9";
-	public static AudioManager audioManager = new AudioManager();;
-	public static EventManager eventManager = new EventManager();
-	public static PluginManager pluginManager = new PluginManager(); //TODO: Load this in in main with GUI feedback.
+	public static AudioManager audioManager;
+	public static EventManager eventManager;
+	public static PluginManager pluginManager;
+	private static final int loadingSteps = 12;
 	
 	public static void main(String[] args) throws Exception {
+		loadingProgressLogging(1, "Initialising database manager");
+		new DatabaseManager();
+		
+		loadingProgressLogging(2, "Initialising user settings");
+		new Settings();
+		
+		loadingProgressLogging(3, "Fetching audio fiels.");
+		audioManager = new AudioManager();
+		
+		loadingProgressLogging(4, "Preparing MineChat events.");
+		eventManager = new EventManager();
+		
+		loadingProgressLogging(5, "Loading custom plugins.");
+		pluginManager = new PluginManager();
+		
+		loadingProgressLogging(6, "Decrypt credentials file...");
+		try {
+	    	new CredentialsManager();
+		} catch (InvalidAttributesException ex) {
+			JFrame tempFrame = new JFrame();
+			tempFrame.setVisible(true);
+			new GetCredentialsFrame(tempFrame);
+		} catch (Exception ex) {
+			CredentialsManager.deleteCredentialsFile();
+			logger.error("Invalid twitch credentials!", ex);
+			System.exit(0);
+		}
+		
+		CredentialsManager credentials = new CredentialsManager();
+
+		
+		try {
+			loadingProgressLogging(7, "Connecting to Twitch Helix.");
+			new TwitchManager(credentials);
+			loadingProgressLogging(8, "Prepare message highlight strings.");
+			Settings.reloadHighlights();
+			loadingProgressLogging(9, "Validate public badges and emotes.");
+			TextureManager.downloadPublicData();
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+			System.exit(0);
+		}
+
+		loadingProgressLogging(10, "Load AutoReply manager.");
+		new AutoReplyManager();
+
+		loadingProgressLogging(11, "Building main frame.");
+		launch(args);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
-		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
+//		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
 		    	TwitchManager.leaveAllChannel();
 		    }
 		});
 	}
-		
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		try {
+			BorderPane root = new BorderPane();
+			Scene scene = new Scene(root,400,400);
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setScene(scene);
+			primaryStage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+//		primaryStage.setTitle("Hello JavaFX");
+//
+//        // Create buttons
+//        Button button1 = new Button("Button 1");
+//        Button button2 = new Button("Button 2");
+//
+//        // Set action for Button 1
+//        button1.setOnAction(e -> {
+//            System.out.println("Hallo from Button 1!");
+//        });
+//
+//        // Set action for Button 2
+//        button2.setOnAction(e -> {
+//            System.out.println("Hallo from Button 2!");
+//        });
+//
+//        // Create layout and add buttons
+//        VBox layout = new VBox(10);
+//        layout.getChildren().addAll(button1, button2);
+//
+//        // Set up the scene
+//        Scene scene = new Scene(layout, 300, 200);
+//
+//        // Set the scene to the stage
+//        primaryStage.setScene(scene);
+//
+//        // Show the stage
+//        primaryStage.show();
+	}
+
+
 
 	public static AudioManager getAudioManager(){
 		return audioManager;
@@ -43,6 +150,8 @@ public class Main {
 	 */
 	public static String extractDomain(String input) {
         try {
+        	if(!isValidURL(input)){throw new MalformedURLException("Invalid URL.");}
+        	
         	String url = input.replace("https://", "");
 	        String host = url.substring(0, url.contains("/") ? url.indexOf("/") : url.length());
 	        String[] split = host.split("\\.");
@@ -53,4 +162,31 @@ public class Main {
 			return input;
 		}
 	}
+	
+	public static boolean isValidURL(String input){
+		try {
+			new URL(input).toURI();
+			return true;
+		} catch (MalformedURLException | URISyntaxException e) {
+			return false;
+		}
+	}
+	
+	public static boolean isValidImageURL(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            int responseCode = connection.getResponseCode();
+            return (responseCode >= 200 && responseCode < 400);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+	
+	
+	private static void loadingProgressLogging(int stage, String message) {
+		logger.info("Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
+	}
+
 }

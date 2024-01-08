@@ -21,35 +21,30 @@ import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.obj.ChannelTab;
-import de.minetrain.minechat.gui.obj.TitleBar;
+import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class ChatMessage {
 	private static final Logger logger = LoggerFactory.getLogger(ChatMessage.class);
-	private TwitchMessage replyMessage;
 	private final String message;
 	private final String messageRaw;
 	private final String senderNamem;
-	private final ChannelTab channelTab;
-	private boolean replyOveride;
+	private final Channel channel;
 	
-	public ChatMessage(ChannelTab tab, String senderNamem, String message) {
-		this.replyMessage = tab.getChatWindow().replyMessage;
-		this.senderNamem = senderNamem;
-		this.channelTab = tab;
+	public ChatMessage(Channel channel, String senderNamem, String message) {
+		this.channel = channel;
 		this.messageRaw = message;
+		this.senderNamem = senderNamem;
 
 		
 //		https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 		if(message.contains("{")){
 			LocalDateTime localDateTime = LocalDateTime.now();
 			Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
-			ChannelStatistics statistics = TitleBar.currentTab.getStatistics();
+			ChannelStatistics statistics = channel.getStatistics();
 			
 			String clipBoard = "";
 			try {
@@ -59,18 +54,18 @@ public class ChatMessage {
 			} 
 			
 			if(message.contains("{VIEWER}") || message.contains("{UPTIME}") || message.contains("{GAME}") || message.contains("{TITLE}") || message.contains("{TAGS}")){
-				String channelId = channelTab.getConfigID();
+				String channelId = channel.getChannelId();
 				List<TwitchUserObj> liveUseres = TwitchManager.getLiveUseres(TwitchApiCallType.ID, channelId).stream()
 						.filter(user -> user.getUserId().equals(channelId)).toList();
 				
 				if(!liveUseres.isEmpty()){
-					TwitchUserObj channel = liveUseres.get(0);
+					TwitchUserObj user = liveUseres.get(0);
 					message = message
-						.replace("{VIEWER}", String.valueOf(channel.getStreamViewer()))
-						.replace("{UPTIME}", channel.getStreamLiveSince())
-						.replace("{GAME}", channel.getStreamGame())
-						.replace("{TITLE}", channel.getStreamTitle())
-						.replace("{TAGS}", String.join(", ", channel.getStreamTags()));
+						.replace("{VIEWER}", String.valueOf(user.getStreamViewer()))
+						.replace("{UPTIME}", user.getStreamLiveSince())
+						.replace("{GAME}", user.getStreamGame())
+						.replace("{TITLE}", user.getStreamTitle())
+						.replace("{TAGS}", String.join(", ", user.getStreamTags()));
 				}
 			}
 			
@@ -78,7 +73,7 @@ public class ChatMessage {
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
 					.replace("{DAY}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat, locale)))
-					.replace("{STREAMER}", "@"+channelTab.getChannelName())
+					.replace("{STREAMER}", "@"+channel.getChannelData().getLoginName())
 					.replace("{MYSELF}", "@"+TwitchManager.ownerChannelName)
 					.replace("{VIEWER}", "0")
 					.replace("{UPTIME}", "0")
@@ -132,9 +127,6 @@ public class ChatMessage {
 		}
 	}
 	
-	public TwitchMessage getReplyMessage() {
-		return replyMessage;
-	}
 
 	public String getMessage() {
 		return message;
@@ -144,25 +136,16 @@ public class ChatMessage {
 		return senderNamem;
 	}
 
-	public String getSendToChannel() {
-		return channelTab.getChannelName();
-	}
-
-	public ChannelTab getChannelTab() {
-		return channelTab;
+	public Channel getChannel() {
+		return channel;
 	}
 
 	public String getMessageRaw() {
 		return messageRaw;
 	}
 	
-	public boolean isReplyOveride(){
-		return replyOveride;
-	}
-	
-	public void overrideReplyMessage(TwitchMessage message){
-		this.replyMessage = message;
-		this.replyOveride = true;
+	public void displayMessage(){
+		getChannel().displayMessage(this);
 	}
 	
 

@@ -25,11 +25,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
-import de.minetrain.minechat.gui.frames.ChatWindow;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
-import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
@@ -37,7 +33,6 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
-import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.events.MineChatEventType;
 import io.github.bucket4j.Bandwidth;
 import kong.unirest.HttpResponse;
@@ -178,36 +173,12 @@ public class TwitchManager {
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
 	public static void sendMessage(ChatMessage message) {
-		TwitchMessage replyMessage = message.getReplyMessage();
-		ChatWindow chatWindow = message.getChannelTab().getChatWindow();
-		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(message.getChannelTab().getConfigID());
-		
-		if(ownerData == null){
-			ownerData = new UserChatData(message.getChannelTab().getConfigID(), HTMLColors.WHITE.getColorCode(), message.getSenderName(), "");
-		}
-
-		message.getChannelTab().getStatistics().addMessage(message.getSenderName(), ownerTwitchUser.getUserId());
-		chatWindow.chatStatusPanel.getMessageHistory().addSendedMessages(message.getMessageRaw());
-		chatWindow.displayMessage(new MessageComponentContent(
-				chatWindow,
-				ownerData,
-				((replyMessage != null) ? "@" + replyMessage.getParentReplyUser() + " " : "")+ message.getMessage(),
-				null,
-				replyMessage));
-		
+		message.displayMessage();
 				
-		//Check if a chatter is was mentioned
-		Arrays.asList(message.getMessage().split(" ")).forEach(word -> {
-			if(word.startsWith("@")){
-				chatWindow.greetingsManager.setMentioned(word.replace("@", ""));
-			}
-		});
-		
-		
-		if(replyMessage != null){
+		if(message.getChannel().replyMessage != null){
 			replyMessage(message);
 		}else{
-			sendMessage(message.getChannelTab().getChannelName(), message.getMessage());
+			sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage());
 		}
 		
 		//Fire the MineChatEvent.
@@ -236,13 +207,10 @@ public class TwitchManager {
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
 	private static void replyMessage(ChatMessage message) {
-		TwitchMessage replyMessage = message.getReplyMessage();
+		TwitchMessage replyMessage = message.getChannel().replyMessage;
 		if(!replyMessage.isNull()){
-			twitch.getChat().sendMessage(message.getChannelTab().getChannelName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
-			if(!message.isReplyOveride()){
-				replyMessage.getParentTab().getChatWindow().greetingsManager.setMentioned(replyMessage.getUserName().toLowerCase());
-				replyMessage.getParentTab().getChatWindow().setMessageToReply(null);
-			}
+			twitch.getChat().sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
+			message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());
 			return;
 		}
 		sendMessage(message);
@@ -260,7 +228,7 @@ public class TwitchManager {
 		try {
 			json = new Gson().fromJson(requestAccesToken(credentials.getClientID(), credentials.getClientSecret()), JsonObject.class);
 			return new TwitchAccesToken(json);
-		} catch (JsonSyntaxException | IllegalArgumentException ex) {
+		} catch (JsonSyntaxException | IllegalArgumentException | NullPointerException ex) {
 			logger.error("Error while trying to get a new AccesToken", ex);
 			return null;
 		}

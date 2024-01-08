@@ -25,12 +25,10 @@ public class AudioManager {
 	
 	/**Path {@link URI#toString()} --> {@link AudioClip}*/
 	private HashMap<String, AudioClip> audioCach = new HashMap<String, AudioClip>();
-
+	
 	public AudioManager() {
-//		playAudioClip(createUri("default", "message69.mp3"));
-//		playAudioClip(DefaultAudioFiles.PING_4);
-		logger.info(new AudioPath(DefaultAudioFiles.PING_4.getFilePath()).toString());;
-		
+		Collection<Path> audioFiles = scrapeAudioFiles();
+		logger.info("Scraped \""+audioFiles.size()+ "\" custom audio files.");
 	}
 
 	public static Collection<Path> scrapeAudioFiles() {

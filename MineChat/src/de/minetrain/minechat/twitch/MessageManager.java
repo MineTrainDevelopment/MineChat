@@ -8,8 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.gui.obj.TitleBar;
-import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
 import de.minetrain.minechat.utils.ChatMessage;
 
@@ -57,23 +56,23 @@ public class MessageManager {
 	 * 
 	 * @param message the message to send to the Twitch API
 	 */
-    public static void sendMessage(String message) {
+    public static void sendMessage(Channel channel, String message) {
     	if(message.length()>MAX_MESSAGE_LENGTH){
     		splitString(message).forEach(newMessage -> {
-    			sendMessage(newMessage);
+    			sendMessage(channel, newMessage);
     		});
     		
     		return;
     	}
     	
-    	if(TitleBar.currentTab.isModerator()){
-            getModeratorMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
+    	if(channel.isModerator()){
+            getModeratorMessageHandler().addMessage(new ChatMessage(channel, TwitchManager.ownerChannelName, message));
     	}else{
-    		sendDelayedMessage(message);
+    		sendDelayedMessage(channel, message);
     	}
     }
     
-    private static void sendDelayedMessage(String message) {
+    private static void sendDelayedMessage(Channel channel, String message) {
         Instant now = Instant.now(); //Get the current time.
         
         //If the same message has been sent recently, append the spam protector character.
@@ -85,9 +84,7 @@ public class MessageManager {
         lastMessage = message;
         lastSentTime = now;
 
-//        getMessageHandler().addMessage(message+"%-%"+TitleBar.currentTab.getChannelName());
-        
-        getDefaultMessageHandler().addMessage(new ChatMessage(TitleBar.currentTab, TwitchManager.ownerChannelName, message));
+        getDefaultMessageHandler().addMessage(new ChatMessage(channel, TwitchManager.ownerChannelName, message));
     }
     
     
@@ -150,7 +147,7 @@ public class MessageManager {
      * Updates the user interface queue button text based on the current message count.
      */
     public static void updateQueueButton() {
-    	Main.MAIN_FRAME.queueButton.setText("Message Queue: "+(getDefaultMessageHandler().getMessageCount()+getModeratorMessageHandler().getMessageCount()));
+//    	Main.MAIN_FRAME.queueButton.setText("Message Queue: "+(getDefaultMessageHandler().getMessageCount()+getModeratorMessageHandler().getMessageCount()));
     }
     
 	public static AsyncMessageHandler getDefaultMessageHandler() {

@@ -103,7 +103,7 @@ public class ChannelsDatabase extends Database{
             	statement.setString(2, channel_id);
             	statement.executeUpdate();
             }else{
-            	logger.warn("Can´t set bttv emotes IDs for channel '"+channel_id+"'.");
+            	logger.warn("Can´t update channel login name for channel '"+channel_id+"'.");
             }
 
 //            connection.commit();

@@ -39,12 +39,22 @@ public class Emote {
 		this.name = ">null<";
 		this.emoteId = ">null<";
 		this.favorite = false;
-		this.emoteType = EmoteType.DEFAULT;
+		this.emoteType = EmoteType.NON;
 		this.filePath = ">null<";
 		this.fileFormat = "png";
 	}
-
 	
+	public Emote(String name, String emoteId, String fileFormat){
+		this.dummyData = true;
+		this.name = name;
+		this.emoteId = emoteId;
+		this.favorite = false;
+		this.emoteType = EmoteType.NON;
+		this.filePath = ">null<";
+		this.fileFormat = fileFormat;
+	}
+
+
 	/**
 	 * @return {@link ImageIcon} on the {@link EmoteSize#SMALL} scale.
 	 */
@@ -128,7 +138,7 @@ public class Emote {
 	}
 
 	public enum EmoteType{
-		SUB(true, true), SUB_2(true, true), SUB_3(true, true), BIT(true, true), FOLLOW(false, false), BTTV(false, false), DEFAULT(false, true);
+		SUB(true, true), SUB_2(true, true), SUB_3(true, true), BIT(true, true), FOLLOW(false, false), BTTV(false, false), DEFAULT(false, true), NON(false, false);
 
 		private boolean subOnly;
 		public boolean isSubOnly(){return subOnly;}
@@ -155,6 +165,7 @@ public class Emote {
 				case "follower": return FOLLOW;
 				case "bitstier": return BIT;
 				case "bttv": return BTTV;
+				case "non": return NON;
 				default: return DEFAULT;
 			}
 		}

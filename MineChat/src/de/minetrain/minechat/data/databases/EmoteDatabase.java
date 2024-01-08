@@ -242,7 +242,6 @@ public class EmoteDatabase extends Database{
             	statement.setString(2, chanelId);
             	statement.executeUpdate();
             	connection.commit();
-            	EmoteManager.load();
             }else{
             	logger.warn("Can´t update sub tier for channel -> '"+chanelId+"'.");
             }

@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.twitch4j.chat.events.channel.CheerEvent;
@@ -14,9 +16,6 @@ import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.obj.ChannelTab;
-import de.minetrain.minechat.gui.obj.chat.userinput.textarea.SuggestionObj;
-import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.twitch.TwitchManager;
 
 //dalay_stats.
@@ -32,7 +31,7 @@ public class ChannelStatistics {
 	private final Map<String, Long> sendedMessages = new HashMap<>(); //User_id, value
 	private final Map<SubscriptionPlan, Map<String, Long>> giftedSubs = new HashMap<>(); //subPlan - User_id, value
 	private final Map<String, Long> cheerdBits = new HashMap<>(); //User_id, value
-	private long uniqueMessages = 0;
+	private final Set<Integer> uniqueMessages = new HashSet<>();
 //	private long streamStartupTime = 0;
 	private long totalMessages = 0;
 	private long totalSubs = 0;
@@ -40,24 +39,26 @@ public class ChannelStatistics {
 	private long totalNewSubs = 0;
 	private long totalBits = 0;
 	private long totalFollower = 0;
-	private ChannelTab parentTab;
+	private String channelId;
 	
-	public ChannelStatistics(ChannelTab parentTab){
-		this.parentTab = parentTab;
+	public ChannelStatistics(String channelId){
+		this.channelId = channelId;
 	}
 	
 //	public void setStreamStartupTime(long streamStartupTime) {
 //		this.streamStartupTime = streamStartupTime;
 //	}
 
-	public void addMessage(String senderName, String senderId) {
+	public void addMessage(String senderName, String senderId, String message) {
 		totalMessages++;
 		
 		if(!sendedMessages.containsKey(senderId)){
-			parentTab.getChatWindow().chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+senderName, null));
+//			Add user to username suggestion?
+//			parentTab.getChatWindow().chatStatusPanel.getinputArea().addToDictionary(new SuggestionObj("@"+senderName, null));
 		}
 		
 		sendedMessages.put(senderId, sendedMessages.containsKey(senderId) ? sendedMessages.get(senderId)+1 : 1l);
+		uniqueMessages.add(message.hashCode());
 		messageTimestamps.compute(senderName, (key, value) -> {
 		    if (value != null) {
 		        previousMessageTimestamps.put(key, value);
@@ -99,7 +100,7 @@ public class ChannelStatistics {
 			return;
 		}
 		
-		DatabaseManager.getChannelStatistics().insert(this, parentTab.getConfigID());
+		DatabaseManager.getChannelStatistics().insert(this, channelId);
 		sendedMessages.clear();
 		giftedSubs.clear();
 		cheerdBits.clear();
@@ -115,7 +116,7 @@ public class ChannelStatistics {
 	}
 	
 	public String getChannelId(){
-		return parentTab.getConfigID();
+		return channelId;
 	}
 	
 	public Map<String, Long> getSendedMessages() {
@@ -247,11 +248,7 @@ public class ChannelStatistics {
 	}
 	
 	public long getTotalUniqueMessages(){
-		return uniqueMessages + MessageComponent.getDocumentCacheSize(getChannelId());
-	}
-	
-	public void updateUniqueMessages(long count){
-		uniqueMessages = uniqueMessages + count;
+		return uniqueMessages.size();
 	}
 	
 //	Das hier muss noch in die @user auswahl.
