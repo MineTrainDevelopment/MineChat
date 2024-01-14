@@ -1,6 +1,6 @@
 package de.minetrain.minechat.gui.utils;
 
-import java.awt.Color;
+import javafx.scene.paint.Color;
 
 /**
  * NOTE: I stole this code from <a href="https://github.com/jeffjianzhao/DAViewer/blob/master/src/daviewer/HSLColor.java">GitHub</a> and modified it a bit to my needs.
@@ -23,8 +23,8 @@ import java.awt.Color;
  * a color by adjusting the luminance value.
  */
 public class HSLColor {
-	private float[] hsl;
-	private float alpha = 255.0f;
+	private double[] hsl;
+	private double opacity = 255.0f;
 
 	/**
 	 * Create a HSLColor object using an hex code
@@ -32,7 +32,7 @@ public class HSLColor {
 	 * @param rgb the RGB Color object
 	 */
 	public HSLColor(String hexCode) {
-		float[] rgb = ColorManager.hexToRGB(hexCode);
+		double[] rgb = ColorManager.hexToRGB(hexCode);
 		hsl = fromRGB(rgb[0], rgb[1], rgb[2]);
 	}
 
@@ -43,16 +43,16 @@ public class HSLColor {
 	 */
 	public HSLColor(Color rgb) {
 		hsl = fromColor(rgb);
-		alpha = rgb.getAlpha() / 255.0f;
+		opacity = rgb.getOpacity();
 	}
 
 	/**
 	 * Create a HSLColor object using an an array containing the individual HSL
-	 * values and with a default alpha value of 1.
+	 * values and with a default opacity value of 1.
 	 *
 	 * @param hsl array containing HSL values
 	 */
-	public HSLColor(float[] hsl) {
+	public HSLColor(double[] hsl) {
 		this(hsl, 1.0f);
 	}
 
@@ -61,22 +61,22 @@ public class HSLColor {
 	 * values.
 	 *
 	 * @param hsl   array containing HSL values
-	 * @param alpha the alpha value between 0 - 1
+	 * @param opacity the opacity value between 0 - 1
 	 */
-	public HSLColor(float[] hsl, float alpha) {
+	public HSLColor(double[] hsl, double opacity) {
 		this(hsl[0], hsl[1], hsl[2]);
-		this.alpha = alpha;
+		this.opacity = opacity;
 	}
 
 	/**
-	 * Create a HSLColor object using individual HSL values and a default alpha
+	 * Create a HSLColor object using individual HSL values and a default opacity
 	 * value of 1.0.
 	 *
 	 * @param h is the Hue value in degrees between 0 - 360
 	 * @param s is the Saturation percentage between 0 - 100
 	 * @param l is the Lumanance percentage between 0 - 100
 	 */
-	public HSLColor(float h, float s, float l) {
+	public HSLColor(double h, double s, double l) {
 		this(h, s, l, 1.0f);
 	}
 
@@ -86,11 +86,11 @@ public class HSLColor {
 	 * @param h     the Hue value in degrees between 0 - 360
 	 * @param s     the Saturation percentage between 0 - 100
 	 * @param l     the Lumanance percentage between 0 - 100
-	 * @param alpha the alpha value between 0 - 1
+	 * @param opacity the opacity value between 0 - 1
 	 */
-	public HSLColor(float h, float s, float l, float alpha) {
-		hsl = new float[] {checkBounds(h, 0, 360), checkBounds(s, 0, 100), checkBounds(l, 0, 100)};
-		this.alpha = alpha;
+	public HSLColor(double h, double s, double l, double opacity) {
+		hsl = new double[] {checkBounds(h, 0, 360), checkBounds(s, 0, 100), checkBounds(l, 0, 100)};
+		this.opacity = opacity;
 	}
 
 	/**
@@ -100,8 +100,8 @@ public class HSLColor {
 	 * @param degrees - the Hue value between 0 - 360
 	 * @return itself for method chaining.
 	 */
-	public HSLColor setHue(float hue) {
-		hsl = new float[] {checkBounds(hue, 0, 360), hsl[1], hsl[2]};
+	public HSLColor setHue(double hue) {
+		hsl = new double[] {checkBounds(hue, 0, 360), hsl[1], hsl[2]};
 		return this;
 	}
 	
@@ -112,8 +112,8 @@ public class HSLColor {
 	 * @param percent - the Saturation value between 0 - 100
 	 * @return itself for method chaining.
 	 */
-	public HSLColor setSaturation(float saturation) {
-		hsl = new float[] {hsl[0], checkBounds(saturation, 0, 100), hsl[2]};
+	public HSLColor setSaturation(double saturation) {
+		hsl = new double[] {hsl[0], checkBounds(saturation, 0, 100), hsl[2]};
 		return this;
 	}
 	
@@ -124,8 +124,8 @@ public class HSLColor {
 	 * @param percent - the Luminance value between 0 - 100
 	 * @return itself for method chaining.
 	 */
-	public HSLColor setLuminance(float luminance) {
-		hsl = new float[] {hsl[0], hsl[1], checkBounds(luminance, 0, 100)};
+	public HSLColor setLuminance(double luminance) {
+		hsl = new double[] {hsl[0], hsl[1], checkBounds(luminance, 0, 100)};
 		return this;
 	}
 
@@ -136,9 +136,9 @@ public class HSLColor {
 	 * @param percent - the value between 0 - 100
 	 * @return itself for method chaining.
 	 */
-	public HSLColor adjustShade(float percent) {
-		float multiplier = (100.0f - checkBounds(percent, 0, 100)) / 100.0f;
-		float luminance = Math.max(0.0f, hsl[2] * multiplier);
+	public HSLColor adjustShade(double percent) {
+		double multiplier = (100.0f - checkBounds(percent, 0, 100)) / 100.0f;
+		double luminance = Math.max(0.0f, hsl[2] * multiplier);
 
 		setLuminance(luminance);
 		return this;
@@ -151,9 +151,9 @@ public class HSLColor {
 	 * @param percent - the value between 0 - 100
 	 * @return itself for method chaining.
 	 */
-	public HSLColor adjustTone(float percent) {
-		float multiplier = (100.0f + checkBounds(percent, 0, 100)) / 100.0f;
-		float luminance = Math.min(100.0f, hsl[2] * multiplier);
+	public HSLColor adjustTone(double percent) {
+		double multiplier = (100.0f + checkBounds(percent, 0, 100)) / 100.0f;
+		double luminance = Math.min(100.0f, hsl[2] * multiplier);
 
 		setLuminance(luminance);
 		return this;
@@ -163,9 +163,9 @@ public class HSLColor {
         // This is used to stop colors from getting darker as they should, as long as its not intended.
         boolean isOver25 = getLuminance() >= 25;
         
-        float backgroundLuminance = background.getLuminance();
+        double backgroundLuminance = background.getLuminance();
         backgroundLuminance = backgroundLuminance == 100 ? backgroundLuminance = 99 : backgroundLuminance;
-		float toneAjustmint = Math.abs(backgroundLuminance == 50 ? 0 : backgroundLuminance-50);
+		double toneAjustmint = Math.abs(backgroundLuminance == 50 ? 0 : backgroundLuminance-50);
 
         if(backgroundLuminance < 50){
         	
@@ -198,8 +198,8 @@ public class HSLColor {
 	 *
 	 * @return the Alpha value.
 	 */
-	public float getAlpha() {
-		return alpha;
+	public double getAlpha() {
+		return opacity;
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class HSLColor {
 	 * @return the RGB Color object
 	 */
 	public Color getComplementary() {
-		float hue = (hsl[0] + 180.0f) % 360.0f;
+		double hue = (hsl[0] + 180.0f) % 360.0f;
 		return toRGB(hue, hsl[1], hsl[2]);
 	}
 
@@ -219,7 +219,7 @@ public class HSLColor {
 	 *
 	 * @return the Hue value.
 	 */
-	public float getHue() {
+	public double getHue() {
 		return hsl[0];
 	}
 
@@ -228,7 +228,7 @@ public class HSLColor {
 	 *
 	 * @return the Saturation value.
 	 */
-	public float getSaturation() {
+	public double getSaturation() {
 		return hsl[1];
 	}
 
@@ -237,7 +237,7 @@ public class HSLColor {
 	 *
 	 * @return the Luminance value.
 	 */
-	public float getLuminance() {
+	public double getLuminance() {
 		return hsl[2];
 	}
 
@@ -246,7 +246,7 @@ public class HSLColor {
 	 *
 	 * @return the HSL values.
 	 */
-	public float[] getHSL() {
+	public double[] getHSL() {
 		return hsl;
 	}
 
@@ -267,7 +267,7 @@ public class HSLColor {
 	}
 
 	public String toString() {
-		return "HSLColor[h=" + hsl[0] + ",s=" + hsl[1] + ",l=" + hsl[2] + ",alpha=" + alpha + "]";
+		return "HSLColor[h=" + hsl[0] + ",s=" + hsl[1] + ",l=" + hsl[2] + ",opacity=" + opacity + "]";
 	}
 
 	/**
@@ -275,12 +275,11 @@ public class HSLColor {
 	 *
 	 * @return an array containing the 3 HSL values.
 	 */
-	public static float[] fromColor(Color color) {
+	public static double[] fromColor(Color color) {
 		// Get RGB values in the range 0 - 1
-		float[] rgb = color.getRGBColorComponents(null);
-		float r = rgb[0];
-		float g = rgb[1];
-		float b = rgb[2];
+		double r = color.getRed();
+		double g = color.getGreen();
+		double b = color.getBlue();
 		
 		return fromRGB(r, g, b);
 	}
@@ -290,8 +289,8 @@ public class HSLColor {
 	 *
 	 * @return an array containing the 3 HSL values.
 	 */
-	public static float[] fromHex(String hexCode) {
-		float[] rgb = ColorManager.hexToRGB(hexCode);
+	public static double[] fromHex(String hexCode) {
+		double[] rgb = ColorManager.hexToRGB(hexCode);
 		return fromRGB(rgb[0], rgb[1], rgb[2]);
 	}
 	
@@ -301,13 +300,13 @@ public class HSLColor {
 	 *
 	 * @return an array containing the 3 HSL values.
 	 */
-	public static float[] fromRGB(float r, float g, float b) {
+	public static double[] fromRGB(double r, double g, double b) {
 		// Minimum and Maximum RGB values are used in the HSL calculations
-		float min = Math.min(r, Math.min(g, b));
-		float max = Math.max(r, Math.max(g, b));
+		double min = Math.min(r, Math.min(g, b));
+		double max = Math.max(r, Math.max(g, b));
 
 		// Calculate the Hue
-		float h = 0;
+		double h = 0;
 
 		if (max == min)
 			h = 0;
@@ -320,11 +319,11 @@ public class HSLColor {
 
 		// Calculate the Luminance
 
-		float l = (max + min) / 2;
+		double l = (max + min) / 2;
 		// System.out.println(max + " : " + min + " : " + l);
 
 		// Calculate the Saturation
-		float s = 0;
+		double s = 0;
 
 		if (max == min)
 			s = 0;
@@ -332,11 +331,11 @@ public class HSLColor {
 			s = (max - min) / (max + min);
 		else
 			s = (max - min) / (2 - max - min);
-		return new float[] { h, s * 100, l * 100 };
+		return new double[] { h, s * 100, l * 100 };
 	}
 
 	/**
-	 * Convert HSL values to a RGB Color with a default alpha value of 1. H (Hue) is
+	 * Convert HSL values to a RGB Color with a default opacity value of 1. H (Hue) is
 	 * specified as degrees in the range 0 - 360. S (Saturation) is specified as a
 	 * percentage in the range 1 - 100. L (Lumanance) is specified as a percentage
 	 * in the range 1 - 100.
@@ -345,7 +344,7 @@ public class HSLColor {
 	 *
 	 * @returns the RGB Color object
 	 */
-	public static Color toRGB(float[] hsl) {
+	public static Color toRGB(double[] hsl) {
 		return toRGB(hsl, 1.0f);
 	}
 
@@ -355,16 +354,16 @@ public class HSLColor {
 	 * 100. L (Lumanance) is specified as a percentage in the range 1 - 100.
 	 *
 	 * @param hsl   an array containing the 3 HSL values
-	 * @param alpha the alpha value between 0 - 1
+	 * @param opacity the opacity value between 0 - 1
 	 *
 	 * @returns the RGB Color object
 	 */
-	public static Color toRGB(float[] hsl, float alpha) {
-		return toRGB(hsl[0], hsl[1], hsl[2], alpha);
+	public static Color toRGB(double[] hsl, double opacity) {
+		return toRGB(hsl[0], hsl[1], hsl[2], opacity);
 	}
 
 	/**
-	 * Convert HSL values to a RGB Color with a default alpha value of 1.
+	 * Convert HSL values to a RGB Color with a default opacity value of 1.
 	 *
 	 * @param h Hue is specified as degrees in the range 0 - 360.
 	 * @param s Saturation is specified as a percentage in the range 1 - 100.
@@ -372,7 +371,7 @@ public class HSLColor {
 	 *
 	 * @returns the RGB Color object
 	 */
-	public static Color toRGB(float h, float s, float l) {
+	public static Color toRGB(double h, double s, double l) {
 		return toRGB(h, s, l, 1.0f);
 	}
 
@@ -382,11 +381,11 @@ public class HSLColor {
 	 * @param h     Hue is specified as degrees in the range 0 - 360.
 	 * @param s     Saturation is specified as a percentage in the range 1 - 100.
 	 * @param l     Lumanance is specified as a percentage in the range 1 - 100.
-	 * @param alpha the alpha value between 0 - 1
+	 * @param opacity the opacity value between 0 - 1
 	 *
 	 * @returns the RGB Color object
 	 */
-	public static Color toRGB(float h, float s, float l, float alpha) {
+	public static Color toRGB(double h, double s, double l, double opacity) {
 		if (s < 0.0f || s > 100.0f) {
 			String message = "Color parameter outside of expected range - Saturation["+s+"]";
 			throw new IllegalArgumentException(message);
@@ -397,7 +396,7 @@ public class HSLColor {
 			throw new IllegalArgumentException(message);
 		}
 
-		if (alpha < 0.0f || alpha > 1.0f) {
+		if (opacity < 0.0f || opacity > 1.0f) {
 			String message = "Color parameter outside of expected range - Alpha";
 			throw new IllegalArgumentException(message);
 		}
@@ -409,27 +408,27 @@ public class HSLColor {
 		s /= 100f;
 		l /= 100f;
 
-		float q = 0;
+		double q = 0;
 
 		if (l < 0.5)
 			q = l * (1 + s);
 		else
 			q = (l + s) - (s * l);
 
-		float p = 2 * l - q;
+		double p = 2 * l - q;
 
-		float r = Math.max(0, HueToRGB(p, q, h + (1.0f / 3.0f)));
-		float g = Math.max(0, HueToRGB(p, q, h));
-		float b = Math.max(0, HueToRGB(p, q, h - (1.0f / 3.0f)));
+		double r = Math.max(0, HueToRGB(p, q, h + (1.0f / 3.0f)));
+		double g = Math.max(0, HueToRGB(p, q, h));
+		double b = Math.max(0, HueToRGB(p, q, h - (1.0f / 3.0f)));
 
 		r = Math.min(r, 1.0f);
 		g = Math.min(g, 1.0f);
 		b = Math.min(b, 1.0f);
 
-		return new Color(r, g, b, alpha);
+		return new Color(r, g, b, opacity);
 	}
 
-	private static float HueToRGB(float p, float q, float h) {
+	private static double HueToRGB(double p, double q, double h) {
 		if (h < 0)
 			h += 1;
 
@@ -509,7 +508,7 @@ public class HSLColor {
 	 * @param maxValue
 	 * @return
 	 */
-	private float checkBounds(float value, int minValue, int maxValue){
+	private double checkBounds(double value, int minValue, int maxValue){
 		return value > maxValue ? maxValue : value < minValue ? minValue : value;
 	}
 }

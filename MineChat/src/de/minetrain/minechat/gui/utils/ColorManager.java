@@ -1,11 +1,11 @@
 package de.minetrain.minechat.gui.utils;
 
-import java.awt.Color;
 import java.util.HashMap;
 
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.YamlManager;
+import javafx.scene.paint.Color;
 
 //import javax.swing.JColorChooser;
 
@@ -19,22 +19,32 @@ public class ColorManager {
 	private String TODO_Against_settings = "";
 	public static final Color FONT_DEFAULT = Color.WHITE;
 	public static final Color FONT_HYPERTEXT = decode("#1000FF");
-	public static final Color GUI_BORDER_DEFAULT = new Color(14, 14, 14);
-	public static final Color GUI_BACKGROUND_DEFAULT = new Color(40, 40, 40);
-	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = new Color(80, 80, 80);
-	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = new Color(30, 30, 30);
+	public static final Color GUI_BORDER_DEFAULT = colorOf(14, 14, 1);
+	public static final Color GUI_BACKGROUND_DEFAULT = colorOf(40, 40, 40);
+	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = colorOf(80, 80, 80);
+	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = colorOf(30, 30, 30);
 	public static final Color GUI_ACCENT_DEFAULT = Color.GREEN;
 
 	public static final Color CHAT_UNIMPORTANT_DEFAULT = Color.GRAY;
     public static final Color CHAT_MODERATION_DEFAULT = Color.CYAN;
-    public static final Color CHAT_SPENDING_SMALL_DEFAULT = new Color(180, 80, 0);
+    public static final Color CHAT_SPENDING_SMALL_DEFAULT = colorOf(180, 80, 0);
     public static final Color CHAT_SPENDING_BIG_DEFAULT = Color.YELLOW;
     public static final Color CHAT_ANNOUNCEMENT_DEFAULT = Color.GREEN;
     public static final Color CHAT_USER_REWARD_DEFAULT = Color.BLUE;
-    public static final Color CHAT_TWITCH_HIGHLIGHTED_DEFAULT = new Color(120, 86, 188);
-    public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = new Color(255, 40, 40);
-    public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = new Color(125, 0, 255);
-	
+    public static final Color CHAT_TWITCH_HIGHLIGHTED_DEFAULT = colorOf(120, 86, 188);
+    public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = colorOf(255, 40, 40);
+    public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = colorOf(125, 0, 255);
+    
+    /**
+     * 
+     * @param red
+     * @param green
+     * @param blue
+     * @return
+     */
+    private static final Color colorOf(int red, int green, int blue){
+    	return new Color(red/255d, green/255d, blue/255d, 1);
+    }
 	
 	/**
 	 * (14, 14, 14)
@@ -76,7 +86,7 @@ public class ColorManager {
 	public static Color decode(String hexCode){
 		hexCode = hexCode.startsWith("#") ? hexCode : "#"+hexCode;
 		try {
-			return Color.decode(hexCode);
+			return Color.valueOf(hexCode);
 		} catch (NumberFormatException ex) {
 			LoggerFactory.getLogger(ColorManager.class).warn("Can´t decode color with following hexCode --> "+hexCode);
 			return Color.WHITE;
@@ -96,19 +106,23 @@ public class ColorManager {
 	}
 	
 	public static String encode(Color color) {
-		return "#"+String.format("%06x", 0xFFFFFF & color.getRGB());
-	}
+        return String.format("#%02X%02X%02X%02X",
+            (int) (color.getRed() * 255),
+            (int) (color.getGreen() * 255),
+            (int) (color.getBlue() * 255),
+            (int) (color.getOpacity() * 255));
+    }
 	
 	public static YamlManager getSettingsConfig(){
 		return settings;
 	}
 	
-	public static float[] hexToRGB(String hexCode){
+	public static double[] hexToRGB(String hexCode){
 		hexCode = hexCode.replace("#", "");
 		int red = Integer.valueOf(hexCode.substring(0, 2), 16);
 	    int green = Integer.valueOf(hexCode.substring(2, 4), 16);
 	    int blue = Integer.valueOf(hexCode.substring(4, 6), 16);
-	    return new float[]{red/255f, green/255f, blue/255f};
+	    return new double[]{red/255d, green/255d, blue/255d};
 	}
 	
 }

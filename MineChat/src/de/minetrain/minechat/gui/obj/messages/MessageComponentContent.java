@@ -1,6 +1,5 @@
 package de.minetrain.minechat.gui.obj.messages;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,6 +13,7 @@ import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import javafx.scene.paint.Color;
 
 /**
  * 
