@@ -3,14 +3,14 @@ package de.minetrain.minechat.data.objectdata;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.features.macros.MacroType;
 
 public class MacroData {
 	private final Long id;
 	private String channelId;
-	private final ButtonType button_type;
-	private final String button_id;
-	private final String button_row;
+	private final MacroType macro_type;
+	private final int button_id;
 	private final String title;
 	private final String emoteId;
 	private final String[] output;
@@ -18,9 +18,8 @@ public class MacroData {
 	public MacroData(ResultSet resultSet) throws SQLException {
 		this.id = resultSet.getLong("id");
 		this.channelId = resultSet.getString("channel_id");
-		this.button_type = ButtonType.get(resultSet.getString("button_type"));
-		this.button_id = resultSet.getString("button_id");
-		this.button_row = resultSet.getString("button_row");
+		this.macro_type = MacroType.get(resultSet.getString("macro_type"));
+		this.button_id = resultSet.getInt("button_id");
 		this.title = resultSet.getString("title");
 		this.emoteId = resultSet.getString("emote_id");
 		this.output = resultSet.getString("output").split("\n");
@@ -29,12 +28,21 @@ public class MacroData {
 	public MacroData(MacroData data){
 		this.id = null;
 		this.channelId = data.getChannelId();
-		this.button_type = data.getButton_type();
+		this.macro_type = data.getMacro_type();
 		this.button_id = data.getButton_id();
-		this.button_row = data.getButton_row();
 		this.title = data.getTitle();
 		this.emoteId = data.getEmoteId();
 		this.output = data.getOutput();
+	}
+	
+	public MacroData(String channelId, MacroObject data){
+		this.id = data.getDatabaseId();
+		this.channelId = channelId;
+		this.macro_type = data.getMacroType();
+		this.button_id = data.getButtonId();
+		this.title = data.getTitle();
+		this.emoteId = data.getEmoteId();
+		this.output = data.getAllOutputs();
 	}
 	
 	public MacroData fromChannelId(String channel_id){
@@ -50,20 +58,16 @@ public class MacroData {
 		return id;
 	}
 	
-	public ButtonType getButton_type() {
-		return button_type;
+	public MacroType getMacro_type() {
+		return macro_type;
 	}
 
 	public String getChannelId() {
 		return channelId;
 	}
 	
-	public String getButton_id() {
+	public int getButton_id() {
 		return button_id;
-	}
-	
-	public String getButton_row() {
-		return button_row;
 	}
 	
 	public String getTitle() {

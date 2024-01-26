@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.minetrain.minechat.gui.obj.buttons.ChannelTab;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
+import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelManager;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -33,8 +35,9 @@ public class TitleBarPane extends BorderPane{
 	private final ScrollPane tabPane;
 	private final HBox tabBar;
 	
-	public void scrollToTab(ChannelTab channelTab){
+	public void scrollToTab(ChannelTabButton channelTab){
 //		tabPane.setHvalue(channelTab.getLayoutX() * (1/(tabBar.getWidth() - tabPane.getViewportBounds().getWidth())));
+//		System.err.println(tabBar.getWidth() +" - "+ tabPane.getViewportBounds().getWidth());
 		animateScrollPane(tabPane, channelTab.getLayoutX() * (1/(tabBar.getWidth() - tabPane.getViewportBounds().getWidth())));
 	}
 	
@@ -54,6 +57,10 @@ public class TitleBarPane extends BorderPane{
         settingsButton.setMaxSize(30, 30);
         settingsButton.setMinSize(30, 30);
         settingsButton.setId("program-action");
+        settingsButton.setOnMouseClicked(event -> {
+        	System.err.println("TODO: Settings");
+        	new EmoteSelector();
+        });
         
 
         HBox settingsButtonContainer = new HBox(5);
@@ -63,18 +70,7 @@ public class TitleBarPane extends BorderPane{
 
         tabBar = new HBox(5);
         tabBar.setAlignment(Pos.CENTER_LEFT);
-		tabBar.getChildren().addAll(
-				new ChannelTab(new Channel("177849882"), this),
-				new ChannelTab(new Channel("35884167"), this),
-				new ChannelTab(new Channel("99351845"), this),
-				new ChannelTab(new Channel("151368796"), this),
-				new ChannelTab(new Channel("12875057"), this),
-				new ChannelTab(new Channel("41629029"), this),
-				new ChannelTab(new Channel("40972890"), this),
-				new ChannelTab(new Channel("438349822"), this),
-				new ChannelTab(new Channel("884338173"), this),
-				new ChannelTab(new Channel("962743570"), this),
-				new ChannelTab(new Channel("605556313"), this));
+        ChannelManager.getAllChannels().forEach(channel -> tabBar.getChildren().add(new ChannelTabButton(channel, this)));
 		
         tabPane = new ScrollPane(tabBar);
         tabPane.setFocusTraversable(false);

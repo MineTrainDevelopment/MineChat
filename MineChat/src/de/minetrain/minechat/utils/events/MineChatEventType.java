@@ -2,7 +2,7 @@ package de.minetrain.minechat.utils.events;
 
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.obj.MacroObject;
+import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.ChatMessage;

@@ -1,217 +1,96 @@
 package de.minetrain.minechat.gui.frames.parant;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
-import java.util.Arrays;
+import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.utils.MineTextFlow;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
-import de.minetrain.minechat.gui.utils.ColorManager;
-
-public class MineDialog extends JDialog{
-	private static final long serialVersionUID = 4562021738118686842L;
-	private final JLabel titleText = new JLabel("MineDialog");;
-	private JButton infoButton;
-	private JButton confirmButton;
-	private JPanel contentPanel;
-	private int mouseX, mouseY;
-	private boolean exitOnCancelButton;
+public class MineDialog {
+	private final Stage stage;
+	private BorderPane contentPane;
+	private Button confirmButton, cancelButton;
 	
-	public MineDialog(JFrame parentFrame, String title) {
-		super(parentFrame, title, true);
-		createPanal(title, new Dimension(400, 100));
-	}
-	
-	public MineDialog(JFrame parentFrame, String title, Dimension dimension) {
-		super(parentFrame, title, true);
-		createPanal(title, dimension);
-	}
-	
-	public MineDialog(JFrame parentFrame, String title, Dimension dimension, ActionListener confirmButtonAction) {
-		super(parentFrame, title, true);
-		createPanal(title, dimension);
-		setConfirmButtonAction(confirmButtonAction);
-	}
-	
-	public MineDialog(JFrame parentFrame, String title, Dimension dimension, boolean setVisible, ActionListener confirmButtonAction) {
-		super(parentFrame, title, true);
-		createPanal(title, dimension);
-		setConfirmButtonAction(confirmButtonAction);
-		setVisible(setVisible);
-	}
-
-	private void createPanal(String title, Dimension dimension) {
-		setTitle(title);
-		setSize(dimension);
-        setUndecorated(true);
-        setLocationRelativeTo(null);
-        setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+	public MineDialog(String title, double width, double hight) {
+		stage = new Stage();
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initStyle(StageStyle.TRANSPARENT);
+		stage.initOwner(Main.primaryStage);
         
-        contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 2));
-        contentPanel.setBackground(ColorManager.GUI_BACKGROUND);
+        BorderPane titleBar = new BorderPane();
+        titleBar.setId("title-bar");
+        titleBar.setCenter(new MineTextFlow().setAlignment(TextAlignment.CENTER).appendString(title, 20d));
         
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createLineBorder(ColorManager.GUI_BORDER, 7));
-        mainPanel.setBackground(ColorManager.GUI_BACKGROUND);
-        mainPanel.add(createTitleBar(), BorderLayout.NORTH);
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
-
-        getContentPane().add(mainPanel, BorderLayout.CENTER);
-	}
-
-	private JPanel createTitleBar() {
-		titleText.setBackground(ColorManager.GUI_BUTTON_BACKGROUND);
-		titleText.setForeground(ColorManager.FONT);
-		titleText.setFont(new Font(null, Font.BOLD, 15));
-		titleText.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		JPanel titleBar = new JPanel(new BorderLayout());
-        titleBar.setBackground(ColorManager.GUI_BACKGROUND);
-		titleBar.add(titleText, BorderLayout.CENTER);
-        titleBar.add(Box.createHorizontalStrut(4), BorderLayout.SOUTH);
+        confirmButton = new Button();
+        confirmButton.setFocusTraversable(false);
+        confirmButton.setMaxSize(26, 26);
+        confirmButton.setMinSize(26, 26);
+        confirmButton.setId("program-action");
+        confirmButton.setStyle("-fx-background-color: green;");
         
-		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 3, 2));
-		mainPanel.setBackground(ColorManager.GUI_BORDER);
-		mainPanel.add(titleBar, BorderLayout.CENTER);
-		
-		JPanel buttonPanal = new JPanel(new BorderLayout());
-		buttonPanal.setBorder(new EmptyBorder(2, 2, 2, 2));
-		buttonPanal.setBackground(titleBar.getBackground());
-		titleBar.add(buttonPanal, BorderLayout.EAST);
-		
-		JButton cancelButton = new JButton("X");
-		cancelButton.setBackground(titleBar.getBackground());
-		cancelButton.setMinimumSize(new Dimension(30, 30));
-		cancelButton.setBorder(null);
-		cancelButton.setToolTipText("Cancel");
-		cancelButton.addActionListener(getDefaultWindowCloseAction(true));
-
-		JPanel confirmButtonPanal = new JPanel(new BorderLayout());
-		confirmButtonPanal.setBorder(new EmptyBorder(0, 3, 0, 3));
-		confirmButtonPanal.setBackground(titleBar.getBackground());
-		
-		confirmButton = new JButton("Y");
-		confirmButton.setBackground(titleBar.getBackground());
-		confirmButton.setMinimumSize(new Dimension(30, 30));
-		confirmButton.setBorder(null);
-		confirmButton.setToolTipText("Confirm");
-		confirmButton.addActionListener(getDefaultWindowCloseAction(false));
-		confirmButtonPanal.add(confirmButton, BorderLayout.CENTER);
-		
-		infoButton = new JButton("I");
-		infoButton.setBackground(titleBar.getBackground());
-		infoButton.setMinimumSize(new Dimension(30, 30));
-		infoButton.setBorder(null);
-		infoButton.setVisible(false);
-		infoButton.setToolTipText("Info");
-		infoButton.addActionListener(getDefaultWindowCloseAction(false));
-
-		buttonPanal.add(infoButton, BorderLayout.WEST);
-		buttonPanal.add(confirmButtonPanal, BorderLayout.CENTER);
-		buttonPanal.add(cancelButton, BorderLayout.EAST);
-		mainPanel.addMouseListener(MoiseListner());
-		mainPanel.addMouseMotionListener(mouseMotionListner());
-        return mainPanel;
+        cancelButton = new Button();
+        cancelButton.setFocusTraversable(false);
+        cancelButton.setMaxSize(26, 26);
+        cancelButton.setMinSize(26, 26);
+        cancelButton.setId("program-action");
+        cancelButton.setOnAction(event -> closeStage());
+        
+        HBox actionButtonBox = new HBox(5, confirmButton, cancelButton);
+        titleBar.setRight(new VBox(5, actionButtonBox, new Rectangle(0, 0, Color.TRANSPARENT)));
+        
+        contentPane = new BorderPane();
+        contentPane.setTop(titleBar);
+        
+        Scene scene = new Scene(contentPane, width, hight);
+        scene.setFill(Color.TRANSPARENT);
+        scene.getStylesheets().addAll(Main.primaryStage.getScene().getStylesheets());
+        
+        stage.setScene(scene);
+        stage.show();
 	}
 	
-	private MouseAdapter MoiseListner() {
-		return new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
-        };
-	}
-
-	private MouseAdapter mouseMotionListner() {
-		return new MouseAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                int newX = e.getXOnScreen() - mouseX;
-                int newY = e.getYOnScreen() - mouseY;
-
-                setLocation(newX, newY);
-            }
-        };
+	public MineDialog(String title, double width, double hight, Node content, EventHandler<ActionEvent> confirmEvent) {
+		this(title, width, hight, content);
+		setOnConfirm(confirmEvent);
 	}
 	
-	private ActionListener getDefaultWindowCloseAction(Boolean isCanselt){
-		return new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(isCanselt){
-					dispose(); 
-					if(exitOnCancelButton){
-						System.exit(0);
-					}
-				}
-			}
-		};
+	public MineDialog(String title, double width, double hight, Node content) {
+		this(title, width, hight);
+		setContent(content);
 	}
 	
-	public MineDialog setExitOnCancelButton(boolean state){
-		exitOnCancelButton = state;
-		return this;
-	}
-
-	public MineDialog setConfirmButtonAction(ActionListener actionListener) {
-		Arrays.asList(confirmButton.getActionListeners()).forEach(listner -> confirmButton.removeActionListener(listner));
-		confirmButton.addActionListener(actionListener);
-		return this;
-	}
-
-	public MineDialog setInfoButtonAction(ActionListener actionListener) {
-		Arrays.asList(infoButton.getActionListeners()).forEach(listner -> infoButton.removeActionListener(listner));
-		infoButton.addActionListener(actionListener);
-		infoButton.setVisible(true);
+	public MineDialog setContent(Node node) {
+		this.contentPane.setCenter(node);
 		return this;
 	}
 	
-	@Override
-	public void setTitle(String title) {
-		title = title.isEmpty() ? " " : title;
-		super.setTitle(title);
-		titleText.setText(title);
-	}
-	
-	public void setTitleColor(Color color){
-		titleText.setForeground(color);
-	}
-	
-	@Override
-	public void setSize(Dimension d) {
-		super.setSize(new Dimension(d.width+18, d.height+53));
-	}
-	
-	/**
-	 * @param comp
-	 * @param borderPosion Needs to be {@link BorderLayout} for examle {@link BorderLayout#CENTER}
-	 */
-	public MineDialog addContent(Component comp, String borderPosion) {
-		contentPanel.add(comp, borderPosion);
+	public MineDialog setOnConfirm(EventHandler<ActionEvent> event){
+		confirmButton.setOnAction(event);
 		return this;
 	}
-
-	public JPanel getContentPanel() {
-		return contentPanel;
+	
+	public MineDialog setOnCancel(EventHandler<ActionEvent> event){
+		cancelButton.setOnAction(event);
+		return this;
 	}
 	
+	public void closeStage(){
+		stage.close();
+//		System.gc(); //DEBUG ONLY!!!
+	}
+	
+
 }

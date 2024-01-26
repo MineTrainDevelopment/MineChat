@@ -2,19 +2,18 @@ package de.minetrain.minechat.gui.emotes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.swing.ImageIcon;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
+import javafx.scene.CacheHint;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 
 public class Emote {
-	private static final ImageIcon defaultBorderImage = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorder.png");
-	private static final ImageIcon borderSub2 = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorder2.png");
-	private static final ImageIcon borderSub3 = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorder3.png");
-	private static final ImageIcon borderBits = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorderBits.png");
-	private static final ImageIcon borderFollow = new ImageIcon(TextureManager.texturePath+"emoteBorder/emoteBorderFollow.png");
-	
+	private static final ConcurrentHashMap<Emote, Image> imageCache = new ConcurrentHashMap<Emote, Image>();
 	private boolean favorite;
 	private boolean dummyData = false;
 	private final String name;
@@ -55,18 +54,34 @@ public class Emote {
 	}
 
 
-	/**
-	 * @return {@link ImageIcon} on the {@link EmoteSize#SMALL} scale.
-	 */
-	public ImageIcon getImageIcon(){
-		return getImageIcon(EmoteSize.SMALL);
+	public Image getEmoteImage(EmoteSize emoteSize, int prefSize) {
+//		return imageCache.computeIfAbsent(this, emote -> new Image("file:"+(emote.getFilePath().replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false));
+//		return imageCache.computeIfAbsent(this, emote -> new Image("file:"+(filePath.replace("1"+getFileFormat(), emoteSize.getFileEnding(this))), prefSize, prefSize, false, false));
+		return new Image("file:"+(filePath.replace("1"+getFileFormat(), emoteSize.getFileEnding(this))), prefSize, prefSize, false, false);
 	}
 	
-	public ImageIcon getImageIcon(EmoteSize size){
-		if(filePath.equalsIgnoreCase(">null<")){
+	public final Rectangle getEmoteNode(EmoteSize emoteSize) {
+		return getEmoteNode(emoteSize, emoteSize.getSize());
+	}
+	
+//	private static HashMap<Emote, Rectangle> testCache = new HashMap<Emote, Rectangle>();
+	
+	public final Rectangle getEmoteNode(EmoteSize emoteSize, int prefSize) {
+		if(isDummyData()){
 			return null;
 		}
-		return new ImageIcon(filePath.replace("1"+getFileFormat(), size.getFileEnding(this)));
+		
+//		return testCache.computeIfAbsent(this, emote -> {
+//		});
+		System.err.println("new cache -> "+getName());
+		ImagePattern pattern = new ImagePattern(getEmoteImage(emoteSize, prefSize));
+		Rectangle emotePic = new Rectangle(0, 0, prefSize, prefSize);
+		emotePic.setCache(true);
+		emotePic.setCacheHint(CacheHint.QUALITY);
+		emotePic.setId("macro-key-image");
+		emotePic.setFill(pattern);
+		return emotePic;
+		
 	}
 	
 	public void toggleFavorite() {
@@ -123,17 +138,30 @@ public class Emote {
 		return "."+fileFormat;
 	}
 	
+	public boolean isAnimated(){
+		return fileFormat.equals("gif");
+	}
+	
 	public boolean isDummyData() {
 		return dummyData;
 	}
+	
+	public EmoteBorderType getBorderType(){
+		switch (emoteType) {
+		case BIT:
+			return EmoteBorderType.BITS;
+			
+		case FOLLOW:
+			return EmoteBorderType.FOLLOW;
+			
+		case SUB_2:
+			return EmoteBorderType.TIER_2;
+			
+		case SUB_3:
+			return EmoteBorderType.TIER_2;
 
-	public ImageIcon getBorderImage(){
-		switch (getEmoteType()) {
-			case SUB_2: return borderSub2;
-			case SUB_3: return borderSub3;
-			case BIT: return borderBits;
-			case FOLLOW: return borderFollow;
-			default: return defaultBorderImage;
+		default:
+			return EmoteBorderType.DEFAULT;
 		}
 	}
 
@@ -172,13 +200,23 @@ public class Emote {
 	}
 	
 	public enum EmoteSize {
-		SMALL("1"), MEDIUM("2"), BIG("3");
+		SMALL("1", 28),
+		MEDIUM("2", 56),
+		BIG("3", 112);
 		
-		private String size;
+		private String fileEnding;
+		private int size;
+		
 		public String getFileEnding(Emote emote){
-			return size + emote.getFileFormat();
+			return fileEnding + emote.getFileFormat();
 		}
-		private EmoteSize(String size) {
+		
+		public int getSize(){
+			return size;
+		}
+		
+		private EmoteSize(String fileEnding, int size) {
+			this.fileEnding = fileEnding;
 			this.size = size;
 		}
 	};
@@ -188,7 +226,5 @@ public class Emote {
 	public String toString() {
 		return getName()+" - "+getEmoteId();
 	}
-
-	
 	
 }

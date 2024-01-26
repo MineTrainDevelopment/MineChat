@@ -76,6 +76,10 @@ public class EmoteManager {
 		return emotes.containsKey(emoteId) ? emotes.get(emoteId) : null;
 	}
 	
+	/**
+	 * @param channelId
+	 * @return may be null, if no emotes are installed for the user.
+	 */
 	public static ChannelEmotes getChannelEmotes(String channelId){
 		return channelEmotes.containsKey(channelId) ? channelEmotes.get(channelId) : null;
 	}

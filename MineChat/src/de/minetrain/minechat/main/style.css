@@ -11,8 +11,10 @@
 	-fx-font-style: normal;
 	-fx-font-weight: bold;
 	-fx-text-fill: white;
-	-fx-text-alignment: center;
-	-fx-padding: 0 0 0 27;
+	-fx-text-alignment: left;
+	/*-fx-padding: 0 0 0 7; */
+	-fx-padding: 0 0 0 5;
+    -fx-alignment: center-left;
 }
 
 #macro-key:pressed:hover {
@@ -127,7 +129,7 @@
 	-fx-border-width: 3px;
 	-fx-border-color: black;
     -fx-background-color: #181818;
-	-fx-background-radius: 16px;
+	-fx-background-radius: 14px;
 	-fx-background-insets: 0, 0 0 0 2;
 	
 	-fx-font-family: "Inter";
@@ -221,14 +223,37 @@
 	-fx-control-inner-background: #181818;
 }
 
+#emote_border{
+	-fx-border-radius: 5px;
+	/*-fx-border-width: 2px; */
+	
+    -fx-background-color: #191919;
+	-fx-background-radius: 7px;
+	
+	-fx-padding: 0, 0 0 0 10;
+	/*-fx-background-insets: 0, 0 0 0 2; */
+}
 
 
 
-#rounded-image{
+
+#tab-profile-image{
 	-fx-background-radius: 10px;
 	-fx-arc-height: 10px;
 	-fx-arc-width: 10px;
 }
+
+#macro-key-image{
+	-fx-background-radius: 15px;
+	-fx-arc-height: 15px;
+	-fx-arc-width: 15px;
+}
+
+.titled-pane > *.content {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+ }
+
 
 
 .scroll-pane {
@@ -247,6 +272,6 @@
 	-fx-border-width: 5px;
 	-fx-border-radius: 20px;
 	-fx-border-color: black;
-	-fx-background-radius: 20px;
+	-fx-background-radius: 25px;
 	-fx-background-color: #282828;
 }

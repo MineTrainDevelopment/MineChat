@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
+import de.minetrain.minechat.main.Channel;
 
 public class ChannelEmotes {
 	private static final Logger logger = LoggerFactory.getLogger(ChannelEmotes.class);
@@ -118,6 +120,13 @@ public class ChannelEmotes {
 				.sorted(Comparator.comparing(Emote::getName))
 				.collect(Collectors.toList());
 	}
+	
+	public static final List<Emote> sortEmotesByEasterEgg(Channel channel, List<Emote> emotes){
+		return emotes.stream()
+				.sorted(Comparator.comparing((Emote emote) -> !emote.getName().equals("GAMBA") && channel.getChannelId().equals("605556313")))
+				.collect(Collectors.toList());
+	}
+	
 	
 	public List<Emote> getAllEmotes(){
 		List<Emote> emotes = new ArrayList<Emote>();

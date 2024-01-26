@@ -8,7 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelManager;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
 import de.minetrain.minechat.utils.ChatMessage;
 
@@ -71,6 +73,14 @@ public class MessageManager {
     		sendDelayedMessage(channel, message);
     	}
     }
+    
+    public static void sendMessage(MacroObject macro) {
+    	try {
+    		sendMessage(ChannelManager.getChannel(macro.getChannelId()), macro.getRandomOutput());
+		} catch (Exception ex) {
+			logger.error("Can´t send message from a macro:",ex);
+		}
+	}
     
     private static void sendDelayedMessage(Channel channel, String message) {
         Instant now = Instant.now(); //Get the current time.
@@ -169,5 +179,6 @@ public class MessageManager {
 	public static String getSpamprotector() {
 		return spamProtector;
 	}
+
 }
 

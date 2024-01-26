@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
@@ -402,5 +404,30 @@ public class TwitchManager {
 
 		return users;
 	}
+	
+	
+	/**
+	 * No url check requert.
+	 * <br> returns null or twitch user.
+	 * @param url
+	 * @return
+	 */
+	public static TwitchUserObj extracktUserLoginFromUrl(String url){
+		if(url.matches("\\b\\w+\\b")){url = "twitch.tv/"+url;}
+		
+    	try {
+    		Matcher matcher = Pattern.compile("(?<=twitch\\.tv/(?:popout/)?)(\\w+)").matcher(url);
+        	if(matcher.find()){
+        		if(matcher.group().equals("popout") || matcher.group().equals("u")) {
+                    if(matcher.find()){
+                        return TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, matcher.group());
+                    }
+        		}
+        		
+                return TwitchManager.getTwitchUser(TwitchApiCallType.LOGIN, matcher.group());
+        	}
+		} catch (Exception e) {}
+    	return null;
+    }
 
 }

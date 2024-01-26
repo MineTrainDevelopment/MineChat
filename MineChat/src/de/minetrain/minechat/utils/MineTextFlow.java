@@ -37,10 +37,17 @@ public class MineTextFlow extends TextFlow{
 	}
 	
 	/**
-     * Appends the specified string to the output string.
-     */
+	 * Appends the specified string to the output string.
+	 */
 	public MineTextFlow appendString(String string){
 		return appendString(string, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE, DEFAULT_FONT_POSTURE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_FILL);
+	}
+	
+	/**
+     * Appends the specified string to the output string.
+     */
+	public MineTextFlow appendString(String string, double font_size){
+		return appendString(string, DEFAULT_FONT_FAMILY, font_size, DEFAULT_FONT_POSTURE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_FILL);
 	}
 	
 	/**

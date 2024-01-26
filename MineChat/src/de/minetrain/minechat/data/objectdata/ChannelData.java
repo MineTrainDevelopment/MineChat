@@ -29,6 +29,7 @@ public class ChannelData {
 		this.audioPath = resultSet.getString("audio_path");
 		this.audioVolume = AudioVolume.get(resultSet.getString("audio_volume"));
 	}
+	
 
 	public String getChannelId() {
 		return channelId;

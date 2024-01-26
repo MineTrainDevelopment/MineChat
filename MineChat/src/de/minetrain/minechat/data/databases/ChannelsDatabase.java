@@ -44,6 +44,19 @@ public class ChannelsDatabase extends Database{
                 + ");");
 	}
 	
+	/**
+	 * NOTE: No autocommit.
+	 * @param channel_id
+	 * @param login_name
+	 * @param display_name
+	 * @param chat_role
+	 * @param chatlog_level
+	 * @param greeting_text
+	 * @param goodby_text
+	 * @param return_text
+	 * @param audio_path
+	 * @param audio_volume
+	 */
 	public void insert(String channel_id, String login_name, String display_name, String chat_role, String chatlog_level, String greeting_text, String goodby_text, String return_text, String audio_path, AudioVolume audio_volume){
 		logger.info("Insert new database entry");
 

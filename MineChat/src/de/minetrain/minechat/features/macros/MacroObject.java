@@ -1,40 +1,44 @@
-package de.minetrain.minechat.config.obj;
+package de.minetrain.minechat.features.macros;
 
 import java.util.Random;
 
 import de.minetrain.minechat.data.objectdata.MacroData;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.obj.buttons.ButtonType;
 
 public class MacroObject {
 	private static final Random random = new Random();
-	private static final Emote dummyEmote = new Emote(false);
-	private final ButtonType buttonType;
+	private final MacroType macroType;
 	private final String title;
 	private final String emote_id;
 	private final String[] output;
-	private final Long macroId;
+	private final Long databaseId;
+	private final int buttonId;
+	private final String channelId;
 	private int previousRandom = 0;
 	
-	public MacroObject(ButtonType buttonType, String emote_id, String title, String[] output) {
-		this.buttonType = buttonType;
+	public MacroObject(MacroType macroType, String emote_id, int button_id, String title, String channelId, String[] output) {
+		this.macroType = macroType;
 		this.title = title;
 		this.output = output;
 		this.emote_id = emote_id;
-		this.macroId = null;
+		this.buttonId = button_id;
+		this.channelId = channelId;
+		this.databaseId = null;
 	}
 	
 	public MacroObject(MacroData macroData) {
-		this.buttonType = macroData.getButton_type();
+		this.macroType = macroData.getMacro_type();
 		this.title = macroData.getTitle();
 		this.output = macroData.getOutput();
 		this.emote_id = macroData.getEmoteId();
-		this.macroId = macroData.getId();
+		this.databaseId = macroData.getId();
+		this.buttonId = macroData.getButton_id();
+		this.channelId = macroData.getChannelId();
 	}
 	
-	public ButtonType getButtonType() {
-		return buttonType;
+	public MacroType getMacroType() {
+		return macroType;
 	}
 
 	public String getTitle() {
@@ -42,9 +46,9 @@ public class MacroObject {
 	}
 
 	/**
-	 * @return a random output from the {@link MacroObject#getOutputArray()}
+	 * @return a random output from the {@link MacroObject#getAllOutputs()}
 	 */
-	public String getOutput() {
+	public String getRandomOutput() {
 		int newRandom = 0;
 		while(this.output.length > 1 && (newRandom == previousRandom)){
 			newRandom = random.nextInt(this.output.length);
@@ -58,11 +62,11 @@ public class MacroObject {
 		return output[random.nextInt(output.length)];
 	}
 
-	public String getRawOutput() {
+	public String getAllOutputsAsString() {
 		return String.join(" \n", output);
 	}
 
-	public String[] getOutputArray() {
+	public String[] getAllOutputs() {
 		return output;
 	}
 
@@ -70,17 +74,33 @@ public class MacroObject {
 		return emote_id;
 	}
 	
-	public Long getMacroId(){
-		return macroId;
+	public Long getDatabaseId(){
+		return databaseId;
+	}
+	
+	public int getButtonId() {
+		return buttonId;
+	}
+	
+	public String getChannelId() {
+		return channelId;
 	}
 
+	
+	/**
+	 * @return may be null if no emote with the provided id is loaded.
+	 */
 	public Emote getEmote() {
 		if(emote_id == null || emote_id.equalsIgnoreCase("null")){
-			return dummyEmote;
+			return null;
 		}
 		
 		Emote emoteById  = EmoteManager.getEmoteById(emote_id);
-		return emoteById == null ? dummyEmote : emoteById;
+		return emoteById;
+	}
+	
+	public MacroObject getThis() {
+		return this;
 	}
 	
 }

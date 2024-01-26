@@ -10,6 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
+import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
@@ -46,6 +51,8 @@ public class Main extends Application {
 		loadingProgressLogging(1, "Initialising database manager");
 		new DatabaseManager();
 		TwitchManager.credentials = new CredentialsManager(); //TEMP
+		new ChannelManager();//Load all channels.
+		new EmoteManager(); //TEMP
 //		
 //		loadingProgressLogging(2, "Initialising user settings");
 //		new Settings();
@@ -101,14 +108,19 @@ public class Main extends Application {
 //		});
 	}
 	
+	public static MacroPanelPane macroPane;
+	public static Stage primaryStage;
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Hello JavaFX");
+		Main.primaryStage = primaryStage;
+		primaryStage.setTitle("MineChat - JavaFX rework");
 //        primaryStage.initStyle(StageStyle.TRANSPARENT);
         
 		BorderPane topPane = new BorderPane();
 		topPane.setTop(new TitleBarPane());
-		topPane.setBottom(new MacroPanelPane());
+		macroPane = new MacroPanelPane();
+		topPane.setBottom(macroPane);
 		
 		
 		TabPane tabPane = new TabPane();
@@ -134,14 +146,16 @@ public class Main extends Application {
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setTop(topPane);
-		mainContentPane.setCenter(messagePanel);
+//		mainContentPane.setCenter(messagePanel);
+//		mainContentPane.setCenter(new EmoteSelectorButton(EmoteManager.getEmoteByName("jennyanPls"), EmoteSize.SMALL, EmoteBorderType.DEFAULT));
 		mainContentPane.setBottom(new InputFieldPane());
 		
 
         //Set up the scene
         Scene scene = new Scene(mainContentPane, 500, 700);
         scene.setFill(Color.TRANSPARENT);
-		scene.getStylesheets().add("file:///C:/MineTrainDev/git_repos/MineChat/MineChat/src/de/minetrain/minechat/main/style.css");
+//		scene.getStylesheets().add("file:///C:/MineTrainDev/git_repos/MineChat/MineChat/src/de/minetrain/minechat/main/style.css");
+		scene.getStylesheets().add("file:///D:/Development/eclipse/git-repos/MineChat/MineChat/src/de/minetrain/minechat/main/style.css");
 
 		//TODO: Keep multiframe in mind.
 		//TODO: Keep multiframe in mind.
@@ -156,7 +170,7 @@ public class Main extends Application {
 		//TODO: Keep multiframe in mind.
 
         // Set the scene to the stage
-		primaryStage.setMinWidth(500);
+		primaryStage.setMinWidth(516);
         primaryStage.setScene(scene);
         primaryStage.show();
 	}

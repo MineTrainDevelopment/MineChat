@@ -13,29 +13,30 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.MacroData;
-import de.minetrain.minechat.gui.obj.buttons.ButtonType;
+import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.features.macros.MacroType;
 
 //Table name: macros
-// id, channel_id, button_type, button_id, button_row, title, emote_id, output
-//      										   				null
+// id, channel_id, macro_type, button_id, title, emote_id, output
+//      										   	null
 
 public class MacroDatabase extends Database {
 	private static final Logger logger = LoggerFactory.getLogger(MacroDatabase.class);
 	
 	private static final String tabelName = "macros";
-	private static final String insert_SQL = "INSERT INTO "+tabelName+"(channel_id,button_type,button_id,button_row,title,emote_id,output) VALUES(?,?,?,?,?,?,?)";
-	private static final String update_SQL = "UPDATE "+tabelName+" SET channel_id = ? , button_type = ? , button_id = ? , button_row = ? , title = ? , emote_id = ? , output = ? WHERE id = ?";
+	private static final String insert_SQL = "INSERT INTO "+tabelName+"(channel_id,macro_type,button_id,title,emote_id,output) VALUES(?,?,?,?,?,?)";
+	private static final String update_SQL = "UPDATE "+tabelName+" SET channel_id = ? , macro_type = ? , button_id = ? , title = ? , emote_id = ? , output = ? WHERE id = ?";
 	private static final String check_SQL = "SELECT id FROM "+tabelName+" WHERE id = ?";
-	private static final String select_sql = "SELECT id, channel_id, button_type, button_id, button_row, title, emote_id, output FROM "+tabelName;
-	private static final String delete_sql = "DELETE FROM "+tabelName+" WHERE channel_id = ?";
+	private static final String select_sql = "SELECT id, channel_id, macro_type, button_id, title, emote_id, output FROM "+tabelName;
+	private static final String delete_channel_sql = "DELETE FROM "+tabelName+" WHERE channel_id = ?";
+	private static final String delete_macro_sql = "DELETE FROM "+tabelName+" WHERE channel_id = ? AND button_id = ?";
 	
 	public MacroDatabase() throws SQLException {
 		super("CREATE TABLE IF NOT EXISTS "+tabelName+" (\n"
                 + "	id integer PRIMARY KEY,\n"
                 + "	channel_id text NOT NULL,\n"
-                + "	button_type text NOT NULL,\n"
-                + "	button_id text NOT NULL,\n"
-                + "	button_row text NOT NULL,\n"
+                + "	macro_type text NOT NULL,\n"
+                + "	button_id integer NOT NULL,\n"
                 + "	title text NOT NULL,\n"
                 + "	emote_id text,\n"
                 + "	output text NOT NULL\n"
@@ -44,7 +45,7 @@ public class MacroDatabase extends Database {
 	
 	
 	public void insert(MacroData data, boolean autoCommit){
-		insert(data.getId(), data.getChannelId(), data.getButton_type(), data.getButton_id(), data.getButton_row(), data.getTitle(), data.getEmoteId(), data.getOutput());
+		insert(data.getId(), data.getChannelId(), data.getMacro_type(), data.getButton_id(), data.getTitle(), data.getEmoteId(), data.getOutput());
 		if(autoCommit){
 			DatabaseManager.commit();
 		}
@@ -54,14 +55,14 @@ public class MacroDatabase extends Database {
 	 * 
 	 * @param id
 	 * @param channel_id
-	 * @param button_type
+	 * @param macro_type
 	 * @param button_id
 	 * @param button_row
 	 * @param title
 	 * @param emote_id
 	 * @param output
 	 */
-	public void insert(Long id, String channel_id, ButtonType button_type, String button_id, String button_row, String title, String emote_id, String[] output){
+	public void insert(Long id, String channel_id, MacroType macro_type, int button_id, String title, String emote_id, String[] output){
 		logger.info("Insert new database entry");
 
 		try{
@@ -76,7 +77,7 @@ public class MacroDatabase extends Database {
 				statement = connection.prepareStatement(insert_SQL);
 				if (resultSet.next() && resultSet.getString(1) != null && !resultSet.getString(1).isEmpty()) {
 					statement = connection.prepareStatement(update_SQL);
-					statement.setLong(8, id);
+					statement.setLong(7, id);
 				}
 			}else{
 				statement = connection.prepareStatement(insert_SQL);
@@ -85,12 +86,11 @@ public class MacroDatabase extends Database {
 
             
             statement.setString(1, channel_id);
-            statement.setString(2, button_type.name());
-            statement.setString(3, button_id);
-            statement.setString(4, button_row);
-            statement.setString(5, title);
-            statement.setString(6, emote_id);
-            statement.setString(7, String.join("\n", output));
+            statement.setString(2, macro_type.name());
+            statement.setInt(3, button_id);
+            statement.setString(4, title);
+            statement.setString(5, emote_id);
+            statement.setString(6, String.join("\n", output));
             statement.executeUpdate();
 		} catch (SQLException ex) {
 			logger.error(ex.getMessage(), ex);
@@ -141,10 +141,28 @@ public class MacroDatabase extends Database {
 	
 
 	
+	public void deleteMacro(String channel_id, MacroObject macro, boolean autoCommit){
+		try{
+			Connection connection = DatabaseManager.connect(); 
+			PreparedStatement statement = connection.prepareStatement(delete_macro_sql);
+			statement.setString(1, channel_id);
+			statement.setInt(2, macro.getButtonId());
+			statement.executeUpdate();
+			
+			if(autoCommit){
+				DatabaseManager.commit();
+			}
+		} catch (SQLException ex) {
+			logger.error(ex.getMessage(), ex);
+		}
+	}
+	
+
+	
 	public void deleteChannelDataById(String channel_id, boolean autoCommit){
 		try{
 			Connection connection = DatabaseManager.connect(); 
-			PreparedStatement statement = connection.prepareStatement(delete_sql);
+			PreparedStatement statement = connection.prepareStatement(delete_channel_sql);
 			statement.setString(1, channel_id);
 			statement.executeUpdate();
 			

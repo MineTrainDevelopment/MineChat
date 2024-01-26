@@ -5,12 +5,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.frames.MacroEditorFrame;
+import de.minetrain.minechat.gui.frames.parant.MineDialog;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
+import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelManager;
+import de.minetrain.minechat.twitch.MessageManager;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -21,91 +30,95 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 
 public class MacroButton extends Button{
+	public static final double MIN_WIDTH = 85d;
+	public static final double MAX_WIDTH = 110d;
+	public static final double HEIGHT = 35d;
 	
-	public MacroButton(Channel channel, TitleBarPane titleBarPane) {
-		super(channel.getChannelData().getDisplayName(), getProfilePic(channel, 24));
+	private MacroObject macro;
+	private int buttonId;
+	
+	private static int t = 1;
+	
+	public MacroButton(int button_id, HBox scaleRefrence) {
+		this.buttonId = button_id;
         setFocusTraversable(false);
-        setId("channel-tab");
-        setMinWidth(42d);
+        setId("macro-key");
         
+        t++;
         
-        setOnDragDetected(event -> {
-            Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
-            ClipboardContent content = new ClipboardContent();
-            content.putHtml(channel.getChannelData().getDisplayName());
-            content.putString(channel.getChannelData().getDisplayName());
-            content.putFiles(List.of(new File(channel.getProfileImage(80).getUrl().replace("file:", ""))));
-            content.putUrl("https://www.twitch.tv/"+channel.getChannelData().getLoginName());
-            
-            SnapshotParameters snapshotParameters = new SnapshotParameters();
-            snapshotParameters.setFill(Color.TRANSPARENT);
-            content.putImage(snapshot(snapshotParameters, null));
-            
-            dragboard.setContent(content);
-            event.consume();
-        });
+        setMinSize(MIN_WIDTH, HEIGHT);
+        setMaxSize(MAX_WIDTH, HEIGHT);
+        setPrefSize(getMaxWidth(), getMaxHeight());
 
-        setOnDragOver(event -> {
-            if (event.getGestureSource() != this && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-
-        //Hover effect
-        setOnDragEntered(event -> {
-        	if(!event.getGestureSource().equals(this)){
-        		setBorder(new Border(new BorderStroke(Color.AQUA, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(2), new Insets(-2))));
-        	}
-        });
-
-        setOnDragExited(event -> {
-        	if(!event.getGestureSource().equals(this)){
-        		setBorder(null);
-        	}
-        });
-
-        setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasString()) {
-                Object source = event.getGestureSource();
-                int sourceIndex = titleBarPane.tabBar.getChildren().indexOf(source);
-                int targetIndex = titleBarPane.tabBar.getChildren().indexOf(this);
-                ArrayList<Node> nodes = new ArrayList<>(titleBarPane.tabBar.getChildren());
-                if (sourceIndex < targetIndex) {
-                    Collections.rotate(nodes.subList(sourceIndex, targetIndex + 1), -1);
-                } else {
-                    Collections.rotate(nodes.subList(targetIndex, sourceIndex + 1), 1);
-                }
-                titleBarPane.tabBar.getChildren().clear();
-                titleBarPane.tabBar.getChildren().addAll(nodes);
-                success = true;
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
-
-        setOnDragDone(DragEvent::consume);
+        minWidthProperty().bind(scaleRefrence.widthProperty());
 
         
         //NOTE: Right click gets consumed bsc the computePrefWidth behaves strangely.
         setOnMouseClicked(event -> {
         	if (event.getButton() == MouseButton.SECONDARY) {
         		//Open channel editor
+        		if(macro != null){
+        			new MacroEditorFrame(macro);
+        		}
                 event.consume();
                 return;
             }
         	
-        	select();
+        	if(macro != null){
+        		MessageManager.sendMessage(macro);
+        	}
         });
         
-        
-        if(buttons.size() == 2){setLiveState(true);}
-        buttons.add(this);
 	}
-
+	
+	public MacroButton asEmoteOnly(){
+		minWidthProperty().unbind();
+        setMinSize(35, 35);
+        setMaxSize(35, 35);
+        setPrefSize(getMaxWidth(), getMaxHeight());
+        setStyle("-fx-border-width: 3px;");
+		return this;
+	}
+	
+	private static final Rectangle getEmoteNode(MacroObject macro, int size) {
+		if(macro.getEmote() == null){
+			return null;
+		}
+		
+		Rectangle emoteNode = macro.getEmote().getEmoteNode(EmoteSize.SMALL, size);
+		emoteNode.setTranslateX(-5);
+		return emoteNode;
+	}
+	
+	
+	/**
+	 * Loads the macro from the current selected channel.
+	 * <br> Do nothing when no channel is selected.
+	 */
+	public void setMacro(){
+		Channel currentChannel = ChannelManager.getCurrentChannel();
+		if(currentChannel != null){
+			setMacro(currentChannel);
+		}
+	}
+	
+	public void setMacro(Channel channel){
+        this.macro = channel.getMacros().getMacro(buttonId);
+        
+		if(macro == null){
+			setText("");
+        	setGraphic(null);
+        	return;
+		}
+		
+		setText(macro.getTitle());
+    	setGraphic(getEmoteNode(macro, 27));
+	}
+	
 }
