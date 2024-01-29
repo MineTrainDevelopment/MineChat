@@ -1,16 +1,15 @@
 package de.minetrain.minechat.gui.frames.emote_selector;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
 import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
 import de.minetrain.minechat.main.Channel;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 
 
@@ -22,41 +21,55 @@ import javafx.scene.layout.GridPane;
 //  - A new select listner whould be requert to open the frame again??
 public class EmoteSelectorBatche extends TitledPane {
 	private static final int maxItemsPerRow = 8;
+	private EmoteSelectorChannelButton batcheButton;
+	private final Channel channel;
+	private final EmoteSelector emoteSelector;
+	private final GridPane grid = new GridPane();
 	
-	public EmoteSelectorBatche(Channel channel) {
-//		super(channel.getChannelData().getDisplayName(), grid);
-		GridPane grid = new GridPane();
+	public EmoteSelectorBatche(Channel channel, EmoteSelectorChannelButton batcheButton, EmoteSelector emoteSelector) {
+		this(channel, channel.getChannelData().getDisplayName(), emoteSelector);
+		this.batcheButton = batcheButton;
+	}
+	
+	public EmoteSelectorBatche(Channel channel, String name, EmoteSelector emoteSelector) {
+		this.channel = channel;
+		this.emoteSelector = emoteSelector;
 		
-		setText(channel.getChannelData().getDisplayName());
+		setText(name);
 		setContent(grid);
 		setBorder(null);
-		setExpanded(false);
+//		setExpanded(false);
 		
-//		expandedProperty().addListener((obs, wasExpanded, isNowExpanded) -> {
-//		    if (isNowExpanded) {
-//		        // The TitledPane has been expanded, do something...
-//		    	loadEmotes(channel, grid);
-//		    } else {
-//		        // The TitledPane has been collapsed, do something else...
-//		    	ArrayList<Node> nodes = new ArrayList<Node>();
-//		    	nodes.addAll(grid.getChildren());
-//				nodes.forEach(node -> grid.getChildren().remove(node));
-//		    }
-//		});
-		
-		
-//		grid.setGridLinesVisible(true);
 		grid.setHgap(5); 
 		grid.setVgap(5);
-		loadEmotes(channel, grid);
+		loadEmotes();
 	}
 
-	private void loadEmotes(Channel channel, GridPane grid) {
+	private void loadEmotes() {
 		int columIndex = 0;
 		int rowIndex = 0;
 		
-		for(Emote emote : ChannelEmotes.sortEmotesByEasterEgg(channel, channel.getChannelEmotes().getAllEmotes())){
-			grid.add(new EmoteSelectorButton(emote, EmoteSize.SMALL, 2), columIndex, rowIndex);
+		List<Emote> emotes;
+		if(channel != null){
+			emotes = ChannelEmotes.sortEmotesByEasterEgg(channel, channel.getChannelEmotes().getAllEmotes());
+		}else if(getText().equalsIgnoreCase("Favorite")){
+			emotes = EmoteManager.getAllFavoriteEmotes(true);
+		}else{
+			emotes = EmoteManager.getAllDefaultEmotes();
+		}
+		
+		for(Emote emote : emotes){
+			EmoteSelectorButton selectorButton = new EmoteSelectorButton(emote, EmoteSize.SMALL, 2);
+			selectorButton.setOnAction(event -> emoteSelector.fireSelectEvent(emote));
+			selectorButton.setOnMouseClicked(event -> {
+				if(event.getButton().equals(MouseButton.SECONDARY) && emoteSelector.favoriteEmoteBatche != null){
+					emote.toggleFavorite();
+					emoteSelector.favoriteEmoteBatche.grid.getChildren().clear();
+					emoteSelector.favoriteEmoteBatche.loadEmotes();
+				}
+			});
+			
+			grid.add(selectorButton, columIndex, rowIndex);
 
 			columIndex++;
 			if(columIndex == maxItemsPerRow){
@@ -64,6 +77,12 @@ public class EmoteSelectorBatche extends TitledPane {
 				rowIndex++;
 			}
 		};
+	}
+	
+	public void scrollPrirorty(boolean priority){
+		if(batcheButton != null){
+			batcheButton.setColor(priority);
+		}
 	}
 
 }

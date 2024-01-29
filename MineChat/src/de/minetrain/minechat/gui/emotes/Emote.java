@@ -2,18 +2,15 @@ package de.minetrain.minechat.gui.emotes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
-import javafx.scene.CacheHint;
 import javafx.scene.image.Image;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.ImageView;
 
 public class Emote {
-	private static final ConcurrentHashMap<Emote, Image> imageCache = new ConcurrentHashMap<Emote, Image>();
+	private static final ConcurrentHashMap<Emote, Image> imageCacheSmall = new ConcurrentHashMap<Emote, Image>();
 	private boolean favorite;
 	private boolean dummyData = false;
 	private final String name;
@@ -55,37 +52,30 @@ public class Emote {
 
 
 	public Image getEmoteImage(EmoteSize emoteSize, int prefSize) {
-//		return imageCache.computeIfAbsent(this, emote -> new Image("file:"+(emote.getFilePath().replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false));
-//		return imageCache.computeIfAbsent(this, emote -> new Image("file:"+(filePath.replace("1"+getFileFormat(), emoteSize.getFileEnding(this))), prefSize, prefSize, false, false));
+		if(emoteSize.equals(EmoteSize.SMALL)){
+			return imageCacheSmall.computeIfAbsent(this, emote -> new Image("file:"+(emote.getFilePath().replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false));
+		}
 		return new Image("file:"+(filePath.replace("1"+getFileFormat(), emoteSize.getFileEnding(this))), prefSize, prefSize, false, false);
 	}
 	
-	public final Rectangle getEmoteNode(EmoteSize emoteSize) {
+	public final ImageView getEmoteNode(EmoteSize emoteSize) {
 		return getEmoteNode(emoteSize, emoteSize.getSize());
 	}
 	
-//	private static HashMap<Emote, Rectangle> testCache = new HashMap<Emote, Rectangle>();
-	
-	public final Rectangle getEmoteNode(EmoteSize emoteSize, int prefSize) {
+	public final ImageView getEmoteNode(EmoteSize emoteSize, int prefSize) {
 		if(isDummyData()){
 			return null;
 		}
 		
-//		return testCache.computeIfAbsent(this, emote -> {
-//		});
-		System.err.println("new cache -> "+getName());
-		ImagePattern pattern = new ImagePattern(getEmoteImage(emoteSize, prefSize));
-		Rectangle emotePic = new Rectangle(0, 0, prefSize, prefSize);
-		emotePic.setCache(true);
-		emotePic.setCacheHint(CacheHint.QUALITY);
-		emotePic.setId("macro-key-image");
-		emotePic.setFill(pattern);
-		return emotePic;
-		
+		return new ImageView(getEmoteImage(emoteSize, prefSize));
 	}
 	
-	public void toggleFavorite() {
+	/**
+	 * @return the new favorite sate.
+	 */
+	public boolean toggleFavorite() {
 		setFavorite(!favorite);
+		return favorite;
 	}
 	
 	public void setFavorite(boolean state) {

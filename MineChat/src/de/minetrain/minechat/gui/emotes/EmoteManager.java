@@ -1,6 +1,8 @@
 package de.minetrain.minechat.gui.emotes;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
 
 public class EmoteManager {
 	private static final Logger logger = LoggerFactory.getLogger(EmoteManager.class);
@@ -70,6 +73,27 @@ public class EmoteManager {
 	
 	public static HashMap<String, Emote> getAllEmotes(){
 		return emotes;
+	}
+	
+	public static List<Emote> getAllFavoriteEmotes(boolean considerNameDuplication){
+		List<Emote> emotes = getAllEmotes().values().stream()
+				.filter(emote -> emote.isFavorite())
+				.collect(Collectors.toList());
+		
+		if(considerNameDuplication){
+			emotes = emotes.stream()
+				.collect(Collectors.toMap(Emote::getName, emote -> emote, (existing, replacement) -> existing))
+				.values().stream().collect(Collectors.toList());
+		}
+
+		return emotes.stream().sorted(Comparator.comparing(Emote::getName)).collect(Collectors.toList());
+	}
+	
+	public static List<Emote> getAllDefaultEmotes(){
+		return getAllEmotes().values().stream()
+				.filter(emote -> emote.getEmoteType().equals(EmoteType.DEFAULT))
+				.sorted(Comparator.comparing(Emote::getName))
+				.collect(Collectors.toList());
 	}
 	
 	public static Emote getEmoteById(String emoteId){

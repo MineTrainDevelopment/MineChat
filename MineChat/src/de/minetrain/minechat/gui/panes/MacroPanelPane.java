@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.features.macros.MacroType;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.ChannelManager;
@@ -145,14 +146,14 @@ public class MacroPanelPane extends BorderPane{
 	}
 
 	private Button createMacroButton(int buttonId) {
-		MacroButton macroButton = new MacroButton(buttonId, sizeGuideButton);
+		MacroButton macroButton = new MacroButton(MacroType.TEXT, buttonId, sizeGuideButton);
 		macroButtons.add(macroButton);
 		return macroButton;
 	}
 	
 
 	private Button createEmoteMacroButton(int buttonId) {
-		MacroButton macroButton = new MacroButton(buttonId, sizeGuideButton).asEmoteOnly();
+		MacroButton macroButton = new MacroButton(MacroType.EMOTE, buttonId, sizeGuideButton).asEmoteOnly();
 		macroButtons.add(macroButton);
 		return macroButton;
 	}

@@ -3,8 +3,6 @@ package de.minetrain.minechat.main;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.gui.utils.TextureManager;

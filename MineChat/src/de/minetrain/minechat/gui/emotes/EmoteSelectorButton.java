@@ -6,6 +6,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 
 public class EmoteSelectorButton extends Button {
+	private final EmoteSize size;
 	
 	public EmoteSelectorButton(Emote emote, EmoteSize size, int borderWidth) {
 		this(emote, size, emote.getBorderType(), borderWidth);
@@ -16,6 +17,7 @@ public class EmoteSelectorButton extends Button {
 	}
 	
 	public EmoteSelectorButton(Emote emote, EmoteSize size, EmoteBorderType borderType, int borderWidth) {
+		this.size = size;
 		setId("emote_border");
 		setStyle("-fx-border-color: "+borderType.getHexCode()+"; -fx-border-width: "+borderWidth+"px;");
 		setGraphic(emote.getEmoteNode(size, size.getSize()));
@@ -24,6 +26,10 @@ public class EmoteSelectorButton extends Button {
 		int borderSize = borderWidth*2;
 		setMinSize(size.getSize() + borderSize, size.getSize()+borderSize);
 		setMaxSize(size.getSize() + borderSize, size.getSize() + borderSize);
+	}
+	
+	public void changeImage(Emote emote){
+		setGraphic(emote.getEmoteNode(size, size.getSize()));
 	}
 	
 	

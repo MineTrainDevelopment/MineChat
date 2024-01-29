@@ -59,7 +59,6 @@ public class MineDialog {
         scene.getStylesheets().addAll(Main.primaryStage.getScene().getStylesheets());
         
         stage.setScene(scene);
-        stage.show();
 	}
 	
 	public MineDialog(String title, double width, double hight, Node content, EventHandler<ActionEvent> confirmEvent) {
@@ -90,6 +89,14 @@ public class MineDialog {
 	public void closeStage(){
 		stage.close();
 //		System.gc(); //DEBUG ONLY!!!
+	}
+	
+	public void openStage(boolean showAndWait){
+		if(showAndWait){
+			stage.showAndWait();
+		}else{
+			stage.show();
+		}
 	}
 	
 

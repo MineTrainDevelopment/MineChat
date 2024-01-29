@@ -59,7 +59,11 @@ public class TitleBarPane extends BorderPane{
         settingsButton.setId("program-action");
         settingsButton.setOnMouseClicked(event -> {
         	System.err.println("TODO: Settings");
-        	new EmoteSelector();
+        	
+        	 new EmoteSelector(false, emote -> {
+        		System.err.println(emote.getName());
+        	});
+        	
         });
         
 

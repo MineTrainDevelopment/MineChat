@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.MacroData;
-import de.minetrain.minechat.main.Main;
 
 public class ChannelMacros {
 	private static final Logger logger = LoggerFactory.getLogger(ChannelMacros.class);
@@ -85,6 +84,5 @@ public class ChannelMacros {
 	public void updateMacro(MacroObject macro, String emoteId, String title, String[] output){
 		macro = new MacroObject(macro.getMacroType(), emoteId, macro.getButtonId(), title, channelId, output);
 		createMacro(macro);
-		Main.macroPane.loadMacros();
 	}
 }
