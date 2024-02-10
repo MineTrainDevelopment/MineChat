@@ -41,21 +41,28 @@ public class Emote {
 	}
 	
 	public Emote(String name, String emoteId, String fileFormat){
-		this.dummyData = true;
 		this.name = name;
 		this.emoteId = emoteId;
 		this.favorite = false;
 		this.emoteType = EmoteType.NON;
-		this.filePath = ">null<";
+		this.filePath = WebEmote.getTwitchEmoteUrl(emoteId, fileFormat.equals("gif"));
 		this.fileFormat = fileFormat;
 	}
 
 
+	public Image getEmoteImage(EmoteSize emoteSize) {
+		return getEmoteImage(emoteSize, emoteSize.getSize());
+	}
+	
 	public Image getEmoteImage(EmoteSize emoteSize, int prefSize) {
 		if(emoteSize.equals(EmoteSize.SMALL)){
-			return imageCacheSmall.computeIfAbsent(this, emote -> new Image("file:"+(emote.getFilePath().replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false));
+			return imageCacheSmall.computeIfAbsent(this, emote -> createEmoteImage(emoteSize, prefSize, emote));
 		}
-		return new Image("file:"+(filePath.replace("1"+getFileFormat(), emoteSize.getFileEnding(this))), prefSize, prefSize, false, false);
+		return createEmoteImage(emoteSize, prefSize, this);
+	}
+
+	private Image createEmoteImage(EmoteSize emoteSize, int prefSize, Emote emote) {
+		return new Image((emote.getFilePath(true).replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false);
 	}
 	
 	public final ImageView getEmoteNode(EmoteSize emoteSize) {
@@ -111,7 +118,10 @@ public class Emote {
 		return name;
 	}
 
-	public String getFilePath() {
+	public String getFilePath(boolean filePrefix) {
+		if(filePrefix && !filePath.startsWith("https://")){
+			return "file:"+filePath;
+		}
 		return filePath;
 	}
 	

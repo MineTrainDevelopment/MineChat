@@ -1,9 +1,5 @@
 package de.minetrain.minechat.twitch;
 
-import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +32,9 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.ChannelManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
@@ -56,7 +50,6 @@ import de.minetrain.minechat.utils.events.MineChatEventType;
  */
 public class TwitchListner {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchListner.class);
-	private static final Dimension buttonSize = new Dimension(28, 28);
 	public static int messagesTEMP = 0;
 //	private LiveNotification liveNotification = new LiveNotification();
 	
@@ -110,7 +103,7 @@ public class TwitchListner {
 	 */
 	@EventSubscriber
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
-		if(!ChannelManager.isValidChannel(event.getChannel().getId())){return;}
+		if(!ChannelManager.isValidChannel(event.getChannel().getId()) || !Main.isGuiOpen){return;}
 		logger.info("User: "+event.getUser().getName()+" | Message --> "+event.getMessage());
 		
 		Channel channel = ChannelManager.getChannel(event.getChannel().getId());

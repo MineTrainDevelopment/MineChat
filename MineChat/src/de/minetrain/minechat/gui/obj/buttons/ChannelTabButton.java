@@ -12,7 +12,6 @@ import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.ChannelManager;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import javafx.animation.Interpolator;
@@ -24,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -98,7 +96,7 @@ public class ChannelTabButton extends Button{
         	boolean success = false;
         	
         	
-            if (event.getGestureSource() != null) {
+            if (event.getGestureSource() != null && event.getGestureSource() instanceof ChannelTabButton) {
                 Object source = event.getGestureSource();
                 int sourceIndex = titleBarPane.getTabBar().getChildren().indexOf(source);
                 int targetIndex = titleBarPane.getTabBar().getChildren().indexOf(this);
@@ -212,7 +210,6 @@ public class ChannelTabButton extends Button{
 		}
 		
 		ChannelManager.setCurrentChannel(channel.getChannelId());
-		Main.macroPane.loadMacros();
 	}
 	
 	

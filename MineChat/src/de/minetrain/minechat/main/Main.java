@@ -6,37 +6,34 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
 
+import javax.naming.directory.InvalidAttributesException;
+import javax.swing.JFrame;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreTest;
+import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
-import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
-import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
+import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -45,71 +42,78 @@ public class Main extends Application {
 	public static AudioManager audioManager;
 	public static EventManager eventManager;
 	public static PluginManager pluginManager;
-	private static final int loadingSteps = 12;
+	private static final int loadingSteps = 13;
+	public static boolean isGuiOpen = false;
 	
 	public static void test(String[] args) throws Exception {
 		loadingProgressLogging(1, "Initialising database manager");
 		new DatabaseManager();
-		TwitchManager.credentials = new CredentialsManager(); //TEMP
-		new ChannelManager();//Load all channels.
-		new EmoteManager(); //TEMP
-//		
-//		loadingProgressLogging(2, "Initialising user settings");
-//		new Settings();
-//		
-//		loadingProgressLogging(3, "Fetching audio fiels.");
-//		audioManager = new AudioManager();
-//		
-//		loadingProgressLogging(4, "Preparing MineChat events.");
-//		eventManager = new EventManager();
-//		
-//		loadingProgressLogging(5, "Loading custom plugins.");
-//		pluginManager = new PluginManager();
-//		
-//		loadingProgressLogging(6, "Decrypt credentials file...");
-//		try {
-//	    	new CredentialsManager();
-//		} catch (InvalidAttributesException ex) {
-//			JFrame tempFrame = new JFrame();
-//			tempFrame.setVisible(true);
-//			new GetCredentialsFrame(tempFrame);
-//		} catch (Exception ex) {
-//			CredentialsManager.deleteCredentialsFile();
-//			logger.error("Invalid twitch credentials!", ex);
-//			System.exit(0);
-//		}
-//		
-//		CredentialsManager credentials = new CredentialsManager();
-//
-//		
-//		try {
-//			loadingProgressLogging(7, "Connecting to Twitch Helix.");
-//			new TwitchManager(credentials);
-//			loadingProgressLogging(8, "Prepare message highlight strings.");
-//			Settings.reloadHighlights();
-//			loadingProgressLogging(9, "Validate public badges and emotes.");
-//			TextureManager.downloadPublicData();
-//		} catch (Exception ex) {
-//			logger.error(ex.getMessage(), ex);
-//			System.exit(0);
-//		}
-//
-//		loadingProgressLogging(10, "Load AutoReply manager.");
-//		new AutoReplyManager();
+		
+		loadingProgressLogging(2, "Prepare eclipse store.");
+		new EclipseStoreTest();
+		
+		loadingProgressLogging(3, "Initialising user settings");
+		new Settings();
 
-		loadingProgressLogging(11, "Building main frame.");
+		loadingProgressLogging(4, "Preparing emotes");
+		new EmoteManager();
+		
+		loadingProgressLogging(5, "Fetching audio fiels.");
+		audioManager = new AudioManager();
+		
+		loadingProgressLogging(6, "Preparing MineChat events.");
+		eventManager = new EventManager();
+		
+		loadingProgressLogging(7, "Loading custom plugins.");
+		pluginManager = new PluginManager();
+
+		loadingProgressLogging(8, "Decrypt credentials file...");
+		try {
+	    	new CredentialsManager();
+		} catch (InvalidAttributesException ex) {
+			JFrame tempFrame = new JFrame();
+			tempFrame.setVisible(true);
+			new GetCredentialsFrame(tempFrame);
+		} catch (Exception ex) {
+			CredentialsManager.deleteCredentialsFile();
+			logger.error("Invalid twitch credentials!", ex);
+			System.exit(0);
+		}
+		
+		CredentialsManager credentials = new CredentialsManager();
+
+		
+		try {
+			loadingProgressLogging(9, "Connecting to Twitch Helix.");
+			new TwitchManager(credentials);
+			loadingProgressLogging(10, "Prepare message highlight strings.");
+			Settings.reloadHighlights();
+			loadingProgressLogging(11, "Validate public badges and emotes.");
+			TextureManager.downloadPublicData();
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+			System.exit(0);
+		}
+
+		loadingProgressLogging(12, "Building main frame.");
 		launch(args);
 		
-//		Runtime.getRuntime().addShutdownHook(new Thread() {
-//		    public void run() {
-////		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
-//		    	TwitchManager.leaveAllChannel();
-//		    }
-//		});
+        //First open the frame, then load all channels and add them live into frame.
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+//		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
+//		    	EclipseStoreTest.getStoreRoot().saveAllChannelStatistics();
+		    	TwitchManager.leaveAllChannel();
+		    }
+		});
 	}
 	
 	public static MacroPanelPane macroPane;
+	public static TitleBarPane titleBar;
 	public static Stage primaryStage;
+	public static VBox messagePanel;
+	public static ScrollPane messageScrollPane;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -118,35 +122,27 @@ public class Main extends Application {
 //        primaryStage.initStyle(StageStyle.TRANSPARENT);
         
 		BorderPane topPane = new BorderPane();
-		topPane.setTop(new TitleBarPane());
+		titleBar = new TitleBarPane();
+		topPane.setTop(titleBar);
 		macroPane = new MacroPanelPane();
 		topPane.setBottom(macroPane);
 		
 		
-		TabPane tabPane = new TabPane();
-
-        Tab tab1 = new Tab("Planes", new Label("Show all planes available"));
-        Tab tab2 = new Tab("Cars"  , new Label("Show all cars available"));
-        Tab tab3 = new Tab("Boats" , new Label("Show all boats available"));
-
-        tab1.setId("channel-tab");
-        tab1.setGraphic(new ImageView(new Image("file:"+TextureManager.profilePicPath.replace("{ID}", "99351845").replace("{SIZE}", "25"), 24, 24, false, false)));
-        tab2.setId("channel-tab");
-        tab3.setId("channel-tab");
-
-        tabPane.getTabs().add(tab1);
-        tabPane.getTabs().add(tab2);
-        tabPane.getTabs().add(tab3);
-
-        Button messagePanel = new Button("Jen");
-        messagePanel.setPrefSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-        messagePanel.setStyle("-fx-background-color: #505050; -fx-padding: 5; -fx-text-fill: white; -fx-font-size: 20px");
+//        Button messagePanel = new Button("Jen");
+//        messagePanel.setPrefSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+//        messagePanel.setStyle("-fx-background-color: #505050; -fx-padding: 5; -fx-text-fill: white; -fx-font-size: 20px");
 //        vBox.getChildren().addAll(new Button("ttt"), tabPane, new Button("ttt"));
 		
+        messagePanel = new VBox(0);
+        messageScrollPane = new ScrollPane(messagePanel);
+        
+        Button exit = new Button();
+        exit.setOnAction(e -> System.exit(0));
+        messagePanel.getChildren().add(exit);
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setTop(topPane);
-//		mainContentPane.setCenter(messagePanel);
+		mainContentPane.setCenter(messageScrollPane);
 //		mainContentPane.setCenter(new EmoteSelectorButton(EmoteManager.getEmoteByName("jennyanPls"), EmoteSize.SMALL, EmoteBorderType.DEFAULT));
 		mainContentPane.setBottom(new InputFieldPane());
 		
@@ -173,8 +169,16 @@ public class Main extends Application {
 		primaryStage.setMinWidth(516);
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> System.exit(0));
+        isGuiOpen = true;
+        
+		//LoadChannels
+		new Thread(() -> {
+			loadingAsyncProgressLogging(1, "Loading channels.");
+			new ChannelManager();
+		}).start();
+		
 	}
-
 
 
 	public static AudioManager getAudioManager(){
@@ -227,9 +231,13 @@ public class Main extends Application {
         }
     }
 	
-	
+
 	private static void loadingProgressLogging(int stage, String message) {
 		logger.info("Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
+	}
+	
+	private static void loadingAsyncProgressLogging(int stage, String message) {
+		logger.info("[Async] Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
 	}
 
 }

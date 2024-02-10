@@ -38,6 +38,7 @@ public class Settings{
 	public static HighlightDefault highlightUserReturnMessages; 
 	public static long highlightUserReturnThreshold;
 	public static boolean highlightKeywords;
+	public static boolean displayEmoteOnly;
 	
 	public static HighlightDefault displayModActions; //
 	public static HighlightDefault displayFollows; //
@@ -106,6 +107,7 @@ public class Settings{
 		autoReplyState = AutoReplyState.get(settings.getString("Chatting.AutoReplyState", "ALL"));
 		holdToSendMessages = settings.getBoolean("Chatting.HoltToSendMessages", true);
 		emoteBlendinOnDisplaying = settings.getBoolean("Chatting.emoteBlendinOnDisplaying", false);
+		displayEmoteOnly = settings.getBoolean("Chatting.DisplayEmoteOnly", true);
 		
 		MESSAGE_FONT = new Font(
 				settings.getString("Font.Name", "Arial Unicode MS"), 
@@ -157,11 +159,12 @@ public class Settings{
 				DatabaseManager.getMessageHighlight().insert(
 						UUID.randomUUID().toString(),
 						name,
-						String.format("#%06x", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT.getRGB() & 0x00FFFFFF),
-						String.format("#%06x", ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT.getRGB() & 0x00FFFFFF),
+						String.format("#%06x", ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT)),
+						String.format("#%06x", ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT)),
 						null,
 						null,
 						true);
+				
 				
 				DatabaseManager.commit();
 			}
@@ -278,6 +281,7 @@ public class Settings{
 		settings.setString("Chatting.AutoReplyState", AutoReplyState.ALL.name());
 		settings.setBoolean("Chatting.HoltToSendMessages", true);
 		settings.setBoolean("Chatting.emoteBlendinOnDisplaying", false);
+		settings.setBoolean("Chatting.DisplayEmoteOnly", true);
 		
 		
 

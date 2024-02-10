@@ -2,15 +2,4 @@
 TwitchCredentials.java
 config.yml
 UserIndex.yml
-/data/texture/Icons/
-/data/texture/badges/
-/data/data.minefile
-/data/Settings.yml
-/data/-Settings.yml
-/data/Cache.yml
-/data/bttv_conzept/
-/data/emotes.yml
-/data/ChatLog.yml
-/data/data.db
-/data/texture/RawIcons/
-/data/plugins/
+/data/

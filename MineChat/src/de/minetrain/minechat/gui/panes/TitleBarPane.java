@@ -74,7 +74,7 @@ public class TitleBarPane extends BorderPane{
 
         tabBar = new HBox(5);
         tabBar.setAlignment(Pos.CENTER_LEFT);
-        ChannelManager.getAllChannels().forEach(channel -> tabBar.getChildren().add(new ChannelTabButton(channel, this)));
+//        ChannelManager.getAllChannels().forEach(channel -> tabBar.getChildren().add(new ChannelTabButton(channel, this))); //Moved to channel manager.
 		
         tabPane = new ScrollPane(tabBar);
         tabPane.setFocusTraversable(false);

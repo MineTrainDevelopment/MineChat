@@ -41,7 +41,7 @@ public class AutoReplyManager {
 			return;
 		}
 		
-		if(Settings.autoReplyState.equals(AutoReplyState.CURRENT_TAB) && !(ChannelManager.getCurrentChannel().getChannelId().equals(message.getChannelId()))){
+		if(Settings.autoReplyState.equals(AutoReplyState.CURRENT_TAB) && ChannelManager.getCurrentChannel() != null && !(ChannelManager.getCurrentChannel().getChannelId().equals(message.getChannelId()))){
 			return;
 		}
 		

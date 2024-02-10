@@ -5,6 +5,7 @@ import java.time.Instant;
 
 import com.google.gson.JsonObject;
 
+import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.TwitchManager.LiveMetaData;
 
 public class TwitchUserObj {
@@ -93,6 +94,18 @@ public class TwitchUserObj {
 		
 		private TwitchApiCallType(String url) {
 			this.url = url;
+		}
+	}
+	
+	public void join(){
+		if(!dummy){
+			TwitchManager.joinChannel(loginName);
+		}
+	}
+	
+	public void leave(){
+		if(!dummy){
+			TwitchManager.leaveChannel(loginName);
 		}
 	}
 

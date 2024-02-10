@@ -2,9 +2,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>MineChat</groupId>
 	<artifactId>MineChat</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<description>Chat tool for twitch IRC.</description>
+	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -30,46 +33,54 @@
 	<properties>
 		<javafx.version>17.0.9</javafx.version>
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
+		<unirest.version>4.0.0-RC2</unirest.version>
+		<slf4j.version>1.7.36</slf4j.version>
+		<snakeyaml.version>2.2</snakeyaml.version>
+		<twitch4j.version>1.18.0</twitch4j.version>
+		<fasterxml.version>2.12.5</fasterxml.version>
+		<google.gson.version>2.10.1</google.gson.version>
+		<sqlite.version>3.44.0.0</sqlite.version>
+		<eclipse.store.version>1.1.0</eclipse.store.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
-			<version>4.0.0-RC2</version>
+			<version>${unirest.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-reload4j</artifactId>
-			<version>1.7.36</version>
+			<version>${slf4j.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>2.2</version>
+			<version>${snakeyaml.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.twitch4j</groupId>
 			<artifactId>twitch4j</artifactId>
-			<version>1.18.0</version>
+			<version>${twitch4j.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.12.5</version>
+			<version>${fasterxml.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.10.1</version>
+			<version>${google.gson.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.44.0.0</version>
+			<version>${sqlite.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
@@ -90,6 +101,11 @@
 			<groupId>org.openjdk.jol</groupId>
 			<artifactId>jol-core</artifactId>
 			<version>0.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.store</groupId>
+			<artifactId>storage-embedded</artifactId>
+			<version>${eclipse.store.version}</version>
 		</dependency>
 	</dependencies>
 </project>

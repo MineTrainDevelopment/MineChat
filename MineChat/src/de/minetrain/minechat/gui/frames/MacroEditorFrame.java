@@ -1,42 +1,40 @@
 package de.minetrain.minechat.gui.frames;
 
-import de.minetrain.minechat.data.objectdata.MacroData;
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.features.macros.MacroType;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
-import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.ChannelManager;
 import de.minetrain.minechat.main.Main;
-import javafx.geometry.Pos;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class MacroEditorFrame extends MineDialog {
 	private Emote selectedEmote;
+	private EmoteSelector emoteSelector;
 
 	public MacroEditorFrame(MacroObject macro, MacroType macroType, int button_id) {
 		super("Edit this macro:", 420, 300);
 		
 		String title = "";
-		String output = "Output text\r\n"
-				+ "Line split (ENTER key) == Random output text list\r\n"
-				+ "\r\n"
-				+ "You can use all message variables.\r\n"
-				+ "  - Like {TIME}, {TOTAL_MESSAGES}...";
+		String output = "";
 		
 		if(macro != null){
 			title = macro.getTitle();
 			output = macro.getAllOutputsAsString();
 		}else{
-			new EmoteSelector(true, emote -> selectedEmote = emote);
+			emoteSelector = new EmoteSelector(true, emote -> selectedEmote = emote);
+			//Returns of no emote is selected.
+			if(selectedEmote == null){
+				emoteSelector = null; //Release memory.
+				return;
+			}
 			title = selectedEmote.getName();
 		}
 		
@@ -44,15 +42,23 @@ public class MacroEditorFrame extends MineDialog {
 			selectedEmote = macro.getEmote();
 		}
 		
-		EmoteSelectorButton emoteButton = new EmoteSelectorButton(selectedEmote, EmoteSize.MEDIUM, 4);
-		emoteButton.setOnAction(event -> new EmoteSelector(newEmote -> {
-			selectedEmote = newEmote;
-			emoteButton.changeImage(newEmote);
-		}));
-		
 		TextField titleInputField = new TextField(title);
+		
+		EmoteSelectorButton emoteButton = new EmoteSelectorButton(selectedEmote, EmoteSize.MEDIUM, 4);
+		emoteButton.setOnMouseClicked(event -> {
+			if(emoteSelector == null){
+				emoteSelector = new EmoteSelector(newEmote -> {
+					selectedEmote = newEmote;
+					emoteButton.changeImage(newEmote);
+					titleInputField.setPromptText(newEmote.getName());
+				});
+			}else{
+				emoteSelector.openStage(false);
+			}
+		});
+		
         titleInputField.setId("message-input-field");
-        titleInputField.setPromptText("Enter your title...");
+        titleInputField.setPromptText(selectedEmote.getName());
         titleInputField.setFocusTraversable(false);
         titleInputField.setStyle("-fx-font-size: 30px;");
         titleInputField.minHeightProperty().bind(emoteButton.heightProperty());
@@ -60,7 +66,11 @@ public class MacroEditorFrame extends MineDialog {
 
 		TextArea outputInputField = new TextArea(output);
         outputInputField.setId("message-input-field");
-        outputInputField.setPromptText("Enter your chat message...");
+        outputInputField.setPromptText("Output text\r\n"
+				+ "Line split (ENTER key) == Random output text list\r\n"
+				+ "\r\n"
+				+ "You can use all message variables.\r\n"
+				+ "  - Like {TIME}, {TOTAL_MESSAGES}...");
         outputInputField.setStyle("-fx-font-size: 14px;");
         outputInputField.setFocusTraversable(false);
 		
@@ -91,6 +101,7 @@ public class MacroEditorFrame extends MineDialog {
         	}
         	
         	Main.macroPane.loadMacros();
+        	emoteSelector = null;
         	closeStage();
         });
 		

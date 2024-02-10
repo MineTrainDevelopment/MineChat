@@ -1,5 +1,25 @@
 package de.minetrain.minechat.utils;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
+
+import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.main.Main;
+import javafx.geometry.Pos;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -16,6 +36,13 @@ public class MineTextFlow extends TextFlow{
 	private FontWeight DEFAULT_FONT_WEIGHT = FontWeight.BOLD;
 	private Color DEFAULT_FONT_FILL = Color.WHITE;
 	
+	private static final ConcurrentHashMap<Integer, Image> imageCache = new ConcurrentHashMap<Integer, Image>();
+	
+	public MineTextFlow(double fontSize) {
+		this();
+		DEFAULT_FONT_SIZE = fontSize;
+	}
+
 	public MineTextFlow() {
 		Rectangle clip = new Rectangle();
 
@@ -23,6 +50,7 @@ public class MineTextFlow extends TextFlow{
 		clip.heightProperty().bind(heightProperty());
 		setClip(clip);
 	}
+
 	
 	
 	/**
@@ -81,6 +109,68 @@ public class MineTextFlow extends TextFlow{
 		text.setFill(font_fill);
 		getChildren().add(text);
 		return this;
+	}
+	
+	public MineTextFlow appendHyperLink(String url){
+		Hyperlink hyperlink = new Hyperlink(Main.extractDomain(url));
+		hyperlink.setTooltip(new Tooltip(url));
+		hyperlink.setOnAction(event -> {
+			try{Desktop.getDesktop().browse(new URI(url));} catch (IOException | URISyntaxException e) { }
+		});
+		
+		hyperlink.setFocusTraversable(false);
+		hyperlink.setFont(Font.font(DEFAULT_FONT_FAMILY, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_POSTURE, DEFAULT_FONT_SIZE));
+		
+		hyperlink.setOnDragDetected(event -> {
+            Dragboard dragboard = hyperlink.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putHtml(hyperlink.getText());
+            content.putString(hyperlink.getText());
+            content.putUrl(url);
+            
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setFill(Color.TRANSPARENT);
+            content.putImage(hyperlink.snapshot(snapshotParameters, null));
+            
+            dragboard.setContent(content);
+            hyperlink.setVisited(true);
+            event.consume();
+        });
+		
+		getChildren().add(hyperlink);
+		return this;
+	}
+
+	/**
+	 * Emotes are centert to the text.
+	 * @param emote
+	 * @param size
+	 * @return
+	 */
+	public MineTextFlow appendEmote(Emote emote){
+		ImageView imageView = new ImageView(emote.getEmoteImage(EmoteSize.SMALL)){
+			@Override
+			public double getBaselineOffset() {
+				return getImage().getHeight() * 0.75;
+			}
+		};
+//		imageView.setTranslateY(-((DEFAULT_FONT_SIZE - size.getSize()) / 2));
+		appendImage(imageView);
+		return this;
+	}
+
+	public MineTextFlow appendImage(Path imagePath){
+		appendImage(new ImageView(imageCache.computeIfAbsent(imagePath.hashCode(), hash -> new Image(imagePath.toUri().toString()))));
+		return this;
+	}
+	
+	public MineTextFlow appendImage(Path imagePath, double pixelSize){
+		appendImage(new ImageView(imageCache.computeIfAbsent(imagePath.hashCode(), hash -> new Image(imagePath.toUri().toString(), pixelSize, pixelSize, true, false))));
+		return this;
+	}
+	
+	public void appendImage(ImageView image){
+		getChildren().add(image);
 	}
 	
 

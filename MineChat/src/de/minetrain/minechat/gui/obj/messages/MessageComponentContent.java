@@ -3,7 +3,7 @@ package de.minetrain.minechat.gui.obj.messages;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +18,12 @@ import javafx.scene.paint.Color;
 /**
  * 
  * @author MineTrain/Justin
- * @param chatWindow - not null
  * @param userData - nullable if twitchMessage is not null - DisplayName, NameColor, BadgesSet
  * @param message - not null
  * @param timeStamp - nullable
  * @param twitchMessage - nullable
  */
 public record MessageComponentContent(
-//		ChatWindow chatWindow, //not null
 		UserChatData userData, //DisplayName, NameColor, BadgesSet - nullable if twitchMessage is not null
 		String message, // not null
 		Long timeStamp, //nullable
@@ -68,6 +66,10 @@ public record MessageComponentContent(
 		return twitchMessage != null ? twitchMessage.getEpochTime() : timeStamp;
 	}
 	
+	public String getMessage(){
+		return message;
+	}
+	
 	public LocalDateTime getTimeStamp(){
 		Long epochSec = getEpochSec();
 		return epochSec != null
@@ -78,12 +80,16 @@ public record MessageComponentContent(
 	/**
 	 * @return All public emotes should twitchmessage be null.
 	 */
-	public Collection<Emote> getEmoteSet(){
+	public Map<String, Emote> getEmoteSet(){
 		if(twitchMessage == null){
-			return EmoteManager.getPublicEmotes().values();
+			return EmoteManager.getPublicEmotes();
 		}
 		
-		return twitchMessage.getEmotes();
+		return twitchMessage.getEmoteSet();
+	}
+	
+	public boolean isEmoteOnly(){
+		return twitchMessage != null ? twitchMessage.isEmoteOnly() : false;
 	}
 	
 	/**

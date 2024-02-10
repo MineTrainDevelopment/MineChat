@@ -8,6 +8,7 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.audio.AudioVolume;
+import javafx.scene.paint.Color;
 
 public class HighlightString {
 	private final String uuid;
@@ -60,6 +61,14 @@ public class HighlightString {
 
 	public String getBorderColorCode() {
 		return borderColorCode;
+	}
+
+	public Color getWordColor() {
+		return Color.web(wordColorCode);
+	}
+
+	public Color getBorder() {
+		return Color.web(borderColorCode);
 	}
 
 	public boolean isPlaySound() {

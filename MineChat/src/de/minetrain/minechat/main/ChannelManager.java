@@ -5,11 +5,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
+import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioVolume;
+import javafx.application.Platform;
 
 public class ChannelManager {
 	private static HashMap<String, Channel> channels = new HashMap<String, Channel>();
@@ -20,11 +23,18 @@ public class ChannelManager {
 		TwitchManager.getTwitchUsers(TwitchApiCallType.ID, allChannels.keySet().toArray(String[]::new)); // Load from twitch api.
 		allChannels.keySet().stream().forEach(ChannelManager::addChannel);
 		
-		if(!allChannels.isEmpty()){
-			setCurrentChannel(allChannels.keySet().iterator().next());
+		validateUserLogins();
+		new AutoReplyManager();//Load auto replys after fetching channel data.
+		
+		if(selectedChannelId.isEmpty()){
+			//TODO: Load the last selected channel.
+			setCurrentChannel(channels.keySet().iterator().next());
 		}
 	}
 	
+	/*
+	 * May be null.
+	 */
 	public static Channel getCurrentChannel(){
 		return getChannel(selectedChannelId);
 	}
@@ -35,8 +45,14 @@ public class ChannelManager {
 	 * @return
 	 */
 	public static Channel setCurrentChannel(String channelId){
+		if(channelId.equals(selectedChannelId)){
+			return getChannel(selectedChannelId);
+		}
+		
 		selectedChannelId = channelId;
-		return addChannel(selectedChannelId);
+		Channel channel = addChannel(selectedChannelId);
+		channel.loadViewPort();
+		return channel;
 	}
 	
 	/**
@@ -49,7 +65,13 @@ public class ChannelManager {
 			return null;
 		}
 		
-		return channels.computeIfAbsent(channelId, Channel::new);
+		if(!channels.containsKey(channelId)){
+			Channel channel = channels.computeIfAbsent(channelId, Channel::new);
+			Platform.runLater(() -> Main.titleBar.getTabBar().getChildren().add(new ChannelTabButton(channel, Main.titleBar)));
+			return channel;
+		}
+		return channels.get(channelId);
+//		return channels.computeIfAbsent(channelId, Channel::new);
 	}
 	
 	public static boolean isValidChannel(String channelId){

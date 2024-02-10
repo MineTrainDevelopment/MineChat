@@ -105,7 +105,7 @@ public class EmoteManager {
 	 * @return may be null, if no emotes are installed for the user.
 	 */
 	public static ChannelEmotes getChannelEmotes(String channelId){
-		return channelEmotes.containsKey(channelId) ? channelEmotes.get(channelId) : null;
+		return channelEmotes.get(channelId);
 	}
 	
 	public static HashMap<String, ChannelEmotes> getChannelEmotes(){

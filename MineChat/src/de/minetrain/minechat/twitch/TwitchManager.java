@@ -210,12 +210,8 @@ public class TwitchManager {
 	 */
 	private static void replyMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getChannel().replyMessage;
-		if(!replyMessage.isNull()){
-			twitch.getChat().sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
-			message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());
-			return;
-		}
-		sendMessage(message);
+		twitch.getChat().sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
+		message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());
 	}
 	
 	
