@@ -298,9 +298,6 @@ public class TwitchListner {
 
 
 	
-	private enum EventButtonType{GREETING, REPLY, RAID, LOVE;}
-
-
 //    @EventSubscriber
 //    public void on( event){
 //    	

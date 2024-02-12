@@ -5,12 +5,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.Main;
@@ -65,11 +69,6 @@ public class MessageComponent extends StackPane {
         contentPane.setId("message-comp-background");
         contentPane.setCenter(new Label("test"));
         
-        //twitch highlite test.
-        if(messageContent.twitchMessage() != null && messageContent.twitchMessage().isHighlighted()){
-        	contentPane.setStyle("-fx-background-color: "+Settings.displayTwitchHighlighted.getColorCode()+";");
-        }
-        
         hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
         	if(newValue){
 //        		contentPane.setRight(replyButton);
@@ -100,16 +99,29 @@ public class MessageComponent extends StackPane {
         	return;
         }
 
-        setId("message-comp-border");
-        
-        //Das hier nicht richtig!
-        GreetingsManager greetingsManager = channel.getGreetingsManager();
-		if(!greetingsManager.isMentioned(messageContent.getUserName()) && !greetingsManager.contains(messageContent.getUserName())){
-			setStyle("-fx-border-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
-		}else if(highlight != null){
+        //message highlights
+        if(highlight != null){
         	setStyle("-fx-border-color: "+highlight.getBorderColorCode()+";");
         }
+
+        //twitch highlights.
+		if(twitchMessage != null){
+			if(twitchMessage.isFirstMessageOfInstance()  && Settings.highlightUserFirstMessages.isActive()){
+				setStyle("-fx-border-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
+			}
+			
+			if(twitchMessage.isHighlighted() && Settings.displayTwitchHighlighted.isActive()){
+				contentPane.setStyle("-fx-background-color: "+Settings.displayTwitchHighlighted.getColorCode()+";");
+			}
+			
+			if(twitchMessage.isFirstMessage() && Settings.highlightUserFirstMessages.isActive()){
+				contentPane.setStyle("-fx-background-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
+				setStyle("-fx-border-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
+				title.appendString("  -  First MSG");
+			}
+        }
 		
+		setId("message-comp-border");
         getChildren().addAll(titlePane, contentPane);
         
         //DEBUG
@@ -120,21 +132,26 @@ public class MessageComponent extends StackPane {
 		MineTextFlow textFlow = new MineTextFlow(16d);
 		textFlow.appendString("["+getTimeStamp(messageContent)+"] ");
 		
+		//Cache to prevent unnecessary CPU cycles.
+		Map<String, Emote> emoteSet = messageContent.getEmoteSet(); //Store to prevent the twitch message from calculating all emotes over and over.
+		List<HighlightString> highlights = Settings.highlightStrings.values().stream().filter(highlight -> highlight.isAktiv()).toList();
+		
 		for(String word : messageContent.getMessage().split(" ")){
 			if(word.contains(".") && !word.endsWith(".") && Main.isValidImageURL(word)){
 				textFlow.appendHyperLink(word);
 				continue;
 			}
 			
-			if(messageContent.getEmoteSet().containsKey(word)){
-				textFlow.appendEmote(messageContent.getEmoteSet().get(word));
+			if(emoteSet.containsKey(word)){
+				textFlow.appendEmote(emoteSet.get(word));
 				textFlow.appendSpace();
 				continue;
 			}
 			
 			int elements = textFlow.getChildren().size();
-			
-			Settings.highlightStrings.values().stream().filter(highlight -> highlight.isAktiv()).forEach(highlight -> {
+
+			//This may takes to mutch time.
+			highlights.forEach(highlight -> {
 	    		Pattern pattern = Pattern.compile("\\b" + highlight.getWord() + "\\b", Pattern.CASE_INSENSITIVE);
 	            Matcher matcher = pattern.matcher(word);
 	            if (matcher.find()) {
@@ -144,7 +161,7 @@ public class MessageComponent extends StackPane {
 	    			}
 	    		}
 	    	});
-			
+
 			if(elements == textFlow.getChildren().size()){
 				isEmoteOnly = false;
 				textFlow.appendString(word+" ");

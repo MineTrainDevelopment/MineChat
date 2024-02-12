@@ -23,6 +23,8 @@ import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.WebEmote;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.main.ChannelManager;
+import de.minetrain.minechat.twitch.TwitchManager;
 
 public class TwitchMessage {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchMessage.class);
@@ -46,7 +48,8 @@ public class TwitchMessage {
 	private final Long epochTime;
 	private final boolean emoteOnly;
 	private final boolean highlighted;
-	private final boolean firstMessages;//todo
+	private final boolean firstMessages;
+	private final boolean firstMessageOfInstance;
 
 	public TwitchMessage(IRCMessageEvent ircMessage, String message) {
 		this.message = message;
@@ -62,6 +65,7 @@ public class TwitchMessage {
 		this.emoteOnly = !Boolean.parseBoolean(ircMessage.getTagValue("emote-only").orElse("true"));
 		this.highlighted = ircMessage.getTagValue("msg-id").orElse("false").equals("false") ? false : true;
 		this.firstMessages = ircMessage.getTagValue("first-msg").orElse("0").equals("1") ? true : false;
+		this.firstMessageOfInstance = ChannelManager.getChannel(channelId).getGreetingsManager().add(userName);
 		
 		String emotes = ircMessage.getTagValue("emotes").orElse(null);
 		
@@ -211,6 +215,10 @@ public class TwitchMessage {
 		return firstMessages;
 	}
 	
+	public boolean isFirstMessageOfInstance() {
+		return userId.equals(TwitchManager.ownerTwitchUser.getUserId()) ? false : firstMessageOfInstance;
+	}
+
 	public boolean isParentReply() {
 		return ((replyId != null && replyUser != null) && replyId != messageId) ? true : false;
 	}

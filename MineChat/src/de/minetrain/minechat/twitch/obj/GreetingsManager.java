@@ -31,7 +31,11 @@ public class GreetingsManager extends ArrayList<String>{
      */
 	@Override
 	public boolean add(String name) {
-		return super.add(formatUserName(name));
+		name = formatUserName(name);
+		if(!super.contains(name)){
+			return super.add(name);
+		}
+		return false;
 	}
 
 	/**
