@@ -1,6 +1,8 @@
 package de.minetrain.minechat.main;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
@@ -21,6 +23,8 @@ import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MessageHistory;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -108,22 +112,25 @@ public class Channel {
 	
 	private void addToViewPort(MessageComponentContent messageContent){
 		Platform.runLater(() -> {
-			Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent));
+//			Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent));
 		});
 	}
 	
 	public void loadViewPort(){
-		new Thread(() -> {
+//		new Thread(() -> {
 			Platform.runLater(() -> {
 				Main.macroPane.loadMacros(this);
-				Main.messagePanel.getChildren().clear();
-//				messageCache.forEach(messageContent -> Main.messagePanel.getChildren().add(new MessageComponent(messageContent)));
+//				Main.messagePanel.setItems(FXCollections.observableList(EclipseStoreTest.getStoreRoot().getMessages(this)));
+				
+				ArrayList<MessageComponentContent> testList = new ArrayList<MessageComponentContent>();
+				testList.addAll(EclipseStoreTest.getStoreRoot().getMessages(this));
+				System.err.println("----------------- "+testList.size()+" ---------------------------");
+				
+				Main.messagePanel.setItems(FXCollections.observableList(testList));
+//				Main.messagePanel.getChildren().clear();
 			});
 			
-			EclipseStoreTest.getStoreRoot().getMessages(this).forEach(messageContent -> {
-				Platform.runLater(() -> Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent)));
-			});
-		}).start();
+//		}).start();
 	}
 	
 	public Rectangle getProfilePic(int size) {

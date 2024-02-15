@@ -7,10 +7,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
 import de.minetrain.minechat.main.Main;
-import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tooltip;
@@ -19,7 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -35,6 +34,7 @@ public class MineTextFlow extends TextFlow{
 	private FontPosture DEFAULT_FONT_POSTURE = FontPosture.REGULAR;
 	private FontWeight DEFAULT_FONT_WEIGHT = FontWeight.BOLD;
 	private Color DEFAULT_FONT_FILL = Color.WHITE;
+	private HighlightString highlight = null;
 	
 	private static final ConcurrentHashMap<Integer, Image> imageCache = new ConcurrentHashMap<Integer, Image>();
 	
@@ -199,6 +199,20 @@ public class MineTextFlow extends TextFlow{
 	public MineTextFlow setAlignment(TextAlignment alignment){
 		setTextAlignment(alignment);
 		return this;
+	}
+	
+	
+	public MineTextFlow setHighlight(HighlightString highlight){
+		this.highlight = highlight;
+		return this;
+	}
+	
+	public boolean hasHighlight(){
+		return highlight != null;
+	}
+	
+	public HighlightString getHighlight(){
+		return highlight;
 	}
 	
 	

@@ -31,7 +31,7 @@
 	</build>
 
 	<properties>
-		<javafx.version>17.0.9</javafx.version>
+		<javafx.version>17.0.10</javafx.version>
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 		<unirest.version>4.0.0-RC2</unirest.version>
 		<slf4j.version>1.7.36</slf4j.version>

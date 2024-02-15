@@ -21,6 +21,7 @@ import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
+import de.minetrain.minechat.gui.panes.recyclerview.MessageListView;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
@@ -112,8 +113,8 @@ public class Main extends Application {
 	public static MacroPanelPane macroPane;
 	public static TitleBarPane titleBar;
 	public static Stage primaryStage;
-	public static VBox messagePanel;
-	public static ScrollPane messageScrollPane;
+	public static MessageListView messagePanel;
+//	public static ScrollPane messageScrollPane;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -133,16 +134,15 @@ public class Main extends Application {
 //        messagePanel.setStyle("-fx-background-color: #505050; -fx-padding: 5; -fx-text-fill: white; -fx-font-size: 20px");
 //        vBox.getChildren().addAll(new Button("ttt"), tabPane, new Button("ttt"));
 		
-        messagePanel = new VBox(0);
-        messageScrollPane = new ScrollPane(messagePanel);
+        messagePanel = new MessageListView();
         
-        Button exit = new Button();
-        exit.setOnAction(e -> System.exit(0));
-        messagePanel.getChildren().add(exit);
+//        Button exit = new Button();
+//        exit.setOnAction(e -> System.exit(0));
+//        messagePanel.getChildren().add(exit);
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setTop(topPane);
-		mainContentPane.setCenter(messageScrollPane);
+		mainContentPane.setCenter(messagePanel);
 //		mainContentPane.setCenter(new EmoteSelectorButton(EmoteManager.getEmoteByName("jennyanPls"), EmoteSize.SMALL, EmoteBorderType.DEFAULT));
 		mainContentPane.setBottom(new InputFieldPane());
 		

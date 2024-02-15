@@ -103,6 +103,9 @@ public class TwitchListner {
 	 */
 	@EventSubscriber
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
+		if(true) {
+			return;
+		}
 		if(!ChannelManager.isValidChannel(event.getChannel().getId()) || !Main.isGuiOpen){return;}
 		logger.info("User: "+event.getUser().getName()+" | Message --> "+event.getMessage());
 		

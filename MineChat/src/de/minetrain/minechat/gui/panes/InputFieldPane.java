@@ -71,11 +71,11 @@ public class InputFieldPane extends BorderPane {
         
         infoBox.clear()
 	        .setAlignment(TextAlignment.LEFT)
-//	        .appendString("Reply to thrad from: ", Color.AQUA)
+//	        .appendString("Reply to thread from: ", Color.AQUA)
 //	        .appendString("Pferdchen", Color.LIGHTPINK)
 	        .appendString("Reply to ", Color.AQUA)
 	        .appendString("@MineTrainLP", Color.GREENYELLOW)
-	        .appendString(" in thrad from: ", Color.AQUA)
+	        .appendString(" in thread from: ", Color.AQUA)
 	        .appendString("@Pferdchen", Color.LIGHTPINK)
 	        .appendString(":", Color.WHITE)
 	        .appendLineSplit()
