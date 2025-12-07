@@ -96,7 +96,7 @@ public class TwitchMessage {
 						try {
 							return new WebEmote(emoteName, emoteId);
 						} catch (MalformedURLException ex) {
-							logger.debug("Can´t load web emote for -> "+emoteName, ex);
+							logger.debug("Canï¿½t load web emote for -> "+emoteName, ex);
 						}
 						return null;
 					}));

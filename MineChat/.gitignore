@@ -1,5 +1,8 @@
 /target/
+/.settings/
 TwitchCredentials.java
 config.yml
+.classpath
 UserIndex.yml
 /data/
+/bin/
