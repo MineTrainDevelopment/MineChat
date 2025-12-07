@@ -104,7 +104,7 @@ public class TwitchManager {
 			logger.warn("Start new HTTP server to get new OAuth2 key.");
 			
 			
-			//If the new OAuth2 token also don´t work, let the user Reenter there API credentials
+			//If the new OAuth2 token also donÂ´t work, let the user Reenter there API credentials
 			try {
 				new TwitchManager(new CredentialsManager());
 			} catch (Exception ex) {

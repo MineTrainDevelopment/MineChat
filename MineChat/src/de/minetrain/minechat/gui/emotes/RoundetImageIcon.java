@@ -42,7 +42,7 @@ public class RoundetImageIcon extends ImageIcon {
 		try {
 			return ImageIO.read(path.toFile());
 		} catch (IOException ex) {
-			LoggerFactory.getLogger(RoundetImageIcon.class).warn("Can´t read image -> "+path, ex);
+			LoggerFactory.getLogger(RoundetImageIcon.class).warn("CanÂ´t read image -> "+path, ex);
 			return new BufferedImage(1, 1, 1);
 		}
 	}

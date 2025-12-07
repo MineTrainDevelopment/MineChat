@@ -43,7 +43,7 @@ public class PluginManager extends HashMap<MinePlugin, de.minetrain.minechat.uti
             	plugin.load();
 			} catch (AbstractMethodError ex) {
 				PluginMetaData metaData = this.get(plugin);
-				logger.warn("Unload plugin \""+metaData.name+"\" by \""+metaData.author+"\" because \"plugin.load();\" Can´t be executet.");
+				logger.warn("Unload plugin \""+metaData.name+"\" by \""+metaData.author+"\" because \"plugin.load();\" CanÂ´t be executet.");
 			}
         }
     }
@@ -73,7 +73,7 @@ public class PluginManager extends HashMap<MinePlugin, de.minetrain.minechat.uti
             PluginMetaData metaData = extraktPluginYamlData(jarFile);
             
             if(metaData == null){
-            	logger.warn("Can´t load plugin -> "+jarFile.getName()+"\n   missing plugin.yml");
+            	logger.warn("CanÂ´t load plugin -> "+jarFile.getName()+"\n   missing plugin.yml");
             	return;
             }
             
@@ -105,7 +105,7 @@ public class PluginManager extends HashMap<MinePlugin, de.minetrain.minechat.uti
             }
             
             if(!success){
-            	logger.warn("Can´t load plugin \""+metaData.name+"\" by \""+metaData.author+"\" because \"class path\" is either null, or invalid.", 
+            	logger.warn("CanÂ´t load plugin \""+metaData.name+"\" by \""+metaData.author+"\" because \"class path\" is either null, or invalid.", 
             			new IllegalArgumentException("Provided main class path -> " + metaData.main));
             }
 

@@ -176,7 +176,7 @@ public class EmoteDatabase extends Database{
             	statement.setString(2, channel_id);
             	statement.executeUpdate();
             }else{
-            	logger.warn("Can´t set bttv emotes IDs for channel '"+channel_id+"'.");
+            	logger.warn("CanÂ´t set bttv emotes IDs for channel '"+channel_id+"'.");
             }
 
 //            connection.commit();
@@ -203,7 +203,7 @@ public class EmoteDatabase extends Database{
             	statement.setString(2, emote_id);
             	statement.executeUpdate();
             }else{
-            	logger.warn("Can´t update favorite state for emote -> '"+emote_id+"'.");
+            	logger.warn("CanÂ´t update favorite state for emote -> '"+emote_id+"'.");
             }
 
 //            connection.commit();
@@ -243,7 +243,7 @@ public class EmoteDatabase extends Database{
             	statement.executeUpdate();
             	connection.commit();
             }else{
-            	logger.warn("Can´t update sub tier for channel -> '"+chanelId+"'.");
+            	logger.warn("CanÂ´t update sub tier for channel -> '"+chanelId+"'.");
             }
 
 //            connection.commit();

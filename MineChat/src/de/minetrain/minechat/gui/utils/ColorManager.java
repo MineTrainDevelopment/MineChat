@@ -88,7 +88,7 @@ public class ColorManager {
 		try {
 			return Color.valueOf(hexCode);
 		} catch (NumberFormatException ex) {
-			LoggerFactory.getLogger(ColorManager.class).warn("Can´t decode color with following hexCode --> "+hexCode);
+			LoggerFactory.getLogger(ColorManager.class).warn("CanÂ´t decode color with following hexCode --> "+hexCode);
 			return Color.WHITE;
 		}
 	}

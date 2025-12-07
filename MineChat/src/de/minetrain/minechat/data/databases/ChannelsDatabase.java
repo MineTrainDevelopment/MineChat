@@ -116,7 +116,7 @@ public class ChannelsDatabase extends Database{
             	statement.setString(2, channel_id);
             	statement.executeUpdate();
             }else{
-            	logger.warn("Can´t update channel login name for channel '"+channel_id+"'.");
+            	logger.warn("CanÂ´t update channel login name for channel '"+channel_id+"'.");
             }
 
 //            connection.commit();
@@ -181,7 +181,7 @@ public class ChannelsDatabase extends Database{
 				return channelData;
 			}
 		} catch (SQLException ex) {
-			logger.error("Can´t read data from channel id -> "+channel_id);
+			logger.error("CanÂ´t read data from channel id -> "+channel_id);
 		}
 		return null;
 	}

@@ -25,7 +25,7 @@ public class CredentialsManager {
 	protected static String SALT;
 	protected static String INIT_VECTOR;// = "jhrasrtzjew485wd";
 	protected static String algorithm;// = "PBKDF2WithHmacSHA256";
-	protected static String placeHolder;// = "Jä7bAtPübAt";
+	protected static String placeHolder;// = "JÃ¤7bAtPÃ¼bAt";
 	protected static final String fileLocation = "data/data.minefile";
 
 	protected static String clientId;
@@ -155,7 +155,7 @@ public class CredentialsManager {
     }
     
     private static final String generateBoilerplate() {
-        String alphabet = "/\\===#ÄäÜüÖöabcdefghijklmnopqrstuvwABCDEFGHIKLMJNOPQRSTUVWXYZ1234567890";
+        String alphabet = "/\\===#Ã„Ã¤ÃœÃ¼Ã–Ã¶abcdefghijklmnopqrstuvwABCDEFGHIKLMJNOPQRSTUVWXYZ1234567890";
         String output = "";
         for (int i = 0; i < Math.random()*250+25; i++) {
             int index = (int) (Math.random() * alphabet.length());

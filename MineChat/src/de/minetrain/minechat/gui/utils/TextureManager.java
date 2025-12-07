@@ -291,7 +291,7 @@ public class TextureManager {
 			downloadImage(uri, "Icons/"+channelId, "/profile_75.png", new Dimension(75, 75));
 			downloadImage(uri, "Icons/"+channelId, "/profile_80.png", new Dimension(80, 80));
 		} catch (IOException ex) {
-			logger.warn("Can´t download profile image. \n URL: " + uri, ex);
+			logger.warn("CanÂ´t download profile image. \n URL: " + uri, ex);
 		}
 	}
 	
@@ -537,7 +537,7 @@ public class TextureManager {
 					
 	//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1"+fileFormat, "emoteBorder"+borderImageTyp+".png", fileFormat);
 				} catch (IOException ex) {
-					logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
+					logger.error("CanÂ´t download the Twitch emote '"+name+"'.", ex);
 				}
 				
 			}
@@ -605,7 +605,7 @@ public class TextureManager {
 					
 	//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1."+imageType, "emoteBorder.png", imageType);
 				} catch (IOException ex) {
-					logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
+					logger.error("CanÂ´t download the Twitch emote '"+name+"'.", ex);
 				}
 				
 			}
@@ -662,7 +662,7 @@ public class TextureManager {
 							TextureManager.downloadImage(downloadURL.replace("{{id}}", emoteId).replace("{{format}}", format).replace("{{theme_mode}}", "dark").replace("{{scale}}", index+".0"), fileLocation, emoteId+"_"+index+fileFormat);
 						}
 					} catch (IOException ex) {
-						logger.error("Can´t download the Twitch emote '"+name+"'.", ex);
+						logger.error("CanÂ´t download the Twitch emote '"+name+"'.", ex);
 					}
 	
 				}

@@ -37,7 +37,7 @@ public class AudioManager {
 				.filter(Files::isRegularFile)
 				.collect(Collectors.toList());
 		} catch (IOException ex) {
-			logger.error("Can´t read all files from sound folder."+ex);
+			logger.error("CanÂ´t read all files from sound folder."+ex);
 		}
 		
 		return new ArrayList<Path>();
@@ -103,7 +103,7 @@ public class AudioManager {
 		try {
 			return audioCach.computeIfAbsent(uri, AudioClip::new);
 		} catch (MediaException ex) {
-			logger.warn("Can´t find audio file -> "+uri+"\n"+ex.getMessage());
+			logger.warn("CanÂ´t find audio file -> "+uri+"\n"+ex.getMessage());
 			return null;
 		}
 	}

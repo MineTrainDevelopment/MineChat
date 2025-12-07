@@ -24,7 +24,7 @@ public enum MineChatEventType{
 		@Override
 		public void fireEvent(MineChatEvents event, Object obj) {
 			if(!(obj instanceof MessageComponentContent)){
-				throwFireError("Can´t fire onMessageHighliteEvent!", obj, MessageComponentContent.class);
+				throwFireError("CanÂ´t fire onMessageHighliteEvent!", obj, MessageComponentContent.class);
 				return;
 			}
 			
@@ -36,7 +36,7 @@ public enum MineChatEventType{
 		@Override
 		public void fireEvent(MineChatEvents event, Object obj) {
 			if(!(obj instanceof ChatMessage)){
-				throwFireError("Can´t fire onSentMessageEvent!", obj, ChatMessage.class);
+				throwFireError("CanÂ´t fire onSentMessageEvent!", obj, ChatMessage.class);
 				return;
 			}
 			
@@ -48,7 +48,7 @@ public enum MineChatEventType{
 		@Override
 		public void fireEvent(MineChatEvents event, Object obj) {
 			if(!(obj instanceof MacroObject)){
-				throwFireError("Can´t fire onExecuteMacroEvent!", obj, MacroObject.class);
+				throwFireError("CanÂ´t fire onExecuteMacroEvent!", obj, MacroObject.class);
 				return;
 			}
 			
@@ -62,7 +62,7 @@ public enum MineChatEventType{
 	private static void throwFireError(String message, Object obj, Class<?> clazz) {
 		LoggerFactory.getLogger(MineChatEventType.class).warn(message,
 				new IllegalArgumentException("Tryed to fire an event with invalid parameters.",
-				new ClassCastException("Can´t cast "+obj.getClass()+" to "+clazz)));
+				new ClassCastException("CanÂ´t cast "+obj.getClass()+" to "+clazz)));
 	}
 	
 	public static MineChatEventType[] getAllEvents(){

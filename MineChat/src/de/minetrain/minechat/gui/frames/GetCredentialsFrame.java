@@ -158,7 +158,7 @@ public class GetCredentialsFrame extends MineDialog {
 			server.start();
 			setTitle("Please register your twitch client.");
 			Desktop.getDesktop().browse(new URI(OAuth2_URL.replace("{CLIENT_ID}", clientId).replace("{REDIRECT_URL}", redirectUrl)));
-//			System.out.println("OAuth2 Server gestartet. Öffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
+//			System.out.println("OAuth2 Server gestartet. Ã–ffnen Sie den Browser und besuchen Sie http://localhost:8000/oauth_callback");
 		} catch (IOException | URISyntaxException ex) {
 			logger.error("Error while trying to start the Http server to get the OAuth2 token from the useres Twutch acc.", ex);
 		}
@@ -188,7 +188,7 @@ public class GetCredentialsFrame extends MineDialog {
 	                "xhr.send();" +
 	                "</script>";
 
-	        // Senden Sie die HTML-Seite mit dem JavaScript-Code zurück zum Client
+	        // Senden Sie die HTML-Seite mit dem JavaScript-Code zurÃ¼ck zum Client
 	        String response = "<html><body>" + script + "</body></html>";
 	        exchange.sendResponseHeaders(200, response.length());
 	        OutputStream outputStream = exchange.getResponseBody();

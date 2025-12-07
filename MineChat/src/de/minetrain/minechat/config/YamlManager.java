@@ -33,7 +33,7 @@ public class YamlManager extends HashMap<String, Object>{
 	private static final Logger logger = LoggerFactory.getLogger(YamlManager.class);
 	private final String filePath; //Name of the configuration file to be loaded.
     private final Yaml yaml; //Yaml instance for parsing the configuration file.
-	private static final String invalidFileChars = "<>:\"\\|?*"; //List of invalid chars, that operating systems don´t allow in there file names.
+	private static final String invalidFileChars = "<>:\"\\|?*"; //List of invalid chars, that operating systems donÂ´t allow in there file names.
 	private boolean suppressWarnings = false;
 
     /**
@@ -76,7 +76,7 @@ public class YamlManager extends HashMap<String, Object>{
 	    } catch (FileNotFoundException ex) {
 			throw new IllegalArgumentException("Can't initialize YamlManager. File not found!", ex);
 		} catch (IOException ex) {
-			throw new IllegalArgumentException("Can't initialize YamlManager. Can´t create file", ex);
+			throw new IllegalArgumentException("Can't initialize YamlManager. CanÂ´t create file", ex);
 		}
 	}
     
@@ -103,7 +103,7 @@ public class YamlManager extends HashMap<String, Object>{
     		return this;
     	}
     	
-		logger.info("Can´t reload the config file...");
+		logger.info("CanÂ´t reload the config file...");
 		return this;
     }
     
@@ -120,7 +120,7 @@ public class YamlManager extends HashMap<String, Object>{
             yaml.dump(this, writer);
             writer.close();
         } catch (IOException ex) {
-        	logger.error("Can´t save config file!", ex);
+        	logger.error("CanÂ´t save config file!", ex);
         }
     }
     

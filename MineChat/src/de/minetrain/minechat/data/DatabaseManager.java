@@ -38,7 +38,7 @@ public class DatabaseManager {
 			ownerCacheDatabase = new OwnerCacheDatabase();
 			countVariableDatabase = new CountVariableDatabase();
 		} catch (SQLException ex) {
-			logger.error("Can´t prepare all databases.", ex);
+			logger.error("CanÂ´t prepare all databases.", ex);
 			System.exit(1);
 		}
 	}
@@ -48,7 +48,7 @@ public class DatabaseManager {
 			logger.debug("Commiting database changes.");
 			connection.commit();
 		} catch (SQLException ex) {
-			logger.error("Can´t commit.", ex);
+			logger.error("CanÂ´t commit.", ex);
 		}
 	}
 

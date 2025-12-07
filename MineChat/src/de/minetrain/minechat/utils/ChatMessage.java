@@ -50,7 +50,7 @@ public class ChatMessage {
 			try {
 				clipBoard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 			} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
-				logger.info("Can´t readout the System ClipBoard. It may be empty.");
+				logger.info("CanÂ´t readout the System ClipBoard. It may be empty.");
 			} 
 			
 			if(message.contains("{VIEWER}") || message.contains("{UPTIME}") || message.contains("{GAME}") || message.contains("{TITLE}") || message.contains("{TAGS}")){

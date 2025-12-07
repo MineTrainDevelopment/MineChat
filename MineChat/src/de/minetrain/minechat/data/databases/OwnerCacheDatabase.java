@@ -145,7 +145,7 @@ public class OwnerCacheDatabase extends Database {
 			DatabaseManager.commit();
 			return null;
 		} catch (SQLException ex) {
-			logger.error("Can´t read data from channel id -> "+channel_id);
+			logger.error("CanÂ´t read data from channel id -> "+channel_id);
 			return null;
 		}
 	}
