@@ -1,22 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	
+	xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
+	<modelVersion>4.1.0</modelVersion>
 	<groupId>MineChat</groupId>
 	<artifactId>MineChat</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.9-SNAPSHOT</version>
 	<description>Chat tool for twitch IRC.</description>
-	
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.release>25</maven.compiler.release>
+	</properties>
+
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sources>
+			<source>
+				<scope>main</scope>
+				<directory>src</directory>
+			</source>
+		</sources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<release>17</release>
-				</configuration>
+				<version>4.0.0-beta-3</version>
 			</plugin>
 			
 			<plugin>
