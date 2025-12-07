@@ -1,5 +1,7 @@
 package de.minetrain.minechat.twitch;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +27,13 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
+import com.github.twitch4j.eventsub.events.ChannelUnsubscribeEvent;
+import com.github.twitch4j.eventsub.subscriptions.ChannelSubscriptionEndType;
+import com.github.twitch4j.helix.domain.UserChatColorList;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.ChatEventType;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
@@ -36,9 +42,11 @@ import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.ChannelManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.twitch.obj.UserColorCache;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 import de.minetrain.minechat.utils.events.MineChatEventType;
+import de.minetrain.minechat.utils.message.Message;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
@@ -69,7 +77,10 @@ public class TwitchListner {
 	public void onStreamUp(ChannelGoLiveEvent event){
 		logger.info("Twtich livestram startet: "+event.getStream().getUserName()+" | "+event.getStream().getViewerCount()+" | "+event.getStream().getTitle());
 		//TODO Call a sound event and display a red dott next to the name inside a channels tab.
-		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
+//		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
+		
+		ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("ChannelGoLiveEvent", ChatEventType.STREAM_UP));
+		
 //		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
 //		if(channelTab != null){
 //			channelTab.setLiveState(true);
@@ -90,6 +101,7 @@ public class TwitchListner {
 	@EventSubscriber
 	public void onStreamDown(ChannelGoOfflineEvent event){
 		logger.info("Twtich livestram Offline: "+event.getChannel().getName());
+		ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("ChannelGoOfflineEvent", ChatEventType.STREAM_DOWN));
 		//remove the red dot next to chennel name in tab
 //		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
 //		if(channelTab != null){
@@ -103,22 +115,25 @@ public class TwitchListner {
 	 */
 	@EventSubscriber
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
-		if(true) {
-			return;
-		}
+//		System.err.println(event.getMessageEvent().getEscapedTags());
+//		if(true){return;}
 		if(!ChannelManager.isValidChannel(event.getChannel().getId()) || !Main.isGuiOpen){return;}
 		logger.info("User: "+event.getUser().getName()+" | Message --> "+event.getMessage());
 		
+		Message.nameColorCache.putUser(event.getMessageEvent().getUserName(), event.getMessageEvent().getUserChatColor());
+		
 		Channel channel = ChannelManager.getChannel(event.getChannel().getId());
 		channel.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId(), event.getMessage());
-		TwitchMessage twitchMessage = new TwitchMessage(event.getMessageEvent(), event.getMessage());
-		Main.eventManager.fireEvent(MineChatEventType.INCOMING_MESSAGE, twitchMessage);
 		
+		Message message = new Message(event.getMessageEvent());
+		Main.eventManager.fireEvent(MineChatEventType.INCOMING_MESSAGE, message);
+		channel.addEventToViewPort("incoming", ChatEventType.INCOMING_MESSAGE);
 		
+//		TwitchMessage twitchMessage = new TwitchMessage(event.getMessageEvent(), event.getMessage());
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
 			channel.getMessageHistory().addSendedMessages(event.getMessage());
     		MessageManager.setLastMessage(event.getMessage());
-    		DatabaseManager.getOwnerCache().insert(twitchMessage);
+//    		DatabaseManager.getOwnerCache().insert(twitchMessage);
     		
     		ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getChannel().getId());
     		if(channelEmotes != null){
@@ -127,41 +142,55 @@ public class TwitchListner {
     		
 		}
 		
+		channel.displayMessage(message);
+//		AutoReplyManager.recordMessage(twitchMessage);
+	}
+	
+	public void onChannelUnsubscribe(ChannelUnsubscribeEvent event) {
+		logger.error("-------------------------------------------------");
+		logger.error("Unsub from -> " +event.getBroadcasterUserLogin() +" - "+event.getUserName());
+		logger.error("-------------------------------------------------");
+	}
 
-		if(twitchMessage.isFirstMessage()){
-//			currentChannelTab.getChatWindow()
-//				.displaySystemInfo("First channel Message.", "@"+event.getUser().getName()+" just left his first chat message on this channel.\n\n"+event.getMessage(), 
-//					Settings.highlightUserFirstMessages.getColor(), getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
-		}
-		
-		channel.displayMessage(twitchMessage);
-		AutoReplyManager.recordMessage(twitchMessage);
+
+	public void onChannelSubscriptionEndType(ChannelSubscriptionEndType event) {
+		logger.error("-------------------------------------------------");
+		logger.error("SubscriptionEnd -> " + event.getName());
+		logger.error("-------------------------------------------------");
 	}
 	
 	
     @EventSubscriber
     public void onCheer(CheerEvent event) {
-//    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
-//    	currentChannelTab.getStatistics().addBits(event);
-    	if(!Settings.displayBitsCheerd.isActive()){return;}
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> {
+			channel.getStatistics().addBits(event);
+			if(Settings.displayBitsCheerd.isActive()){
+				channel.addEventToViewPort("cheer bits", ChatEventType.CHEERD_BITS);
+			}
+    	});
     }
 
     @EventSubscriber
     public void onSub(SubscriptionEvent event) {
-//    	ChannelTab currentChannelTab = getCurrentChannelTab(event.getChannel());
-//    	currentChannelTab.getStatistics().addSub(event);
-    	
-        if(!event.getGifted() && Settings.displaySubs.isActive()) {
-        	
-        }else if(Settings.displayGiftedSubs.isActive() && Settings.displayIndividualGiftedSubs.isActive()){
-        	
-        }
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel ->  {
+    		channel.getStatistics().addSub(event);
+    		
+    		if(!event.getGifted() && Settings.displaySubs.isActive()) {
+    			if(event.getMonths()>1){
+    				channel.addEventToViewPort("re subs", ChatEventType.RE_SUB);
+    			}else{
+    				channel.addEventToViewPort("new subs", ChatEventType.NEW_SUB);
+    			}
+    		}else if(Settings.displayGiftedSubs.isActive() && Settings.displayIndividualGiftedSubs.isActive()){
+				channel.addEventToViewPort("gift subs", ChatEventType.GIFT_SUB);
+    		}
+    	});
     }
 
     @EventSubscriber
     public void onGiftSubscriptions(GiftSubscriptionsEvent event) { //ONLY Random sub gifed
     	if(!Settings.displayGiftedSubs.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.GIFT_SUB));
     }
     
     
@@ -191,61 +220,61 @@ public class TwitchListner {
     @EventSubscriber
     public void onModAnnouncement(ModAnnouncementEvent event){
     	if(!Settings.displayAnnouncement.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
 
     @EventSubscriber
     public void onIncumingRaid(RaidEvent event){
     	if(!Settings.displayAnnouncement.isActive()){return;}
-
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.INCUMING_RAID));
     }
     
     @EventSubscriber
     public void onRewardGift(RewardGiftEvent event){ //Someone got a reward
     	if(!Settings.displayUserRewards.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.USER_REWARDS));
     }
     
     @EventSubscriber
     public void onBitsBadgeEarned(BitsBadgeEarnedEvent event){
     	if(!Settings.displayUserRewards.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.USER_REWARDS));
     }
 
     @EventSubscriber
     public void onClearChat(ClearChatEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
 
     @EventSubscriber
     public void onDeleteMessage(DeleteMessageEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
 
     @EventSubscriber
     public void onRaidCancellation(RaidCancellationEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
     
     @EventSubscriber
     public void onChannelMod(ChannelModeratorAddEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getBroadcasterUserId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
     
     @EventSubscriber
     public void onChannelMod(ChannelModeratorRemoveEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getBroadcasterUserId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
 
     @EventSubscriber
     public void onUserBan(UserBanEvent event){
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
 
     @EventSubscriber
@@ -255,7 +284,7 @@ public class TwitchListner {
     	}
     	
     	if(!Settings.displayModActions.isActive()){return;}
-    	
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.MOD_ACTIONS));
     }
     
     
@@ -266,6 +295,7 @@ public class TwitchListner {
     public void onSlowMode(SlowModeEvent event){
     	logger.info("Change slow mode to -> "+event.getTime());
     	MessageManager.channelSlowMods.put(event.getChannel().getId(), event.getTime()*1000);
+    	ChannelManager.getChannelOptional(event.getChannel().getId()).ifPresent(channel -> channel.addEventToViewPort("event", ChatEventType.SLOW_CHAT));
     }
     
     /**

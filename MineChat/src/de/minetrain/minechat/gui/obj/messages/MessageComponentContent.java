@@ -7,19 +7,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.ChatEventType;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.main.ChannelManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.MineTextFlow;
 import javafx.scene.paint.Color;
@@ -42,10 +41,17 @@ public class MessageComponentContent {
 	private transient MineTextFlow messageFlow;
 	private transient boolean emoteOnly = true;
 
+	public MessageComponentContent(UserChatData userData, String message, Long... timeStamp){
+		this.userData = userData;
+		this.message = message;
+		this.timeStamp = timeStamp != null && timeStamp.length > 0 ? timeStamp[0] : Instant.now().getEpochSecond();
+		this.twitchMessage = null;
+	}
+	
 	public MessageComponentContent(UserChatData userData, String message, Long timeStamp, TwitchMessage twitchMessage){
 		this.userData = userData;
 		this.message = message;
-		this.timeStamp = timeStamp;
+		this.timeStamp = timeStamp != null ? timeStamp : Instant.now().getEpochSecond();
 		this.twitchMessage = twitchMessage;
 	}
 	
@@ -61,13 +67,16 @@ public class MessageComponentContent {
 		return (twitchMessage == null ? userData != null : true) && message != null && !message.isBlank();
 	}
 	
+	public boolean isSystemMessage(){
+		return userData == null ? false : userData.channelId().equals("0");
+	}
 	
 	public String getUserName(){
-		return userData != null ? userData.displa_name() : twitchMessage.getUserName();
+		return userData != null ? userData.displayName() : twitchMessage.getUserName();
 	}
 	
 	public Color getUserColor(){
-		return ColorManager.decode(userData != null ? userData.color_code() : twitchMessage.getUserColorCode(), ColorManager.encode(ColorManager.GUI_BACKGROUND));
+		return ColorManager.decode(userData != null ? userData.colorCode() : twitchMessage.getUserColorCode(), ColorManager.encode(ColorManager.GUI_BACKGROUND));
 	}
 	
 	/**
@@ -75,7 +84,7 @@ public class MessageComponentContent {
 	 * @return
 	 */
 	public String getUserColorCode(){
-		return ColorManager.adjustHexcode(userData != null ? userData.color_code() : twitchMessage.getUserColorCode(), ColorManager.encode(ColorManager.GUI_BACKGROUND));
+		return ColorManager.adjustHexcode(userData != null ? userData.colorCode() : twitchMessage.getUserColorCode(), ColorManager.encode(ColorManager.GUI_BACKGROUND));
 	}
 	
 	public String[] getBadges(){
@@ -143,6 +152,12 @@ public class MessageComponentContent {
 //	    			textFlow.appendString(word+" ", highlight.getWordColor());
 //	    			if(!textFlow.hasHighlight()){
 //	    				textFlow.setHighlight(highlight);
+//	    				
+//	    				if(twitchMessage != null){
+//
+//	    					ChannelManager.getChannelOptional(twitchMessage.getChannelId()).ifPresent(channel -> channel.addEventToViewPort("MessageHighlite", ChatEventType.INCOMING_MESSAGE_HIGHLITE));
+//	    				}
+//	    				
 //	    			}
 //	    		}
 //	    	});

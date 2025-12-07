@@ -62,6 +62,7 @@ public class Emote {
 	}
 
 	private Image createEmoteImage(EmoteSize emoteSize, int prefSize, Emote emote) {
+//		System.err.println((emote.getFilePath(true).replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))));
 		return new Image((emote.getFilePath(true).replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false);
 	}
 	

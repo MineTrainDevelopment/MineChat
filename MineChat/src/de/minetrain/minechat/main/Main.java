@@ -5,10 +5,12 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Optional;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.JFrame;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ import de.minetrain.minechat.gui.panes.recyclerview.MessageListView;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.CredentialsManager;
+import de.minetrain.minechat.twitch.obj.UserColorCache;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
@@ -32,7 +35,10 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -179,6 +185,31 @@ public class Main extends Application {
 		}).start();
 		
 	}
+	
+//	@Override
+//    public void start(Stage primaryStage) throws Exception {
+//        // URL des GIF-Bildes
+//        String imageUrl = "https://media.discordapp.net/attachments/441925231624454154/1099285939303501875/ezgif.com-crop_1.gif";
+////        String imageUrl = "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg";
+//
+//        // Lade das Bild von der URL
+//        Image image = new Image(imageUrl);
+//
+//        // Erstelle eine ImageView, um das Bild anzuzeigen
+//        ImageView imageView = new ImageView(image);
+//
+//        // Erstelle eine StackPane und füge die ImageView hinzu
+//        StackPane root = new StackPane();
+//        root.getChildren().add(imageView);
+//
+//        // Erstelle die Szene
+//        Scene scene = new Scene(root, 400, 300);
+//
+//        // Setze die Szene und zeige das Fenster
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle("GIF von URL laden");
+//        primaryStage.show();
+//    }
 
 
 	public static AudioManager getAudioManager(){
@@ -211,22 +242,41 @@ public class Main extends Application {
 	}
 	
 	public static boolean isValidURL(String input){
-		try {
-			new URL(input).toURI();
-			return true;
-		} catch (MalformedURLException | URISyntaxException e) {
-			return false;
-		}
+		return new UrlValidator().isValid(input.startsWith("http") ? input : "https://"+input);
+//		return new UrlValidator().isValid(input);
+		
+//		if(input.replace(".", "").matches("\\d+")){
+//			return Optional.empty();
+//		}
+		
+//		try {
+//			URL url = new URL(input.startsWith("http") ? input : "https://"+input);
+//			url.toURI();
+//			return Optional.of(url);
+//		} catch (MalformedURLException | URISyntaxException e) {
+//			return Optional.empty();
+//		}
 	}
-	
-	public static boolean isValidImageURL(String imageUrl) {
-        try {
+
+	public static Optional<URL> isValidImageURL(String imageUrl) {
+		try {
             URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            if(isValidImageURL(url)){
+            	return Optional.of(url);
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+	
+	public static boolean isValidImageURL(URL imageUrl) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) imageUrl.openConnection();
             connection.setRequestMethod("HEAD");
             int responseCode = connection.getResponseCode();
             return (responseCode >= 200 && responseCode < 400);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             return false;
         }
     }

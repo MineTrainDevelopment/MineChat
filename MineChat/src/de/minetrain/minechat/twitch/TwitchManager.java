@@ -33,6 +33,7 @@ import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchAccesToken;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
+import de.minetrain.minechat.twitch.obj.UserColorCache;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.events.MineChatEventType;
@@ -210,7 +211,7 @@ public class TwitchManager {
 	 */
 	private static void replyMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getChannel().replyMessage;
-		twitch.getChat().sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
+		twitch.getChat().sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage(), replyMessage.getClientNonce(), replyMessage.getReplyId());
 		message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());
 	}
 	

@@ -18,7 +18,7 @@ import de.minetrain.minechat.twitch.obj.TwitchMessage;
 
 public class OwnerCacheDatabase extends Database {
 	private static final Logger logger = LoggerFactory.getLogger(OwnerCacheDatabase.class);
-	public record UserChatData(String channelId, String color_code, String displa_name, String badges){};
+	public record UserChatData(String channelId, String colorCode, String displayName, String badges){};
 	private static HashMap<String, UserChatData> cache = new HashMap<String, UserChatData>();//Channel_id, data
 	
 	private static final String tabelName = "owner_cache";

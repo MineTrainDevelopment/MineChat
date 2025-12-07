@@ -62,28 +62,6 @@ public class ChannelStatistics {
 		this.totalBits = this.totalBits+event.getBits();
 		userStatistics.computeIfAbsent(event.getUser().getId(), UserStatistics::new).increaseBits(event.getBits());
 	}
-
-	
-	
-//	/**
-//	 * 
-//	 * @param commit weather the new database changes should be commited. 
-//	 */
-//	public void save(boolean commit){
-//		DatabaseManager.getChannelStatistics().insert(this, channelId);
-//		sendedMessages.clear();
-//		giftedSubs.clear();
-//		cheerdBits.clear();
-//		totalMessages = 0;
-//		totalSubs = 0;
-//		totalResubs = 0;
-//		totalNewSubs = 0;
-//		totalBits = 0;
-//		totalFollower = 0;
-//		if(commit){
-//			DatabaseManager.commit();
-//		}
-//	}
 	
 	public String getChannelId(){
 		return channelId;

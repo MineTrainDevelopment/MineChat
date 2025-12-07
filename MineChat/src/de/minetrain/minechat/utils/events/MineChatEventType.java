@@ -6,29 +6,30 @@ import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.message.Message;
 
 public enum MineChatEventType{
 	INCOMING_MESSAGE {
         @Override
         public void fireEvent(MineChatEvents event, Object obj) {
-            if (!(obj instanceof TwitchMessage)) {
+            if (!(obj instanceof Message)) {
                 throwFireError("Can't fire onIncomingMessageEvent!", obj, TwitchMessage.class);
                 return;
             }
 
-            event.onIncomingMessageEvent((TwitchMessage) obj);
+            event.onIncomingMessageEvent((Message) obj);
         }
     },
 	
 	MESSAGE_HIGHLITE {
 		@Override
 		public void fireEvent(MineChatEvents event, Object obj) {
-			if(!(obj instanceof MessageComponentContent)){
+			if(!(obj instanceof Message)){
 				throwFireError("Can´t fire onMessageHighliteEvent!", obj, MessageComponentContent.class);
 				return;
 			}
 			
-			event.onMessageHighliteEvent((MessageComponentContent) obj);
+			event.onMessageHighliteEvent((Message) obj);
 		}
 	},
 	

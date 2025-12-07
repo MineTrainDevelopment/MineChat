@@ -1,20 +1,19 @@
 package de.minetrain.minechat.utils.events;
 
-import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.utils.message.Message;
 
 public class EventTest extends EventListener {
 	
 	@Override
-	public void onIncomingMessageEvent(TwitchMessage message) {
+	public void onIncomingMessageEvent(Message message) {
 		super.onIncomingMessageEvent(message);
 		System.err.println("Messsage?");
 	}
 	
 	@Override
-	public void onMessageHighliteEvent(MessageComponentContent content) {
-		super.onMessageHighliteEvent(content);
-		System.err.println(content.message());
+	public void onMessageHighliteEvent(Message message) {
+		super.onMessageHighliteEvent(message);
+		System.err.println(message.getRawMessage());
 	}
 
 }

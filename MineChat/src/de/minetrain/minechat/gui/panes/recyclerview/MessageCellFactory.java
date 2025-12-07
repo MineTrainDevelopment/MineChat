@@ -3,13 +3,14 @@ package de.minetrain.minechat.gui.panes.recyclerview;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
+import de.minetrain.minechat.utils.message.Message;
 import javafx.scene.AccessibleRole;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
-public class MessageCellFactory extends ListCell<MessageComponentContent>{
+public class MessageCellFactory extends ListCell<Message>{
 	private MessageComponent component;
 	
 	private MessageCellFactory() {
@@ -20,7 +21,7 @@ public class MessageCellFactory extends ListCell<MessageComponentContent>{
 	}
 	
 	@Override
-    protected void updateItem(MessageComponentContent item, boolean empty){
+    protected void updateItem(Message item, boolean empty){
         super.updateItem(item, empty);
         
 //        new IllegalArgumentException("test").printStackTrace();
@@ -37,13 +38,13 @@ public class MessageCellFactory extends ListCell<MessageComponentContent>{
         	return;
         }
         
-        System.err.println("hilfe?  -  "+ getAccessibleRole().equals(AccessibleRole.NODE)+" - "+ (item != null ? item.getMessage() : ""));
+        System.err.println("hilfe?  -  "+ getAccessibleRole().equals(AccessibleRole.NODE)+" - "+ (item != null ? item.getRawMessage() : ""));
         component.fillData(item);
         
 //        Stack<MessageComponent> stack = new Stack<MessageComponent>();
     }
 	
-	private static final MessageComponentContent testComp = new MessageComponentContent(new UserChatData("0", "2f2f2f", "name", null), "", 0l, null);
+	private static final Message testComp = new Message(new UserChatData("0", "2f2f2f", "name", null), "", null);
 	
 	
     /**
@@ -51,7 +52,7 @@ public class MessageCellFactory extends ListCell<MessageComponentContent>{
      *
      * @return a Callback to use in ListView.
      */
-    public static Callback<ListView<MessageComponentContent>, ListCell<MessageComponentContent>> getFactory(){
+    public static Callback<ListView<Message>, ListCell<Message>> getFactory(){
     	System.err.println("FACTORY?-------------------------------");
         return i -> new MessageCellFactory();
     }

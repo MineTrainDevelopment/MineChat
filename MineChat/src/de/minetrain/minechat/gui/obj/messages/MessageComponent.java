@@ -1,9 +1,15 @@
 package de.minetrain.minechat.gui.obj.messages;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.MineTextFlow;
+import de.minetrain.minechat.utils.message.Message;
+import de.minetrain.minechat.utils.message.MessageToken;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,7 +21,9 @@ import javafx.scene.paint.Color;
 
 public class MessageComponent extends StackPane {
 	
+	private Pane titlePane;
 	private MineTextFlow title;
+	private MineTextFlow messageFlow;
 	private BorderPane contentPane;
 	
 	private static final Button replyButton = new Button() {{
@@ -25,17 +33,20 @@ public class MessageComponent extends StackPane {
 	}};
 	
 	public MessageComponent() {
-		title = new MineTextFlow(20);
+		title = new MineTextFlow(20d);
 		title.appendString("user_name");
 		title.setId("message-comp-title");
 		
-        Pane titlePane = new Pane(title);
+		messageFlow = new MineTextFlow(16d, true);
+		messageFlow.setStyle("-fx-padding: 0 5 0 5;");
+		
+        titlePane = new Pane(title);
         titlePane.setId("message-comp-title-pane");
         StackPane.setAlignment(titlePane, Pos.TOP_LEFT);
         
         contentPane = new BorderPane();
         contentPane.setId("message-comp-background");
-        contentPane.setCenter(new Label("test"));
+        contentPane.setCenter(messageFlow);
         
 //        hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
 //        	if(newValue){
@@ -64,28 +75,28 @@ public class MessageComponent extends StackPane {
         getChildren().addAll(titlePane, contentPane);
 	}
 	
-	public void fillData(MessageComponentContent messageContent){
-		if(!messageContent.isValid() || Settings.displayEmoteOnly ? false : messageContent.isEmoteOnly()){
-			return;
+	public void fillData(Message message){
+		free();
+		if(!Settings.displayEmoteOnly && message.isEmoteOnly()){
+			if(!message.getUser().channelId().equals(TwitchManager.ownerTwitchUser.getUserId())){
+				return;
+			}
 		}
 		
-		TwitchMessage twitchMessage = messageContent.getTwitchMessage();
 		
 		title.clear();
-		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
-			twitchMessage.getBadges().forEach(badge -> title.appendImage(badge).appendSpace());
-		}
+//		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
+//			twitchMessage.getBadges().forEach(badge -> title.appendImage(badge).appendSpace());
+//		}
 		
-		title.appendString(messageContent.getUserName(), messageContent.getUserColor()).appendString(": ", 20, Color.WHITE);
+		//TODO: Check if user color should be stored as hex or color.
+		title.appendString(message.getUser().displayName(), Color.web(message.getUser().colorCode())).appendString(": ", 20, Color.WHITE);
 		
-		MineTextFlow messageFlow = messageContent.formatText();
-        contentPane.setCenter(messageFlow);
+		formatText(message.getMessageTokens());
         
-        //Check for emote only again, bcs of bttv emotes.
-        if(messageContent.isEmoteOnly() && !Settings.displayEmoteOnly){
-        	contentPane = null;
-        	return;
-        }
+//        if(messageContent.isSystemMessage()){
+//        	StackPane.setAlignment(titlePane, Pos.TOP_CENTER);
+//        }
 
 //        //message highlights
 //		HighlightString highlight = messageFlow.getHighlight();
@@ -111,11 +122,18 @@ public class MessageComponent extends StackPane {
 //        }
 	}
 	
+	private void formatText(MessageToken... tokens) {
+		for(MessageToken token : tokens){
+			token.appendNode(messageFlow);
+		}
+	}
+	
 	public void free(){
 		title.clear();
 		title.appendString("user_name");
+
+		messageFlow.clear();
 		
-		contentPane.setCenter(null);
 		contentPane.setStyle(null);
 		
 		setStyle(null);

@@ -2,8 +2,12 @@ package de.minetrain.minechat.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+import com.sun.prism.paint.Color;
+
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.ChatEventDisplayType;
+import de.minetrain.minechat.config.enums.ChatEventType;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreTest;
@@ -11,7 +15,6 @@ import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
@@ -22,9 +25,9 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MessageHistory;
+import de.minetrain.minechat.utils.message.Message;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -68,52 +71,51 @@ public class Channel {
 	}
 	
 
-	public void displayMessage(TwitchMessage message){
-		MessageComponentContent messageComponentContent = new MessageComponentContent(
-				null,
-				message.getMessage(), 
-				null,
-				message);
-		
-		EclipseStoreTest.getStoreRoot().addMessage(channelId, messageComponentContent);
+	public void displayMessage(Message message){
+		EclipseStoreTest.getStoreRoot().addMessage(channelId, message);
 		
 		if(ChannelManager.getCurrentChannel() != null && ChannelManager.getCurrentChannel().getChannelId().equals(getChannelId())){
-			addToViewPort(messageComponentContent);
+			addToViewPort(message);
 		}
 		
 	}
 	
-	public void displayMessage(ChatMessage message){
+	public void displayMessage(ChatMessage chatMessage){
 		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(channelId);
 		
 		if(ownerData == null){
-			ownerData = new UserChatData(channelId, HTMLColors.WHITE.getColorCode(), message.getSenderName(), "");
+			ownerData = new UserChatData(channelId, HTMLColors.WHITE.getColorCode(), chatMessage.getSenderName(), "");
 		}
 		
-		getStatistics().addMessage(message.getSenderName(), channelId, message.getMessage());
-		getMessageHistory().addSendedMessages(message.getMessageRaw());
+		getStatistics().addMessage(chatMessage.getSenderName(), channelId, chatMessage.getMessage());
+		getMessageHistory().addSendedMessages(chatMessage.getMessageRaw());
 		
-		Arrays.stream(message.getMessage().split(" ")).parallel().forEach(word -> {
+		Arrays.stream(chatMessage.getMessage().split(" ")).parallel().forEach(word -> {
 			if(word.startsWith("@") && word.length() > 1){
 				greetingsManager.setMentioned(word.replace("@", ""));
 			}
 		});
 		
-		MessageComponentContent messageComponentContent = new MessageComponentContent(
-				ownerData,
-				((replyMessage != null) ? "@" + replyMessage.getParentReplyUser() + " " : "")+ message.getMessage(),
-				null,
-				replyMessage);
+		Message message = new Message(ownerData, ((replyMessage != null) ? "@" + replyMessage.getParentReplyUser() + " " : "")+ chatMessage.getMessage(), channelId);
 
-		EclipseStoreTest.getStoreRoot().addMessage(channelId, messageComponentContent);
-		
-		addToViewPort(messageComponentContent);
+		EclipseStoreTest.getStoreRoot().addMessage(channelId, message);
+		addToViewPort(message);
 	}
 	
-	private void addToViewPort(MessageComponentContent messageContent){
+	private void addToViewPort(Message message){
 		Platform.runLater(() -> {
 //			Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent));
 		});
+	}
+	
+	public void addEventToViewPort(String message, ChatEventType eventType){
+		ChatEventDisplayType displayType = Settings.getChannelEventDisplayType(eventType);
+		
+//		if(displayType.isMessageList()){
+//			MessageComponentContent messageComponentContent = new MessageComponentContent(new UserChatData(getChannelId(), "#ffffff", eventType.getDisplayName(), ""), message);
+//			EclipseStoreTest.getStoreRoot().addMessage(channelId, messageComponentContent);
+//			addToViewPort(messageComponentContent);
+//		}
 	}
 	
 	public void loadViewPort(){
@@ -122,11 +124,11 @@ public class Channel {
 				Main.macroPane.loadMacros(this);
 //				Main.messagePanel.setItems(FXCollections.observableList(EclipseStoreTest.getStoreRoot().getMessages(this)));
 				
-				ArrayList<MessageComponentContent> testList = new ArrayList<MessageComponentContent>();
-				testList.addAll(EclipseStoreTest.getStoreRoot().getMessages(this));
-				System.err.println("----------------- "+testList.size()+" ---------------------------");
+//				ArrayList<Message> testList = new ArrayList<Message>();
+//				testList.addAll(EclipseStoreTest.getStoreRoot().getMessages(this));
+//				System.err.println("----------------- "+testList.size()+" ---------------------------");
 				
-				Main.messagePanel.setItems(FXCollections.observableList(testList));
+				Main.messagePanel.setItems(FXCollections.observableList(EclipseStoreTest.getStoreRoot().getMessages(this)));
 //				Main.messagePanel.getChildren().clear();
 			});
 			

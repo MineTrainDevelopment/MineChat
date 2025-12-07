@@ -8,7 +8,7 @@ public class WebEmote extends Emote{
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{ID}/{FORMAT}/dark/1.0"; //static, animated
 
 	public WebEmote(String name, String emoteId) throws MalformedURLException {
-		super(name, emoteId, Main.isValidImageURL(getTwitchEmoteUrl(emoteId, true)) ? "gif" : "png");
+		super(name, emoteId, Main.isValidImageURL(getTwitchEmoteUrl(emoteId, true)).isPresent() ? "gif" : "png");
 	}
 
 	public static String getTwitchEmoteUrl(String emoteId, boolean animated) {

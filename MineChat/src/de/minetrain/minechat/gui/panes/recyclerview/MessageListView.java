@@ -2,9 +2,10 @@ package de.minetrain.minechat.gui.panes.recyclerview;
 
 import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
+import de.minetrain.minechat.utils.message.Message;
 import javafx.scene.control.ListView;
 
-public class MessageListView extends ListView<MessageComponentContent>{
+public class MessageListView extends ListView<Message>{
 	
 	public MessageListView() {
 		// TODO Auto-generated constructor stub

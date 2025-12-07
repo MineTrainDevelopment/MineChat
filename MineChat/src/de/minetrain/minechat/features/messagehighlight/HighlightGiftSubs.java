@@ -1,10 +1,9 @@
 package de.minetrain.minechat.features.messagehighlight;
 
-import java.awt.Color;
-
 import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import javafx.scene.paint.Color;
 
 public class HighlightGiftSubs extends HighlightDefault{
 	private final String borderColorCodeBig;

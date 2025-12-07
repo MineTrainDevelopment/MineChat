@@ -3,6 +3,8 @@ package de.minetrain.minechat.main;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
+
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
@@ -80,6 +82,10 @@ public class ChannelManager {
 	
 	public static Channel getChannel(String channelId){
 		return channels.get(channelId);
+	}
+	
+	public static Optional<Channel> getChannelOptional(String channelId){
+		return Optional.ofNullable(channels.get(channelId));
 	}
 	
 	public static Collection<Channel> getAllChannels(){

@@ -29,7 +29,7 @@ import de.minetrain.minechat.twitch.TwitchManager;
 public class TwitchMessage {
 	private static final Logger logger = LoggerFactory.getLogger(TwitchMessage.class);
 	private static final transient Map<String, String> colorCache = new HashMap<String, String>();
-	private static final transient ConcurrentHashMap<String, WebEmote> webEmoteCache = new ConcurrentHashMap<String, WebEmote>();//emote_id, emote
+	public static final transient ConcurrentHashMap<String, WebEmote> webEmoteCache = new ConcurrentHashMap<String, WebEmote>();//emote_id, emote
 	
 	private final String message;
 	private final String messageId;
@@ -126,7 +126,7 @@ public class TwitchMessage {
     	return emoteSet;
     }
 
-	public ArrayList<Path> getBadges() {
+	public static Path[] getBadges(String[] badgeTags, String channelId) {
 		ArrayList<Path> paths = new ArrayList<>();
 		Arrays.asList(badgeTags).forEach(badge -> {
 			Path path = Path.of(TextureManager.badgePath+badge+"/1.png");
@@ -144,7 +144,7 @@ public class TwitchMessage {
 			}
 		});
 		
-		return paths;
+		return paths.toArray(Path[]::new);
 	}
 	
 	public boolean isOlderThanHours(int hours){
@@ -191,7 +191,7 @@ public class TwitchMessage {
 		return epochTime;
 	}
 
-	public String getClient_nonce() {
+	public String getClientNonce() {
 		return client_nonce;
 	}
 	

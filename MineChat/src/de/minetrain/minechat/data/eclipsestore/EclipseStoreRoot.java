@@ -7,25 +7,25 @@ import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyHashMap;
 import org.eclipse.serializer.persistence.types.Persister;
 
-import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
+import de.minetrain.minechat.utils.message.Message;
 
 public class EclipseStoreRoot {
 	private static final int maxMessagesSize = 10_000;
-	private Map<String, List<MessageComponentContent>> twitchMessages;// Channel_id, data
+	private Map<String, List<Message>> message;// Channel_id, data
 	private Map<String, ChannelStatistics> channelStatics; //Channel_id, data
 	public transient Persister persister;
 	
-	public void addMessage(String channelId, MessageComponentContent message) {
-		Map<String, List<MessageComponentContent>> twitchMessages = getTwitchMessages();
+	public void addMessage(String channelId, Message message) {
+		Map<String, List<Message>> twitchMessages = getTwitchMessages();
 		if(!twitchMessages.containsKey(channelId)){
-			twitchMessages.put(channelId, new LazyArrayList<MessageComponentContent>());
+			twitchMessages.put(channelId, new LazyArrayList<Message>());
 			persister.store(twitchMessages);
 		}
 		
 //		TODO: Zocki will testen... Mach wieder an :P
-		List<MessageComponentContent> messages = twitchMessages.get(channelId);
+		List<Message> messages = twitchMessages.get(channelId);
 //		if(messages.size() > maxMessagesSize){
 //			messages.subList(0, 1000).clear();
 //		}
@@ -34,7 +34,7 @@ public class EclipseStoreRoot {
 		persister.store(messages);
 	}
 	
-	public List<MessageComponentContent> getMessages(Channel channel){
+	public List<Message> getMessages(Channel channel){
 		return getTwitchMessages().getOrDefault(channel.getChannelId(), List.of());
 	}
 	
@@ -61,12 +61,12 @@ public class EclipseStoreRoot {
 	
 	
 	//Layze loading.
-	private Map<String, List<MessageComponentContent>> getTwitchMessages() {
-		if(twitchMessages == null){
-			twitchMessages = new LazyHashMap<String, List<MessageComponentContent>>();
+	private Map<String, List<Message>> getTwitchMessages() {
+		if(message == null){
+			message = new LazyHashMap<String, List<Message>>();
 			persister.store(this);
 		}
-		return twitchMessages;
+		return message;
 	}
 
 	private Map<String, ChannelStatistics> getChannelStatics() {

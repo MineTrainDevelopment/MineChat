@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.emotes.WebEmote;
 import de.minetrain.minechat.main.Main;
+import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tooltip;
@@ -35,12 +37,18 @@ public class MineTextFlow extends TextFlow{
 	private FontWeight DEFAULT_FONT_WEIGHT = FontWeight.BOLD;
 	private Color DEFAULT_FONT_FILL = Color.WHITE;
 	private HighlightString highlight = null;
+	private boolean autoSapce = false;
 	
 	private static final ConcurrentHashMap<Integer, Image> imageCache = new ConcurrentHashMap<Integer, Image>();
-	
+
 	public MineTextFlow(double fontSize) {
 		this();
 		DEFAULT_FONT_SIZE = fontSize;
+	}
+	
+	public MineTextFlow(double fontSize, boolean autoSpace) {
+		this(fontSize);
+		this.autoSapce = autoSpace;
 	}
 
 	public MineTextFlow() {
@@ -104,7 +112,7 @@ public class MineTextFlow extends TextFlow{
      * Appends the specified string to the output string.
      */
 	public MineTextFlow appendString(String string, String font_family, double font_size, FontPosture font_posture, FontWeight font_weight, Color font_fill){
-		Text text = new Text(string);
+		Text text = new Text(autoSapce ? string+" " : string);
 		text.setFont(Font.font(font_family, font_weight, font_posture, font_size));
 		text.setFill(font_fill);
 		getChildren().add(text);
@@ -137,7 +145,15 @@ public class MineTextFlow extends TextFlow{
             event.consume();
         });
 		
-		getChildren().add(hyperlink);
+		appendNode(hyperlink);
+		return this;
+	}
+	
+	public MineTextFlow appendNode(Node node){
+		getChildren().add(node);
+		if(autoSapce){
+			appendSpace();
+		}
 		return this;
 	}
 
@@ -154,8 +170,28 @@ public class MineTextFlow extends TextFlow{
 				return getImage().getHeight() * 0.75;
 			}
 		};
+		
+		imageView.setOnDragDetected(event -> {
+            Dragboard dragboard = imageView.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+            ClipboardContent content = new ClipboardContent();
+//            content.putHtml(emote.getName());
+            content.putString(emote.getName());
+            
+            if(emote instanceof WebEmote){
+            	content.putString(emote.getFilePath(true));
+            }
+            
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setFill(Color.TRANSPARENT);
+            content.putImage(emote.getEmoteImage(EmoteSize.MEDIUM));
+            
+            dragboard.setContent(content);
+            event.consume();
+        });
+		
 //		imageView.setTranslateY(-((DEFAULT_FONT_SIZE - size.getSize()) / 2));
 		appendImage(imageView);
+		if(autoSapce){appendSpace();}
 		return this;
 	}
 
@@ -179,7 +215,7 @@ public class MineTextFlow extends TextFlow{
      * @return the {@link MineTextFlow} object for method chaining
      */
 	public MineTextFlow appendSpace(){
-		return appendString(" ");
+		return appendString(autoSapce ? "" : " "); //Prevent 2 spacec from beeing added.
 	}
 
 	/**
@@ -206,6 +242,15 @@ public class MineTextFlow extends TextFlow{
 		this.highlight = highlight;
 		return this;
 	}
+
+	public MineTextFlow setAutoSpace(boolean autoSapce) {
+		this.autoSapce = autoSapce;
+		return this;
+	}
+	
+	public boolean getAutoSpace() {
+		return autoSapce;
+	}
 	
 	public boolean hasHighlight(){
 		return highlight != null;
@@ -213,6 +258,14 @@ public class MineTextFlow extends TextFlow{
 	
 	public HighlightString getHighlight(){
 		return highlight;
+	}
+	
+	public double getFontSize(){
+		return DEFAULT_FONT_SIZE;
+	}
+	
+	public Font getFont() {
+		return Font.font(DEFAULT_FONT_FAMILY, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_POSTURE, DEFAULT_FONT_SIZE);
 	}
 	
 	

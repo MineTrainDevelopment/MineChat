@@ -274,6 +274,14 @@
     -fx-border-width: 2;
 }
 
+#message-comp-token-username {
+    -fx-background-insets: 0, 0, -1, 0;
+    -fx-background-color: transparent;
+	-fx-background-radius: 40px;
+	-fx-border-radius: 20px;
+    -fx-border-width: 2;
+}
+
 
 
 .hyperlink {

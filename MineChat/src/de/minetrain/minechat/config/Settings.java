@@ -3,6 +3,7 @@ package de.minetrain.minechat.config;
 import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.enums.AutoReplyState;
+import de.minetrain.minechat.config.enums.ChatEventDisplayType;
+import de.minetrain.minechat.config.enums.ChatEventType;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -61,6 +64,9 @@ public class Settings{
 
 	public static boolean holdToSendMessages;
 	public static boolean emoteBlendinOnDisplaying;
+	
+	private static ChatEventDisplayType channelEventDisplayType = ChatEventDisplayType.MESSAGE_POPUP; //TODO: IMPLEMENT ME
+	private static EnumMap<ChatEventType, ChatEventDisplayType> channelEventDisplayTypeOverrides = new EnumMap<ChatEventType, ChatEventDisplayType>(ChatEventType.class); //TODO: IMPLEMENT ME
 
 
 	public static Font MESSAGE_FONT;
@@ -115,6 +121,8 @@ public class Settings{
 				settings.getInt("Font.Size", 17));
 		
 		new ColorManager(settings);
+		
+		channelEventDisplayTypeOverrides.put(ChatEventType.INCOMING_MESSAGE, ChatEventDisplayType.NON);
 	}
 	
 	public static void reloadHighlights(){
@@ -291,6 +299,14 @@ public class Settings{
 		
 		settings.saveConfigToFile();
 		return settings;
+	}
+	
+	public static ChatEventDisplayType getChannelEventDisplayType(ChatEventType eventType){
+		if(channelEventDisplayTypeOverrides.containsKey(eventType)){
+			return channelEventDisplayTypeOverrides.get(eventType);
+		}
+		
+		return channelEventDisplayType;
 	}
 
 	
