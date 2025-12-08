@@ -25,21 +25,21 @@ public class Settings{
 //	https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 //	public static String messageTimeFormat = "dd.MM.yyy | HH:mm:ss";
 	public static YamlManager settings;
-	
+
 	public static String messageTimeFormat; //
 	public static String timeFormat; //
 	public static String dateFormat; //
 	public static String dayFormat; //
 	/**keyWord, obj*/
 	public static HashMap<String, HighlightString> highlightStrings = new HashMap<String, HighlightString>();
-	
+
 	public static HighlightDefault highlightUserFirstMessages; //
-	public static HighlightDefault highlightUserGoodbyeMessages; 
-	public static HighlightDefault highlightUserReturnMessages; 
+	public static HighlightDefault highlightUserGoodbyeMessages;
+	public static HighlightDefault highlightUserReturnMessages;
 	public static long highlightUserReturnThreshold;
 	public static boolean highlightKeywords;
 	public static boolean displayEmoteOnly;
-	
+
 	public static HighlightDefault displayModActions; //
 	public static HighlightDefault displayFollows; //
 	public static HighlightDefault displaySubs; //
@@ -56,7 +56,7 @@ public class Settings{
 
 	public static UndoVariation UNDO_VARIATION;
 	public static int MAX_UNDO_LOG_SIZE;
-	
+
 	public static AutoReplyState autoReplyState;
 
 	public static boolean holdToSendMessages;
@@ -64,31 +64,31 @@ public class Settings{
 
 
 	public static Font MESSAGE_FONT;
-	
+
 	public Settings() {
 		loadSettings();
 	}
-	
+
 	public static void loadSettings() {
 		File file = new File("data/Settings.yml");
-		if(file.isFile()) { 
+		if(file.isFile()) {
 			settings = new YamlManager("data/Settings.yml");
 		}else{
 			settings = createNewConfig("data/Settings.yml");
 		}
-		
+
 		messageTimeFormat = settings.getString("Variables.MessageTime", "HH:mm");
 		timeFormat = settings.getString("Variables.TimeFormat", "HH:mm");
 		dateFormat = settings.getString("Variables.DateFormat", "dd:MM:yyyy");
 		dayFormat = settings.getString("Variables.DayFormat", "eeee");
 		highlightStrings = new HashMap<String, HighlightString>();
-		
+
 		highlightUserFirstMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.FirstMessage");
 		highlightUserGoodbyeMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.GoodByeMessage");
 		highlightUserReturnMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.ReturnMessage");
 		highlightUserReturnThreshold = settings.getLong("Highlights.MessageHighlights.ReturnMessage.ThresholdSeconds", 3600);
 		highlightKeywords = settings.getBoolean("Highlights.MessageHighlights.KeyWods.Active");
-		
+
 		displayModActions = new HighlightDefault(settings, "Highlights.EventHighlights.Moderaion");
 		displaySubs = new HighlightDefault(settings, "Highlights.EventHighlights.Subs");
 		displayFollows = new HighlightDefault(settings, "Highlights.EventHighlights.Follows");
@@ -108,15 +108,15 @@ public class Settings{
 		holdToSendMessages = settings.getBoolean("Chatting.HoltToSendMessages", true);
 		emoteBlendinOnDisplaying = settings.getBoolean("Chatting.emoteBlendinOnDisplaying", false);
 		displayEmoteOnly = settings.getBoolean("Chatting.DisplayEmoteOnly", true);
-		
+
 		MESSAGE_FONT = new Font(
-				settings.getString("Font.Name", "Arial Unicode MS"), 
-				settings.getInt("Font.Style", 1), 
+				settings.getString("Font.Name", "Arial Unicode MS"),
+				settings.getInt("Font.Style", 1),
 				settings.getInt("Font.Size", 17));
-		
+
 		new ColorManager(settings);
 	}
-	
+
 	public static void reloadHighlights(){
 		Settings.highlightStrings.clear();
 		DatabaseManager.getMessageHighlight().getAll();
@@ -128,7 +128,7 @@ public class Settings{
 			String twitchName = TwitchManager.ownerChannelName;
 			String[] result = twitchName.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)|(?<=\\D)(?=[_-])|(?<=[_-])(?=\\D)");
 			String name = result[0];
-			
+
 			if(result.length > 1){
 				for(int i = 0; i < result.length; i++) {
 					if(Pattern.compile("(?=[a-zA-Z])").matcher(result[i]).find()){
@@ -136,13 +136,13 @@ public class Settings{
 						break;
 					}
 				}
-				
+
 				String suffix = "";
 				for(int i = 1; i < result.length; i++) {
 					suffix += result[i];
 				}
-				
-				
+
+
 				if(twitchName.startsWith(name)){
 					name = "^"+name+"(?:"+suffix+")?$";
 				}else{
@@ -151,29 +151,29 @@ public class Settings{
 					suffix = suffix.substring(suffix.indexOf(name)+name.length(), suffix.length());
 					name = "^(?:"+twitchName+"|"+prefix+name+"|"+name+"(?:"+suffix+")?)$";
 				}
-				
+
 			}
-			
-			
+
+
 			if(!highlightStrings.containsKey(name)){
 				DatabaseManager.getMessageHighlight().insert(
 						UUID.randomUUID().toString(),
 						name,
-						String.format("#%06x", ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT)),
-						String.format("#%06x", ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT)),
+						ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT),
+						ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT),
 						null,
 						null,
 						true);
-				
-				
+
+
 				DatabaseManager.commit();
 			}
-			
+
 		}
 	}
 
-	
-	
+
+
 	public static void setMessageTimeFormat(String newMessageTimeFormat) {
 		settings.setString("Variables.MessageTime", newMessageTimeFormat, true);
 		messageTimeFormat = newMessageTimeFormat;
@@ -194,24 +194,24 @@ public class Settings{
 		settings.setString("Variables.DayFormat", newDayFormat, true);
 		dayFormat = newDayFormat;
 	}
-	
+
 	public static void setAutoReplyState(AutoReplyState state){
 		settings.setString("Chatting.AutoReplyState", state.name(), true);
 		autoReplyState = state;
 	}
-	
+
 	public static void setHoltToSendMessages(boolean state){
 		settings.setBoolean("Chatting.HoltToSendMessages",  state, true);
 		holdToSendMessages = state;
 	}
-	
+
 	public static void setEmoteBlendinOnDisplaying(boolean state){
 		settings.setBoolean("Chatting.emoteBlendinOnDisplaying",  state, true);
 		emoteBlendinOnDisplaying = state;
 //		MessageComponent.clearDocumentCache();
 	}
-	
-	
+
+
 	private static YamlManager createNewConfig(String path){
 		logger.warn("Create new Settings file!");
 		YamlManager settings = new YamlManager(path);
@@ -221,21 +221,21 @@ public class Settings{
 		settings.setString("Colors.GUI.Border", ColorManager.encode(ColorManager.GUI_BORDER_DEFAULT));
 		settings.setString("Colors.GUI.ButtonBackground", ColorManager.encode(ColorManager.GUI_BUTTON_BACKGROUND_DEFAULT));
 		settings.setString("Colors.GUI.DefaultKeyHighlight", ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT));
-		
+
 
 		settings.setBoolean("Highlights.MessageHighlights.KeyWods.Active", true);
 		settings.setStringList("Highlights.MessageHighlights.KeyWods.List", new ArrayList<String>(), false);
-		
+
 		settings.setBoolean("Highlights.MessageHighlights.FirstMessage.Active", true);
 		settings.setString("Highlights.MessageHighlights.FirstMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
-		
+
 		settings.setBoolean("Highlights.MessageHighlights.GoodByeMessage.Active", false);
 		settings.setString("Highlights.MessageHighlights.GoodByeMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
-		
+
 		settings.setBoolean("Highlights.MessageHighlights.ReturnMessage.Active", false);
 		settings.setString("Highlights.MessageHighlights.ReturnMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
 		settings.setNumber("Highlights.MessageHighlights.ReturnMessage.ThresholdSeconds", 3600);
-		
+
 		settings.setBoolean("Highlights.EventHighlights.Moderaion.Active", true);
 		settings.setString("Highlights.EventHighlights.Moderaion.Color", ColorManager.encode(ColorManager.CHAT_MODERATION_DEFAULT));
 
@@ -263,15 +263,15 @@ public class Settings{
 
 		settings.setBoolean("Highlights.EventHighlights.TwitchHighlighted.Active", true);
 		settings.setString("Highlights.EventHighlights.TwitchHighlighted.Color", ColorManager.encode(ColorManager.CHAT_TWITCH_HIGHLIGHTED_DEFAULT));
-		
+
 
 
 		settings.setString("Variables.MessageTime", "HH:mm");
 		settings.setString("Variables.TimeFormat", "HH:mm");
 		settings.setString("Variables.DateFormat", "dd.MM.yyyy");
 		settings.setString("Variables.DayFormat", "eeee");
-		
-		
+
+
 
 		settings.setNumber("Chatting.MaxMessageDisplaying", 500);
 		settings.setString("Chatting.GreetingType", ReplyType.MESSAGE.name());
@@ -282,20 +282,20 @@ public class Settings{
 		settings.setBoolean("Chatting.HoltToSendMessages", true);
 		settings.setBoolean("Chatting.emoteBlendinOnDisplaying", false);
 		settings.setBoolean("Chatting.DisplayEmoteOnly", true);
-		
-		
+
+
 
 		settings.setString("Font.Name", "Arial Unicode MS");
 		settings.setNumber("Font.Style", 1);
 		settings.setNumber("Font.Size", 17);
-		
+
 		settings.saveConfigToFile();
 		return settings;
 	}
 
-	
+
 //	CustomiseTimeFormatFrame test = new CustomiseTimeFormatFrame(onboardingFrame, "Title", "HH:ss");
 //  System.out.println(test.getCurentInput());
-	
+
 //  new AddWordHighlightFrame();
 }

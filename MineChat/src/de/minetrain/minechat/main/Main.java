@@ -150,8 +150,7 @@ public class Main extends Application {
         //Set up the scene
         Scene scene = new Scene(mainContentPane, 500, 700);
         scene.setFill(Color.TRANSPARENT);
-//		scene.getStylesheets().add("file:///C:/MineTrainDev/git_repos/MineChat/MineChat/src/de/minetrain/minechat/main/style.css");
-		scene.getStylesheets().add("file:///D:/Development/eclipse/git-repos/MineChat/MineChat/src/de/minetrain/minechat/main/style.css");
+		scene.getStylesheets().add("style.css");
 
 		//TODO: Keep multiframe in mind.
 		//TODO: Keep multiframe in mind.
