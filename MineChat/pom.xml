@@ -40,7 +40,7 @@
 		<fasterxml.version>2.12.5</fasterxml.version>
 		<google.gson.version>2.10.1</google.gson.version>
 		<sqlite.version>3.44.0.0</sqlite.version>
-		<eclipse.store.version>1.1.0</eclipse.store.version>
+		<eclipse.store.version>3.1.0</eclipse.store.version>
 	</properties>
 
 	<dependencies>
