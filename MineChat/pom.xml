@@ -11,11 +11,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.release>25</maven.compiler.release>
 		<javafx.version>25-ea+21</javafx.version>
-		<unirest.version>3.14.5</unirest.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<twitch4j.version>1.25.0</twitch4j.version>
-		<fasterxml.version>2.20.1</fasterxml.version>
 		<google.gson.version>2.13.1</google.gson.version>
 		<sqlite.version>3.49.1.0</sqlite.version>
 		<eclipse.store.version>3.1.0</eclipse.store.version>
@@ -46,11 +44,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.konghq</groupId>
-			<artifactId>unirest-java</artifactId>
-			<version>${unirest.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-reload4j</artifactId>
 			<version>${slf4j.version}</version>
@@ -66,18 +59,11 @@
 			<artifactId>twitch4j</artifactId>
 			<version>${twitch4j.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>${fasterxml.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${google.gson.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
@@ -97,11 +83,6 @@
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openjdk.jol</groupId>
-			<artifactId>jol-core</artifactId>
-			<version>0.17</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.store</groupId>

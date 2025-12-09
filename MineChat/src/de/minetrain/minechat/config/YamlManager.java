@@ -1,13 +1,12 @@
 package de.minetrain.minechat.config;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,7 +32,7 @@ public class YamlManager extends HashMap<String, Object>{
 	private static final Logger logger = LoggerFactory.getLogger(YamlManager.class);
 	private final String filePath; //Name of the configuration file to be loaded.
     private final Yaml yaml; //Yaml instance for parsing the configuration file.
-	private static final String invalidFileChars = "<>:\"\\|?*"; //List of invalid chars, that operating systems don´t allow in there file names.
+	private static final String invalidFileChars = "<>:\"|?*"; //List of invalid chars, that operating systems don´t allow in there file names.
 	private boolean suppressWarnings = false;
 
     /**
@@ -41,57 +40,57 @@ public class YamlManager extends HashMap<String, Object>{
      * @param configFileName Name of the configuration file to be loaded.
      */
     public YamlManager(String filePath) {
-    	super(new HashMap<String, Object>());
-    	
+    	super(new HashMap<>());
+
     	if(filePath == null){
     		this.yaml = new Yaml();
     		this.filePath = "";
     		return;
     	}
-    	
+
     	if(!filePath.endsWith(".yml")){
     		logger.warn("Tryed to load a non yaml file! - Automatically appending a '.yml'...", new IllegalArgumentException(filePath+" does not end with '.yml'!"));
     		filePath = filePath+".yml";
     	}
-    	
+
 		filePath = filePath
 			.replaceAll("[" + Pattern.quote(invalidFileChars) + "]", "_")
 			.replaceAll("(?i)null", "")
 			.replaceAll("\\s", "_");
-    	
+
         this.filePath = filePath;
 		this.yaml = new Yaml();
     	logger.info("Reading config file: ["+filePath+"]");
-    	
-    	try {
-    		File file = new File(filePath);
-    		if(!file.isFile()) {
-    			logger.warn("["+filePath+"] Not found! Trying to create this file.");
-    			Files.createDirectories(Paths.get(filePath.substring(0, filePath.lastIndexOf("/"))));
-    			file.createNewFile();
-    		}
-    		
+
+		try {
+			Path path = Path.of(filePath);
+			if (!Files.exists(path)) {
+				logger.warn("[{}] Not found! Trying to create this file.", path);
+				Files.createDirectories(path.getParent());
+				Files.createFile(path);
+			}
+
     		reloadConfig();
-    		
+
 	    } catch (FileNotFoundException ex) {
 			throw new IllegalArgumentException("Can't initialize YamlManager. File not found!", ex);
 		} catch (IOException ex) {
 			throw new IllegalArgumentException("Can't initialize YamlManager. Can´t create file", ex);
 		}
 	}
-    
+
     /**
      * Method for reloading the configuration file.
-     * @return 
+     * @return
      * @throws FileNotFoundException If the configuration file is not found.
      */
     public YamlManager reloadConfig() throws FileNotFoundException{
     	return reloadConfig(yaml.load(new FileInputStream(filePath)));
     }
-    
+
     /**
      * Method for reloading the configuration file.
-     * @return 
+     * @return
      * @throws FileNotFoundException If the configuration file is not found.
      */
     public YamlManager reloadConfig(Map<String, Object> yamlLoad) throws FileNotFoundException{
@@ -102,18 +101,18 @@ public class YamlManager extends HashMap<String, Object>{
     		logger.info("Config reloadet...");
     		return this;
     	}
-    	
+
 		logger.info("Can´t reload the config file...");
 		return this;
     }
-    
+
     /**
      * Save the Config to the file.
      */
     public void saveConfigToFile() {
     	DumperOptions options = new DumperOptions();
     	options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    	
+
         Yaml yaml = new Yaml(options);
         try {
             FileWriter writer = new FileWriter(filePath, StandardCharsets.UTF_8);
@@ -123,7 +122,7 @@ public class YamlManager extends HashMap<String, Object>{
         	logger.error("Can´t save config file!", ex);
         }
     }
-    
+
     /**
      * Method for getting a boolean value from the configuration file.
      * @param path Path to the boolean value in the configuration file.
@@ -132,7 +131,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public final boolean getBoolean(String path) {
 		return getBoolean(path, false);
 	}
-    
+
 	/**
      * Method for getting a long value from the configuration file.
      * @param path Path to the long value in the configuration file.
@@ -141,7 +140,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public final long getLong(String path) {
 		return getLong(path, 0l);
 	}
-    
+
 	/**
      * Method for getting an integer value from the configuration file.
      * @param path Path to the integer value in the configuration file.
@@ -150,7 +149,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public final int getInt(String path) {
 		return getInt(path, 0);
 	}
-    
+
 	/**
      * Method for getting a string value from the configuration file.
      * @param path Path to the string value in the configuration file.
@@ -159,7 +158,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public final String getString(String path) {
 		return getString(path, ">null<");
 	}
-	
+
 	/**
      * Method for getting a string array from the configuration file.
      * @param path Path to the string array in the configuration file.
@@ -169,7 +168,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public final String[] getStringArray(String path, String regex) {
         return getStringArray(path, regex, ">null<");
     }
-	
+
 	/**
      * Method for getting a string array from the configuration file.
      * @param path Path to the string array in the configuration file.
@@ -180,7 +179,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public final String[] getStringArray(String path, String regex, String defaultValue) {
         return getString(path, defaultValue).replace(" ", "").split(regex);
     }
-	
+
 	/**
 	 * Returns a boolean value from the configuration file based on the given path.
 	 * If the path is not found, it returns the default value.
@@ -207,7 +206,7 @@ public class YamlManager extends HashMap<String, Object>{
 		throwWarn(path);
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns a long value from the configuration file based on the given path.
 	 * If the path is not found, it returns the default value.
@@ -230,11 +229,11 @@ public class YamlManager extends HashMap<String, Object>{
 	            }
 	        }
 	    }
-	    
+
 	    throwWarn(path);
 	    return defaultValue;
 	}
-	
+
 	/**
 	 * Returns an int value from the configuration file based on the given path.
 	 * If the path is not found, it returns the default value.
@@ -249,7 +248,7 @@ public class YamlManager extends HashMap<String, Object>{
 	    	logger.warn("Intiger is to large! Use getLong instat!");
 	    	return defaultValue;
 	    }
-	    
+
 	    return Integer.parseInt(String.valueOf(value));
 	}
 
@@ -275,11 +274,11 @@ public class YamlManager extends HashMap<String, Object>{
 	            }
 	        }
 	    }
-	    
+
 	    throwWarn(path);
 	    return defaultValue;
 	}
-	
+
 	/**
 	 * Returns a list of long values from the configuration file based on the given path.
 	 * If the path is not found, it returns the default value.
@@ -299,13 +298,13 @@ public class YamlManager extends HashMap<String, Object>{
 	            } else if (value instanceof List) { //If the value is a list, convert the values to longs and return the list
 	            	List<Object> values = (List<Object>) value;
 	    	        List<Long> longList = new ArrayList<>();
-	    	        
+
 	    	        values.forEach(index -> {
 	    	        	if(index instanceof Long || index instanceof Integer){
 	    	                longList.add(Long.valueOf(String.valueOf(index)));
 	    	        	}
 	    	        });
-	    	        
+
 	    	        return longList;
 	            }
 	        }
@@ -313,9 +312,9 @@ public class YamlManager extends HashMap<String, Object>{
 
 		//If the key wasn't found, throw an exception
 		throwWarn(path);
-		return new ArrayList<Long>();
+		return new ArrayList<>();
 	}
-	
+
 	/**
 	 * Returns a list of string values from the configuration file based on the given path.
 	 * If the path is not found, it returns the default value.
@@ -335,24 +334,24 @@ public class YamlManager extends HashMap<String, Object>{
 	            } else if (value instanceof List) {
 	            	List<Object> values = (List<Object>) value;
 	    	        List<String> stringList = new ArrayList<>();
-	    	        
+
 	    	        values.forEach(index -> {
 	    	        	if(index instanceof String){
 	    	        		stringList.add(String.valueOf(index));
 	    	        	}
 	    	        });
-	    	        
+
 	    	        return stringList;
 	            }
 	        }
 	    }
-	    
+
 
 	    throwWarn(path);
-	    return new ArrayList<String>();
+	    return new ArrayList<>();
 	}
-	
-	
+
+
 
 	/**
 	 * Sets the value of a String at the given path in the configuration.
@@ -380,7 +379,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public void setNumber(String path, Number value) {
 		setNumber(path, value, false);
 	}
-	
+
 
 	/**
 	 * Sets the value of a String at the given path in the configuration.
@@ -390,7 +389,7 @@ public class YamlManager extends HashMap<String, Object>{
 	public void setStringList(String path, List<String> values) {
 		setStringList(path, values, false);
 	}
-	
+
 	/**
 	 * Sets the value of a String at the given path in the configuration.
 	 * @param path the path to the value, specified as a dot-separated string.
@@ -418,7 +417,7 @@ public class YamlManager extends HashMap<String, Object>{
 	    current.put(keys[keys.length - 1], value);
 	    if(saveFile){saveConfigToFile();}
 	}
-	
+
 	/**
 	 * Sets the value of a boolean at the given path in the configuration.
 	 * @param path the path to the value, specified as a dot-separated string
@@ -474,7 +473,7 @@ public class YamlManager extends HashMap<String, Object>{
 	    current.put(keys[keys.length - 1], value);
 	    if(saveFile){saveConfigToFile();}
 	}
-	
+
 	/**
 	 * Sets the value of a String at the given path in the configuration.
 	 * @param path the path to the value, specified as a dot-separated string.
@@ -502,9 +501,9 @@ public class YamlManager extends HashMap<String, Object>{
 	    current.put(keys[keys.length - 1], values);
 	    if(saveFile){saveConfigToFile();}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -521,9 +520,9 @@ public class YamlManager extends HashMap<String, Object>{
 			}
 		}
 
-		return (Map<String, Object>) current;
+		return current;
 	}
-	
+
 	/**
 	 * Removes everything after a given path.
 	 * @param path
@@ -546,22 +545,22 @@ public class YamlManager extends HashMap<String, Object>{
 	            current = newMap;
 	        }
 	    }
-	    
+
 	    current.remove(keys[keys.length-1]);
 		saveConfigToFile();
 	}
-	
+
 	public void setSuppressWarnings(boolean state){
 		suppressWarnings = state;
 	}
-	
+
 	/**
 	 * Throws a warning message indicating that an invalid configuration path was provided.
 	 * @param path the invalid configuration path
 	 */
 	private void throwWarn(String path) {
 		if(!suppressWarnings){
-			
+
 			logger.warn("Invalid config path!", new ConfigurationException("Cant find a value on this path: "+path));
 		}
 	}

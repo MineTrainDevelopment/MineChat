@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Channel;
 import de.minetrain.minechat.main.ChannelManager;
-import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -38,35 +39,36 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class ChannelTabButton extends Button{
-	private static final List<ChannelTabButton> buttons = new ArrayList<ChannelTabButton>();
+	private static final Logger LOG = LoggerFactory.getLogger(ChannelTabButton.class);
+	private static final List<ChannelTabButton> buttons = new ArrayList<>();
 	private static final Label messageContainer = new Label("This is a test");
 	private static final double MIN_VALUE = 34d;
 	private static final int ANIMATION_TIME = 150;
-	
+
 	private Channel channel;
 	private TitleBarPane parentTitleBar;
 	private boolean liveState = false;
-	
+
 	public ChannelTabButton(Channel channel, TitleBarPane titleBarPane) {
 		super(channel.getChannelData().getDisplayName(), getProfilePic(channel, 24));
         setFocusTraversable(false);
         setId("channel-tab");
         setMinWidth(34d);
-        
+
         this.channel = channel;
         this.parentTitleBar = titleBarPane;
-        
+
         setOnDragDetected(event -> {
             Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putHtml(channel.getChannelData().getDisplayName());
             content.putString(channel.getChannelData().getDisplayName());
             content.putUrl("https://www.twitch.tv/"+channel.getChannelData().getLoginName());
-            
+
             SnapshotParameters snapshotParameters = new SnapshotParameters();
             snapshotParameters.setFill(Color.TRANSPARENT);
             content.putImage(snapshot(snapshotParameters, null));
-            
+
             dragboard.setContent(content);
             event.consume();
         });
@@ -94,8 +96,8 @@ public class ChannelTabButton extends Button{
         setOnDragDropped(event -> {
         	Dragboard dragboard = event.getDragboard();
         	boolean success = false;
-        	
-        	
+
+
             if (event.getGestureSource() != null && event.getGestureSource() instanceof ChannelTabButton) {
                 Object source = event.getGestureSource();
                 int sourceIndex = titleBarPane.getTabBar().getChildren().indexOf(source);
@@ -110,12 +112,12 @@ public class ChannelTabButton extends Button{
                 titleBarPane.getTabBar().getChildren().addAll(nodes);
                 success = true;
             }
-            
+
             if(!success){
             	try {
             		String url = dragboard.getUrl() != null ? dragboard.getUrl() : dragboard.getString();
-            		TwitchUserObj twitchUser = TwitchManager.extracktUserLoginFromUrl(url);
-            		
+            		TwitchUserObj twitchUser = TwitchHelper.extracktUserLoginFromUrl(url).get();
+
             		if(twitchUser != null && !twitchUser.isDummy()){
             			//Collect all ChannelTabButtons from tabBar.
             			List<ChannelTabButton> channelTabButtons = titleBarPane.getTabBar()
@@ -124,50 +126,50 @@ public class ChannelTabButton extends Button{
             					.filter(ChannelTabButton.class::isInstance)
             					.map(ChannelTabButton.class::cast)
             					.collect(Collectors.toList());
-            			
+
             			//Select the existing channel tab for the provided user, should it exist.
             			if(ChannelManager.isValidChannel(twitchUser.getUserId())){
             				List<ChannelTabButton> existingChannelTabButton = channelTabButtons.stream()
             						.filter(button -> button.channel.getChannelId().equals(twitchUser.getUserId()))
             						.toList();
-            				
+
             				if(!existingChannelTabButton.isEmpty()){
             					existingChannelTabButton.get(0).select();
             					success = true;
             				}
             			}
-            			
+
             			//Add a new channel tab button.
             			if(!success){
             				ChannelTabButton channelTabButton = new ChannelTabButton(ChannelManager.addChannel(twitchUser.getUserId()), titleBarPane);
-            				
+
             				int targetIndex = titleBarPane.getTabBar().getChildren().indexOf(this);
             				channelTabButtons.add(targetIndex+1, channelTabButton);
-            				
+
             				titleBarPane.getTabBar().getChildren().clear();
             				titleBarPane.getTabBar().getChildren().addAll(channelTabButtons);
-            				
+
             				Timeline switchAnimation = new Timeline();
             				switchAnimation.getKeyFrames().add(new KeyFrame(Duration.millis(20), e -> channelTabButton.select()));
             				switchAnimation.play();
-            				
+
             				success = true;
             			}
-            			
+
             		}
-					
+
 				} catch (Exception e) {
-					LoggerFactory.getLogger(ChannelTabButton.class).error("", e);
+					LOG.error("", e);
 				}
             }
-            
+
             event.setDropCompleted(success);
             event.consume();
         });
 
         setOnDragDone(DragEvent::consume);
 
-        
+
         //NOTE: Right click gets consumed bsc the computePrefWidth behaves strangely.
         setOnMouseClicked(event -> {
         	if (event.getButton() == MouseButton.SECONDARY) {
@@ -175,11 +177,11 @@ public class ChannelTabButton extends Button{
                 event.consume();
                 return;
             }
-        	
+
         	select();
         });
-        
-        
+
+
         if(buttons.size() == 2){setLiveState(true);}
         buttons.add(this);
 	}
@@ -195,34 +197,35 @@ public class ChannelTabButton extends Button{
 				buttonAnimation.play();
 			}
 		});
-		
+
 		if(getId().equals("channel-tab")){
 			setId("channel-tab-selected");
 			setLiveState(isLiveState());
-			
+
 			double endWidth = computePrefWidth(Double.NEGATIVE_INFINITY);
-			
+
 			Timeline buttonAnimation = new Timeline();
 			KeyFrame key1 = new KeyFrame(Duration.millis(ANIMATION_TIME+20), e -> parentTitleBar.scrollToTab(this));
 			KeyFrame key2 = new KeyFrame(Duration.millis(ANIMATION_TIME), new KeyValue(minWidthProperty(), endWidth, Interpolator.EASE_BOTH));
 			buttonAnimation.getKeyFrames().addAll(key1, key2);
 			buttonAnimation.play();
 		}
-		
+
 		ChannelManager.setCurrentChannel(channel.getChannelId());
 	}
-	
-	
+
+
+	@Override
 	public double computePrefWidth(double height) {
 		return super.computePrefWidth(height);
 	}
-	
+
 	private static final Rectangle getProfilePic(Channel channel, int size) {
 		Rectangle profilePic = channel.getProfilePic(size);
         profilePic.setTranslateX(-5);
 		return profilePic;
 	}
-	
+
 	public void setLiveState(boolean liveState){
 		this.liveState = liveState;
 		if(liveState && getId() != null){
@@ -231,9 +234,9 @@ public class ChannelTabButton extends Button{
 			setStyle(null);
 		}
 	}
-	
+
 	public boolean isLiveState() {
 		return liveState;
 	}
-	
+
 }

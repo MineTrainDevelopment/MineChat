@@ -22,6 +22,7 @@ import com.github.twitch4j.common.enums.SubscriptionPlan;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
@@ -33,31 +34,31 @@ public class ChatMessage {
 	private final String messageRaw;
 	private final String senderNamem;
 	private final Channel channel;
-	
+
 	public ChatMessage(Channel channel, String senderNamem, String message) {
 		this.channel = channel;
 		this.messageRaw = message;
 		this.senderNamem = senderNamem;
 
-		
+
 //		https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 		if(message.contains("{")){
 			LocalDateTime localDateTime = LocalDateTime.now();
 			Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
 			ChannelStatistics statistics = channel.getStatistics();
-			
+
 			String clipBoard = "";
 			try {
 				clipBoard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 			} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
 				logger.info("Can´t readout the System ClipBoard. It may be empty.");
-			} 
-			
+			}
+
 			if(message.contains("{VIEWER}") || message.contains("{UPTIME}") || message.contains("{GAME}") || message.contains("{TITLE}") || message.contains("{TAGS}")){
 				String channelId = channel.getChannelId();
-				List<TwitchUserObj> liveUseres = TwitchManager.getLiveUseres(TwitchApiCallType.ID, channelId).stream()
+				List<TwitchUserObj> liveUseres = TwitchHelper.requestLiveUsers(TwitchApiCallType.ID, channelId).join().stream()
 						.filter(user -> user.getUserId().equals(channelId)).toList();
-				
+
 				if(!liveUseres.isEmpty()){
 					TwitchUserObj user = liveUseres.get(0);
 					message = message
@@ -68,7 +69,7 @@ public class ChatMessage {
 						.replace("{TAGS}", String.join(", ", user.getStreamTags()));
 				}
 			}
-			
+
 			message = message
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
@@ -95,7 +96,7 @@ public class ChatMessage {
 					.replace("{CLIP_BOARD}", clipBoard)
 					.replace("{Clip}", clipBoard)
 					.replace("{CLIP}", clipBoard);
-			
+
 
 			//{C_TEST}
 			//{C_D_TEST}
@@ -104,7 +105,7 @@ public class ChatMessage {
 			//{COUNT_DISPLAY_TEST}
 			//{COUNT_123_TEST}
 			//NOTE: 123 stands for any nummber to increase the value.
-			
+
 			if(message.contains("{C_") || message.contains("{COUNT_")){
 				Map<String, Long> counterVariables = Arrays.stream(message.split(" "))
 					.filter(word -> word.startsWith("{C_") || word.startsWith("{COUNT_"))
@@ -114,19 +115,19 @@ public class ChatMessage {
 								: DatabaseManager.getCountVariableDatabase().increaseValue(var);
 						},(existingValue, newValue) -> newValue
 					));
-				
-				
+
+
 				for(Entry<String, Long> entry : counterVariables.entrySet()){
 					message = message.replace(entry.getKey(), String.valueOf(entry.getValue()));
 				}
 			}
-			
+
 			this.message = message;
 		}else{
 			this.message = message;
 		}
 	}
-	
+
 
 	public String getMessage() {
 		return message;
@@ -143,11 +144,11 @@ public class ChatMessage {
 	public String getMessageRaw() {
 		return messageRaw;
 	}
-	
+
 	public void displayMessage(){
 		getChannel().displayMessage(this);
 	}
-	
 
-	
+
+
 }

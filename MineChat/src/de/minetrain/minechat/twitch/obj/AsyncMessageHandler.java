@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.twitch.MessageManager;
+import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.utils.CallCounter;
 import de.minetrain.minechat.utils.ChatMessage;
@@ -20,7 +21,7 @@ import de.minetrain.minechat.utils.ChatMessage;
  * The AsyncMessageHandler class handles asynchronous message processing.
  * <br>It provides functionality to add messages to a queue, send them at regular intervals,
  * and update the message count and user interface accordingly.
- * 
+ *
  * @author MineTrain/Justin
  * @since 15.05.2023
  * @version 1.0
@@ -76,7 +77,7 @@ public class AsyncMessageHandler {
     public int getMessageCount() {
         return messageCount;
     }
-    
+
     /**
      * Clears the message queue and resets the message count to zero.
      * <br>Also updates the user interface queue button accordingly.
@@ -86,24 +87,24 @@ public class AsyncMessageHandler {
     	messageCount = 0;
         MessageManager.updateQueueButton();
     }
-    
+
     /**
      * Sends a message from the message queue if it is not empty.
-     * 
-     * <br>Decreases the message count and updates the user interface queue button accordingly. 
+     *
+     * <br>Decreases the message count and updates the user interface queue button accordingly.
      * And Sends the message through the {@link TwitchManager} class.
      */
     private void sendMessage() {
         if (!messageQueue.isEmpty()) {
             ChatMessage chatMessage = messageQueue.poll();
-    		
+
             messageCount--;
             MessageManager.updateQueueButton();
             logger.debug("Sending message: {" + chatMessage.getMessage()+"}");
-            
-        	TwitchManager.sendMessage(chatMessage);
+
+        	TwitchHelper.sendMessage(chatMessage);
         	lastSendMessage = Instant.now();
-        	
+
 			try {
 				long i = 1000;
 				while(i > 0){
@@ -114,7 +115,7 @@ public class AsyncMessageHandler {
 			} catch (InterruptedException e) {}
         }
     }
-    
+
     /**
      * Calculates the sleep time based on the {@link AsyncMessageHandler#getCurrentDelay()}.
      * Sleep time is capped at 1000 milliseconds.
@@ -125,8 +126,8 @@ public class AsyncMessageHandler {
     	long currentDelay = getCurrentDelay(channel_id);
 		return currentDelay > 1000 ? 1000 : currentDelay;
     }
-    
-    
+
+
 
 	/**
 	 * Gets the current delay for message sending, considering slow mode.
@@ -138,9 +139,9 @@ public class AsyncMessageHandler {
     	if(slowMode != null && slowMode > delay){
     		delay = slowMode;
     	}
-    	
+
     	Duration duration = Duration.between(lastSendMessage.plusMillis(delay), Instant.now());
     	return Math.abs(duration.getSeconds() > 0 ? 0 : duration.getSeconds() * 1000);
     }
-    
+
 }

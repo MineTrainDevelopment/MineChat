@@ -17,7 +17,7 @@ import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.TwitchHelper;
 
 //dalay_stats.
 // id, channel_id, unix_timestamp, messages, total_subs, resubs, gift_subs, new_subs, bits, follower
@@ -36,11 +36,11 @@ public class ChannelStatistics {
 	private long totalNewSubs = 0;
 	private long totalBits = 0;
 	private String channelId;
-	
+
 	public ChannelStatistics(String channelId){
 		this.channelId = channelId;
 	}
-	
+
 	public void addMessage(String senderName, String senderId, String message) {
 		totalMessages++;
 		uniqueMessages.add(message.hashCode());
@@ -49,7 +49,7 @@ public class ChannelStatistics {
 
 	public void addSub(SubscriptionEvent event) {
 		totalSubs++;
-		
+
 		if(event.getGifted()){
 			totalGirftsubs++;
 			userStatistics.computeIfAbsent(event.getUser().getId(), UserStatistics::new).increaseSubs(event.getSubPlan());
@@ -63,11 +63,11 @@ public class ChannelStatistics {
 		userStatistics.computeIfAbsent(event.getUser().getId(), UserStatistics::new).increaseBits(event.getBits());
 	}
 
-	
-	
+
+
 //	/**
-//	 * 
-//	 * @param commit weather the new database changes should be commited. 
+//	 *
+//	 * @param commit weather the new database changes should be commited.
 //	 */
 //	public void save(boolean commit){
 //		DatabaseManager.getChannelStatistics().insert(this, channelId);
@@ -84,11 +84,11 @@ public class ChannelStatistics {
 //			DatabaseManager.commit();
 //		}
 //	}
-	
+
 	public String getChannelId(){
 		return channelId;
 	}
-	
+
 	public long getSendedMessages() {
 		return totalMessages;
 	}
@@ -98,7 +98,7 @@ public class ChannelStatistics {
 	        .map(UserStatistics::getSentMessages)
 	        .orElse(0L);
 	}
-	
+
 	/**
 	 * Gets the total gifted subscriptions for each user across all subscription plans.
 	 * @return Returns a map where keys are user IDs and values are the total gifted subscriptions of that user.
@@ -106,7 +106,7 @@ public class ChannelStatistics {
 	public long getGiftedSubs() {
 		return totalGirftsubs;
 	}
-	
+
 	/**
 	 * Gets the total gifted subscriptions for a specific user.
 	 *
@@ -116,7 +116,7 @@ public class ChannelStatistics {
 	public Long getGiftedSubs(String userId) {
 		return Optional.ofNullable(userStatistics.get(userId).getTotalGiftedSubs()).orElse(0L);
 	}
-	
+
 	/**
 	 * Gets the total gifted subscriptions for a specific subscription plan.
 	 * <br>If the plan is {@link SubscriptionPlan#NONE}, returns the total across all plans.
@@ -139,50 +139,50 @@ public class ChannelStatistics {
 	public Long getTotalGiftedSubs(SubscriptionPlan plan, String userId){
 		return Optional.ofNullable(userStatistics.get(userId).getGiftedSubs(plan)).orElse(0L);
 	}
-	
+
 	public long getCheerdBits() {
 		return totalBits;
 	}
-	
+
 	public Long getCheerdBits(String userId) {
 		return Optional.ofNullable(userStatistics.get(userId).getCheerdBits()).orElse(0L);
 	}
-	
+
 	public long getTotalSelfMessages() {
-		String userId = TwitchManager.ownerTwitchUser.getUserId();
+		String userId = TwitchHelper.getSelfUser().getUserId();
 		return userStatistics.containsKey(userId) ? userStatistics.get(userId).getSentMessages() : 0l;
 	}
-	
+
 	public long getTotalMessages() {
 		return totalMessages;
 	}
-	
+
 	public long getTotalSubs() {
 		return totalSubs;
 	}
-	
+
 	public long getTotalResubs() {
 		return totalResubs;
 	}
-	
+
 	public long getTotalNewSubs() {
 		return totalNewSubs;
 	}
-	
+
 	public long getTotalBits() {
 		return totalBits;
 	}
-	
+
 	public long getTotalUniqueMessages(){
 		return uniqueMessages.size();
 	}
-	
+
 	public void saveChannelStatistics(Persister persister){
 		persister.store(this);
 		persister.store(userStatistics);
 		persister.store(uniqueMessages);
 	}
-	
+
 	public static String getCurentTime() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(Settings.messageTimeFormat,
 				new Locale(System.getProperty("user.language"), System.getProperty("user.country"))));

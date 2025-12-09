@@ -9,19 +9,19 @@ import de.minetrain.minechat.data.objectdata.ChannelData;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import javafx.application.Platform;
 
 public class ChannelManager {
-	private static HashMap<String, Channel> channels = new HashMap<String, Channel>();
+	private static HashMap<String, Channel> channels = new HashMap<>();
 	private static String selectedChannelId = "";
 
 	public ChannelManager() {
 		HashMap<String, ChannelData> allChannels = DatabaseManager.getChannel().getAllChannels();
-		TwitchManager.getTwitchUsers(TwitchApiCallType.ID, allChannels.keySet().toArray(String[]::new)); // Load from twitch api.
+		TwitchHelper.requestTwitchUsers(TwitchApiCallType.ID, allChannels.keySet().toArray(String[]::new)).join(); // Load from twitch api.
 		allChannels.keySet().stream().forEach(ChannelManager::addChannel);
 
 		validateUserLogins();
@@ -87,7 +87,7 @@ public class ChannelManager {
 	}
 
 	public static void validateUserLogins(){
-		TwitchManager.getTwitchUsers(TwitchApiCallType.ID, channels.keySet().toArray(String[]::new)).forEach(user -> {
+		TwitchHelper.requestTwitchUsers(TwitchApiCallType.ID, channels.keySet().toArray(String[]::new)).join().forEach(user -> {
 			if(!user.isDummy()){
 				DatabaseManager.getChannel().updateChannelLoginName(user.getUserId(), user.getLoginName());
 			}
@@ -97,7 +97,7 @@ public class ChannelManager {
 	}
 
 	public static boolean createNewChannel(String channelId){
-		TwitchUserObj channel = TwitchManager.getTwitchUser(TwitchApiCallType.ID, channelId);
+		TwitchUserObj channel = TwitchHelper.requestTwitchUser(TwitchApiCallType.ID, channelId).join();
 		if(channel.isDummy()){return false;}
 
 		DatabaseManager.getChannel().insert(
@@ -114,7 +114,7 @@ public class ChannelManager {
 
 		DatabaseManager.commit();
 
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		DatabaseManager.getEmote().insertChannel(channelId, "tier0", list, list, list, list, list);
 		TextureManager.downloadChannelEmotes(channelId);
 		TextureManager.downloadBttvEmotes(channelId);

@@ -3,9 +3,12 @@ package de.minetrain.minechat.twitch.obj;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.github.twitch4j.helix.domain.User;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager.LiveMetaData;
 
 public class TwitchUserObj {
@@ -26,12 +29,12 @@ public class TwitchUserObj {
 	private Instant streamStartTimeStamp = Instant.ofEpochSecond(0);
 	private int streamViewer = 0;
 	private String[] streamTags = new String[]{""};
-	
-	
+
+
 	public TwitchUserObj(JsonObject data) {
 		String offlineImageUrl = data.get("offline_image_url").getAsString().replace("\"", "");
 		dummy = false;
-		
+
 		this.userId = data.get("id").getAsString().replace("\"", "");
 		this.loginName = data.get("login").getAsString().replace("\"", "");
 		this.displayName = data.get("display_name").getAsString().replace("\"", "");
@@ -42,44 +45,58 @@ public class TwitchUserObj {
 		this.offlineImageUrl = (offlineImageUrl.length()>0) ? offlineImageUrl : profileImageUrl;
 		this.userAge = data.get("created_at").getAsString().replace("\"", "");
 	}
-	
+
+	public TwitchUserObj(User user) {
+		dummy = false;
+
+		this.userId = user.getId();
+		this.loginName = user.getLogin();
+		this.displayName = user.getDisplayName();
+		this.userType = TwitchUserType.fromString(user.getType());
+		this.broadcasterType = TwitchBroadcasterType.fromString(user.getBroadcasterType());
+		this.channelDescription = user.getDescription();
+		this.profileImageUrl = user.getProfileImageUrl();
+		this.offlineImageUrl = StringUtils.isBlank(user.getOfflineImageUrl()) ? user.getProfileImageUrl() : user.getOfflineImageUrl();
+		this.userAge = user.getCreatedAt().toString();
+	}
+
 	public TwitchUserObj(TwitchApiCallType type, String dummyNameId, boolean dummy) {
 		this.dummy = true;
-		
+
 		this.userId = (type!=TwitchApiCallType.ID) ? placeHolder:dummyNameId;
 		this.loginName = (type!=TwitchApiCallType.LOGIN) ? placeHolder:dummyNameId;
 		this.displayName = placeHolder;
-		this.userType = TwitchUserType.DEFAULD;
-		this.broadcasterType = TwitchBroadcasterType.DEFAULD;
+		this.userType = TwitchUserType.DEFAULT;
+		this.broadcasterType = TwitchBroadcasterType.DEFAULT;
 		this.channelDescription = placeHolder;
 		this.profileImageUrl = placeHolder;
 		this.offlineImageUrl = placeHolder;
 		this.userAge = placeHolder;
 	}
-	
+
 	public static enum TwitchUserType{
 		ADMIN, // Twitch administrator
-		GLOBAL_MOD, 
+		GLOBAL_MOD,
 		STAFF, // Twitch staff
-		DEFAULD; // Normal user
-		
+		DEFAULT; // Normal user
+
 		public static TwitchUserType fromString(String input){
 			input = input.replace("\"", "");
-			return (input.length() == 0) ? TwitchUserType.DEFAULD : TwitchUserType.valueOf(input.toUpperCase());
+			return (input.length() == 0) ? TwitchUserType.DEFAULT : TwitchUserType.valueOf(input.toUpperCase());
 		}
 	}
-	
+
 	public static enum TwitchBroadcasterType{
 		PARTNER, // An partner broadcaster
 		AFFILIATE, // A affiliate broadcaster
-		DEFAULD; // A normal broadcaster
-		
+		DEFAULT; // A normal broadcaster
+
 		public static TwitchBroadcasterType fromString(String input){
 			input = input.replace("\"", "");
-			return (input.length() == 0) ? TwitchBroadcasterType.DEFAULD : TwitchBroadcasterType.valueOf(input.toUpperCase());
+			return (input.length() == 0) ? TwitchBroadcasterType.DEFAULT : TwitchBroadcasterType.valueOf(input.toUpperCase());
 		}
 	}
-	
+
 	public static enum TwitchApiCallType{
 		LOGIN("login"),
 		ID("id");
@@ -91,21 +108,21 @@ public class TwitchUserObj {
 		public String getShortUrl(){
 			return url;
 		}
-		
+
 		private TwitchApiCallType(String url) {
 			this.url = url;
 		}
 	}
-	
+
 	public void join(){
 		if(!dummy){
-			TwitchManager.joinChannel(loginName);
+			TwitchHelper.joinChannel(loginName);
 		}
 	}
-	
+
 	public void leave(){
 		if(!dummy){
-			TwitchManager.leaveChannel(loginName);
+			TwitchHelper.leaveChannel(loginName);
 		}
 	}
 
@@ -156,7 +173,7 @@ public class TwitchUserObj {
 	public boolean isDummy() {
 		return dummy;
 	}
-	
+
 	/**
 	 * @param streamTitle
 	 * @param streamGame
@@ -173,8 +190,8 @@ public class TwitchUserObj {
 		this.streamTags = metaData.tags();
 		return true;
 	}
-	
-	
+
+
 	public String getStreamTitle() {
 		return streamTitle;
 	}
@@ -189,12 +206,12 @@ public class TwitchUserObj {
 
 	public String getStreamLiveSince() {
 		Duration duration = Duration.between(getStreamStartTimeStamp(), Instant.now());
-		
+
         long days = duration.toDays();
         long hours = duration.toHoursPart();
         long minutes = duration.toMinutesPart();
         long seconds = duration.toSecondsPart();
-        
+
         if(days == 0){
         	return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         }
