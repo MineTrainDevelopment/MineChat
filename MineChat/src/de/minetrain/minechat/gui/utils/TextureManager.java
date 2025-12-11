@@ -341,8 +341,7 @@ public class TextureManager {
 	public static void downloadBttvEmotes(String userId){
 		CompletableFuture.supplyAsync(() -> {
 			try (HttpClient client = HttpClient.newHttpClient()) {
-				HttpRequest request = HttpRequest.newBuilder(null)
-					.uri(URI.create("https://api.betterttv.net/3/cached/users/twitch/" + userId))
+				HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.betterttv.net/3/cached/users/twitch/" + userId))
 					.header("accept", "application/json")
 					.header("user-agent", "MineChat Client")
 					.GET()
@@ -581,6 +580,7 @@ public class TextureManager {
 	private static void downloadImage(String url, Path target) throws IOException {
 		LOG.debug("Downloading image from URL: {}", url);
 		try (InputStream in = URI.create(url).toURL().openStream()) {
+			Files.createDirectories(target.getParent());
 			Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
 		}
 		LOG.debug("Image downloaded and saved to: {}", target);
@@ -598,6 +598,7 @@ public class TextureManager {
 	private static void writeImage(BufferedImage scaledImage, Path imagePath) throws IOException {
 		String fileName = imagePath.getFileName().toString();
 		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
+		Files.createDirectories(imagePath.getParent());
 		ImageIO.write(scaledImage, format, imagePath.toFile());
 		LOG.debug("Image saved to: {}", imagePath);
 	}

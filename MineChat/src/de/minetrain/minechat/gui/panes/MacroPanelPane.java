@@ -7,7 +7,7 @@ import java.util.List;
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.features.macros.MacroType;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.ChannelManager;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -202,7 +202,7 @@ public class MacroPanelPane extends BorderPane{
 		            
 		            //
 		            //
-		            //Das problem ist, das die macro scroll pane nicht gescheit skaliert, und damit die größen berächnung nicht geht.
+		            //Das problem ist, das die macro scroll pane nicht gescheit skaliert, und damit die grï¿½ï¿½en berï¿½chnung nicht geht.
 		            //
 		            //
 		            
@@ -231,7 +231,7 @@ public class MacroPanelPane extends BorderPane{
 		macroButtons.forEach(MacroButton::setMacro);
 	}
 	
-	public void loadMacros(Channel channel){
+	public void loadMacros(ChannelActions channel){
 		macroButtons.forEach(button -> button.setMacro(channel));
 	}
 	

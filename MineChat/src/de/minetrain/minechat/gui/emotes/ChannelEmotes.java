@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.Emote.EmoteType;
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 
 public class ChannelEmotes {
 	private static final Logger logger = LoggerFactory.getLogger(ChannelEmotes.class);
@@ -121,7 +121,7 @@ public class ChannelEmotes {
 				.collect(Collectors.toList());
 	}
 	
-	public static final List<Emote> sortEmotesByEasterEgg(Channel channel, List<Emote> emotes){
+	public static final List<Emote> sortEmotesByEasterEgg(ChannelActions channel, List<Emote> emotes){
 		return emotes.stream()
 				.sorted(Comparator.comparing((Emote emote) -> !emote.getName().equals("GAMBA") && channel.getChannelId().equals("605556313")))
 				.collect(Collectors.toList());

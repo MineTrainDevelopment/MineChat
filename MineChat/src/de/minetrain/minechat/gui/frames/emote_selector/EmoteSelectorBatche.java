@@ -7,7 +7,7 @@ import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
 import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
@@ -22,16 +22,16 @@ import javafx.scene.layout.GridPane;
 public class EmoteSelectorBatche extends TitledPane {
 	private static final int maxItemsPerRow = 8;
 	private EmoteSelectorChannelButton batcheButton;
-	private final Channel channel;
+	private final ChannelActions channel;
 	private final EmoteSelector emoteSelector;
 	private final GridPane grid = new GridPane();
 	
-	public EmoteSelectorBatche(Channel channel, EmoteSelectorChannelButton batcheButton, EmoteSelector emoteSelector) {
-		this(channel, channel.getChannelData().getDisplayName(), emoteSelector);
+	public EmoteSelectorBatche(ChannelActions channel, EmoteSelectorChannelButton batcheButton, EmoteSelector emoteSelector) {
+		this(channel, channel.getChannel().getDisplayName(), emoteSelector);
 		this.batcheButton = batcheButton;
 	}
 	
-	public EmoteSelectorBatche(Channel channel, String name, EmoteSelector emoteSelector) {
+	public EmoteSelectorBatche(ChannelActions channel, String name, EmoteSelector emoteSelector) {
 		this.channel = channel;
 		this.emoteSelector = emoteSelector;
 		

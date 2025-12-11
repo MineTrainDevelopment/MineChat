@@ -16,7 +16,7 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -41,7 +41,7 @@ public class MessageComponent extends StackPane {
 	}};
 	
 	static long callCount = 0;
-	public MessageComponent(Channel channel, MessageComponentContent messageContent) {
+	public MessageComponent(ChannelActions channel, MessageComponentContent messageContent) {
 		//filter out emote only messages
 		if(!messageContent.isValid() || Settings.displayEmoteOnly ? false : messageContent.isEmoteOnly()){
 			return;

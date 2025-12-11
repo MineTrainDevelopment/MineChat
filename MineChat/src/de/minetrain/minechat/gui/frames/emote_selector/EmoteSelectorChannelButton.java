@@ -1,6 +1,6 @@
 package de.minetrain.minechat.gui.frames.emote_selector;
 
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 
@@ -8,7 +8,7 @@ public class EmoteSelectorChannelButton extends Button {
 	private static final String default_style = "-fx-min-width: 34; -fx-max-width: 34;";
 	private EmoteSelectorBatche emoteBatche;
 	
-	public EmoteSelectorChannelButton(Channel channel, EmoteSelector emoteSelector) {
+	public EmoteSelectorChannelButton(ChannelActions channel, EmoteSelector emoteSelector) {
 		setFocusTraversable(false);
         setId("channel-tab");
         setStyle(default_style);

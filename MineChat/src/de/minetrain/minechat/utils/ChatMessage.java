@@ -21,7 +21,7 @@ import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
@@ -33,9 +33,9 @@ public class ChatMessage {
 	private final String message;
 	private final String messageRaw;
 	private final String senderNamem;
-	private final Channel channel;
+	private final ChannelActions channel;
 
-	public ChatMessage(Channel channel, String senderNamem, String message) {
+	public ChatMessage(ChannelActions channel, String senderNamem, String message) {
 		this.channel = channel;
 		this.messageRaw = message;
 		this.senderNamem = senderNamem;
@@ -74,7 +74,7 @@ public class ChatMessage {
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
 					.replace("{DAY}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat, locale)))
-					.replace("{STREAMER}", "@"+channel.getChannelData().getLoginName())
+					.replace("{STREAMER}", "@"+channel.getChannel().getLoginName())
 					.replace("{MYSELF}", "@"+TwitchManager.ownerChannelName)
 					.replace("{VIEWER}", "0")
 					.replace("{UPTIME}", "0")
@@ -137,7 +137,7 @@ public class ChatMessage {
 		return senderNamem;
 	}
 
-	public Channel getChannel() {
+	public ChannelActions getChannel() {
 		return channel;
 	}
 

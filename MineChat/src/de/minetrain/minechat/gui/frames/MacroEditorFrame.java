@@ -7,8 +7,7 @@ import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
-import de.minetrain.minechat.main.Channel;
-import de.minetrain.minechat.main.ChannelManager;
+import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -21,10 +20,10 @@ public class MacroEditorFrame extends MineDialog {
 
 	public MacroEditorFrame(MacroObject macro, MacroType macroType, int button_id) {
 		super("Edit this macro:", 420, 300);
-		
+
 		String title = "";
 		String output = "";
-		
+
 		if(macro != null){
 			title = macro.getTitle();
 			output = macro.getAllOutputsAsString();
@@ -37,13 +36,13 @@ public class MacroEditorFrame extends MineDialog {
 			}
 			title = selectedEmote.getName();
 		}
-		
+
 		if(selectedEmote == null){
 			selectedEmote = macro.getEmote();
 		}
-		
+
 		TextField titleInputField = new TextField(title);
-		
+
 		EmoteSelectorButton emoteButton = new EmoteSelectorButton(selectedEmote, EmoteSize.MEDIUM, 4);
 		emoteButton.setOnMouseClicked(event -> {
 			if(emoteSelector == null){
@@ -56,13 +55,13 @@ public class MacroEditorFrame extends MineDialog {
 				emoteSelector.openStage(false);
 			}
 		});
-		
+
         titleInputField.setId("message-input-field");
         titleInputField.setPromptText(selectedEmote.getName());
         titleInputField.setFocusTraversable(false);
         titleInputField.setStyle("-fx-font-size: 30px;");
         titleInputField.minHeightProperty().bind(emoteButton.heightProperty());
-        
+
 
 		TextArea outputInputField = new TextArea(output);
         outputInputField.setId("message-input-field");
@@ -73,38 +72,38 @@ public class MacroEditorFrame extends MineDialog {
 				+ "  - Like {TIME}, {TOTAL_MESSAGES}...");
         outputInputField.setStyle("-fx-font-size: 14px;");
         outputInputField.setFocusTraversable(false);
-		
+
 //		BorderPane layout = new BorderPane();
 //		layout.setStyle("-fx-border-width: 10; -fx-border-color: transparent;");
 //		layout.setLeft(emoteButton);
 //		layout.setCenter(titleInputField);
 //		layout.setBottom(outputInputField);
-        
+
         VBox layout = new VBox(10, new HBox(10, emoteButton, titleInputField), outputInputField);
         layout.setStyle("-fx-border-width: 10; -fx-border-color: transparent;");
-        
+
         setOnConfirm(event -> {
         	if(macro != null){
-        		ChannelManager.getChannel(macro.getChannelId()).getMacros()
+        		Main.getChannelManager().getChannelActions(macro.getChannelId()).getMacros()
         			.updateMacro(macro, selectedEmote.getEmoteId(), titleInputField.getText(), outputInputField.getText().split("\n\r"));
         	}else{
-        		Channel channel = ChannelManager.getCurrentChannel();
+        		ChannelActions channel = Main.getChannelManager().getActiveChannelActions();
         		MacroObject newMacro = new MacroObject(
-        				macroType, 
-        				selectedEmote.getEmoteId(), 
-        				button_id, 
-        				titleInputField.getText(), 
-        				channel.getChannelId(), 
+        				macroType,
+        				selectedEmote.getEmoteId(),
+        				button_id,
+        				titleInputField.getText(),
+        				channel.getChannelId(),
         				outputInputField.getText().split("\n\r"));
-        		
+
         		channel.getMacros().createMacro(newMacro);
         	}
-        	
+
         	Main.macroPane.loadMacros();
         	emoteSelector = null;
         	closeStage();
         });
-		
+
 		setContent(layout);
 		openStage(false);
 	}

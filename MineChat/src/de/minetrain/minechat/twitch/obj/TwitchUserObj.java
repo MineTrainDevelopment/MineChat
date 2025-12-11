@@ -30,7 +30,6 @@ public class TwitchUserObj {
 	private int streamViewer = 0;
 	private String[] streamTags = new String[]{""};
 
-
 	public TwitchUserObj(JsonObject data) {
 		String offlineImageUrl = data.get("offline_image_url").getAsString().replace("\"", "");
 		dummy = false;

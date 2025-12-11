@@ -23,7 +23,7 @@ import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.WebEmote;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.main.ChannelManager;
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchHelper;
 
 public class TwitchMessage {
@@ -65,7 +65,7 @@ public class TwitchMessage {
 		this.emoteOnly = !Boolean.parseBoolean(ircMessage.getTagValue("emote-only").orElse("true"));
 		this.highlighted = ircMessage.getTagValue("msg-id").orElse("false").equals("false") ? false : true;
 		this.firstMessages = ircMessage.getTagValue("first-msg").orElse("0").equals("1") ? true : false;
-		this.firstMessageOfInstance = ChannelManager.getChannel(channelId).getGreetingsManager().add(userName);
+		this.firstMessageOfInstance = Main.getChannelManager().getChannelActions(channelId).getGreetingsManager().add(userName);
 
 		String emotes = ircMessage.getTagValue("emotes").orElse(null);
 

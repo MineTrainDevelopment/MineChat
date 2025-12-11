@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.concurrent.CompletableFuture;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.JFrame;
@@ -14,9 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.eclipsestore.EclipseStoreTest;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
+import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
@@ -28,6 +31,7 @@ import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -39,9 +43,11 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	public static final String VERSION = "V0.9";
+	// TODO resolve statics...
 	public static AudioManager audioManager;
 	public static EventManager eventManager;
 	public static PluginManager pluginManager;
+	private static ChannelManager channelManager;
 	private static final int loadingSteps = 13;
 	public static boolean isGuiOpen = false;
 
@@ -50,7 +56,7 @@ public class Main extends Application {
 		new DatabaseManager();
 
 		loadingProgressLogging(2, "Prepare eclipse store.");
-		new EclipseStoreTest();
+		EclipseStoreKeeper.init();
 
 		loadingProgressLogging(3, "Initialising user settings");
 		new Settings();
@@ -172,14 +178,25 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(event -> System.exit(0));
         isGuiOpen = true;
 
-		//LoadChannels
-		new Thread(() -> {
-			loadingAsyncProgressLogging(1, "Loading channels.");
-			new ChannelManager();
-		}).start();
+		// LoadChannels
+		loadingAsyncProgressLogging(1, "Loading channels.");
+		channelManager = new ChannelManager();
+		channelManager.init();
+		new AutoReplyManager(); //Load auto replys after fetching channel data.
 
+		CompletableFuture.runAsync(() -> channelManager.getAllChannels().stream()
+			.map(channel -> new ChannelTabButton(channel, titleBar))
+			.forEach(cab -> Platform.runLater(() -> {
+				titleBar.getTabBar().getChildren().add(cab);
+				if (channelManager.getActiveChanneldId() == null) {
+					cab.select();
+				}
+		})));
 	}
 
+	public static ChannelManager getChannelManager(){
+		return channelManager;
+	}
 
 	public static AudioManager getAudioManager(){
 		return audioManager;

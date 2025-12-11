@@ -113,7 +113,7 @@ public class TwitchManager {
 		ownerTwitchUser = requestTwitchUser(TwitchApiCallType.LOGIN, ownerChannelName).join();
 	}
 
-	public static void init(CredentialsManager credentials) throws InterruptedException, ExecutionException {
+	public static void init(CredentialsManager credentials) throws ExecutionException {
 		if(instance != null) {
 			LOG.warn("TwitchManager is already initialized and will be recreated!");
 		}
@@ -174,7 +174,7 @@ public class TwitchManager {
 		if (message.getChannel().replyMessage != null) {
 			replyMessage(message);
 		} else {
-			sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage());
+			sendMessage(message.getChannel().getChannel().getLoginName(), message.getMessage());
 		}
 
 		// Fire the MineChatEvent.
@@ -375,7 +375,7 @@ public class TwitchManager {
 	 */
 	private void replyMessage(ChatMessage message) {
 		TwitchMessage replyMessage = message.getChannel().replyMessage;
-		twitch.getChat().sendMessage(message.getChannel().getChannelData().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
+		twitch.getChat().sendMessage(message.getChannel().getChannel().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
 		message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());
 	}
 }

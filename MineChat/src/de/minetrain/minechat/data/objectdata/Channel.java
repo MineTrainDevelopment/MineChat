@@ -1,0 +1,167 @@
+package de.minetrain.minechat.data.objectdata;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import de.minetrain.minechat.utils.audio.AudioVolume;
+
+public class Channel  {
+	private final String channelId;
+	private final String loginName;
+	private final String displayName;
+	private final String chatRole; //Viwer, MODERATOR, VIP
+	private final String chatlogLevel; //null, Highlight, everything
+	private final String greetingText; //full string without seperating bye \n
+	private final String goodbyeText; //full string without seperating bye \n
+	private final String returnText; //full string without seperating bye \n
+	private final String audioPath;
+	private final AudioVolume audioVolume;
+
+	public Channel(String channelId, String loginName,  String displayName, String chatRole, String chatlogLevel, String greetingText, String goodbyeText, String returnText, String audioPath, AudioVolume audioVolume) {
+		this.channelId = channelId;
+		this.loginName = loginName;
+		this.displayName = displayName;
+		this.chatRole = chatRole;
+		this.chatlogLevel = chatlogLevel;
+		this.greetingText = greetingText;
+		this.goodbyeText = goodbyeText;
+		this.returnText = returnText;
+		this.audioPath = audioPath;
+		this.audioVolume = audioVolume;
+	}
+
+	@Deprecated
+	public Channel(ResultSet resultSet) throws SQLException {
+		this.channelId = resultSet.getString("channel_id");
+		this.loginName = resultSet.getString("login_name");
+		this.displayName = resultSet.getString("display_name");
+		this.chatRole = resultSet.getString("chat_role");
+		this.chatlogLevel = resultSet.getString("chatlog_level");
+		this.greetingText = resultSet.getString("greeting_text");
+		this.goodbyeText = resultSet.getString("goodby_text");
+		this.returnText = resultSet.getString("return_text");
+		this.audioPath = resultSet.getString("audio_path");
+		this.audioVolume = AudioVolume.get(resultSet.getString("audio_volume"));
+	}
+
+	public String getChannelId() {
+		return channelId;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getChatRole() {
+		return chatRole;
+	}
+
+	public String getChatlogLevel() {
+		return chatlogLevel;
+	}
+
+	public String getGreetingText() {
+		return greetingText;
+	}
+
+	public String getGoodbyeText() {
+		return goodbyeText;
+	}
+
+	public String getReturnText() {
+		return returnText;
+	}
+
+	public String getAudioPath() {
+		return audioPath;
+	}
+
+	public AudioVolume getAudioVolume() {
+		return audioVolume;
+	}
+
+	public Builder buildCopy() {
+		return new Builder()
+			.withChannelId(channelId)
+			.withLoginName(loginName)
+			.withDisplayName(displayName)
+			.withChatRole(chatRole)
+			.withChatlogLevel(chatlogLevel)
+			.withGreetingText(greetingText)
+			.withGoodbyText(goodbyeText)
+			.withReturnText(returnText)
+			.withAudioPath(audioPath)
+			.withAudioVolume(audioVolume);
+	}
+
+	public static class Builder {
+		private String channelId;
+		private String loginName;
+		private String displayName;
+		private String chatRole;
+		private String chatlogLevel;
+		private String greetingText;
+		private String goodbyeText;
+		private String returnText;
+		private String audioPath;
+		private AudioVolume audioVolume;
+
+		public Builder withChannelId(String channelId) {
+			this.channelId = channelId;
+			return this;
+		}
+
+		public Builder withLoginName(String loginName) {
+			this.loginName = loginName;
+			return this;
+		}
+
+		public Builder withDisplayName(String displayName) {
+			this.displayName = displayName;
+			return this;
+		}
+
+		public Builder withChatRole(String chatRole) {
+			this.chatRole = chatRole;
+			return this;
+		}
+
+		public Builder withChatlogLevel(String chatlogLevel) {
+			this.chatlogLevel = chatlogLevel;
+			return this;
+		}
+
+		public Builder withGreetingText(String greetingText) {
+			this.greetingText = greetingText;
+			return this;
+		}
+
+		public Builder withGoodbyText(String goodbyText) {
+			this.goodbyeText = goodbyText;
+			return this;
+		}
+
+		public Builder withReturnText(String returnText) {
+			this.returnText = returnText;
+			return this;
+		}
+
+		public Builder withAudioPath(String audioPath) {
+			this.audioPath = audioPath;
+			return this;
+		}
+
+		public Builder withAudioVolume(AudioVolume audioVolume) {
+			this.audioVolume = audioVolume;
+			return this;
+		}
+
+		public Channel build() {
+			return new Channel(channelId, loginName, displayName, chatRole, chatlogLevel, greetingText, goodbyeText, returnText, audioPath, audioVolume);
+		}
+	}
+}

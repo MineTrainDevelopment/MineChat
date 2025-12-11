@@ -3,7 +3,7 @@ package de.minetrain.minechat.gui.frames.emote_selector;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.Emote;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
-import de.minetrain.minechat.main.ChannelManager;
+import de.minetrain.minechat.main.Main;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -24,7 +24,7 @@ public class EmoteSelector extends MineDialog {
 	private EmoteSelectEvent selectEvent;
 	public EmoteSelectorBatche favoriteEmoteBatche;
 	private boolean closeOnSelect = true;
-	
+
 	public EmoteSelector(EmoteSelectEvent selectEvent) {
 		this(false, selectEvent);
 	}
@@ -32,32 +32,32 @@ public class EmoteSelector extends MineDialog {
 	public EmoteSelector(boolean showAndWait, EmoteSelectEvent selectEvent) {
 		super("Emote selector", 400, 400);
 		this.selectEvent = selectEvent;
-		
+
 		BorderPane layout = new BorderPane();
 		setContent(layout);
 		layout.setCenter(new Text("Test..."));
-		
+
 		VBox channelButtons = new VBox(5);
 		channelButtons.setAlignment(Pos.CENTER_LEFT);
 
 		favoriteEmoteBatche = new EmoteSelectorBatche(null, "Favorite", this);
 		batches.getChildren().add(favoriteEmoteBatche);
-		
-        ChannelManager.getAllChannels().forEach(channel -> {
-			
+
+		Main.getChannelManager().getAllChannelActions().forEach(channel -> {
+
 			ChannelEmotes channelEmotes = channel.getChannelEmotes();
-			if(channelEmotes != null && !channelEmotes.getAllEmotes().isEmpty()){
-				
+			if (channelEmotes != null && !channelEmotes.getAllEmotes().isEmpty()) {
+
 				EmoteSelectorChannelButton channelButton = new EmoteSelectorChannelButton(channel, this);
 				channelButtons.getChildren().add(channelButton);
-				
-        		EmoteSelectorBatche selectorBatche = new EmoteSelectorBatche(channel, channelButton, this);
+
+				EmoteSelectorBatche selectorBatche = new EmoteSelectorBatche(channel, channelButton, this);
 				batches.getChildren().add(selectorBatche);
 				channelButton.setParentBatche(selectorBatche);
-        	}
-        });
+			}
+		});
 		batches.getChildren().add(new EmoteSelectorBatche(null, "Default", this));
-		
+
 		ScrollPane tabPane = new ScrollPane(channelButtons);
 		tabPane.setStyle("-fx-border-width: 10; -fx-border-color: transparent;");
         tabPane.setFocusTraversable(false);
@@ -65,7 +65,7 @@ public class EmoteSelector extends MineDialog {
         tabPane.setFitToWidth(true);
         tabPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         tabPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        
+
 
 //		ScrollPane test = new ScrollPane(new EmoteSelectorBatche(ChannelManager.getChannel("99351845")));
 		emoteBatchsPane = new ScrollPane(batches);
@@ -74,11 +74,11 @@ public class EmoteSelector extends MineDialog {
         emoteBatchsPane.setFitToWidth(true);
 //        test.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         emoteBatchsPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        
+
         emoteBatchsPane.vvalueProperty().addListener(event -> {
 			Bounds paneBounds = emoteBatchsPane.localToScene(emoteBatchsPane.getBoundsInParent());
 			boolean isDetermined = false;
-			
+
 			if (emoteBatchsPane.getContent() instanceof Parent) {
 				for (Node node : ((Parent) emoteBatchsPane.getContent()).getChildrenUnmodifiable()) {
 					if(node instanceof EmoteSelectorBatche){
@@ -93,15 +93,15 @@ public class EmoteSelector extends MineDialog {
 				}
 			}
         });
-        
+
         layout.setRight(tabPane);
         layout.setCenter(emoteBatchsPane);
         openStage(true);
 	}
-	
+
 	public void scrollToEmoteBatch(EmoteSelectorBatche batch) {
 		double targetValue = batch.getLayoutY() * (1/(batches.getHeight() - emoteBatchsPane.getViewportBounds().getHeight()));
-		
+
 	    Timeline timeline = new Timeline(
 	            new KeyFrame(Duration.millis(400),
 	                    new KeyValue(emoteBatchsPane.vvalueProperty(), targetValue, Interpolator.EASE_BOTH)
@@ -109,11 +109,11 @@ public class EmoteSelector extends MineDialog {
 	    );
 	    timeline.play();
 	}
-	
+
 	public void setCloseOnSelect(boolean closeOnSelect){
 		this.closeOnSelect = closeOnSelect;
 	}
-	
+
 	public void fireSelectEvent(Emote emote){
 		if(selectEvent != null){
 			selectEvent.onSelect(emote);
@@ -122,11 +122,11 @@ public class EmoteSelector extends MineDialog {
 			}
 		}
 	}
-	
+
 	public void setOnSelect(EmoteSelectEvent event){
 		selectEvent = event;
 	}
-	
+
 	public interface EmoteSelectEvent {
 		void onSelect(Emote emote);
 	}

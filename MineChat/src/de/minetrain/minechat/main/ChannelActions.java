@@ -1,11 +1,12 @@
 package de.minetrain.minechat.main;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
-import de.minetrain.minechat.data.eclipsestore.EclipseStoreTest;
-import de.minetrain.minechat.data.objectdata.ChannelData;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
@@ -25,14 +26,13 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-public class Channel {
+public class ChannelActions {
 	private final GreetingsManager greetingsManager;
 	private final MessageHistory messageHistory;
 	private final TwitchUserObj twitchUser;
-	private final ChannelData channelData;
 	private final ChannelMacros macros;
 
-	private final String channelId;
+	private final Channel channel;
 
 	private String chatRole = "viwer";
 
@@ -44,12 +44,12 @@ public class Channel {
 	 */
 	public TwitchMessage replyMessage = null;
 
-	public Channel(String channelId) {
-		this.channelId = channelId;
-		this.twitchUser = TwitchHelper.requestTwitchUser(TwitchApiCallType.ID, channelId).join();
+	public ChannelActions(Channel channel) {
+		this.channel = channel;
+		this.twitchUser = TwitchHelper.requestTwitchUser(TwitchApiCallType.ID, channel.getChannelId()).join();
 		this.greetingsManager = new GreetingsManager();
 		this.messageHistory = new MessageHistory();
-		this.macros = new ChannelMacros(channelId);
+		this.macros = new ChannelMacros(channel.getChannelId());
 
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "emotesv2_6cc7fdb3cca74bdc80c49f4199b6d001", 00, "Test 1", "Macro-V2 | test_1".split("q")));
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "emotesv2_2f6e7f957a37440e92fc33c66be7c0c2", 10, "Test 2", "Macro-V2 | test_2".split("q")));
@@ -59,7 +59,6 @@ public class Channel {
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "612f819daf28e956864b54dd", 11, "Test 5", "Macro-V2 | test_5".split("q")));
 //		macros.createMacro(new MacroObject(MacroType.EMOTE, "emotesv2_662fe5cfd480497f98bd3ec7b953817a", 21, "Test 6", "Macro-V2 | test_6".split("q")));
 
-		channelData = DatabaseManager.getChannel().getChannelById(channelId);
 		twitchUser.join();
 	}
 
@@ -71,22 +70,22 @@ public class Channel {
 				null,
 				message);
 
-		EclipseStoreTest.getStoreRoot().addMessage(channelId, messageComponentContent);
+		EclipseStoreKeeper.storeRoot().addMessage(channel.getChannelId(), messageComponentContent);
 
-		if(ChannelManager.getCurrentChannel() != null && ChannelManager.getCurrentChannel().getChannelId().equals(getChannelId())){
+		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
 			addToViewPort(messageComponentContent);
 		}
 
 	}
 
 	public void displayMessage(ChatMessage message){
-		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(channelId);
+		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(channel.getChannelId());
 
 		if(ownerData == null){
-			ownerData = new UserChatData(channelId, HTMLColors.WHITE.getColorCode(), message.getSenderName(), "");
+			ownerData = new UserChatData(channel.getChannelId(), HTMLColors.WHITE.getColorCode(), message.getSenderName(), "");
 		}
 
-		getStatistics().addMessage(message.getSenderName(), channelId, message.getMessage());
+		getStatistics().addMessage(message.getSenderName(), channel.getChannelId(), message.getMessage());
 		getMessageHistory().addSendedMessages(message.getMessageRaw());
 
 		Arrays.stream(message.getMessage().split(" ")).parallel().forEach(word -> {
@@ -101,7 +100,7 @@ public class Channel {
 				null,
 				replyMessage);
 
-		EclipseStoreTest.getStoreRoot().addMessage(channelId, messageComponentContent);
+		EclipseStoreKeeper.storeRoot().addMessage(channel.getChannelId(), messageComponentContent);
 
 		addToViewPort(messageComponentContent);
 	}
@@ -120,7 +119,7 @@ public class Channel {
 //				messageCache.forEach(messageContent -> Main.messagePanel.getChildren().add(new MessageComponent(messageContent)));
 			});
 
-			EclipseStoreTest.getStoreRoot().getMessages(this).forEach(messageContent -> {
+			EclipseStoreKeeper.storeRoot().getMessages(this).forEach(messageContent -> {
 				Platform.runLater(() -> Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent)));
 			});
 		}).start();
@@ -144,7 +143,7 @@ public class Channel {
 
 
 	public ChannelStatistics getStatistics() {
-		return EclipseStoreTest.getStoreRoot().getChannelStatistics(channelId);
+		return EclipseStoreKeeper.storeRoot().getChannelStatistics(channel.getChannelId());
 	}
 
 	public GreetingsManager getGreetingsManager() {
@@ -160,11 +159,11 @@ public class Channel {
 	}
 
 	public String getChannelId() {
-		return channelId;
+		return channel.getChannelId();
 	}
 
-	public ChannelData getChannelData() {
-		return channelData;
+	public Channel getChannel() {
+		return channel;
 	}
 
 	public ChannelMacros getMacros() {
@@ -175,6 +174,6 @@ public class Channel {
 	 * @return may be null, if no emotes are installed for the user.
 	 */
 	public ChannelEmotes getChannelEmotes(){
-		return EmoteManager.getChannelEmotes(channelId);
+		return EmoteManager.getChannelEmotes(channel.getChannelId());
 	}
 }

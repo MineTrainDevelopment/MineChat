@@ -8,7 +8,7 @@ import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
 import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.main.Channel;
+import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.ChannelManager;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
