@@ -35,7 +35,10 @@ import com.google.gson.Gson;
 
 import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteType;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.BttvEmote;
@@ -326,16 +329,16 @@ public class TextureManager {
 			});
 	}
 
-
 	public static void downloadChannelEmotes(String userId) {
-		TwitchHelper.requestChannelEmotes(userId)
-			.thenAcceptAsync(emotes -> downloadEmotes(emotes, userId))
-			.handle((_, e) -> {
-				if (e != null) {
-					LOG.error("Error while downloading channel emotes for user ID: {}", userId, e);
-				}
-				return null;
-			});
+		TwitchHelper.requestChannelEmotes(userId).thenAcceptAsync(emotes -> {
+			downloadEmotes(emotes, userId);
+			downloadEmotesLegacy(emotes, userId);
+		}).handle((_, e) -> {
+			if (e != null) {
+				LOG.error("Error while downloading channel emotes for user ID: {}", userId, e);
+			}
+			return null;
+		});
 	}
 
 	public static void downloadBttvEmotes(String userId){
@@ -459,6 +462,28 @@ public class TextureManager {
 	}
 
 	private static void downloadEmotes(List<com.github.twitch4j.helix.domain.Emote> emotes, String channelId) {
+		List<Emote> newEmotes = new ArrayList<>(emotes.size());
+		for (var twitchEmote : emotes) {
+			EmoteType type = EmoteType.get(twitchEmote.getEmoteType(), twitchEmote.getTier().ordinalName());
+			boolean animated = twitchEmote.getFormat().contains(Format.ANIMATED);
+			String fileFormat = animated ? "gif" : "png";
+			try {
+				byte[] image1x = downloadImageData(twitchEmote.getImages().getSmallImageUrl());
+				byte[] image2x = downloadImageData(twitchEmote.getImages().getMediumImageUrl());
+				byte[] image3x = downloadImageData(twitchEmote.getImages().getLargeImageUrl());
+
+				Emote emote = new Emote(twitchEmote.getId(), twitchEmote.getEmoteSetId(), channelId,
+						twitchEmote.getName(), type, false, animated, fileFormat, image1x, image2x, image3x);
+				newEmotes.add(emote);
+			} catch (IOException e) {
+				LOG.error("Error downloading emote images for emote '{}' in channel ID: {}", twitchEmote.getName(), channelId, e);
+			}
+		}
+		EclipseStoreKeeper.root().emotes().addEmotes(newEmotes);
+	}
+
+	@Deprecated
+	private static void downloadEmotesLegacy(List<com.github.twitch4j.helix.domain.Emote> emotes, String channelId) {
 		ArrayList<String> tier1 = new ArrayList<>();
 		ArrayList<String> tier2 = new ArrayList<>();
 		ArrayList<String> tier3 = new ArrayList<>();
@@ -482,7 +507,7 @@ public class TextureManager {
 			}
 
 			boolean isFavorite = false;
-			Emote emoteByName = EmoteManager.getEmoteByName(emote.getName());
+			EmoteLegacy emoteByName = EmoteManager.getEmoteByName(emote.getName());
 			if (emoteByName != null) {
 				isFavorite = emoteByName.isFavorite();
 			}
@@ -518,7 +543,7 @@ public class TextureManager {
 
 		for (var emote : emotes) {
 			boolean isFavorite = false;
-			Emote emoteByName = EmoteManager.getEmoteByName(emote.getName());
+			EmoteLegacy emoteByName = EmoteManager.getEmoteByName(emote.getName());
 			if (emoteByName != null) {
 				isFavorite = emoteByName.isFavorite();
 			}
@@ -551,7 +576,7 @@ public class TextureManager {
 			emoteIDs.add(emote.getId());
 
 			boolean isFavorite = false;
-			Emote emoteByName = EmoteManager.getEmoteByName(emote.getCode());
+			EmoteLegacy emoteByName = EmoteManager.getEmoteByName(emote.getCode());
 			if (emoteByName != null) {
 				isFavorite = emoteByName.isFavorite();
 			}
@@ -592,6 +617,15 @@ public class TextureManager {
 			BufferedImage image = ImageIO.read(in);
 			LOG.debug("Image downloaded");
 			return image;
+		}
+	}
+
+	private static byte[] downloadImageData(String url) throws IOException {
+		LOG.debug("Downloading image from URL: {}", url);
+		try (InputStream in = URI.create(url).toURL().openStream()) {
+			byte[] imageData = in.readAllBytes();
+			LOG.debug("Image downloaded");
+			return imageData;
 		}
 	}
 

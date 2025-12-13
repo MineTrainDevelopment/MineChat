@@ -2,7 +2,7 @@ package de.minetrain.minechat.gui.obj.buttons;
 
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.features.macros.MacroType;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteSize;
 import de.minetrain.minechat.gui.frames.MacroEditorFrame;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;

@@ -89,5 +89,10 @@
 			<artifactId>storage-embedded</artifactId>
 			<version>${eclipse.store.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.store</groupId>
+			<artifactId>cache</artifactId>
+			<version>${eclipse.store.version}</version>
+		</dependency>
 	</dependencies>
 </project>

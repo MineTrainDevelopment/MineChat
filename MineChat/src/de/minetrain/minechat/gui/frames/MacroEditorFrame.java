@@ -2,8 +2,8 @@ package de.minetrain.minechat.gui.frames;
 
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.features.macros.MacroType;
-import de.minetrain.minechat.gui.emotes.Emote;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteSize;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
@@ -15,7 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class MacroEditorFrame extends MineDialog {
-	private Emote selectedEmote;
+	private EmoteLegacy selectedEmote;
 	private EmoteSelector emoteSelector;
 
 	public MacroEditorFrame(MacroObject macro, MacroType macroType, int button_id) {

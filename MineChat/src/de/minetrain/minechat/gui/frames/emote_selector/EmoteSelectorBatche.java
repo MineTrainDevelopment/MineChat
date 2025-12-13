@@ -3,10 +3,10 @@ package de.minetrain.minechat.gui.frames.emote_selector;
 import java.util.List;
 
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
-import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
-import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteSize;
 import de.minetrain.minechat.main.ChannelActions;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseButton;
@@ -49,7 +49,7 @@ public class EmoteSelectorBatche extends TitledPane {
 		int columIndex = 0;
 		int rowIndex = 0;
 		
-		List<Emote> emotes;
+		List<EmoteLegacy> emotes;
 		if(channel != null){
 			emotes = ChannelEmotes.sortEmotesByEasterEgg(channel, channel.getChannelEmotes().getAllEmotes());
 		}else if(getText().equalsIgnoreCase("Favorite")){
@@ -58,7 +58,7 @@ public class EmoteSelectorBatche extends TitledPane {
 			emotes = EmoteManager.getAllDefaultEmotes();
 		}
 		
-		for(Emote emote : emotes){
+		for(EmoteLegacy emote : emotes){
 			EmoteSelectorButton selectorButton = new EmoteSelectorButton(emote, EmoteSize.SMALL, 2);
 			selectorButton.setOnAction(event -> emoteSelector.fireSelectEvent(emote));
 			selectorButton.setOnMouseClicked(event -> {

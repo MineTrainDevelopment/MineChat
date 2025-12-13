@@ -70,7 +70,7 @@ public class ChannelActions {
 				null,
 				message);
 
-		EclipseStoreKeeper.storeRoot().addMessage(channel.getChannelId(), messageComponentContent);
+		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
 
 		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
 			addToViewPort(messageComponentContent);
@@ -100,7 +100,7 @@ public class ChannelActions {
 				null,
 				replyMessage);
 
-		EclipseStoreKeeper.storeRoot().addMessage(channel.getChannelId(), messageComponentContent);
+		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
 
 		addToViewPort(messageComponentContent);
 	}
@@ -119,7 +119,7 @@ public class ChannelActions {
 //				messageCache.forEach(messageContent -> Main.messagePanel.getChildren().add(new MessageComponent(messageContent)));
 			});
 
-			EclipseStoreKeeper.storeRoot().getMessages(this).forEach(messageContent -> {
+			EclipseStoreKeeper.root().getMessages(this).forEach(messageContent -> {
 				Platform.runLater(() -> Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent)));
 			});
 		}).start();
@@ -143,7 +143,7 @@ public class ChannelActions {
 
 
 	public ChannelStatistics getStatistics() {
-		return EclipseStoreKeeper.storeRoot().getChannelStatistics(channel.getChannelId());
+		return EclipseStoreKeeper.root().getChannelStatistics(channel.getChannelId());
 	}
 
 	public GreetingsManager getGreetingsManager() {

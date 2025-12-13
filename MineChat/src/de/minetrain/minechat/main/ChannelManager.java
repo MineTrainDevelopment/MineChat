@@ -32,8 +32,8 @@ public class ChannelManager {
 
 	public void init() {
 		// Migrate existing channels from SQLite to Eclipse Store
-		if (EclipseStoreKeeper.storeRoot().channels().size() == 0) {
-			EclipseStoreKeeper.storeRoot().channels().addChannels(DatabaseManager.getChannel().getAllChannels().values());
+		if (EclipseStoreKeeper.root().channels().size() == 0) {
+			EclipseStoreKeeper.root().channels().addChannels(DatabaseManager.getChannel().getAllChannels().values());
 		}
 
 		validateUserLogins().join();
@@ -128,7 +128,7 @@ public class ChannelManager {
 	}
 
 	private static Channels getChannels() {
-		return EclipseStoreKeeper.storeRoot().channels();
+		return EclipseStoreKeeper.root().channels();
 	}
 
 	private static Channel createChannelFromTwitchUser(TwitchUserObj twitchUser) {

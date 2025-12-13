@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyHashMap;
-import org.eclipse.serializer.persistence.types.Persister;
 
 import de.minetrain.minechat.data.objectdata.Channels;
+import de.minetrain.minechat.data.objectdata.Emotes;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
@@ -18,13 +18,13 @@ public class EclipseStoreRoot {
 	private Map<String, List<MessageComponentContent>> twitchMessages;// Channel_id, data
 	private Map<String, ChannelStatistics> channelStatics; // Channel_id, data
 	private Channels channels;
-	public transient Persister persister;
+	private Emotes emotes;
 
 	public void addMessage(String channelId, MessageComponentContent message) {
 		Map<String, List<MessageComponentContent>> twitchMessages = getTwitchMessages();
 		if (!twitchMessages.containsKey(channelId)) {
 			twitchMessages.put(channelId, new LazyArrayList<>());
-			persister.store(twitchMessages);
+			EclipseStoreKeeper.storeManager().store(twitchMessages);
 		}
 
 //		TODO: Zocki will testen... Mach wieder an :P
@@ -34,7 +34,7 @@ public class EclipseStoreRoot {
 //		}
 
 		messages.add(message);
-		persister.store(messages);
+		EclipseStoreKeeper.storeManager().store(messages);
 	}
 
 	public List<MessageComponentContent> getMessages(ChannelActions channel) {
@@ -43,7 +43,7 @@ public class EclipseStoreRoot {
 
 	private void addChannelStatistics(String channelId, ChannelStatistics statistics) {
 		getChannelStatics().put(channelId, statistics);
-		persister.store(getChannelStatics());
+		EclipseStoreKeeper.storeManager().store(getChannelStatics());
 	}
 
 	public ChannelStatistics getChannelStatistics(String channelId) {
@@ -55,7 +55,7 @@ public class EclipseStoreRoot {
 	}
 
 	public void saveAllChannelStatistics() {
-		getChannelStatics().values().forEach(stats -> stats.saveChannelStatistics(persister));
+		getChannelStatics().values().forEach(stats -> stats.saveChannelStatistics(EclipseStoreKeeper.storeManager()));
 	}
 
 	public Channels channels() {
@@ -66,11 +66,19 @@ public class EclipseStoreRoot {
 		return channels;
 	}
 
-	// Layze loading.
+	public Emotes emotes() {
+		if (emotes == null) {
+			emotes = new Emotes();
+			EclipseStoreKeeper.storeManager().store(this);
+		}
+		return emotes;
+	}
+
+	// Lazy loading.
 	private Map<String, List<MessageComponentContent>> getTwitchMessages() {
 		if (twitchMessages == null) {
 			twitchMessages = new LazyHashMap<>();
-			persister.store(this);
+			EclipseStoreKeeper.storeManager().store(this);
 		}
 		return twitchMessages;
 	}
@@ -78,7 +86,7 @@ public class EclipseStoreRoot {
 	private Map<String, ChannelStatistics> getChannelStatics() {
 		if (channelStatics == null) {
 			channelStatics = new LazyHashMap<>();
-			persister.store(this);
+			EclipseStoreKeeper.storeManager().store(this);
 		}
 		return channelStatics;
 	}

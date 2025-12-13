@@ -37,7 +37,6 @@ public class EclipseStoreKeeper {
 			root = new EclipseStoreRoot();
 			storageManager.setRoot(root);
 			storageManager.storeRoot();
-			root.persister = storageManager;
 		}
 	}
 
@@ -45,7 +44,7 @@ public class EclipseStoreKeeper {
 		return instance().storageManager;
 	}
 
-	public static EclipseStoreRoot storeRoot() {
+	public static EclipseStoreRoot root() {
 		return instance().root;
 	}
 }

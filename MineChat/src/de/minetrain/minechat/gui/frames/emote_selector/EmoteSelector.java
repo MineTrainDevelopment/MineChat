@@ -1,7 +1,7 @@
 package de.minetrain.minechat.gui.frames.emote_selector;
 
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
-import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.main.Main;
 import javafx.animation.Interpolator;
@@ -114,7 +114,7 @@ public class EmoteSelector extends MineDialog {
 		this.closeOnSelect = closeOnSelect;
 	}
 
-	public void fireSelectEvent(Emote emote){
+	public void fireSelectEvent(EmoteLegacy emote){
 		if(selectEvent != null){
 			selectEvent.onSelect(emote);
 			if(closeOnSelect){
@@ -128,7 +128,7 @@ public class EmoteSelector extends MineDialog {
 	}
 
 	public interface EmoteSelectEvent {
-		void onSelect(Emote emote);
+		void onSelect(EmoteLegacy emote);
 	}
 
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.WebEmote;
 import de.minetrain.minechat.gui.utils.TextureManager;
@@ -50,7 +51,9 @@ public class TwitchMessage {
 	private final boolean highlighted;
 	private final boolean firstMessages;
 	private final boolean firstMessageOfInstance;
+	private final Set<String> emotes;
 
+	// TODO migrate to event api
 	public TwitchMessage(IRCMessageEvent ircMessage, String message) {
 		this.message = message;
 		this.messageId = ircMessage.getTagValue("id").orElse(">null<");
@@ -66,6 +69,7 @@ public class TwitchMessage {
 		this.highlighted = ircMessage.getTagValue("msg-id").orElse("false").equals("false") ? false : true;
 		this.firstMessages = ircMessage.getTagValue("first-msg").orElse("0").equals("1") ? true : false;
 		this.firstMessageOfInstance = Main.getChannelManager().getChannelActions(channelId).getGreetingsManager().add(userName);
+		this.emotes = ircMessage.getTagValue("emotes").map(commaSeparated -> Set.of(commaSeparated.split(","))).orElse(Set.of());
 
 		String emotes = ircMessage.getTagValue("emotes").orElse(null);
 
@@ -106,12 +110,12 @@ public class TwitchMessage {
 		return emoteSet;
 	}
 
-	private final HashMap<String, Emote> getInstalltEmotes() {
-		HashMap<String, Emote> emoteSet = new HashMap<>();//Name, emote
+	private final HashMap<String, EmoteLegacy> getInstalltEmotes() {
+		HashMap<String, EmoteLegacy> emoteSet = new HashMap<>();//Name, emote
 
     	Arrays.stream(message.split(" ")).parallel().forEach(word -> {
 
-			Emote emoteByName = EmoteManager.getChannelEmoteByName(channelId, word);
+			EmoteLegacy emoteByName = EmoteManager.getChannelEmoteByName(channelId, word);
 			if(emoteByName != null) {
 				emoteSet.put(emoteByName.getName(), emoteByName);
 			}else if(Settings.emoteBlendinOnDisplaying){
@@ -199,6 +203,10 @@ public class TwitchMessage {
 		return channelId;
 	}
 
+	public Set<String> getEmoteSets() {
+		return emotes;
+	}
+
 	public boolean isReply() {
 		return replyId != null;
 	}
@@ -241,8 +249,8 @@ public class TwitchMessage {
 		return String.join(", ", getBadgeTags());
 	}
 
-	public HashMap<String, Emote> getEmoteSet() {
-		HashMap<String, Emote> emoteSet = getInstalltEmotes();
+	public HashMap<String, EmoteLegacy> getEmoteSet() {
+		HashMap<String, EmoteLegacy> emoteSet = getInstalltEmotes();
 		HashMap<String, WebEmote> webEmotes = getWebEmotes();
 		webEmotes.keySet().removeAll(emoteSet.keySet());
 		emoteSet.putAll(webEmotes);

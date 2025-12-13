@@ -3,7 +3,7 @@ package de.minetrain.minechat.features.macros;
 import java.util.Random;
 
 import de.minetrain.minechat.data.objectdata.MacroData;
-import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 
 public class MacroObject {
@@ -90,12 +90,12 @@ public class MacroObject {
 	/**
 	 * @return may be null if no emote with the provided id is loaded.
 	 */
-	public Emote getEmote() {
+	public EmoteLegacy getEmote() {
 		if(emote_id == null || emote_id.equalsIgnoreCase("null")){
 			return null;
 		}
 		
-		Emote emoteById  = EmoteManager.getEmoteById(emote_id);
+		EmoteLegacy emoteById  = EmoteManager.getEmoteById(emote_id);
 		return emoteById;
 	}
 	

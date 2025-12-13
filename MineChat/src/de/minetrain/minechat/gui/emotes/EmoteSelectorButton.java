@@ -1,6 +1,6 @@
 package de.minetrain.minechat.gui.emotes;
 
-import de.minetrain.minechat.gui.emotes.Emote.EmoteSize;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteSize;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
@@ -8,15 +8,15 @@ import javafx.scene.paint.Color;
 public class EmoteSelectorButton extends Button {
 	private final EmoteSize size;
 	
-	public EmoteSelectorButton(Emote emote, EmoteSize size, int borderWidth) {
+	public EmoteSelectorButton(EmoteLegacy emote, EmoteSize size, int borderWidth) {
 		this(emote, size, emote.getBorderType(), borderWidth);
 	}
 	
-	public EmoteSelectorButton(Emote emote, EmoteSize size, EmoteBorderType borderType) {
+	public EmoteSelectorButton(EmoteLegacy emote, EmoteSize size, EmoteBorderType borderType) {
 		this(emote, size, borderType, 2);
 	}
 	
-	public EmoteSelectorButton(Emote emote, EmoteSize size, EmoteBorderType borderType, int borderWidth) {
+	public EmoteSelectorButton(EmoteLegacy emote, EmoteSize size, EmoteBorderType borderType, int borderWidth) {
 		this.size = size;
 		setId("emote_border");
 		setStyle("-fx-border-color: "+borderType.getHexCode()+"; -fx-border-width: "+borderWidth+"px;");
@@ -28,7 +28,7 @@ public class EmoteSelectorButton extends Button {
 		setMaxSize(size.getSize() + borderSize, size.getSize() + borderSize);
 	}
 	
-	public void changeImage(Emote emote){
+	public void changeImage(EmoteLegacy emote){
 		setGraphic(emote.getEmoteNode(size, size.getSize()));
 	}
 	

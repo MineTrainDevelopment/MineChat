@@ -9,8 +9,9 @@ import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Emote {
-	private static final ConcurrentHashMap<Emote, Image> imageCacheSmall = new ConcurrentHashMap<Emote, Image>();
+@Deprecated
+public class EmoteLegacy {
+	private static final ConcurrentHashMap<EmoteLegacy, Image> imageCacheSmall = new ConcurrentHashMap<>();
 	private boolean favorite;
 	private boolean dummyData = false;
 	private final String name;
@@ -20,8 +21,9 @@ public class Emote {
 	private final EmoteType emoteType;
 	private final String filePath;
 	private final String fileFormat;
-	
-	public Emote(ResultSet resultSet) throws SQLException {
+
+	@Deprecated
+	public EmoteLegacy(ResultSet resultSet) throws SQLException {
 		this.name = resultSet.getString("name");
 		this.emoteId = resultSet.getString("emote_id");
 		this.favorite = resultSet.getBoolean("favorite");
@@ -29,8 +31,9 @@ public class Emote {
 		this.filePath = resultSet.getString("file_location");
 		this.fileFormat = resultSet.getString("image_type");
 	}
-	
-	public Emote(boolean dummyData){
+
+	@Deprecated
+	public EmoteLegacy(boolean dummyData){
 		this.dummyData = true;
 		this.name = ">null<";
 		this.emoteId = ">null<";
@@ -39,8 +42,9 @@ public class Emote {
 		this.filePath = ">null<";
 		this.fileFormat = "png";
 	}
-	
-	public Emote(String name, String emoteId, String fileFormat){
+
+	@Deprecated
+	public EmoteLegacy(String name, String emoteId, String fileFormat){
 		this.name = name;
 		this.emoteId = emoteId;
 		this.favorite = false;
@@ -50,10 +54,12 @@ public class Emote {
 	}
 
 
+	@Deprecated
 	public Image getEmoteImage(EmoteSize emoteSize) {
 		return getEmoteImage(emoteSize, emoteSize.getSize());
 	}
-	
+
+	@Deprecated
 	public Image getEmoteImage(EmoteSize emoteSize, int prefSize) {
 		if(emoteSize.equals(EmoteSize.SMALL)){
 			return imageCacheSmall.computeIfAbsent(this, emote -> createEmoteImage(emoteSize, prefSize, emote));
@@ -61,35 +67,39 @@ public class Emote {
 		return createEmoteImage(emoteSize, prefSize, this);
 	}
 
-	private Image createEmoteImage(EmoteSize emoteSize, int prefSize, Emote emote) {
+	private Image createEmoteImage(EmoteSize emoteSize, int prefSize, EmoteLegacy emote) {
 		return new Image((emote.getFilePath(true).replace("1"+emote.getFileFormat(), emoteSize.getFileEnding(emote))), prefSize, prefSize, false, false);
 	}
-	
+
+	@Deprecated
 	public final ImageView getEmoteNode(EmoteSize emoteSize) {
 		return getEmoteNode(emoteSize, emoteSize.getSize());
 	}
-	
+
+	@Deprecated
 	public final ImageView getEmoteNode(EmoteSize emoteSize, int prefSize) {
 		if(isDummyData()){
 			return null;
 		}
-		
+
 		return new ImageView(getEmoteImage(emoteSize, prefSize));
 	}
-	
+
 	/**
 	 * @return the new favorite sate.
 	 */
+	@Deprecated
 	public boolean toggleFavorite() {
 		setFavorite(!favorite);
 		return favorite;
 	}
-	
+
+	@Deprecated
 	public void setFavorite(boolean state) {
 		favorite = state;
 		DatabaseManager.getEmote().updateFavoriteState(emoteId, state);
 		DatabaseManager.commit();
-//		
+//
 //		if(state){
 //			EmoteManager.addFavoriteEmote(this);
 //			return;
@@ -97,35 +107,42 @@ public class Emote {
 //
 //		EmoteManager.removeFavoriteEmote(this);
 	}
-	
+
+	@Deprecated
 	public boolean isFavorite() {
 		return favorite;
 	}
-	
+
+	@Deprecated
 	public boolean isSubOnly() {
 		return emoteType.isSubOnly();
 	}
-	
+
+	@Deprecated
 	public boolean isGlobal() {
 		return emoteType.isGlobal();
 	}
 
+	@Deprecated
 	public EmoteType getEmoteType() {
 		return emoteType;
 	}
 
+	@Deprecated
 	public String getName() {
 		return name;
 	}
 
+	@Deprecated
 	public String getFilePath(boolean filePrefix) {
 		if(filePrefix && !filePath.startsWith("https://")){
 			return "file:"+filePath;
 		}
 		return filePath;
 	}
-	
 
+
+	@Deprecated
 	public String getEmoteId() {
 		return emoteId;
 	}
@@ -134,29 +151,33 @@ public class Emote {
 	 * Returns the file format with a leading dot.
 	 * <br> This is due to the previews implementation.
 	 */
+	@Deprecated
 	public String getFileFormat() {
 		return "."+fileFormat;
 	}
-	
+
+	@Deprecated
 	public boolean isAnimated(){
 		return fileFormat.equals("gif");
 	}
-	
+
+	@Deprecated
 	public boolean isDummyData() {
 		return dummyData;
 	}
-	
+
+	@Deprecated
 	public EmoteBorderType getBorderType(){
 		switch (emoteType) {
 		case BIT:
 			return EmoteBorderType.BITS;
-			
+
 		case FOLLOW:
 			return EmoteBorderType.FOLLOW;
-			
+
 		case SUB_2:
 			return EmoteBorderType.TIER_2;
-			
+
 		case SUB_3:
 			return EmoteBorderType.TIER_2;
 
@@ -170,17 +191,17 @@ public class Emote {
 
 		private boolean subOnly;
 		public boolean isSubOnly(){return subOnly;}
-		
+
 		public boolean isBitOnly(){return this.equals(BIT);}
-		
+
 		private boolean global;
 		public boolean isGlobal(){return global;}
-		
+
 		private EmoteType(boolean subOnly, boolean global){
 			this.subOnly = subOnly;
 			this.global = global;
 		}
-		
+
 		public static EmoteType get(String input, String tier){
 			switch (input) {
 				case "subscriptions":
@@ -189,7 +210,7 @@ public class Emote {
 					case "2000": return SUB_2;
 					case "3000": return SUB_3;
 					default: return SUB;}
-					
+
 				case "follower": return FOLLOW;
 				case "bitstier": return BIT;
 				case "bttv": return BTTV;
@@ -198,33 +219,34 @@ public class Emote {
 			}
 		}
 	}
-	
+
 	public enum EmoteSize {
 		SMALL("1", 28),
 		MEDIUM("2", 56),
 		BIG("3", 112);
-		
+
 		private String fileEnding;
 		private int size;
-		
-		public String getFileEnding(Emote emote){
+
+		public String getFileEnding(EmoteLegacy emote){
 			return fileEnding + emote.getFileFormat();
 		}
-		
+
 		public int getSize(){
 			return size;
 		}
-		
+
 		private EmoteSize(String fileEnding, int size) {
 			this.fileEnding = fileEnding;
 			this.size = size;
 		}
 	};
-	
-	
+
+
+	@Deprecated
 	@Override
 	public String toString() {
 		return getName()+" - "+getEmoteId();
 	}
-	
+
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
-import de.minetrain.minechat.gui.emotes.Emote;
+import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 
 
@@ -256,7 +256,7 @@ public class EmoteDatabase extends Database{
 		try(Connection connection = DatabaseManager.connect(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(select_sql)){
 			EmoteManager.clear();
 			while(resultSet.next()){
-				EmoteManager.addEmote(new Emote(resultSet));
+				EmoteManager.addEmote(new EmoteLegacy(resultSet));
 //				logger.info(
 //						resultSet.getString("emote_id")+" - "+
 //						resultSet.getString("name")+" - "+

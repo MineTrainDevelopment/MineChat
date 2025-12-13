@@ -2,6 +2,7 @@ package de.minetrain.minechat.features.messagehighlight;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
@@ -18,7 +19,9 @@ public class HighlightString {
 	private final String soundPath;
 	private final AudioVolume soundVolume;
 	private boolean state;
-	
+
+	private transient Pattern pattern;
+
 	public HighlightString(ResultSet result) throws SQLException {
 		this.uuid = result.getString("uuid");
 		this.word = result.getString("word");
@@ -28,21 +31,21 @@ public class HighlightString {
 		this.soundVolume = AudioVolume.get(result.getString("sound_volume"));
 		this.state = result.getBoolean("state");
 	}
-	
+
 	public void playSound(){
 		if(isPlaySound()){
 			Main.getAudioManager().playAudioClip(getSoundUri(), soundVolume);
 		}
 	}
-	
+
 	public AudioVolume getSoundVolume(){
 		return soundVolume;
 	}
-	
+
 	public String getSoundPath(){
 		return AudioManager.RAW_AUDIO_PATH.replace("/", "\\")+soundPath;
 	}
-	
+
 	public String getSoundUri(){
 		return AudioManager.createUri(soundPath);
 	}
@@ -78,15 +81,21 @@ public class HighlightString {
 	public boolean isAktiv() {
 		return state;
 	}
-	
+
 	public void setAktiv(boolean state) {
 		this.state = state;
 		DatabaseManager.getMessageHighlight().setState(uuid, state);
 	}
-	
+
 	public void delete(){
 		DatabaseManager.getMessageHighlight().remove(uuid);
 		Settings.reloadHighlights();
 	}
-	
+
+	public Pattern getPattern() {
+		if (pattern == null) {
+			pattern = Pattern.compile("^" + word + "$", Pattern.CASE_INSENSITIVE);
+		}
+		return pattern;
+	}
 }

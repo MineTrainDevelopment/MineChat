@@ -48,6 +48,7 @@ public class Main extends Application {
 	public static EventManager eventManager;
 	public static PluginManager pluginManager;
 	private static ChannelManager channelManager;
+	private static EmoteManager emoteManager;
 	private static final int loadingSteps = 13;
 	public static boolean isGuiOpen = false;
 
@@ -62,7 +63,7 @@ public class Main extends Application {
 		new Settings();
 
 		loadingProgressLogging(4, "Preparing emotes");
-		new EmoteManager();
+		emoteManager = new EmoteManager();
 
 		loadingProgressLogging(5, "Fetching audio fiels.");
 		audioManager = new AudioManager();
@@ -204,6 +205,10 @@ public class Main extends Application {
 
 	public static EventManager getEventManager(){
 		return eventManager;
+	}
+
+	public static EmoteManager getEmoteManager(){
+		return emoteManager;
 	}
 
 	/**
