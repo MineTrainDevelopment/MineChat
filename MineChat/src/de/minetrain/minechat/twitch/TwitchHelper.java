@@ -22,8 +22,8 @@ public final class TwitchHelper {
 		// Private constructor to prevent instantiation
 	}
 
-	public static void joinChannel(String... names){
-		TwitchManager.instance().joinChannel(names);
+	public static void joinChannel(String channelId){
+		TwitchManager.instance().joinChannel(channelId);
 	}
 
 	public static void leaveChannel(String... names){
@@ -97,7 +97,6 @@ public final class TwitchHelper {
 	public static CompletableFuture<List<TwitchUserObj>> requestTwitchUsers(TwitchApiCallType callType, String... channels) {
 		return TwitchManager.instance().requestTwitchUsers(callType, channels);
 	}
-
 
 	/**
 	 * No url check requert. <br>

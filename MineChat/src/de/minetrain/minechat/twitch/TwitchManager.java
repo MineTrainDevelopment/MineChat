@@ -1,5 +1,11 @@
 package de.minetrain.minechat.twitch;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -9,12 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JFrame;
-
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +30,7 @@ import com.github.twitch4j.ITwitchClient;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatBadgeSetList;
 import com.github.twitch4j.helix.domain.ChatSettings;
@@ -32,10 +38,10 @@ import com.github.twitch4j.helix.domain.Emote;
 import com.github.twitch4j.helix.domain.EmoteList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 
-import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
@@ -60,80 +66,43 @@ public class TwitchManager {
 
 	private static TwitchManager instance;
 
-	private ITwitchClient twitch;
-	private CredentialsManager credentials;
+	private final ITwitchClient twitch;
 	private final List<TwitchUserObj> twitchUsers;
-	private TwitchUserObj ownerTwitchUser;
+	private final TwitchUserObj ownerTwitchUser;
 
 
 	/**
 	 * Creates a new Twitch client instance using the provided TwitchCredentials.
 	 * @param credentials The TwitchCredentials used to authenticate the Twitch client.
 	 */
-	public TwitchManager(CredentialsManager credentials) {
-		this.credentials = credentials;
+	public TwitchManager(String oAuth2Token) {
 		this.twitchUsers = Collections.synchronizedList(new ArrayList<>());
 
 //		Main.LOADINGBAR.setProgress("Conect to Twitch Helix", 25);
 
 		//Configure the TwitchClientBuilder with the provided credentials.
-		twitch = buildClient(credentials);
-
-		if(twitch.getChat().getChannels().isEmpty()){
-//			Asking for a new OAuth2 token.
-//			Main.LOADINGBAR.setError("Requesting new OAuth2 Token.");
-			LOG.warn("Requesting new OAuth2 Token.");
-
-			JFrame tempFrame = new JFrame();
-			tempFrame.setVisible(false);
-			GetCredentialsFrame newCredentialsFrame = new GetCredentialsFrame(tempFrame);
-			newCredentialsFrame.injectData(credentials.getClientID(), credentials.getClientSecret());
-			newCredentialsFrame.startServer();
-			LOG.warn("Start new HTTP server to get new OAuth2 key.");
-
-
-			//If the new OAuth2 token also don´t work, let the user Reenter there API credentials
-			try {
-				this.credentials = new CredentialsManager();
-				twitch = buildClient(this.credentials);
-			} catch (Exception ex) {
-				CredentialsManager.deleteCredentialsFile();
-//				Main.LOADINGBAR.setError("Invalid Twitch Credentials!");
-				LOG.error("Invalid twitch credentials!", ex);
-			}
-
-			ownerTwitchUser = new TwitchUserObj(TwitchApiCallType.LOGIN, ownerChannelName, true);
-			return;
-		}
+		twitch = buildClient(oAuth2Token);
 
 //		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
-		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListner()); //Register a listener for Twitch events.
-		LOG.info("Connecting to channels: "+twitch.getChat().getChannels().toString()); //Print all the connected channels
-		twitch.getChat().getChannels().forEach(s -> ownerChannelName = s);
-		ownerTwitchUser = requestTwitchUser(TwitchApiCallType.LOGIN, ownerChannelName).join();
+		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListener());
+		ownerTwitchUser = new TwitchUserObj(twitch.getHelix().getUsers(null, null, null).execute().getUsers().getFirst());
+		ownerChannelName = ownerTwitchUser.getLoginName();
 	}
 
-	public static void init(CredentialsManager credentials) throws ExecutionException {
+	public static void init(String oAuth2Token) {
 		if(instance != null) {
 			LOG.warn("TwitchManager is already initialized and will be recreated!");
 		}
-		instance = new TwitchManager(credentials);
+		instance = new TwitchManager(oAuth2Token);
 	}
 
 	public static TwitchManager instance() {
 		return instance;
 	}
 
-	public void joinChannel(String... names){
-		if(names == null || names.length == 0 || String.join("", names).isBlank()){return;}
-		for(String name : names) {
-			if(!twitch.getChat().getChannels().contains(name)){
-				LOG.info("Joining channel: {}", name);
-				twitch.getChat().joinChannel(name);
-				twitch.getClientHelper().enableFollowEventListener(name);
-				twitch.getClientHelper().enableStreamEventListener(name);
-			}
-		}
+	public void joinChannel(String channeldId) {
+		LOG.info("Joining channel: {}", channeldId);
+		twitch.getEventSocket().register(SubscriptionTypes.CHANNEL_CHAT_MESSAGE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).userId(getSelfUser().getUserId()).build(), null));
 	}
 
 //	public void joinChannelById(String... channelIds){
@@ -314,6 +283,100 @@ public class TwitchManager {
 		});
 	}
 
+	public static CompletableFuture<String> requestOAuthToken(String clientId) {
+		RandomStringUtils secure = RandomStringUtils.secure();
+		String state = secure.nextAlphanumeric(32);
+		String requestUrl = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientId + "&redirect_uri=http://localhost:8000/oauth_callback&scope=user:read:chat&state=" + state;
+		Pattern pattern = Pattern.compile("access_token=([^&]+).*&state=([^&]+)");
+		CompletableFuture<String> futureToken = new CompletableFuture<>();
+		String html = """
+			<!doctype html><html><head><meta charset='utf-8'><title>OAuth Callback</title></head>
+			<body>
+			<script>
+			  const params = new URLSearchParams(window.location.hash.substring(1));
+			  const accessToken = params.get('access_token') || '';
+			  const scope = params.get('scope') || '';
+			  const state = params.get('state') || '';
+			  fetch('/token', {
+			    method: 'POST',
+			    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			    body: new URLSearchParams({access_token: accessToken, scope: scope, state: state})
+			  }).then(() => {
+			    document.body.innerText = 'Authentication complete. You can close this window.';
+			  }).catch(() => {
+			    document.body.innerText = 'Failed to deliver token.';
+			  });
+			</script>
+			</body></html>
+			""";
+		HttpServer httpServer = null;
+		try {
+			httpServer = HttpServer.create(new InetSocketAddress("localhost", 8000), 0);
+			httpServer.createContext("/oauth_callback", exchange -> handleOAuthCallback(html, exchange));
+			httpServer.createContext("/token", exchange -> handleTokenReceive(state, pattern, futureToken, exchange));
+			httpServer.start();
+		} catch (IOException e) {
+			LOG.error("Failed to start OAuth HTTP server!", e);
+			futureToken.completeExceptionally(e);
+			return futureToken;
+		}
+
+		try {
+			Desktop.getDesktop().browse(URI.create(requestUrl));
+		} catch (IOException e) {
+			futureToken.completeExceptionally(e);
+			httpServer.stop(0);
+			LOG.error("Failed to request OAuth token!", e);
+		}
+		return futureToken;
+	}
+
+	private static void handleTokenReceive(String state, Pattern pattern, CompletableFuture<String> futureToken, HttpExchange exchange) throws IOException {
+		if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+			exchange.sendResponseHeaders(405, -1);
+			return;
+		}
+		String query = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+		LOG.debug("OAuth2 token received with query: {}", query);
+		byte[] ok = "OK".getBytes(StandardCharsets.UTF_8);
+		exchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8");
+		exchange.sendResponseHeaders(200, ok.length);
+		try (OutputStream os = exchange.getResponseBody()) {
+			os.write(ok);
+		}
+		if (StringUtils.isBlank(query)) {
+			LOG.error("No query parameters found in OAuth2 token receive!");
+			exchange.getHttpContext().getServer().stop(0);
+			futureToken.completeExceptionally(new RuntimeException("No query parameters found in OAuth2 token receive."));
+			return;
+		}
+
+		Matcher matcher = pattern.matcher(query);
+		if (matcher.find()) {
+			if (!state.equals(matcher.group(2))) {
+				LOG.warn("State mismatch! Potential CSRF attack.");
+				return;
+			}
+			String oAuth2Token = matcher.group(1);
+			LOG.info("Received new OAuth2 token.");
+			exchange.getHttpContext().getServer().stop(0);
+			futureToken.complete(oAuth2Token);
+			return;
+		}
+		LOG.error("Failed to retrieve OAuth2 token!");
+		exchange.getHttpContext().getServer().stop(0);
+		futureToken.completeExceptionally(new RuntimeException("Failed to retrieve OAuth2 token."));
+	}
+
+	private static void handleOAuthCallback(String html, HttpExchange exchange) throws IOException {
+		byte[] bytes = html.getBytes(StandardCharsets.UTF_8);
+		exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
+		exchange.sendResponseHeaders(200, bytes.length);
+		try (OutputStream os = exchange.getResponseBody()) {
+			os.write(bytes);
+		}
+	}
+
 	/**
 	 * No url check request.
 	 * <br> returns null or twitch user.
@@ -342,12 +405,12 @@ public class TwitchManager {
 		return ownerTwitchUser;
 	}
 
-	private TwitchClient buildClient(CredentialsManager credentials) {
+	private TwitchClient buildClient(String oAuth2Token) {
 		return TwitchClientBuilder.builder()
-			.withClientId(credentials.getClientID())
-			.withClientSecret(credentials.getClientSecret())
+			.withEnableEventSocket(true)
+			.withDefaultAuthToken(new OAuth2Credential("twitch", oAuth2Token))
 			.withEnableHelix(true)
-			.withChatAccount(new OAuth2Credential("twitch", credentials.getOAuth2Token()))
+			.withChatAccount(new OAuth2Credential("twitch", oAuth2Token))
 			.withChatChannelMessageLimit(Bandwidth.builder().capacity(1L).refillGreedy(1, Duration.ofMillis(300)).id("per-channel-limit").build())
 			.withEnableChat(true)
 			.build();

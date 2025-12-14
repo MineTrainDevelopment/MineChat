@@ -23,6 +23,7 @@ import com.github.twitch4j.chat.events.channel.UserTimeoutEvent;
 import com.github.twitch4j.chat.events.roomstate.SlowModeEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
+import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
@@ -47,8 +48,10 @@ import de.minetrain.minechat.utils.events.MineChatEventType;
  * @since 28.04.2023
  * @version 1.1
  */
-public class TwitchListner {
-	private static final Logger logger = LoggerFactory.getLogger(TwitchListner.class);
+public class TwitchListener {
+
+	private static final Logger LOG = LoggerFactory.getLogger(TwitchListener.class);
+
 	public static int messagesTEMP = 0;
 //	private LiveNotification liveNotification = new LiveNotification();
 
@@ -66,7 +69,7 @@ public class TwitchListner {
 	 */
 	@EventSubscriber
 	public void onStreamUp(ChannelGoLiveEvent event){
-		logger.info("Twtich livestram startet: "+event.getStream().getUserName()+" | "+event.getStream().getViewerCount()+" | "+event.getStream().getTitle());
+		LOG.info("Twtich livestram startet: "+event.getStream().getUserName()+" | "+event.getStream().getViewerCount()+" | "+event.getStream().getTitle());
 		//TODO Call a sound event and display a red dott next to the name inside a channels tab.
 		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
 //		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
@@ -88,7 +91,7 @@ public class TwitchListner {
 	 */
 	@EventSubscriber
 	public void onStreamDown(ChannelGoOfflineEvent event){
-		logger.info("Twtich livestram Offline: "+event.getChannel().getName());
+		LOG.info("Twtich livestram Offline: "+event.getChannel().getName());
 		//remove the red dot next to chennel name in tab
 //		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
 //		if(channelTab != null){
@@ -96,16 +99,22 @@ public class TwitchListner {
 //		}
 	}
 
+	@EventSubscriber
+	public void onChannelMessage(ChannelChatMessageEvent event) {
+		LOG.info("EventSub ChannelMessage: {} | {}", event.getChatterUserName(), event.getMessage().getText());
+	}
+
 	/**
 	 * Handles the event when a message is sent in the channel and executes the command if the cooldown time has elapsed.
 	 * @param event The {@link ChannelMessageEvent} object containing information about the message.
 	 */
 	@EventSubscriber
+	@Deprecated
 	public void onAbstractChannelMessage(AbstractChannelMessageEvent event){
 		if (!Main.isGuiOpen || Main.getChannelManager().getChannel(event.getChannel().getId()) == null) {
 			return;
 		}
-		logger.info("User: {} | Message --> {}", event.getUser().getName(), event.getMessage());
+		LOG.info("User: {} | Message --> {}", event.getUser().getName(), event.getMessage());
 
 		ChannelActions channel = Main.getChannelManager().getChannelActions(event.getChannel().getId());
 		channel.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId(), event.getMessage());
@@ -262,7 +271,7 @@ public class TwitchListner {
      */
     @EventSubscriber
     public void onSlowMode(SlowModeEvent event){
-    	logger.info("Change slow mode to -> "+event.getTime());
+    	LOG.info("Change slow mode to -> "+event.getTime());
     	MessageManager.channelSlowMods.put(event.getChannel().getId(), event.getTime()*1000);
     }
 
@@ -281,7 +290,7 @@ public class TwitchListner {
 
     @EventSubscriber
     public void onChatConnectionState(ChatConnectionStateEvent event){
-    	logger.info(event.getPreviousState()+" -> "+event.getState());
+    	LOG.info(event.getPreviousState()+" -> "+event.getState());
 
     	switch (event.getState()) {
 		case CONNECTED:

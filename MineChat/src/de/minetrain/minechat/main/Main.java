@@ -1,5 +1,7 @@
 package de.minetrain.minechat.main;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -7,9 +9,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.concurrent.CompletableFuture;
 
-import javax.naming.directory.InvalidAttributesException;
-import javax.swing.JFrame;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,6 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.frames.GetCredentialsFrame;
 import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
@@ -26,7 +25,6 @@ import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.twitch.obj.CredentialsManager;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
@@ -74,25 +72,16 @@ public class Main extends Application {
 		loadingProgressLogging(7, "Loading custom plugins.");
 		pluginManager = new PluginManager();
 
-		loadingProgressLogging(8, "Decrypt credentials file...");
-		try {
-	    	new CredentialsManager();
-		} catch (InvalidAttributesException ex) {
-			JFrame tempFrame = new JFrame();
-			tempFrame.setVisible(true);
-			new GetCredentialsFrame(tempFrame);
-		} catch (Exception ex) {
-			CredentialsManager.deleteCredentialsFile();
-			logger.error("Invalid twitch credentials!", ex);
-			System.exit(0);
-		}
-
-		CredentialsManager credentials = new CredentialsManager();
-
+		loadingProgressLogging(8, "Login in...");
 
 		try {
+			String oAuth2Token = aquireOAuth2Token();
+			if (oAuth2Token == null) {
+				logger.error("Unable to acquire OAuth2 token. Exiting...");
+				System.exit(0);
+			}
 			loadingProgressLogging(9, "Connecting to Twitch Helix.");
-			TwitchManager.init(credentials);
+			TwitchManager.init(oAuth2Token);
 			loadingProgressLogging(10, "Prepare message highlight strings.");
 			Settings.reloadHighlights();
 			loadingProgressLogging(11, "Validate public badges and emotes.");
@@ -115,6 +104,27 @@ public class Main extends Application {
 				TwitchHelper.leaveAllChannel();
 			}
 		});
+	}
+
+	private static String aquireOAuth2Token() throws IOException {
+		String oAuth2Token = EclipseStoreKeeper.root().credentials().getOAuth2Token();
+		// TODO test if token is valid or needs to be refreshed.
+		if (oAuth2Token == null || StringUtils.isBlank(oAuth2Token)) {
+			try (InputStream is = Main.class.getResourceAsStream("/client.id")) {
+				if (is == null) {
+					logger.error("Twitch Client ID resource not found. Exiting...");
+					return null;
+				}
+				String twitchClientId = new String(is.readAllBytes());
+				if (StringUtils.isBlank(twitchClientId) || twitchClientId.contains("<client_id>")) {
+					logger.error("Twitch Client ID is not properly set. Exiting...");
+					return null;
+				}
+				oAuth2Token = TwitchManager.requestOAuthToken(twitchClientId).join();
+				EclipseStoreKeeper.root().credentials().setOAuth2Token(oAuth2Token);
+			}
+		}
+		return oAuth2Token;
 	}
 
 	public static MacroPanelPane macroPane;

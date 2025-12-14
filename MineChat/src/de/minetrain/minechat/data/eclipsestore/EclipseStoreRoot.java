@@ -7,6 +7,7 @@ import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyHashMap;
 
 import de.minetrain.minechat.data.objectdata.Channels;
+import de.minetrain.minechat.data.objectdata.Credentials;
 import de.minetrain.minechat.data.objectdata.Emotes;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.main.ChannelActions;
@@ -19,6 +20,7 @@ public class EclipseStoreRoot {
 	private Map<String, ChannelStatistics> channelStatics; // Channel_id, data
 	private Channels channels;
 	private Emotes emotes;
+	private Credentials credentials;
 
 	public void addMessage(String channelId, MessageComponentContent message) {
 		Map<String, List<MessageComponentContent>> twitchMessages = getTwitchMessages();
@@ -72,6 +74,14 @@ public class EclipseStoreRoot {
 			EclipseStoreKeeper.storeManager().store(this);
 		}
 		return emotes;
+	}
+
+	public Credentials credentials() {
+		if (credentials == null) {
+			credentials = new Credentials();
+			EclipseStoreKeeper.storeManager().store(this);
+		}
+		return credentials;
 	}
 
 	// Lazy loading.

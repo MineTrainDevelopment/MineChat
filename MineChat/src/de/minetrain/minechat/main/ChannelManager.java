@@ -35,8 +35,8 @@ public class ChannelManager {
 		if (EclipseStoreKeeper.root().channels().size() == 0) {
 			EclipseStoreKeeper.root().channels().addChannels(DatabaseManager.getChannel().getAllChannels().values());
 		}
-
 		validateUserLogins().join();
+		getAllChannels().forEach(channel -> TwitchHelper.joinChannel(channel.getChannelId()));
 	}
 
 	public String getActiveChanneldId() {
@@ -97,6 +97,10 @@ public class ChannelManager {
 
 	public Collection<ChannelActions> getAllChannelActions(){
 		return channels.values().stream().toList();
+	}
+
+	public void joinChannel(String channelId) {
+		TwitchHelper.joinChannel(getChannel(channelId).getLoginName());
 	}
 
 	/// Validates and updates the login names of all persisted channels.

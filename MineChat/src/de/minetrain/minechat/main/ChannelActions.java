@@ -59,7 +59,7 @@ public class ChannelActions {
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "612f819daf28e956864b54dd", 11, "Test 5", "Macro-V2 | test_5".split("q")));
 //		macros.createMacro(new MacroObject(MacroType.EMOTE, "emotesv2_662fe5cfd480497f98bd3ec7b953817a", 21, "Test 6", "Macro-V2 | test_6".split("q")));
 
-		twitchUser.join();
+//		twitchUser.join(); // Zocki disabled...
 	}
 
 
