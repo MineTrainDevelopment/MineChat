@@ -11,13 +11,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
+import com.github.twitch4j.eventsub.domain.chat.Badge;
+import com.github.twitch4j.eventsub.domain.chat.Emote;
+import com.github.twitch4j.eventsub.domain.chat.Fragment;
+import com.github.twitch4j.eventsub.domain.chat.MessageType;
+import com.github.twitch4j.eventsub.domain.chat.Reply;
+import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.emotes.EmoteLegacy;
@@ -35,6 +42,7 @@ public class TwitchMessage {
 	private final String message;
 	private final String messageId;
 	private final String channelId;
+	@Deprecated
 	private final String client_nonce;
 
 	private String replyId;
@@ -51,9 +59,34 @@ public class TwitchMessage {
 	private final boolean highlighted;
 	private final boolean firstMessages;
 	private final boolean firstMessageOfInstance;
-	private final Set<String> emotes;
 
-	// TODO migrate to event api
+	public TwitchMessage(ChannelChatMessageEvent event) {
+		message = event.getMessage().getText();
+		messageId = event.getMessageId();
+		channelId = event.getBroadcasterUserId();
+		client_nonce = null;
+
+		Reply reply = event.getReply();
+		if (reply != null) {
+			replyId = reply.getParentMessageId();
+			replyUser = reply.getParentUserName();
+		}
+
+		userId = event.getChatterUserId();
+		userName = event.getChatterUserName();
+		String color = event.getColor();
+		userColorCode = StringUtils.isNoneBlank(color) ? color : "#ffffff";
+		badgeTags = event.getBadges().stream().map(Badge::getId).toArray(String[]::new);
+		webEmotesPaths = event.getMessage().getFragments().stream().map(Fragment::getEmote).filter(Objects::nonNull).map(Emote::getId).toList();
+
+		epochTime = Instant.now().toEpochMilli();
+		emoteOnly = event.getMessage().getFragments().stream().allMatch(fragment -> fragment.getType() == Fragment.Type.EMOTE);
+		highlighted = event.getMessageType() == MessageType.CHANNEL_POINTS_HIGHLIGHTED;
+		firstMessages = false; // TODO ?!
+		this.firstMessageOfInstance = Main.getChannelManager().getChannelActions(channelId).getGreetingsManager().add(userName);
+	}
+
+	@Deprecated
 	public TwitchMessage(IRCMessageEvent ircMessage, String message) {
 		this.message = message;
 		this.messageId = ircMessage.getTagValue("id").orElse(">null<");
@@ -69,7 +102,6 @@ public class TwitchMessage {
 		this.highlighted = ircMessage.getTagValue("msg-id").orElse("false").equals("false") ? false : true;
 		this.firstMessages = ircMessage.getTagValue("first-msg").orElse("0").equals("1") ? true : false;
 		this.firstMessageOfInstance = Main.getChannelManager().getChannelActions(channelId).getGreetingsManager().add(userName);
-		this.emotes = ircMessage.getTagValue("emotes").map(commaSeparated -> Set.of(commaSeparated.split(","))).orElse(Set.of());
 
 		String emotes = ircMessage.getTagValue("emotes").orElse(null);
 
@@ -201,10 +233,6 @@ public class TwitchMessage {
 
 	public String getChannelId() {
 		return channelId;
-	}
-
-	public Set<String> getEmoteSets() {
-		return emotes;
 	}
 
 	public boolean isReply() {

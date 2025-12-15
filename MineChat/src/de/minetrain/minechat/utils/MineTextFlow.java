@@ -146,7 +146,7 @@ public class MineTextFlow extends TextFlow{
 	 * @return
 	 */
 	public MineTextFlow appendEmote(Emote emote) {
-		ImageView imageView = new ImageView(Main.getEmoteManager().getEmoteImage1x(emote.getEmoteId())){
+		ImageView imageView = new ImageView(Main.getEmoteManager().getEmoteImage1x(emote.getEmoteId(), emote.isAnimated())){
 
 			@Override
 			public double getBaselineOffset() {
@@ -168,8 +168,9 @@ public class MineTextFlow extends TextFlow{
 		return this;
 	}
 
-	public void appendImage(ImageView image){
+	public MineTextFlow appendImage(ImageView image){
 		getChildren().add(image);
+		return this;
 	}
 
 

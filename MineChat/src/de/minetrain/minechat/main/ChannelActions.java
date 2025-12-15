@@ -3,6 +3,8 @@ package de.minetrain.minechat.main;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
+
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
@@ -62,7 +64,23 @@ public class ChannelActions {
 //		twitchUser.join(); // Zocki disabled...
 	}
 
+	public void displayMessage(TwitchMessage message, ChannelChatMessageEvent event){
+		MessageComponentContent messageComponentContent = new MessageComponentContent(
+				null,
+				message.getMessage(),
+				null,
+				message);
 
+		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
+
+		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
+			addToViewPort(event);
+		}
+
+	}
+
+	/// @deprecated Use displayMessage(TwitchMessage message, ChannelChatMessageEvent event) instead
+	@Deprecated
 	public void displayMessage(TwitchMessage message){
 		MessageComponentContent messageComponentContent = new MessageComponentContent(
 				null,
@@ -103,6 +121,14 @@ public class ChannelActions {
 		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
 
 		addToViewPort(messageComponentContent);
+	}
+
+	private void addToViewPort(ChannelChatMessageEvent event){
+		Platform.runLater(() -> {
+			MessageComponent messageComponent = new MessageComponent();
+			messageComponent.applyMessage(event);
+			Main.messagePanel.getChildren().add(messageComponent);
+		});
 	}
 
 	private void addToViewPort(MessageComponentContent messageContent){

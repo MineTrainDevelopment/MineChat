@@ -102,11 +102,32 @@ public class TwitchListener {
 	@EventSubscriber
 	public void onChannelMessage(ChannelChatMessageEvent event) {
 		LOG.info("EventSub ChannelMessage: {} | {}", event.getChatterUserName(), event.getMessage().getText());
+		ChannelActions channel = Main.getChannelManager().getChannelActions(event.getBroadcasterUserId());
+		channel.getStatistics().addMessage(event.getChatterUserName(), event.getChatterUserId(),
+				event.getMessage().getText());
+		TwitchMessage twitchMessage = new TwitchMessage(event);
+
+		if (event.getChatterUserId().equals(TwitchHelper.getSelfUser().getUserId())) {
+			channel.getMessageHistory().addSendedMessages(event.getMessage().getText());
+			MessageManager.setLastMessage(event.getMessage().getText());
+			DatabaseManager.getOwnerCache().insert(twitchMessage);
+
+			// TODO unnecessary?
+//			ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getBroadcasterUserId());
+//			if (channelEmotes != null) {
+//				channelEmotes.setSubTier("tier" + event.getSubscriptionTier());
+//			}
+		}
+
+		channel.displayMessage(twitchMessage, event);
+		AutoReplyManager.recordMessage(twitchMessage);
 	}
 
 	/**
 	 * Handles the event when a message is sent in the channel and executes the command if the cooldown time has elapsed.
 	 * @param event The {@link ChannelMessageEvent} object containing information about the message.
+	 *
+	 * @deprecated Use {@link #onChannelMessage(ChannelChatMessageEvent)} instead.
 	 */
 	@EventSubscriber
 	@Deprecated

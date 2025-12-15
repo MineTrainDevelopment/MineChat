@@ -34,7 +34,7 @@ public class Emotes extends LockScope {
 			addToMap(setIdToEmotes, emote.getSetId(), emote, changedObjects);
 			emoteIdToEmote.put(emote.getEmoteId(), emote);
 			changedObjects.add(emoteIdToEmote);
-			persister.store(changedObjects);
+			persister.storeAll(changedObjects);
 		});
 	}
 
@@ -52,7 +52,7 @@ public class Emotes extends LockScope {
 			}
 			if (!changedObjects.isEmpty()) {
 				changedObjects.add(emoteIdToEmote);
-				persister.store(changedObjects);
+				persister.storeAll(changedObjects);
 			}
 		});
 	}

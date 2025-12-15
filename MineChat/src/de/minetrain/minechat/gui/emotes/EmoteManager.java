@@ -18,6 +18,7 @@ import javax.cache.spi.CachingProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.Emote;
@@ -29,6 +30,8 @@ public class EmoteManager {
 	public static final String PUBLIC_EMOTE_CHANNEL_ID = "ID_PUBLIC";
 
 	private static final Logger LOG = LoggerFactory.getLogger(EmoteManager.class);
+
+	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/{}/dark/1.0"; // id, format(static, animated)
 
 	private final Cache<String, Image> emoteImage1xCache;
 
@@ -87,8 +90,14 @@ public class EmoteManager {
 		return channelEmoteCache.get(setId);
 	}
 
-	public Image getEmoteImage1x(String emoteId) {
-		return emoteImage1xCache.get(emoteId);
+	public Image getEmoteImage1x(String emoteId, boolean animated) {
+		Image image = emoteImage1xCache.get(emoteId);
+		if (image == null) {
+			String url = MessageFormatter.basicArrayFormat(TWITCH_EMOTE_URL, new Object[] {emoteId, animated ? "animated" : "static"});
+			image = new Image(url, true);
+			emoteImage1xCache.put(emoteId, image);
+		}
+		return image;
 	}
 
 	//This used to load the emote autocompetion.

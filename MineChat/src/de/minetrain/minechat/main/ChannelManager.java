@@ -150,6 +150,7 @@ public class ChannelManager {
 
 		Channel newChannel = createChannelFromTwitchUser(channel);
 		getChannels().addChannel(newChannel);
+		TwitchHelper.joinChannel(newChannel.getChannelId());
 
 		ArrayList<String> list = new ArrayList<>();
 		DatabaseManager.getEmote().insertChannel(channelId, "tier0", list, list, list, list, list);

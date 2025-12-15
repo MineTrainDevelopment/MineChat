@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,10 +87,6 @@ public record MessageComponentContent(
 		}
 
 		return twitchMessage.getEmoteSet();
-	}
-
-	public Set<String> getEmoteSets(){
-		return twitchMessage != null ? twitchMessage.getEmoteSets() : Set.of();
 	}
 
 	public boolean isEmoteOnly(){

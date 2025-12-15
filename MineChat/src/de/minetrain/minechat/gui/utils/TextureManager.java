@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +53,7 @@ public class TextureManager {
 	public static final Path PATH_BASE = Path.of("data", "texture");
 	public static final Path PATH_BADGES = PATH_BASE.resolve("badges");
 	public static final Path PATH_ICONS = PATH_BASE.resolve("Icons");
+	public static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/{}/dark/1.0"; // id, format(static, animated)
 	public static final String texturePath = "data/texture/";
 	public static final String badgePath = texturePath + "badges/";
 	public static final String profilePicPath = "data/texture/Icons/{ID}/profile_{SIZE}.png";
@@ -298,7 +301,7 @@ public class TextureManager {
 			downloadDefaultBadges();
 		}
 
-		if(!DatabaseManager.getEmote().isPublicEmotesInstald()){
+		if (EclipseStoreKeeper.root().emotes().getEmotesByChannelId("public").isEmpty()) {
 			downloadDefaultEmotes();
 		}
 	}
@@ -427,7 +430,10 @@ public class TextureManager {
 
 	private static void downloadDefaultEmotes() {
 		TwitchHelper.requestGlobalEmotes()
-			.thenAcceptAsync(TextureManager::downloadDefaultEmotes)
+			.thenAcceptAsync(emotes -> {
+				downloadEmotes(emotes, "public");
+				downloadDefaultEmotes(emotes);
+			})
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading default badges", e);
@@ -464,13 +470,20 @@ public class TextureManager {
 	private static void downloadEmotes(List<com.github.twitch4j.helix.domain.Emote> emotes, String channelId) {
 		List<Emote> newEmotes = new ArrayList<>(emotes.size());
 		for (var twitchEmote : emotes) {
-			EmoteType type = EmoteType.get(twitchEmote.getEmoteType(), twitchEmote.getTier().ordinalName());
+			LOG.info("{} - Downloading emote: {}", channelId, twitchEmote);
+			EmoteType type = twitchEmote.getEmoteType() == null || twitchEmote.getTier() == null ? null : EmoteType.get(twitchEmote.getEmoteType(), twitchEmote.getTier().ordinalName());
 			boolean animated = twitchEmote.getFormat().contains(Format.ANIMATED);
 			String fileFormat = animated ? "gif" : "png";
 			try {
 				byte[] image1x = downloadImageData(twitchEmote.getImages().getSmallImageUrl());
 				byte[] image2x = downloadImageData(twitchEmote.getImages().getMediumImageUrl());
 				byte[] image3x = downloadImageData(twitchEmote.getImages().getLargeImageUrl());
+
+				if (animated) {
+					image1x = reformatGif(image1x);
+					image2x = reformatGif(image2x);
+					image3x = reformatGif(image3x);
+				}
 
 				Emote emote = new Emote(twitchEmote.getId(), twitchEmote.getEmoteSetId(), channelId,
 						twitchEmote.getName(), type, false, animated, fileFormat, image1x, image2x, image3x);
@@ -538,6 +551,7 @@ public class TextureManager {
 		DatabaseManager.getEmote().getAllChannels();
 	}
 
+	@Deprecated
 	private static void downloadDefaultEmotes(List<com.github.twitch4j.helix.domain.Emote> emotes) {
 		Path channelPath = PATH_ICONS.resolve("default");
 
@@ -648,26 +662,26 @@ public class TextureManager {
 		return scaledImage;
 	}
 
-	@Deprecated
-	private static void reformatGif(String origin, String destination) {
-		try {
-			GifDecoder decoder = new GifDecoder();
-			decoder.read(origin);
+	/// Re-encodes the GIF to ensure infinite looping and proper transparency handling.
+	///
+	/// @param imageData The original GIF image data.
+	/// @return The reformatted GIF image data.
+	private static byte[] reformatGif(byte[] imageData) {
+		GifDecoder decoder = new GifDecoder();
+		decoder.read(new ByteArrayInputStream(imageData));
 
-			GifEncoder encoder = new GifEncoder();
-			encoder.setRepeat(true);
-			encoder.setTransparent();
-			encoder.start(destination);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		GifEncoder encoder = new GifEncoder();
+		encoder.setRepeat(true);
+		encoder.setTransparent();
+		encoder.start(outputStream);
 
-			encoder.setSize(decoder.getFrameSize());
-			for (int i = 0; i < decoder.getFrameCount(); i++) {
-				encoder.addFrame(decoder.getFrame(i), decoder.getDelay(i));
-			}
-
-			encoder.finish();
-		} catch (Exception ex) {
-			LOG.warn("Unable to reformat gif! \nOrigin: "+origin+"\nDestination: "+destination, ex);
+		encoder.setSize(decoder.getFrameSize());
+		for (int i = 0; i < decoder.getFrameCount(); i++) {
+			encoder.addFrame(decoder.getFrame(i), decoder.getDelay(i));
 		}
-	}
 
+		encoder.finish();
+		return outputStream.toByteArray();
+	}
 }
