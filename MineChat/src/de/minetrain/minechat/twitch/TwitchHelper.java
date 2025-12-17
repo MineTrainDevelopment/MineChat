@@ -9,7 +9,7 @@ import com.github.twitch4j.helix.domain.Emote;
 
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 /**
  * A helper class for interacting with Twitch.
@@ -35,7 +35,7 @@ public final class TwitchHelper {
 		TwitchManager.instance().leaveAllChannel();
 	}
 
-	public static void sendMessage(ChatMessage message) {
+	public static void sendMessage(OutboundChatMessage message) {
 		TwitchManager.instance().sendMessage(message);
 	}
 

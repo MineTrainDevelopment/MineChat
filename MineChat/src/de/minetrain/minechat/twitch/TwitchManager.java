@@ -45,7 +45,7 @@ import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 import de.minetrain.minechat.utils.events.MineChatEventType;
 import io.github.bucket4j.Bandwidth;
 
@@ -137,7 +137,7 @@ public class TwitchManager {
 	 * @param channel The name of the Twitch channel to send the message to.
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
-	public void sendMessage(ChatMessage message) {
+	public void sendMessage(OutboundChatMessage message) {
 		message.displayMessage();
 
 		if (message.getChannel().replyMessage != null) {
@@ -436,7 +436,7 @@ public class TwitchManager {
 	 * @param event The {@link ChannelMessageEvent} containing information about the chat channel and user.
 	 * @param message The message to be sent to the Twitch chat channel.
 	 */
-	private void replyMessage(ChatMessage message) {
+	private void replyMessage(OutboundChatMessage message) {
 		TwitchMessage replyMessage = message.getChannel().replyMessage;
 		twitch.getChat().sendMessage(message.getChannel().getChannel().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
 		message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());

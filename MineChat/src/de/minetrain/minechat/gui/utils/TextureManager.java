@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 import com.fmsware.gif.GifDecoder;
 import com.fmsware.gif.GifEncoder;
@@ -36,12 +37,9 @@ import com.github.twitch4j.helix.domain.Emote.Format;
 import com.google.gson.Gson;
 
 import de.minetrain.minechat.config.YamlManager;
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Emote;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteType;
-import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.emotes.EmoteType;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.BttvEmote;
 import de.minetrain.minechat.twitch.obj.BttvUser;
@@ -54,6 +52,7 @@ public class TextureManager {
 	public static final Path PATH_BADGES = PATH_BASE.resolve("badges");
 	public static final Path PATH_ICONS = PATH_BASE.resolve("Icons");
 	public static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/{}/dark/1.0"; // id, format(static, animated)
+	public static final String BTTV_EMOTE_URL = "https://cdn.betterttv.net/emote/{}/{}x"; // id, scale (1, 2, 3)
 	public static final String texturePath = "data/texture/";
 	public static final String badgePath = texturePath + "badges/";
 	public static final String profilePicPath = "data/texture/Icons/{ID}/profile_{SIZE}.png";
@@ -333,14 +332,13 @@ public class TextureManager {
 	}
 
 	public static void downloadChannelEmotes(String userId) {
-		TwitchHelper.requestChannelEmotes(userId).thenAcceptAsync(emotes -> {
-			downloadEmotes(emotes, userId);
-			downloadEmotesLegacy(emotes, userId);
-		}).handle((_, e) -> {
-			if (e != null) {
-				LOG.error("Error while downloading channel emotes for user ID: {}", userId, e);
-			}
-			return null;
+		TwitchHelper.requestChannelEmotes(userId)
+			.thenAcceptAsync(emotes -> downloadEmotes(emotes, userId))
+			.handle((_, e) -> {
+				if (e != null) {
+					LOG.error("Error while downloading channel emotes for user ID: {}", userId, e);
+				}
+				return null;
 		});
 	}
 
@@ -352,7 +350,7 @@ public class TextureManager {
 					.header("user-agent", "MineChat Client")
 					.GET()
 					.build();
-				HttpResponse<String> response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 				if (response.statusCode() != 200) {
 					throw new IllegalStateException("Failed to fetch BTTV emotes, status code: " + response.statusCode());
 				}
@@ -430,10 +428,7 @@ public class TextureManager {
 
 	private static void downloadDefaultEmotes() {
 		TwitchHelper.requestGlobalEmotes()
-			.thenAcceptAsync(emotes -> {
-				downloadEmotes(emotes, "public");
-				downloadDefaultEmotes(emotes);
-			})
+			.thenAcceptAsync(emotes -> downloadEmotes(emotes, "public"))
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading default badges", e);
@@ -485,8 +480,8 @@ public class TextureManager {
 					image3x = reformatGif(image3x);
 				}
 
-				Emote emote = new Emote(twitchEmote.getId(), twitchEmote.getEmoteSetId(), channelId,
-						twitchEmote.getName(), type, false, animated, fileFormat, image1x, image2x, image3x);
+				Emote emote = new Emote(twitchEmote.getId(), channelId, twitchEmote.getName(), type, false, animated,
+						fileFormat, image1x, image2x, image3x);
 				newEmotes.add(emote);
 			} catch (IOException e) {
 				LOG.error("Error downloading emote images for emote '{}' in channel ID: {}", twitchEmote.getName(), channelId, e);
@@ -495,125 +490,25 @@ public class TextureManager {
 		EclipseStoreKeeper.root().emotes().addEmotes(newEmotes);
 	}
 
-	@Deprecated
-	private static void downloadEmotesLegacy(List<com.github.twitch4j.helix.domain.Emote> emotes, String channelId) {
-		ArrayList<String> tier1 = new ArrayList<>();
-		ArrayList<String> tier2 = new ArrayList<>();
-		ArrayList<String> tier3 = new ArrayList<>();
-		ArrayList<String> follower = new ArrayList<>();
-		ArrayList<String> bits = new ArrayList<>();
-		Path channelPath = PATH_ICONS.resolve(channelId);
-
-		for (var emote : emotes) {
-			switch (emote.getTier()) {
-				case TIER1 -> tier1.add(emote.getId());
-				case TIER2 ->tier2.add(emote.getId());
-				case TIER3 -> tier3.add(emote.getId());
-				default -> {
-					String type = emote.getEmoteType();
-					if (type.startsWith("bitstier")) {
-						bits.add(emote.getId());
-					} else if (type.startsWith("follower")) {
-						follower.add(emote.getId());
-					}
-				}
-			}
-
-			boolean isFavorite = false;
-			EmoteLegacy emoteByName = EmoteManager.getEmoteByName(emote.getName());
-			if (emoteByName != null) {
-				isFavorite = emoteByName.isFavorite();
-			}
-
-			boolean animated = emote.getFormat().contains(Format.ANIMATED);
-			String fileFormat = animated ? "gif" : "png";
-			Path targetPath = channelPath.resolve(emote.getId());
-			DatabaseManager.getEmote().insert(emote.getId(), emote.getName(), false, isFavorite, emote.getEmoteType(), emote.getTier().ordinalName(),
-					fileFormat, animated, targetPath.resolve(emote.getId() + "_1." + fileFormat).toString());
-
+	private static void downloadBttvEmotes(List<BttvEmote> emotes, String channelId){
+		List<Emote> newEmotes = new ArrayList<>(emotes.size());
+		for (var bttvEmote : emotes) {
+			LOG.info("{} - Downloading bttv emote: {}", channelId, bttvEmote);
 			try {
-				downloadImage(emote.getImages().getSmallImageUrl(), targetPath.resolve(emote.getId() + "_1." + fileFormat));
-				downloadImage(emote.getImages().getMediumImageUrl(), targetPath.resolve(emote.getId() + "_2." + fileFormat));
-				downloadImage(emote.getImages().getLargeImageUrl(), targetPath.resolve(emote.getId() + "_3." + fileFormat));
-
-//				TextureManager.mergeEmoteImages(fileLocation, emoteID+"_1"+fileFormat, "emoteBorder"+borderImageTyp+".png", fileFormat);
-			} catch (IOException e) {
-				LOG.error("Error downloading channel emote '{}' for channel ID: {}", emote.getName(), channelId, e);
-			}
-		}
-
-		String tierlevel = EmoteManager.getChannelEmotes().containsKey(channelId)
-				? EmoteManager.getChannelEmotes(channelId).getSubLevel()
-				: "tier0";
-		DatabaseManager.getEmote().insertChannel(channelId, tierlevel, tier1, tier2, tier3, bits, follower);
-		DatabaseManager.commit();
-		DatabaseManager.getEmote().getAll();
-		DatabaseManager.getEmote().getAllChannels();
-	}
-
-	@Deprecated
-	private static void downloadDefaultEmotes(List<com.github.twitch4j.helix.domain.Emote> emotes) {
-		Path channelPath = PATH_ICONS.resolve("default");
-
-		for (var emote : emotes) {
-			boolean isFavorite = false;
-			EmoteLegacy emoteByName = EmoteManager.getEmoteByName(emote.getName());
-			if (emoteByName != null) {
-				isFavorite = emoteByName.isFavorite();
-			}
-
-			boolean animated = emote.getFormat().contains(Format.ANIMATED);
-			String fileFormat = animated ? "gif" : "png";
-			Path targetPath = channelPath.resolve(emote.getId());
-			DatabaseManager.getEmote().insert(emote.getId(), emote.getName(), true, isFavorite, "default", null,
-					fileFormat, animated, targetPath.resolve(emote.getId() + "_1." + fileFormat).toString());
-
-			try {
-				downloadImage(emote.getImages().getSmallImageUrl(), targetPath.resolve(emote.getId() + "_1." + fileFormat));
-				downloadImage(emote.getImages().getMediumImageUrl(), targetPath.resolve(emote.getId() + "_2." + fileFormat));
-				downloadImage(emote.getImages().getLargeImageUrl(), targetPath.resolve(emote.getId() + "_3." + fileFormat));
-			} catch (IOException e) {
-				LOG.error("Error downloading global emote '{}'", emote.getName(), e);
-			}
-
-		}
-
-		DatabaseManager.commit();
-		DatabaseManager.getEmote().getAll();
-	}
-
-	private static void downloadBttvEmotes(List<BttvEmote> emotes, String userId) {
-		Path channelPath = PATH_ICONS.resolve("bttv");
-		ArrayList<String> emoteIDs = new ArrayList<>(emotes.size());
-
-		for (var emote : emotes) {
-			emoteIDs.add(emote.getId());
-
-			boolean isFavorite = false;
-			EmoteLegacy emoteByName = EmoteManager.getEmoteByName(emote.getCode());
-			if (emoteByName != null) {
-				isFavorite = emoteByName.isFavorite();
-			}
-
-			Path targetPath = channelPath.resolve(emote.getId());
-			DatabaseManager.getEmote().insert(emote.getId(), emote. getCode(), false, isFavorite, "bttv", null,
-					emote.getImageType(), emote.isAnimated(), targetPath.resolve(emote.getId() + "_1." + emote.getImageType()).toString());
-
-			try {
+				byte[][] images = new byte[3][];
 				for (int scale = 1; scale <= 3; scale++) {
-					String imageUrl = "https://cdn.betterttv.net/emote/" + emote.getId() + "/" + scale + "x";
-					downloadImage(imageUrl, targetPath.resolve(emote.getId() + "_" + scale + "." + emote.getImageType()));
+					String imageUrl = MessageFormatter.basicArrayFormat(BTTV_EMOTE_URL, new Object[] { bttvEmote.getId(), scale });
+					images[scale - 1] = bttvEmote.isAnimated() ? reformatGif(downloadImageData(imageUrl)) : downloadImageData(imageUrl);
 				}
+
+				Emote emote = new Emote(bttvEmote.getId(), channelId, bttvEmote.getCode(), EmoteType.BTTV, false,
+						bttvEmote.isAnimated(), bttvEmote.getImageType(), images[0], images[1], images[2]);
+				newEmotes.add(emote);
 			} catch (IOException e) {
-				LOG.error("Error downloading bttv emote '{}'", emote.getCode(), e);
+				LOG.error("Error downloading emote images for emote '{}' in channel ID: {}", bttvEmote.getCode(), channelId, e);
 			}
-
 		}
-
-		DatabaseManager.getEmote().insertChannelBttv(userId, emoteIDs);
-		DatabaseManager.commit();
-		DatabaseManager.getEmote().getAll();
-		DatabaseManager.getEmote().getAllChannels();
+		EclipseStoreKeeper.root().emotes().addEmotes(newEmotes);
 	}
 
 	private static void downloadImage(String url, Path target) throws IOException {

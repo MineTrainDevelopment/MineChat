@@ -28,14 +28,14 @@ import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
-public class ChatMessage {
-	private static final Logger logger = LoggerFactory.getLogger(ChatMessage.class);
+public class OutboundChatMessage {
+	private static final Logger logger = LoggerFactory.getLogger(OutboundChatMessage.class);
 	private final String message;
 	private final String messageRaw;
 	private final String senderNamem;
 	private final ChannelActions channel;
 
-	public ChatMessage(ChannelActions channel, String senderNamem, String message) {
+	public OutboundChatMessage(ChannelActions channel, String senderNamem, String message) {
 		this.channel = channel;
 		this.messageRaw = message;
 		this.senderNamem = senderNamem;

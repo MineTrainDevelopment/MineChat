@@ -15,7 +15,7 @@ import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.utils.CallCounter;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 /**
  * The AsyncMessageHandler class handles asynchronous message processing.
@@ -28,7 +28,7 @@ import de.minetrain.minechat.utils.ChatMessage;
  */
 public class AsyncMessageHandler {
 	private static final Logger logger = LoggerFactory.getLogger(AsyncMessageHandler.class); //system logger
-	private BlockingQueue<ChatMessage> messageQueue; //The message queue to store the incoming messages.
+	private BlockingQueue<OutboundChatMessage> messageQueue; //The message queue to store the incoming messages.
     private ScheduledExecutorService executorService; //The executor service responsible for scheduling and executing message sending tasks.
     private final long defaultDelayMilliseconds = 1500; //The default time between messages.
     private final long messageDelayMilliseconds; //The time between messages.
@@ -65,7 +65,7 @@ public class AsyncMessageHandler {
      * Adds a new message to the message queue and updates the message count.
      * @param message The message to be added to the queue.
      */
-    public void addMessage(ChatMessage message) {
+    public void addMessage(OutboundChatMessage message) {
         messageQueue.offer(message);
         messageCount++;
         MessageManager.updateQueueButton();
@@ -96,7 +96,7 @@ public class AsyncMessageHandler {
      */
     private void sendMessage() {
         if (!messageQueue.isEmpty()) {
-            ChatMessage chatMessage = messageQueue.poll();
+            OutboundChatMessage chatMessage = messageQueue.poll();
 
             messageCount--;
             MessageManager.updateQueueButton();

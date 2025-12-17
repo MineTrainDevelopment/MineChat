@@ -12,10 +12,8 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.twitch4j.eventsub.domain.chat.Emote.Format;
-import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
-
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
@@ -26,8 +24,6 @@ import de.minetrain.minechat.utils.MineTextFlow;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -38,29 +34,29 @@ public class MessageComponent extends StackPane {
 	private boolean isEmoteOnly = true;
 
 
-	private final MineTextFlow title;
+	private final MineTextFlow titleFlow;
 	private final BorderPane content;
-	private final MineTextFlow message;
+	private final MineTextFlow messageFlow;
 
 	static long callCount = 0;
 
 	public MessageComponent() {
 		setId("message-comp-border");
 
-		title = new MineTextFlow(20);
-		title.setId("message-comp-title");
-		Pane titlePane = new Pane(title);
+		titleFlow = new MineTextFlow(20);
+		titleFlow.setId("message-comp-title");
+		Pane titlePane = new Pane(titleFlow);
 		titlePane.setId("message-comp-title-pane");
 		StackPane.setAlignment(titlePane, Pos.TOP_LEFT);
 
-		message = new MineTextFlow(16d);
-		message.setStyle("-fx-padding: 0 5 0 5;");
+		messageFlow = new MineTextFlow(16d);
+		messageFlow.setStyle("-fx-padding: 0 5 0 5;");
 		content = new BorderPane();
 		content.setId("message-comp-background");
 		content.setLeft(createWaveButton());
-		content.setCenter(message);
+		content.setCenter(messageFlow);
 
-		getChildren().addAll(createReplyButton(), titlePane, content);
+		getChildren().addAll(titlePane, content, createReplyButton());
 	}
 
 	public MessageComponent(ChannelActions channel, MessageComponentContent messageContent) {
@@ -76,10 +72,10 @@ public class MessageComponent extends StackPane {
 		TwitchMessage twitchMessage = messageContent.twitchMessage();
 
 		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
-			twitchMessage.getBadges().forEach(badge -> title.appendImage(badge).appendSpace());
+			twitchMessage.getBadges().forEach(badge -> titleFlow.appendImage(badge).appendSpace());
 		}
 
-		title.appendString(messageContent.getUserName(), messageContent.getUserColor()).appendString(": ", 20, Color.WHITE);
+		titleFlow.appendString(messageContent.getUserName(), messageContent.getUserColor()).appendString(": ", 20, Color.WHITE);
 
 
 		formatText(messageContent, channel.getChannelId());
@@ -109,7 +105,7 @@ public class MessageComponent extends StackPane {
 			if(twitchMessage.isFirstMessage() && Settings.highlightUserFirstMessages.isActive()){
 				content.setStyle("-fx-background-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
 				setStyle("-fx-border-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
-				title.appendString("  -  First MSG");
+				titleFlow.appendString("  -  First MSG");
 			}
         }
 
@@ -119,42 +115,22 @@ public class MessageComponent extends StackPane {
         System.err.println(Instant.now().toEpochMilli()-lastCall+".ms - "+callCount);
     }
 
-	public void applyMessage(ChannelChatMessageEvent event) {
-		String color = event.getColor();
+	public void applyMessage(ChatMessage message) {
+		String color = message.getSenderColor();
 		if (StringUtils.isBlank(color)) {
 			color = "#ffffff";
 		}
-		title.appendString(event.getChatterUserName(), ColorManager.decode(color, ColorManager.encode(ColorManager.GUI_BACKGROUND))).appendString(": ", 20, Color.WHITE);
+		titleFlow.appendString(message.getSenderName(), ColorManager.decode(color, ColorManager.encode(ColorManager.GUI_BACKGROUND))).appendString(": ", 20, Color.WHITE);
 
-		Instant messageCreated = Instant.now(); // TODO provide message time
+		Instant messageCreated = message.getTimestamp();
 		DateTimeFormatter selectDateTimeFormatter = selectDateTimeFormatter(messageCreated);
-		message.appendString("[" + selectDateTimeFormatter.format(messageCreated.atZone(ZoneId.systemDefault())) + "] ");
+		messageFlow.appendString("[" + selectDateTimeFormatter.format(messageCreated.atZone(ZoneId.systemDefault())) + "] ");
 
-		event.getMessage().getFragments().forEach(fragment -> {
-			switch (fragment.getType()) {
-				case TEXT -> message.appendString(fragment.getText() + " "); // handle url and bttv
-				case EMOTE -> {
-					Image emote = Main.getEmoteManager().getEmoteImage1x(fragment.getEmote().getId(), fragment.getEmote().getFormat().contains(Format.ANIMATED));
-					if (emote == null) {
-						message.appendString(fragment.getText() + " ");
-					} else {
-						ImageView iv = new ImageView(emote) {
-
-							@Override
-							public double getBaselineOffset() {
-								return getImage().getHeight() * 0.75;
-							}
-						};
-						message.appendImage(iv).appendSpace();
-					}
-				}
-				default -> message.appendString(fragment.getText() + " ");
-			}
-		});
+		message.getTokens().forEach(messageFlow::appendToken);
 	}
 
 	private void formatText(MessageComponentContent messageContent, String channelId){
-		message.appendString("["+getTimeStamp(messageContent)+"] ");
+		messageFlow.appendString("["+getTimeStamp(messageContent)+"] ");
 
 		// Cache to prevent unnecessary CPU cycles.
 		Map<String, Emote> emotes = Map.of(); // No emotes for now
@@ -163,14 +139,14 @@ public class MessageComponent extends StackPane {
 		for (String word : messageContent.getMessage().split(" ")) {
 			Emote emote = emotes.get(word);
 			if (emote != null) {
-				message.appendEmote(emote);
-				message.appendSpace();
+				messageFlow.appendEmote(emote);
+				messageFlow.appendSpace();
 				continue;
 			}
 
 			isEmoteOnly = false;
 			if(word.contains(".") && !word.endsWith(".") && Main.isValidImageURL(word)){
-				message.appendHyperLink(word);
+				messageFlow.appendHyperLink(word);
 				continue;
 			}
 
@@ -179,22 +155,22 @@ public class MessageComponent extends StackPane {
 				.filter(hs -> hs.getPattern().matcher(word).matches())
 				.findFirst();
 			if (matchingHighlight.isPresent()) {
-				message.appendString(word + " ", matchingHighlight.get().getWordColor());
+				messageFlow.appendString(word + " ", matchingHighlight.get().getWordColor());
 				if (this.highlight == null) {
 					this.highlight = matchingHighlight.get();
 				}
 				continue;
 			}
-			message.appendString(word + " ");
+			messageFlow.appendString(word + " ");
 		}
 	}
-
 
 	private Button createReplyButton() {
 		Button replyButton = new Button();
 		replyButton.setPrefSize(28, 28);
 		BorderPane.setAlignment(replyButton, Pos.CENTER);
 		StackPane.setAlignment(replyButton, Pos.TOP_RIGHT);
+		replyButton.setVisible(false);
 		hoverProperty().addListener((ChangeListener<Boolean>) (_, _, newValue) -> replyButton.setVisible(newValue));
 		// TODO set action
 		return replyButton;

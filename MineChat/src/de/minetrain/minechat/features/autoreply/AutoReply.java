@@ -15,7 +15,7 @@ import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.CallCounter;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 public class AutoReply {
 	private final String uuid;
@@ -76,7 +76,7 @@ public class AutoReply {
 		messageCounter.clear();
 
 		ChannelActions channelActions = Main.getChannelManager().getChannelActions(channelId);
-		ChatMessage chatMessage = new ChatMessage(channelActions, TwitchManager.ownerChannelName, getOutput());
+		OutboundChatMessage chatMessage = new OutboundChatMessage(channelActions, TwitchManager.ownerChannelName, getOutput());
 		if (isChatReply()) {
 			channelActions.replyMessage = message;
 		}

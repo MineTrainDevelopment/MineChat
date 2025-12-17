@@ -3,7 +3,7 @@ package de.minetrain.minechat.utils.events;
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 abstract class EventListener implements MineChatEvents{
 
@@ -14,7 +14,7 @@ abstract class EventListener implements MineChatEvents{
 	public void onMessageHighliteEvent(MessageComponentContent content){}
 	
 	@Override
-	public void onSentMessageEvent(ChatMessage message){}
+	public void onSentMessageEvent(OutboundChatMessage message){}
 	
 	@Override
 	public void onExecuteMacroEvent(MacroObject macro){}

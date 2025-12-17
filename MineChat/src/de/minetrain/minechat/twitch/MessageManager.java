@@ -12,7 +12,7 @@ import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 
 /**
@@ -68,7 +68,7 @@ public class MessageManager {
     	}
 
     	if(channel.isModerator()){
-            getModeratorMessageHandler().addMessage(new ChatMessage(channel, TwitchManager.ownerChannelName, message));
+            getModeratorMessageHandler().addMessage(new OutboundChatMessage(channel, TwitchManager.ownerChannelName, message));
     	}else{
     		sendDelayedMessage(channel, message);
     	}
@@ -94,7 +94,7 @@ public class MessageManager {
         lastMessage = message;
         lastSentTime = now;
 
-        getDefaultMessageHandler().addMessage(new ChatMessage(channel, TwitchManager.ownerChannelName, message));
+        getDefaultMessageHandler().addMessage(new OutboundChatMessage(channel, TwitchManager.ownerChannelName, message));
     }
 
 

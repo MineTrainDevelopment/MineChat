@@ -1,5 +1,8 @@
 package de.minetrain.minechat.twitch;
 
+import java.time.Instant;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,10 @@ import com.github.twitch4j.chat.events.channel.UserTimeoutEvent;
 import com.github.twitch4j.chat.events.roomstate.SlowModeEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
+import com.github.twitch4j.eventsub.domain.chat.Badge;
+import com.github.twitch4j.eventsub.domain.chat.Emote.Format;
+import com.github.twitch4j.eventsub.domain.chat.Fragment;
+import com.github.twitch4j.eventsub.domain.chat.Reply;
 import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
@@ -30,12 +37,18 @@ import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.ChatMessage;
+import de.minetrain.minechat.data.objectdata.ChatMessage.MessageType;
+import de.minetrain.minechat.data.objectdata.ChatMessageToken;
+import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.utils.WebUtils;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 import de.minetrain.minechat.utils.events.MineChatEventType;
@@ -103,8 +116,7 @@ public class TwitchListener {
 	public void onChannelMessage(ChannelChatMessageEvent event) {
 		LOG.info("EventSub ChannelMessage: {} | {}", event.getChatterUserName(), event.getMessage().getText());
 		ChannelActions channel = Main.getChannelManager().getChannelActions(event.getBroadcasterUserId());
-		channel.getStatistics().addMessage(event.getChatterUserName(), event.getChatterUserId(),
-				event.getMessage().getText());
+		channel.getStatistics().addMessage(event.getChatterUserName(), event.getChatterUserId(), event.getMessage().getText());
 		TwitchMessage twitchMessage = new TwitchMessage(event);
 
 		if (event.getChatterUserId().equals(TwitchHelper.getSelfUser().getUserId())) {
@@ -119,8 +131,50 @@ public class TwitchListener {
 //			}
 		}
 
-		channel.displayMessage(twitchMessage, event);
+		ChatMessage chatMessage = createChatMessage(event);
+		EclipseStoreKeeper.root().messages().addMessage(chatMessage);
+		channel.displayMessage(chatMessage);
+
 		AutoReplyManager.recordMessage(twitchMessage);
+	}
+
+	private static ChatMessage createChatMessage(ChannelChatMessageEvent event) {
+		ChatMessageToken[] tokens = event.getMessage().getFragments().stream().map(fragment -> createChatMessageToken(event.getBroadcasterUserId(), fragment)).toArray(ChatMessageToken[]::new);
+		String[] badges = event.getBadges().stream().map(Badge::getId).toArray(String[]::new);
+		Reply reply = event.getReply();
+
+		return new ChatMessage(
+				event.getMessageId(),
+				event.getBroadcasterUserId(),
+				event.getChatterUserId(),
+				event.getChatterUserName(),
+				event.getColor(),
+				Instant.now(),
+				reply != null ? reply.getParentMessageId() : null,
+				event.getMessageType() == com.github.twitch4j.eventsub.domain.chat.MessageType.CHANNEL_POINTS_HIGHLIGHTED ? MessageType.HIGHLIGHTED : MessageType.TEXT,
+				tokens,
+				badges
+		);
+	}
+
+	private static ChatMessageToken createChatMessageToken(String channelId, Fragment fragment) {
+		return switch (fragment.getType()) {
+			case EMOTE -> ChatMessageToken.createEmoteToken(fragment.getEmote().getId(), fragment.getEmote().getFormat().contains(Format.ANIMATED), fragment.getText());
+			case MENTION -> ChatMessageToken.createMentionToken(fragment.getText());
+			default ->  {
+				String text = fragment.getText();
+				if (WebUtils.isValidUrl(text)) {
+					yield ChatMessageToken.createLinkToken(text);
+				}
+				if (StringUtils.isAlphanumeric(text)) {
+					Emote emote = Main.getEmoteManager().getBttvEmoteByName(channelId, text);
+					if (emote != null) {
+						yield ChatMessageToken.createEmoteToken(emote.getEmoteId(), emote.isAnimated(), text);
+					}
+				}
+				yield ChatMessageToken.createTextToken(text);
+			}
+		};
 	}
 
 	/**
@@ -162,7 +216,7 @@ public class TwitchListener {
 //					Settings.highlightUserFirstMessages.getColor(), getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
 		}
 
-		channel.displayMessage(twitchMessage);
+//		channel.displayMessage(twitchMessage);
 		AutoReplyManager.recordMessage(twitchMessage);
 	}
 

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
-import de.minetrain.minechat.utils.ChatMessage;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 public enum MineChatEventType{
 	INCOMING_MESSAGE {
@@ -35,12 +35,12 @@ public enum MineChatEventType{
 	SENT_MESSAGE {
 		@Override
 		public void fireEvent(MineChatEvents event, Object obj) {
-			if(!(obj instanceof ChatMessage)){
-				throwFireError("Can´t fire onSentMessageEvent!", obj, ChatMessage.class);
+			if(!(obj instanceof OutboundChatMessage)){
+				throwFireError("Can´t fire onSentMessageEvent!", obj, OutboundChatMessage.class);
 				return;
 			}
 			
-			event.onSentMessageEvent((ChatMessage) obj);
+			event.onSentMessageEvent((OutboundChatMessage) obj);
 		}
 	},
 	

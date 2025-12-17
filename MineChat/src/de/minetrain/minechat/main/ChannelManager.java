@@ -2,7 +2,6 @@ package de.minetrain.minechat.main;
 
 import static java.util.function.Predicate.not;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.Channels;
@@ -31,12 +29,12 @@ public class ChannelManager {
 	private String activeChannelId;
 
 	public void init() {
-		// Migrate existing channels from SQLite to Eclipse Store
-		if (EclipseStoreKeeper.root().channels().size() == 0) {
-			EclipseStoreKeeper.root().channels().addChannels(DatabaseManager.getChannel().getAllChannels().values());
-		}
 		validateUserLogins().join();
 		getAllChannels().forEach(channel -> TwitchHelper.joinChannel(channel.getChannelId()));
+
+		if (getAllChannels().isEmpty()) {
+			addChannel(TwitchHelper.getSelfUser().getUserId());
+		}
 	}
 
 	public String getActiveChanneldId() {
@@ -99,10 +97,6 @@ public class ChannelManager {
 		return channels.values().stream().toList();
 	}
 
-	public void joinChannel(String channelId) {
-		TwitchHelper.joinChannel(getChannel(channelId).getLoginName());
-	}
-
 	/// Validates and updates the login names of all persisted channels.
 	/// Therefore fetches the latest user information from Twitch and updates the login names accordingly.
 	///
@@ -152,13 +146,9 @@ public class ChannelManager {
 		getChannels().addChannel(newChannel);
 		TwitchHelper.joinChannel(newChannel.getChannelId());
 
-		ArrayList<String> list = new ArrayList<>();
-		DatabaseManager.getEmote().insertChannel(channelId, "tier0", list, list, list, list, list);
 		TextureManager.downloadChannelEmotes(channelId);
 		TextureManager.downloadBttvEmotes(channelId);
 		TextureManager.downloadChannelBadges(channelId);
-		DatabaseManager.getEmote().getAllChannels();
-		DatabaseManager.commit();
 		return newChannel;
 	}
 }

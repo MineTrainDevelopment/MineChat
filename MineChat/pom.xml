@@ -94,5 +94,10 @@
 			<artifactId>cache</artifactId>
 			<version>${eclipse.store.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.10.1</version>
+		</dependency>
 	</dependencies>
 </project>

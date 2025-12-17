@@ -20,9 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.objectdata.Emote;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteType;
 import javafx.scene.image.Image;
 
 public class EmoteManager {
@@ -35,10 +33,7 @@ public class EmoteManager {
 
 	private final Cache<String, Image> emoteImage1xCache;
 
-	private final Cache<String, Map<String, Emote>> channelEmoteCache;
-
-	private final Cache<String, Map<String, Emote>> setEmoteCache;
-
+	private final Cache<String, Map<String, Emote>> channelIdBttvNameToEmoteCache;
 
 	/**emoteId, emoteName*/
 	private static final HashMap<String, String> emoteIdToName = new HashMap<>();
@@ -50,12 +45,6 @@ public class EmoteManager {
 	private static final HashMap<String, ChannelEmotes> channelEmotes = new HashMap<>();
 
 	public EmoteManager() {
-		LOG.info("Initiating EmoteManager");
-		DatabaseManager.getEmote().getAll();
-		DatabaseManager.getEmote().getAllChannels();
-//		load();
-		LOG.info("Emotes loaded...");
-
 		CachingProvider cachingProvider = Caching.getCachingProvider();
 		CacheManager cacheManager = cachingProvider.getCacheManager();
 		MutableConfiguration<String,Image> image1xConfig = new MutableConfiguration<String, Image>()
@@ -65,29 +54,13 @@ public class EmoteManager {
 			.setReadThrough(true);
 		emoteImage1xCache = cacheManager.createCache("emoteImageCacheSmall", image1xConfig);
 
-		MutableConfiguration<String, Map<String, Emote>> channelEmoteConfig = new MutableConfiguration<String, Map<String, Emote>>()
+		MutableConfiguration<String, Map<String, Emote>> channelIdBttvNameToEmoteConfig = new MutableConfiguration<String, Map<String, Emote>>()
 			.setStoreByValue(false)
-			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES))
-			.setCacheLoaderFactory(ChannelEmotesCacheLoader.factory())
+			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_HOUR))
+			.setCacheLoaderFactory(ChannelBttvEmotesCacheLoader.factory())
 			.setReadThrough(true);
-		channelEmoteCache = cacheManager.createCache("channelEmoteCache", channelEmoteConfig);
 
-		MutableConfiguration<String, Map<String, Emote>> setEmoteConfig = new MutableConfiguration<String, Map<String, Emote>>()
-			.setStoreByValue(false)
-			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES))
-			.setCacheLoaderFactory(SetEmotesCacheLoader.factory())
-			.setReadThrough(true);
-		setEmoteCache = cacheManager.createCache("setEmoteCache", setEmoteConfig);
-	}
-
-	/// @Deprecated Maybe actually useless...
-	@Deprecated
-	public Map<String, Emote> getEmotes(String channelId) {
-		return channelEmoteCache.get(channelId);
-	}
-
-	public Map<String, Emote> getEmoteSet(String setId) {
-		return channelEmoteCache.get(setId);
+		channelIdBttvNameToEmoteCache = cacheManager.createCache("channelIdBttvNameToIdCache", channelIdBttvNameToEmoteConfig);
 	}
 
 	public Image getEmoteImage1x(String emoteId, boolean animated) {
@@ -98,6 +71,15 @@ public class EmoteManager {
 			emoteImage1xCache.put(emoteId, image);
 		}
 		return image;
+	}
+
+	public Map<String, Emote> getChannelBttvNameToEmoteMap(String channelId) {
+		return channelIdBttvNameToEmoteCache.get(channelId);
+	}
+
+	public Emote getBttvEmoteByName(String channelId, String emoteName) {
+		Map<String, Emote> nameToIdMap = getChannelBttvNameToEmoteMap(channelId);
+		return nameToIdMap.get(emoteName);
 	}
 
 	//This used to load the emote autocompetion.

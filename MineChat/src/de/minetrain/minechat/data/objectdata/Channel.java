@@ -17,6 +17,10 @@ public class Channel  {
 	private final String audioPath;
 	private final AudioVolume audioVolume;
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public Channel(String channelId, String loginName,  String displayName, String chatRole, String chatlogLevel, String greetingText, String goodbyeText, String returnText, String audioPath, AudioVolume audioVolume) {
 		this.channelId = channelId;
 		this.loginName = loginName;
@@ -85,7 +89,7 @@ public class Channel  {
 	}
 
 	public Builder buildCopy() {
-		return new Builder()
+		return builder()
 			.withChannelId(channelId)
 			.withLoginName(loginName)
 			.withDisplayName(displayName)

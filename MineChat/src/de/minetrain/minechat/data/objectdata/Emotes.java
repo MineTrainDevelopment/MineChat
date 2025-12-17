@@ -16,11 +16,12 @@ import org.eclipse.serializer.persistence.types.PersistenceStoring;
 import org.eclipse.serializer.reference.Lazy;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.gui.emotes.EmoteType;
 
 public class Emotes extends LockScope {
 
 	private final Map<String, Lazy<Set<Emote>>> channelIdToEmotes = new HashMap<>();
-	private final Map<String, Lazy<Set<Emote>>> setIdToEmotes = new HashMap<>();
+	private final Map<String, Lazy<Set<Emote>>> channelIdToBttvEmotes = new HashMap<>();
 	private final Map<String, Emote> emoteIdToEmote = new LazyHashMap<>();
 
 	public void addEmote(Emote emote) {
@@ -29,9 +30,14 @@ public class Emotes extends LockScope {
 
 	public void addEmote(Emote emote, PersistenceStoring persister) {
 		write(() -> {
-			List<Object> changedObjects = new ArrayList<>(1);
-			addToMap(channelIdToEmotes, emote.getChannelId(), emote, changedObjects);
-			addToMap(setIdToEmotes, emote.getSetId(), emote, changedObjects);
+			List<Object> changedObjects = new ArrayList<>(3);
+			if (emote.getEmoteType() == EmoteType.BTTV) {
+				addToMap(channelIdToBttvEmotes, emote.getChannelId(), emote, changedObjects);
+				removeFromMap(channelIdToEmotes, emote.getChannelId(), emote, changedObjects);
+			} else {
+				addToMap(channelIdToEmotes, emote.getChannelId(), emote, changedObjects);
+				removeFromMap(channelIdToBttvEmotes, emote.getChannelId(), emote, changedObjects);
+			}
 			emoteIdToEmote.put(emote.getEmoteId(), emote);
 			changedObjects.add(emoteIdToEmote);
 			persister.storeAll(changedObjects);
@@ -44,10 +50,15 @@ public class Emotes extends LockScope {
 
 	public void addEmotes(Collection<Emote> emotes, PersistenceStoring persister) {
 		write(() -> {
-			List<Object> changedObjects = new ArrayList<>(emotes.size());
+			List<Object> changedObjects = new ArrayList<>(emotes.size() * 3 + 1);
 			for (Emote emote : emotes) {
-				addToMap(channelIdToEmotes, emote.getChannelId(), emote, changedObjects);
-				addToMap(setIdToEmotes, emote.getSetId(), emote, changedObjects);
+				if (emote.getEmoteType() == EmoteType.BTTV) {
+					addToMap(channelIdToBttvEmotes, emote.getChannelId(), emote, changedObjects);
+					removeFromMap(channelIdToEmotes, emote.getChannelId(), emote, changedObjects);
+				} else {
+					addToMap(channelIdToEmotes, emote.getChannelId(), emote, changedObjects);
+					removeFromMap(channelIdToBttvEmotes, emote.getChannelId(), emote, changedObjects);
+				}
 				emoteIdToEmote.put(emote.getEmoteId(), emote);
 			}
 			if (!changedObjects.isEmpty()) {
@@ -68,9 +79,9 @@ public class Emotes extends LockScope {
 		});
 	}
 
-	public List<Emote> getEmotesBySetId(String setId) {
+	public List<Emote> getBttvEmotesByChannelId(String channelId) {
 		return read(() -> {
-			Set<Emote> set = Lazy.get(setIdToEmotes.get(setId));
+			Set<Emote> set = Lazy.get(channelIdToBttvEmotes.get(channelId));
 			return set != null ? set.stream().toList() : List.of();
 		});
 	}
@@ -82,9 +93,9 @@ public class Emotes extends LockScope {
 		});
 	}
 
-	public <T> T computeBySetId(String setId, Function<Stream<Emote>, T> function) {
+	public <T> T computeBttvByChannelId(String channelId, Function<Stream<Emote>, T> function) {
 		return read(() -> {
-			Set<Emote> set = Lazy.get(setIdToEmotes.get(setId));
+			Set<Emote> set = Lazy.get(channelIdToBttvEmotes.get(channelId));
 			return function.apply(set != null ? set.stream() : Stream.empty());
 		});
 	}
@@ -92,7 +103,7 @@ public class Emotes extends LockScope {
 	public void clear() {
 		write(() -> {
 			channelIdToEmotes.clear();
-			setIdToEmotes.clear();
+			channelIdToBttvEmotes.clear();
 			emoteIdToEmote.clear();
 		});
 	}
@@ -109,6 +120,16 @@ public class Emotes extends LockScope {
 			Set<Emote> set = lazy.get();
 			set.add(emote);
 			changedObjects.add(set);
+		}
+	}
+
+	private static <K> void removeFromMap(Map<K, Lazy<Set<Emote>>> map, K key, Emote emote, List<Object> changedObjects) {
+		Lazy<Set<Emote>> lazy = map.get(key);
+		if (lazy != null) {
+			Set<Emote> set = lazy.get();
+			if (set.remove(emote)) {
+				changedObjects.add(set);
+			}
 		}
 	}
 }

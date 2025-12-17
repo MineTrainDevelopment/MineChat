@@ -2,13 +2,17 @@ package de.minetrain.minechat.main;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Gatherers;
 
-import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
+import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
@@ -20,15 +24,18 @@ import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.ChatMessage;
 import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MessageHistory;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class ChannelActions {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ChannelActions.class);
+
 	private final GreetingsManager greetingsManager;
 	private final MessageHistory messageHistory;
 	private final TwitchUserObj twitchUser;
@@ -64,39 +71,13 @@ public class ChannelActions {
 //		twitchUser.join(); // Zocki disabled...
 	}
 
-	public void displayMessage(TwitchMessage message, ChannelChatMessageEvent event){
-		MessageComponentContent messageComponentContent = new MessageComponentContent(
-				null,
-				message.getMessage(),
-				null,
-				message);
-
-		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
-
-		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
-			addToViewPort(event);
-		}
-
-	}
-
-	/// @deprecated Use displayMessage(TwitchMessage message, ChannelChatMessageEvent event) instead
-	@Deprecated
-	public void displayMessage(TwitchMessage message){
-		MessageComponentContent messageComponentContent = new MessageComponentContent(
-				null,
-				message.getMessage(),
-				null,
-				message);
-
-		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
-
-		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
-			addToViewPort(messageComponentContent);
-		}
-
-	}
-
 	public void displayMessage(ChatMessage message){
+		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
+			addToViewPort(message);
+		}
+	}
+
+	public void displayMessage(OutboundChatMessage message){
 		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(channel.getChannelId());
 
 		if(ownerData == null){
@@ -123,32 +104,36 @@ public class ChannelActions {
 		addToViewPort(messageComponentContent);
 	}
 
-	private void addToViewPort(ChannelChatMessageEvent event){
+	private void addToViewPort(ChatMessage message){
 		Platform.runLater(() -> {
 			MessageComponent messageComponent = new MessageComponent();
-			messageComponent.applyMessage(event);
+			messageComponent.applyMessage(message);
 			Main.messagePanel.getChildren().add(messageComponent);
 		});
 	}
 
 	private void addToViewPort(MessageComponentContent messageContent){
-		Platform.runLater(() -> {
-			Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent));
-		});
+		Platform.runLater(() -> Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent)));
 	}
 
-	public void loadViewPort(){
-		new Thread(() -> {
-			Platform.runLater(() -> {
-				Main.macroPane.loadMacros(this);
-				Main.messagePanel.getChildren().clear();
-//				messageCache.forEach(messageContent -> Main.messagePanel.getChildren().add(new MessageComponent(messageContent)));
-			});
+	public void loadViewPort() {
+		Main.macroPane.loadMacros(this);
+		Main.messagePanel.getChildren().clear();
+		CompletableFuture.runAsync(() -> {
+			EclipseStoreKeeper.root().messages().computeByChannelId(getChannelId(), messages -> {
+				messages.map(message -> {
+					MessageComponent mc = new MessageComponent();
+					mc.applyMessage(message);
+					return mc;
+				}).gather(Gatherers.windowFixed(50)).forEach(batch -> Platform.runLater(() -> Main.messagePanel.getChildren().addAll(batch)));
 
-			EclipseStoreKeeper.root().getMessages(this).forEach(messageContent -> {
-				Platform.runLater(() -> Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent)));
+				return null;
 			});
-		}).start();
+			LOG.info("Loaded {} messages for viewport of channel {}", Main.messagePanel.getChildren().size(), getChannelId());
+		}).exceptionally(e -> {
+			LOG.error("Failed to load viewport for channel {}", getChannelId(), e);
+			return null;
+		});
 	}
 
 	public Rectangle getProfilePic(int size) {

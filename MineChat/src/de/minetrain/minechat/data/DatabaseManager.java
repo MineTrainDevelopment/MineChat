@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
 
 import de.minetrain.minechat.data.databases.AutoReplyDatabase;
-import de.minetrain.minechat.data.databases.ChannelsDatabase;
 import de.minetrain.minechat.data.databases.CountVariableDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
 import de.minetrain.minechat.data.databases.MacroDatabase;
@@ -23,7 +22,6 @@ public class DatabaseManager {
 
 	private static AutoReplyDatabase autoReply;
 	private static MacroDatabase macro;
-	private static ChannelsDatabase channel;
 	private static EmoteDatabase emote;
 	private static MessageHighlightDatabase messageHighlight;
 	private static OwnerCacheDatabase ownerCacheDatabase;
@@ -33,7 +31,6 @@ public class DatabaseManager {
 		try {
 			autoReply = new AutoReplyDatabase();
 			macro = new MacroDatabase();
-			channel = new ChannelsDatabase();
 			emote = new EmoteDatabase();
 			messageHighlight = new MessageHighlightDatabase();
 			ownerCacheDatabase = new OwnerCacheDatabase();
@@ -110,10 +107,6 @@ public class DatabaseManager {
 
 	public static MacroDatabase getMacro() {
 		return macro;
-	}
-
-	public static ChannelsDatabase getChannel() {
-		return channel;
 	}
 
 	public static EmoteDatabase getEmote() {

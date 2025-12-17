@@ -16,21 +16,21 @@ import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.data.objectdata.Emotes;
 
-public final class SetEmotesCacheLoader implements CacheLoader<String, Map<String, Emote>>, Serializable {
+public final class ChannelBttvEmotesCacheLoader implements CacheLoader<String, Map<String, Emote>>, Serializable {
 
-	private static final long serialVersionUID = -3008799820102279498L;
+	private static final long serialVersionUID = -6726235329870645764L;
 
-	private SetEmotesCacheLoader() {
+	private ChannelBttvEmotesCacheLoader() {
 	}
 
 	public static Factory<CacheLoader<String, Map<String, Emote>>> factory() {
-		return new FactoryBuilder.SingletonFactory<>(new SetEmotesCacheLoader());
+		return new FactoryBuilder.SingletonFactory<>(new ChannelBttvEmotesCacheLoader());
 	}
 
 	@Override
 	public Map<String, Emote> load(String key) throws CacheLoaderException {
 		Emotes emotes = EclipseStoreKeeper.root().emotes();
-		return emotes.computeBySetId(key, emoteStream -> emoteStream.collect(toMap(Emote::getName, Function.identity())));
+		return emotes.computeBttvByChannelId(key, emotesStream -> emotesStream.collect(toMap(Emote::getName, Function.identity())));
 	}
 
 	@Override

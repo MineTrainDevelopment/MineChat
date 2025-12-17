@@ -4,12 +4,11 @@ import java.util.Objects;
 
 import org.eclipse.serializer.reference.Lazy;
 
-import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteType;
+import de.minetrain.minechat.gui.emotes.EmoteType;
 
 public class Emote {
 
 	private final String emoteId;
-	private final String setId;
 	private final String channelId;
 	private final String name;
 	private final EmoteType emoteType;
@@ -21,9 +20,12 @@ public class Emote {
 	private final Lazy<byte[]> image2x;
 	private final Lazy<byte[]> image4x;
 
-	public Emote(String emoteId, String setId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, String fileFormat, byte[] image1x, byte[] image2x, byte[] image4x) {
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public Emote(String emoteId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, String fileFormat, byte[] image1x, byte[] image2x, byte[] image4x) {
 		this.emoteId = emoteId;
-		this.setId = setId;
 		this.channelId = channelId;
 		this.name = name;
 		this.emoteType = emoteType;
@@ -35,9 +37,8 @@ public class Emote {
 		this.image4x = Lazy.Reference(image4x);
 	}
 
-	public Emote(String emoteId, String setId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, String fileFormat, Lazy<byte[]> image1x, Lazy<byte[]> image2x, Lazy<byte[]> image4x) {
+	public Emote(String emoteId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, String fileFormat, Lazy<byte[]> image1x, Lazy<byte[]> image2x, Lazy<byte[]> image4x) {
 		this.emoteId = emoteId;
-		this.setId = setId;
 		this.channelId = channelId;
 		this.name = name;
 		this.emoteType = emoteType;
@@ -51,10 +52,6 @@ public class Emote {
 
 	public String getEmoteId() {
 		return emoteId;
-	}
-
-	public String getSetId() {
-		return setId;
 	}
 
 	public String getChannelId() {
@@ -114,9 +111,8 @@ public class Emote {
 	}
 
 	public Builder buildCopy() {
-		return new Builder()
+		return builder()
 			.withEmoteId(emoteId)
-			.withSetId(setId)
 			.withChannelId(channelId)
 			.withName(name)
 			.withEmoteType(emoteType)
@@ -131,7 +127,6 @@ public class Emote {
 	public static class Builder {
 
 		private String emoteId;
-		private String setId;
 		private String channelId;
 		private String name;
 		private EmoteType emoteType;
@@ -144,11 +139,6 @@ public class Emote {
 
 		public Builder withEmoteId(String emoteId) {
 			this.emoteId = emoteId;
-			return this;
-		}
-
-		public Builder withSetId(String setId) {
-			this.setId = setId;
 			return this;
 		}
 
@@ -215,7 +205,6 @@ public class Emote {
 		public Emote build() {
 			return new Emote(
 				emoteId,
-				setId,
 				channelId,
 				name,
 				emoteType,
