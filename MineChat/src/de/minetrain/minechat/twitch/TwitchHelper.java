@@ -35,6 +35,10 @@ public final class TwitchHelper {
 		TwitchManager.instance().leaveAllChannel();
 	}
 
+	public static void shutdown() {
+		TwitchManager.instance().shutdown();
+	}
+
 	public static void sendMessage(OutboundChatMessage message) {
 		TwitchManager.instance().sendMessage(message);
 	}

@@ -1,6 +1,9 @@
 package de.minetrain.minechat.twitch;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,6 +67,8 @@ import de.minetrain.minechat.utils.events.MineChatEventType;
 public class TwitchListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TwitchListener.class);
+
+	private static final Pattern SPLIT_PATTERN = Pattern.compile("\\s+");
 
 	public static int messagesTEMP = 0;
 //	private LiveNotification liveNotification = new LiveNotification();
@@ -139,9 +144,13 @@ public class TwitchListener {
 	}
 
 	private static ChatMessage createChatMessage(ChannelChatMessageEvent event) {
-		ChatMessageToken[] tokens = event.getMessage().getFragments().stream().map(fragment -> createChatMessageToken(event.getBroadcasterUserId(), fragment)).toArray(ChatMessageToken[]::new);
+		List<ChatMessageToken> tokenList = new ArrayList<>();
+		event.getMessage().getFragments().stream().forEach(fragment -> createChatMessageToken(event.getBroadcasterUserId(), fragment, tokenList));
+		ChatMessageToken[] tokens = tokenList.toArray(ChatMessageToken[]::new);
 		String[] badges = event.getBadges().stream().map(Badge::getId).toArray(String[]::new);
 		Reply reply = event.getReply();
+
+		LOG.info("Created ChatMessage tokens: {}", (Object) tokens);
 
 		return new ChatMessage(
 				event.getMessageId(),
@@ -157,24 +166,42 @@ public class TwitchListener {
 		);
 	}
 
-	private static ChatMessageToken createChatMessageToken(String channelId, Fragment fragment) {
-		return switch (fragment.getType()) {
-			case EMOTE -> ChatMessageToken.createEmoteToken(fragment.getEmote().getId(), fragment.getEmote().getFormat().contains(Format.ANIMATED), fragment.getText());
-			case MENTION -> ChatMessageToken.createMentionToken(fragment.getText());
-			default ->  {
-				String text = fragment.getText();
-				if (WebUtils.isValidUrl(text)) {
-					yield ChatMessageToken.createLinkToken(text);
-				}
-				if (StringUtils.isAlphanumeric(text)) {
-					Emote emote = Main.getEmoteManager().getBttvEmoteByName(channelId, text);
-					if (emote != null) {
-						yield ChatMessageToken.createEmoteToken(emote.getEmoteId(), emote.isAnimated(), text);
-					}
-				}
-				yield ChatMessageToken.createTextToken(text);
-			}
+	private static void createChatMessageToken(String channelId, Fragment fragment, List<ChatMessageToken> tokenList) {
+		switch (fragment.getType()) {
+			case EMOTE -> tokenList.add(ChatMessageToken.createEmoteToken(fragment.getEmote().getId(), fragment.getEmote().getFormat().contains(Format.ANIMATED), fragment.getText()));
+			case MENTION -> tokenList.add(ChatMessageToken.createMentionToken(fragment.getText()));
+			default ->  tokenizeText(channelId, fragment.getText(), tokenList);
 		};
+	}
+
+	private static void tokenizeText(String channelId, String text, List<ChatMessageToken> tokenList) {
+		String[] words = SPLIT_PATTERN.splitWithDelimiters(text, 0);
+		StringBuilder currentText = new StringBuilder();
+		for (String word : words) {
+			if (word.length() >= 2 && StringUtils.isNotBlank(word)) {
+				if (WebUtils.isValidUrl(word)) {
+					if (!currentText.isEmpty()) {
+						tokenList.add(ChatMessageToken.createTextToken(currentText.toString()));
+						currentText.setLength(0);
+					}
+					tokenList.add(ChatMessageToken.createLinkToken(word));
+					continue;
+				}
+				Emote emote = Main.getEmoteManager().getBttvEmoteByName(channelId, word);
+				if (emote != null) {
+					if (!currentText.isEmpty()) {
+						tokenList.add(ChatMessageToken.createTextToken(currentText.toString()));
+						currentText.setLength(0);
+					}
+					tokenList.add(ChatMessageToken.createEmoteToken(emote.getEmoteId(), emote.isAnimated(), word));
+					continue;
+				}
+			}
+			currentText.append(word);
+		}
+		if (!currentText.isEmpty()) {
+			tokenList.add(ChatMessageToken.createTextToken(currentText.toString()));
+		}
 	}
 
 	/**

@@ -126,7 +126,6 @@ public class ChannelActions {
 					mc.applyMessage(message);
 					return mc;
 				}).gather(Gatherers.windowFixed(50)).forEach(batch -> Platform.runLater(() -> Main.messagePanel.getChildren().addAll(batch)));
-
 				return null;
 			});
 			LOG.info("Loaded {} messages for viewport of channel {}", Main.messagePanel.getChildren().size(), getChannelId());

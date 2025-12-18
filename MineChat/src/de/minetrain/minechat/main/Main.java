@@ -102,6 +102,7 @@ public class Main extends Application {
 //		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
 //		    	EclipseStoreTest.getStoreRoot().saveAllChannelStatistics();
 				TwitchHelper.leaveAllChannel();
+				TwitchHelper.shutdown();
 			}
 		});
 	}
@@ -151,6 +152,7 @@ public class Main extends Application {
 //        messagePanel.setStyle("-fx-background-color: #505050; -fx-padding: 5; -fx-text-fill: white; -fx-font-size: 20px");
 //        vBox.getChildren().addAll(new Button("ttt"), tabPane, new Button("ttt"));
 
+		// TODO Use ListView for better performance with many messages.
         messagePanel = new VBox(0);
         messageScrollPane = new ScrollPane(messagePanel);
 
@@ -227,6 +229,7 @@ public class Main extends Application {
 	 * @param input The input URL to extract the domain from.
 	 * @return The extracted domain or the original input if the domain can´t be extracted.
 	 */
+	// TODO Can´t extract the domain from -> instagram.com/die.doni
 	public static String extractDomain(String input) {
         try {
         	if(!isValidURL(input)){throw new MalformedURLException("Invalid URL.");}

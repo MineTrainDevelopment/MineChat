@@ -1,5 +1,7 @@
 package de.minetrain.minechat.data.objectdata;
 
+import org.slf4j.helpers.MessageFormatter;
+
 public final class ChatMessageToken {
 
 	private final String text;
@@ -48,6 +50,11 @@ public final class ChatMessageToken {
 
 	public TokenType getType() {
 		return type;
+	}
+
+	@Override
+	public String toString() {
+		return MessageFormatter.basicArrayFormat("ChatMessageToken [text={}, type={}]", new Object[] { text, type });
 	}
 
 	public enum TokenType {

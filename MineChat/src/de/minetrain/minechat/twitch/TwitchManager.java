@@ -131,6 +131,11 @@ public class TwitchManager {
 		twitch.getChat().getChannels().forEach(this::leaveChannel);
 	}
 
+	public void shutdown() {
+		LOG.info("Shutting down Twitch client.");
+		twitch.close();
+	}
+
 	/**
 	 * Sends a message to the specified Twitch chat.
 	 *
