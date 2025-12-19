@@ -107,9 +107,12 @@ public class Main extends Application {
 		});
 	}
 
+	// TODO Do we need to refresh periodically?
 	private static String aquireOAuth2Token() throws IOException {
 		String oAuth2Token = EclipseStoreKeeper.root().credentials().getOAuth2Token();
-		// TODO test if token is valid or needs to be refreshed.
+		if (oAuth2Token != null && !TwitchManager.validateOAuthToken(oAuth2Token).join()) {
+			oAuth2Token = null;
+		}
 		if (oAuth2Token == null || StringUtils.isBlank(oAuth2Token)) {
 			try (InputStream is = Main.class.getResourceAsStream("/client.id")) {
 				if (is == null) {

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
@@ -38,10 +41,12 @@ import com.github.twitch4j.helix.domain.Emote;
 import com.github.twitch4j.helix.domain.EmoteList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
 import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.obj.TokenValidateRespone;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
@@ -60,6 +65,11 @@ import io.github.bucket4j.Bandwidth;
 public class TwitchManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TwitchManager.class);
+
+	private static final String[] REQUIRED_OAUTH2_SCOPES = new String[] {
+		"user:read:chat",
+		"user:write:chat"
+	};
 
 	public record LiveMetaData(String title, String game, Instant startTime, int viewer, String[] tags){};
 	public static String ownerChannelName = ">null<";
@@ -288,10 +298,39 @@ public class TwitchManager {
 		});
 	}
 
+	public static CompletableFuture<Boolean> validateOAuthToken(String oAuth2Token) {
+		try (HttpClient httpClient = HttpClient.newHttpClient()) {
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://id.twitch.tv/oauth2/validate"))
+				.header("Authorization", "OAuth " + oAuth2Token)
+				.GET()
+				.build();
+			return httpClient.sendAsync(request, BodyHandlers.ofString())
+				.thenApply(response -> {
+					if (response.statusCode() != 200) {
+						LOG.warn("Failed to validate OAuth2 token! Status code: {}", response.statusCode());
+						return null;
+					}
+					return new Gson().fromJson(response.body(), TokenValidateRespone.class);
+				}).handle((tvr, e) -> {
+					if (e != null) {
+						LOG.error("Failed to validate OAuth2 token!", e);
+						return false;
+					}
+					if (tvr == null || tvr.getScopes() == null || Arrays.stream(REQUIRED_OAUTH2_SCOPES).anyMatch(scope -> !tvr.getScopes().contains(scope))) {
+						LOG.warn("OAuth2 token is invalid or missing required scopes!");
+						return false;
+					}
+					LOG.info("OAuth2 token is valid for client ID: {} and user ID: {}", tvr.getClientId(), tvr.getUserId());
+					return true;
+				});
+		}
+	}
+
 	public static CompletableFuture<String> requestOAuthToken(String clientId) {
 		RandomStringUtils secure = RandomStringUtils.secure();
 		String state = secure.nextAlphanumeric(32);
-		String requestUrl = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientId + "&redirect_uri=http://localhost:8000/oauth_callback&scope=user:read:chat&state=" + state;
+		String requestUrl = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientId + "&redirect_uri=http://localhost:8000/oauth_callback&scope=" + String.join("+", REQUIRED_OAUTH2_SCOPES) + "&state=" + state;
 		Pattern pattern = Pattern.compile("access_token=([^&]+).*&state=([^&]+)");
 		CompletableFuture<String> futureToken = new CompletableFuture<>();
 		String html = """
