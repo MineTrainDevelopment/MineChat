@@ -1,5 +1,7 @@
 package de.minetrain.minechat.gui.panes;
 
+import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.utils.MineTextFlow;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -12,7 +14,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 
 public class InputFieldPane extends BorderPane {
-	
+
 	public InputFieldPane() {
 		setStyle("-fx-border-radius: 0px; -fx-border-width: 10px; -fx-border-color: transparent;");
 		Button sendButton = new Button();
@@ -20,14 +22,14 @@ public class InputFieldPane extends BorderPane {
 		sendButton.setPrefSize(70, 35);
 		sendButton.setMinSize(70, 35);
 		sendButton.setMaxSize(70, 35);
-		
+
 		SVGPath svg = new SVGPath();
 		svg.setContent("M44 1V5C44 6.66667 43 10 39 10C35 10 13.3333 10 3 10M3 10L11 18M3 10L11 2");
         svg.setStroke(Color.web("#0E0E0E"));
         svg.setStrokeWidth(3);
         svg.setFill(Color.TRANSPARENT);
         sendButton.setGraphic(svg);
-        
+
         HBox sendButtonContainer = new HBox(5);
         sendButtonContainer.getChildren().addAll(new Rectangle(0, 0, Color.PINK), sendButton);
 
@@ -41,9 +43,13 @@ public class InputFieldPane extends BorderPane {
         inputField.setMinHeight(35);
         inputField.setPrefHeight(35);
         inputField.setMaxHeight(200);
+        inputField.setOnAction(_ -> {
+			MessageManager.sendMessage(Main.getChannelManager().getActiveChannelActions(), inputField.getText());
+			inputField.clear();
+		});
 
-        
-        
+
+
 //        Text textHolder = new Text();
 //        textHolder.textProperty().bind(inputField.textProperty());
 //        textHolder.layoutBoundsProperty().addListener((ChangeListener<Bounds>) (observable, oldValue, newValue) -> {
@@ -52,12 +58,12 @@ public class InputFieldPane extends BorderPane {
 //		        inputField.setPrefHeight(textHolder.getLayoutBounds().getHeight() + 30); // +20 is for paddings
 //		    }
 //		});
-        
+
 //        Text text = new Text();
 //        text.textProperty().bind(inputField.textProperty());
 //        inputField.prefHeightProperty().bind(Bindings.createDoubleBinding(() -> text.getBoundsInLocal().getHeight(), text.boundsInLocalProperty()).add(20));
-        
-        
+
+
         MineTextFlow infoBox = new MineTextFlow()
 	        .setDefaultFontSize(18d)
 //	        .setAlignment(TextAlignment.CENTER)
@@ -67,8 +73,8 @@ public class InputFieldPane extends BorderPane {
 //	        .appendSpace()
 //	        .appendString(" -  Version: "+Main.VERSION, HTMLColors.GRAY)
 	        ;
-        
-        
+
+
         infoBox.clear()
 	        .setAlignment(TextAlignment.LEFT)
 //	        .appendString("Reply to thrad from: ", Color.AQUA)
@@ -83,7 +89,7 @@ public class InputFieldPane extends BorderPane {
 //	        .appendString("@MineTrainLP", Color.GREENYELLOW)
 //	        .appendString(" --> ", Color.WHITE)
 	        .appendString("Also ich finde ja das du gaaanz besonders fein bist!");
-        
+
 
 //        TextArea infoBox = new TextArea("Test");
 //        Label infoBox = new Label("test\nte");
@@ -97,7 +103,7 @@ public class InputFieldPane extends BorderPane {
         VBox infoBoxContainer = new VBox(5);
         infoBoxContainer.setVisible(true);
         infoBoxContainer.getChildren().addAll(infoBox, new Rectangle(0, 0, Color.PINK));
-        
+
         sendButton.setOnMouseClicked(e -> {
         	if(infoBoxContainer.isVisible()){
                 infoBoxContainer.setVisible(false);
@@ -107,12 +113,12 @@ public class InputFieldPane extends BorderPane {
         		setTop(infoBoxContainer);
         	}
         });
-        
-        
+
+
 		setTop(infoBoxContainer); //Info popup
 		setCenter(inputFieldContainer); //input field
 		setRight(sendButtonContainer); //send button
-		
+
 	}
-	
+
 }

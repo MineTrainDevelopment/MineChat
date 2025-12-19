@@ -23,6 +23,7 @@ import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.utils.audio.AudioManager;
@@ -82,6 +83,7 @@ public class Main extends Application {
 			}
 			loadingProgressLogging(9, "Connecting to Twitch Helix.");
 			TwitchManager.init(oAuth2Token);
+			new MessageManager();
 			loadingProgressLogging(10, "Prepare message highlight strings.");
 			Settings.reloadHighlights();
 			loadingProgressLogging(11, "Validate public badges and emotes.");

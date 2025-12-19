@@ -36,22 +36,22 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatBadgeSetList;
+import com.github.twitch4j.helix.domain.ChatMessage;
 import com.github.twitch4j.helix.domain.ChatSettings;
 import com.github.twitch4j.helix.domain.Emote;
 import com.github.twitch4j.helix.domain.EmoteList;
+import com.github.twitch4j.helix.domain.SentChatMessage;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TokenValidateRespone;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.OutboundChatMessage;
-import de.minetrain.minechat.utils.events.MineChatEventType;
 import io.github.bucket4j.Bandwidth;
 
 /**
@@ -146,23 +146,8 @@ public class TwitchManager {
 		twitch.close();
 	}
 
-	/**
-	 * Sends a message to the specified Twitch chat.
-	 *
-	 * @param channel The name of the Twitch channel to send the message to.
-	 * @param message The message to be sent to the Twitch chat channel.
-	 */
-	public void sendMessage(OutboundChatMessage message) {
-		message.displayMessage();
-
-		if (message.getChannel().replyMessage != null) {
-			replyMessage(message);
-		} else {
-			sendMessage(message.getChannel().getChannel().getLoginName(), message.getMessage());
-		}
-
-		// Fire the MineChatEvent.
-		Main.eventManager.fireEvent(MineChatEventType.SENT_MESSAGE, message);
+	public CompletableFuture<SentChatMessage> sendMessage(String channelId, String message, String replyMessageId) {
+		return CompletableFuture.supplyAsync(() -> twitch.getHelix().sendChatMessage(null, new ChatMessage(channelId, ownerTwitchUser.getUserId(), message, replyMessageId, null)).execute().get());
 	}
 
 	public CompletableFuture<List<ChatBadgeSet>> requestChannelBadges(String userId) {

@@ -6,10 +6,10 @@ import java.util.concurrent.CompletableFuture;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatSettings;
 import com.github.twitch4j.helix.domain.Emote;
+import com.github.twitch4j.helix.domain.SentChatMessage;
 
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.OutboundChatMessage;
 
 /**
  * A helper class for interacting with Twitch.
@@ -39,8 +39,8 @@ public final class TwitchHelper {
 		TwitchManager.instance().shutdown();
 	}
 
-	public static void sendMessage(OutboundChatMessage message) {
-		TwitchManager.instance().sendMessage(message);
+	public static CompletableFuture<SentChatMessage> sendMessage(String channelId, String message, String replyMessageId) {
+		return TwitchManager.instance().sendMessage(channelId, message, replyMessageId);
 	}
 
 	public static CompletableFuture<ChatSettings> getChatSettings(TwitchUserObj user) {

@@ -27,7 +27,7 @@ import de.minetrain.minechat.utils.OutboundChatMessage;
  * @version 1.0
  */
 public class AsyncMessageHandler {
-	private static final Logger logger = LoggerFactory.getLogger(AsyncMessageHandler.class); //system logger
+	private static final Logger LOG = LoggerFactory.getLogger(AsyncMessageHandler.class); //system logger
 	private BlockingQueue<OutboundChatMessage> messageQueue; //The message queue to store the incoming messages.
     private ScheduledExecutorService executorService; //The executor service responsible for scheduling and executing message sending tasks.
     private final long defaultDelayMilliseconds = 1500; //The default time between messages.
@@ -47,12 +47,13 @@ public class AsyncMessageHandler {
         messageCount = 0;
     }
 
-    /**
-     * Starts the message sending process by scheduling a task to send messages at a fixed rate.
-     */
-    public void start() {
-        executorService.scheduleAtFixedRate(this::sendMessage, 0, 1, TimeUnit.MILLISECONDS);
-    }
+	/**
+	 * Starts the message sending process by scheduling a task to send messages at a
+	 * fixed rate.
+	 */
+	public void start() {
+		executorService.scheduleAtFixedRate(this::sendMessage, 0, 1, TimeUnit.MILLISECONDS);
+	}
 
     /**
      * Stops the message sending process by shutting down the executor service.
@@ -94,27 +95,40 @@ public class AsyncMessageHandler {
      * <br>Decreases the message count and updates the user interface queue button accordingly.
      * And Sends the message through the {@link TwitchManager} class.
      */
-    private void sendMessage() {
-        if (!messageQueue.isEmpty()) {
-            OutboundChatMessage chatMessage = messageQueue.poll();
+	private void sendMessage() {
+		if (!messageQueue.isEmpty()) {
+			OutboundChatMessage chatMessage = messageQueue.poll();
 
-            messageCount--;
-            MessageManager.updateQueueButton();
-            logger.debug("Sending message: {" + chatMessage.getMessage()+"}");
+			messageCount--;
+			MessageManager.updateQueueButton();
+			LOG.info("Sending message: {}", chatMessage.getMessage());
 
-        	TwitchHelper.sendMessage(chatMessage);
-        	lastSendMessage = Instant.now();
+			TwitchMessage replyMessage = chatMessage.getChannel().replyMessage;
+			TwitchHelper.sendMessage(chatMessage.getChannel().getChannelId(), chatMessage.getMessage(), replyMessage != null ? replyMessage.getMessageId() : null)
+				.thenAccept(sentMessage -> {
+					if (sentMessage.getDropReason() != null) {
+						LOG.warn("Message was dropped: {} Reason: {}", chatMessage.getMessage(), sentMessage.getDropReason().getMessage());
+					} else {
+						LOG.info("Message sent successfully: {}", chatMessage.getMessage());
+					}
+				})
+				.exceptionally(e -> {
+					LOG.error("Failed to send message: {}", chatMessage.getMessage(), e);
+					return null;
+				});
+			lastSendMessage = Instant.now();
 
 			try {
 				long i = 1000;
-				while(i > 0){
+				while (i > 0) {
 					i = getSleepTime(chatMessage.getChannel().getChannelId());
 					Thread.sleep(i);
 				}
 				callCounter.recordCallTime();
-			} catch (InterruptedException e) {}
-        }
-    }
+			} catch (InterruptedException e) {
+			}
+		}
+	}
 
     /**
      * Calculates the sleep time based on the {@link AsyncMessageHandler#getCurrentDelay()}.
