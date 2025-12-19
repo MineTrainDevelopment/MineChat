@@ -2,7 +2,7 @@ package de.minetrain.minechat.twitch.obj;
 
 import java.util.List;
 
-public class TokenValidateRespone {
+public class TokenValidateResponse {
 	private String clientId;
 	private String login;
 	private List<String> scopes;

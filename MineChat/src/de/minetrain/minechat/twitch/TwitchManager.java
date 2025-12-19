@@ -47,7 +47,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-import de.minetrain.minechat.twitch.obj.TokenValidateRespone;
+import de.minetrain.minechat.twitch.obj.TokenValidateResponse;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
@@ -296,7 +296,7 @@ public class TwitchManager {
 						LOG.warn("Failed to validate OAuth2 token! Status code: {}", response.statusCode());
 						return null;
 					}
-					return new Gson().fromJson(response.body(), TokenValidateRespone.class);
+					return new Gson().fromJson(response.body(), TokenValidateResponse.class);
 				}).handle((tvr, e) -> {
 					if (e != null) {
 						LOG.error("Failed to validate OAuth2 token!", e);
