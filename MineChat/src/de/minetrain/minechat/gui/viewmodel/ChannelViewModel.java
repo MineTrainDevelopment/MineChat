@@ -3,6 +3,9 @@ package de.minetrain.minechat.gui.viewmodel;
 import java.util.Objects;
 
 import de.minetrain.minechat.data.objectdata.Channel;
+import de.minetrain.minechat.main.Main;
+import de.minetrain.minechat.utils.audio.AudioVolume;
+import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -30,6 +33,24 @@ public class ChannelViewModel {
 		channelNamePropertyInternal().set(channelName);
 		profileImageUrlPropertyInternal().set(profileImageUrl);
 		loginNamePropertyInternal().set(loginName);
+
+		liveProperty().addListener((_, _, newValue) -> {
+			if (newValue.booleanValue()) {
+				Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
+				// TODO display live notification?
+//				ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
+//				if(channelTab != null){
+//					channelTab.setLiveState(true);
+//					liveNotification.setData(
+//							channelTab,
+//							event.getStream().getGameName(),
+//							event.getStream().getTitle(),
+//							event.getStream().getThumbnailUrl(80, 80));
+		//
+//					Instant startedAtInstant = event.getStream().getStartedAtInstant();
+//				}
+			}
+		});
 	}
 
 	public ReadOnlyStringProperty channelIdProperty() {

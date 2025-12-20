@@ -27,6 +27,7 @@ import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.twitch.TwitchPollingService;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
@@ -213,6 +214,9 @@ public class Main extends Application {
 				titleBar.getChannels().stream().findFirst().ifPresent(getChannelManager()::setActiveChannel);
 			});
 		});
+
+		TwitchPollingService twitchPollingService = new TwitchPollingService();
+		twitchPollingService.start();
 	}
 
 	public static ChannelManager getChannelManager(){

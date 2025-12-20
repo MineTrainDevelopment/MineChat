@@ -34,8 +34,6 @@ import com.github.twitch4j.eventsub.domain.chat.Reply;
 import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
-import com.github.twitch4j.eventsub.events.StreamOfflineEvent;
-import com.github.twitch4j.eventsub.events.StreamOnlineEvent;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
@@ -79,38 +77,6 @@ public class TwitchListener {
 		for(int i=0; i>50; i++){
 			System.err.println("Ad brake - "+event.getChannelId());
 		}
-	}
-
-	/// Handles the event when a stream goes live.
-	///
-	/// @param event The [StreamOnlineEvent] object containing information about the stream.
-	@EventSubscriber
-	public void onStreamUp(StreamOnlineEvent event){
-		LOG.info("EventSub Stream Online: {}", event.getBroadcasterUserName());
-		//TODO Call a sound event and display a red dott next to the name inside a channels tab.
-		Main.audioManager.playAudioClip(DefaultAudioFiles.LIVE_1, AudioVolume.VOLUME_100);
-		Main.getChannelManager().setChannelLiveStatus(event.getBroadcasterUserId(), true);
-		// TODO display live notification?
-//		ChannelTab channelTab = getCurrentChannelTab(event.getChannel().getId());
-//		if(channelTab != null){
-//			channelTab.setLiveState(true);
-//			liveNotification.setData(
-//					channelTab,
-//					event.getStream().getGameName(),
-//					event.getStream().getTitle(),
-//					event.getStream().getThumbnailUrl(80, 80));
-//
-//			Instant startedAtInstant = event.getStream().getStartedAtInstant();
-//		}
-	}
-
-	/// Handles the event when a stream goes offline.
-	///
-	/// @param event The [StreamOfflineEvent] object containing information about the stream.
-	@EventSubscriber
-	public void onStreamDown(StreamOfflineEvent event){
-		LOG.info("EventSub Stream Offline: {}", event.getBroadcasterUserName());
-		Main.getChannelManager().setChannelLiveStatus(event.getBroadcasterUserId(), false);
 	}
 
 	/// Handles the event when a message is sent in the channel.

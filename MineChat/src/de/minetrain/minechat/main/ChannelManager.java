@@ -35,14 +35,6 @@ public class ChannelManager {
 		validateUsers().join();
 		List<Channel> allChannels = getAllChannels();
 		allChannels.forEach(channel -> TwitchHelper.joinChannel(channel.getChannelId()));
-		TwitchHelper.requestStreamInfo(allChannels.stream().map(Channel::getChannelId).toArray(String[]::new))
-			.thenAcceptAsync(streamInfos -> streamInfos.forEach(streamInfo -> setChannelLiveStatus(streamInfo.getUserId(), "live".equals(streamInfo.getType()))))
-			.handle((_, e) -> {
-				if (e != null) {
-					LOG.error("Error fetching stream info for channels.", e);
-				}
-				return null;
-			});
 
 		if (allChannels.isEmpty()) {
 			addChannel(TwitchHelper.getSelfUser().getUserId());
@@ -183,14 +175,6 @@ public class ChannelManager {
 		Channel newChannel = createChannelFromTwitchUser(channel);
 		getChannels().addChannel(newChannel);
 		TwitchHelper.joinChannel(newChannel.getChannelId());
-		TwitchHelper.requestStreamInfo(newChannel.getChannelId())
-			.thenAcceptAsync(streamInfos -> streamInfos.forEach(streamInfo -> setChannelLiveStatus(streamInfo.getUserId(), "live".equals(streamInfo.getType()))))
-			.handle((_, e) -> {
-				if (e != null) {
-					LOG.error("Error fetching stream info for channel: {}", channelId, e);
-				}
-				return null;
-			});
 
 		TextureManager.downloadChannelEmotes(channelId);
 		TextureManager.downloadBttvEmotes(channelId);

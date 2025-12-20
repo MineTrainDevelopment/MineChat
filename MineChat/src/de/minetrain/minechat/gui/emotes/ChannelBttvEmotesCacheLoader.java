@@ -30,7 +30,7 @@ public final class ChannelBttvEmotesCacheLoader implements CacheLoader<String, M
 	@Override
 	public Map<String, Emote> load(String key) throws CacheLoaderException {
 		Emotes emotes = EclipseStoreKeeper.root().emotes();
-		return emotes.computeBttvByChannelId(key, emotesStream -> emotesStream.collect(toMap(Emote::getName, Function.identity())));
+		return emotes.computeBttvByChannelId(key, emotesStream -> emotesStream.collect(toMap(Emote::getName, Function.identity(), (e1, _) -> e1)));
 	}
 
 	@Override

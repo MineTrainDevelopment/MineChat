@@ -113,8 +113,6 @@ public class TwitchManager {
 	public void joinChannel(String channeldId) {
 		LOG.info("Joining channel: {}", channeldId);
 		twitch.getEventSocket().register(SubscriptionTypes.CHANNEL_CHAT_MESSAGE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).userId(getSelfUser().getUserId()).build(), null));
-		twitch.getEventSocket().register(SubscriptionTypes.STREAM_ONLINE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).build(), null));
-		twitch.getEventSocket().register(SubscriptionTypes.STREAM_OFFLINE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).build(), null));
 	}
 
 //	public void joinChannelById(String... channelIds){
