@@ -43,11 +43,13 @@ public class InputFieldPane extends BorderPane {
         inputField.setMinHeight(35);
         inputField.setPrefHeight(35);
         inputField.setMaxHeight(200);
-        inputField.setOnAction(_ -> {
+		inputField.setOnAction(_ -> {
+			// TODO: Add message to statistics and history
+//			getStatistics().addMessage(message.getSenderName(), channel.getChannelId(), message.getMessage());
+//			getMessageHistory().addSendedMessages(message.getMessageRaw());
 			MessageManager.sendMessage(Main.getChannelManager().getActiveChannelActions(), inputField.getText());
 			inputField.clear();
 		});
-
 
 
 //        Text textHolder = new Text();

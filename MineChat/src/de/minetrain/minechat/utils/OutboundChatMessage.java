@@ -144,11 +144,4 @@ public class OutboundChatMessage {
 	public String getMessageRaw() {
 		return messageRaw;
 	}
-
-	public void displayMessage(){
-		getChannel().displayMessage(this);
-	}
-
-
-
 }

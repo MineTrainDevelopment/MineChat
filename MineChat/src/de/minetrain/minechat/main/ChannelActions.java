@@ -1,6 +1,5 @@
 package de.minetrain.minechat.main;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Gatherers;
@@ -8,8 +7,6 @@ import java.util.stream.Gatherers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase.UserChatData;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
@@ -17,16 +14,13 @@ import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.obj.messages.MessageComponent;
-import de.minetrain.minechat.gui.obj.messages.MessageComponentContent;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.HTMLColors;
 import de.minetrain.minechat.utils.MessageHistory;
-import de.minetrain.minechat.utils.OutboundChatMessage;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
@@ -77,43 +71,12 @@ public class ChannelActions {
 		}
 	}
 
-	public void displayMessage(OutboundChatMessage message){
-		UserChatData ownerData = DatabaseManager.getOwnerCache().getById(channel.getChannelId());
-
-		if(ownerData == null){
-			ownerData = new UserChatData(channel.getChannelId(), HTMLColors.WHITE.getColorCode(), message.getSenderName(), "");
-		}
-
-		getStatistics().addMessage(message.getSenderName(), channel.getChannelId(), message.getMessage());
-		getMessageHistory().addSendedMessages(message.getMessageRaw());
-
-		Arrays.stream(message.getMessage().split(" ")).parallel().forEach(word -> {
-			if(word.startsWith("@") && word.length() > 1){
-				greetingsManager.setMentioned(word.replace("@", ""));
-			}
-		});
-
-		MessageComponentContent messageComponentContent = new MessageComponentContent(
-				ownerData,
-				((replyMessage != null) ? "@" + replyMessage.getParentReplyUser() + " " : "")+ message.getMessage(),
-				null,
-				replyMessage);
-
-		EclipseStoreKeeper.root().addMessage(channel.getChannelId(), messageComponentContent);
-
-		addToViewPort(messageComponentContent);
-	}
-
 	private void addToViewPort(ChatMessage message){
 		Platform.runLater(() -> {
 			MessageComponent messageComponent = new MessageComponent();
 			messageComponent.applyMessage(message);
 			Main.messagePanel.getChildren().add(messageComponent);
 		});
-	}
-
-	private void addToViewPort(MessageComponentContent messageContent){
-		Platform.runLater(() -> Main.messagePanel.getChildren().add(new MessageComponent(this, messageContent)));
 	}
 
 	public void loadViewPort() {
