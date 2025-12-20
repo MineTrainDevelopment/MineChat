@@ -21,7 +21,6 @@ import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.MineTextFlow;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -170,8 +169,7 @@ public class MessageComponent extends StackPane {
 		replyButton.setPrefSize(28, 28);
 		BorderPane.setAlignment(replyButton, Pos.CENTER);
 		StackPane.setAlignment(replyButton, Pos.TOP_RIGHT);
-		replyButton.setVisible(false);
-		hoverProperty().addListener((ChangeListener<Boolean>) (_, _, newValue) -> replyButton.setVisible(newValue));
+		replyButton.visibleProperty().bind(hoverProperty());
 		// TODO set action
 		return replyButton;
 	}

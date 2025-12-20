@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.github.twitch4j.helix.domain.User;
 import com.google.gson.JsonObject;
 
-import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager.LiveMetaData;
 
 public class TwitchUserObj {
@@ -110,18 +109,6 @@ public class TwitchUserObj {
 
 		private TwitchApiCallType(String url) {
 			this.url = url;
-		}
-	}
-
-	public void join(){
-		if(!dummy){
-			TwitchHelper.joinChannel(loginName);
-		}
-	}
-
-	public void leave(){
-		if(!dummy){
-			TwitchHelper.leaveChannel(loginName);
 		}
 	}
 

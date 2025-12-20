@@ -53,15 +53,19 @@
 
 
 #channel-tab{
+	-custom-base-background: #202020;
+	-custom-hover-overlay: #FFFFFF20;
+	-custom-selected-overlay: #FFFFFF40;
+	
 	-fx-background-radius: 5px;
-	-fx-background-color: #202020;
+	-fx-background-color: -custom-base-background;
 	-fx-background-insets: 0, 0 0 0 2;
-	
+
 	/*-fx-min-width: 34px; */
-    -fx-max-width: 150px;
-    -fx-pref-width: 150px;
-    -fx-alignment: center-left;
-	
+	-fx-max-width: 150px;
+	-fx-pref-width: 150px;
+	-fx-alignment: center-left;
+
 	-fx-font-family: "Inter";
 	-fx-font-size: 15px;
 	-fx-font-style: normal;
@@ -70,40 +74,22 @@
 	-fx-text-alignment: left;
 }
 
-#channel-tab:pressed:hover {
-    -fx-scale-y: 0.97;
-    -fx-scale-x: 0.97;
+#channel-tab:live {
+	-custom-base-background: #8B0000;
 }
 
 #channel-tab:hover {
-    -fx-background-color: #383838;
+	-fx-background-color: -custom-base-background, -custom-hover-overlay;
 }
 
-#channel-tab-selected{
-	-fx-background-radius: 5px;
-	-fx-background-color: #404040;
-	-fx-background-insets: 0, 0 0 0 2;
-	
-	/*-fx-min-width: -2px; */
-	/*-fx-min-width: 150px;*/
-	/*-fx-min-width: 34px; */
-	/*-fx-max-width: -1; */
-	-fx-pref-width: 150px;
-    -fx-alignment: center-left;
-    /*-fx-fit-to-width: false;*/
-
-	-fx-font-family: "Inter";
-	-fx-font-size: 15px;
-	-fx-font-style: normal;
-	-fx-font-weight: bold;
-	-fx-text-fill: white;
-	-fx-text-alignment: left;
+#channel-tab:selected, #channel-tab:selected:hover {
+	-fx-background-color: -custom-base-background, -custom-selected-overlay;
 }
 
-
-
-
-
+#channel-tab:pressed:hover {
+	-fx-scale-y: 0.97;
+	-fx-scale-x: 0.97;
+}
 
 #title-bar{
 	-fx-background-radius: 15px 15px 0px 0px;

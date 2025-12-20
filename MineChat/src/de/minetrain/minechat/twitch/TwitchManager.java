@@ -113,6 +113,8 @@ public class TwitchManager {
 	public void joinChannel(String channeldId) {
 		LOG.info("Joining channel: {}", channeldId);
 		twitch.getEventSocket().register(SubscriptionTypes.CHANNEL_CHAT_MESSAGE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).userId(getSelfUser().getUserId()).build(), null));
+		twitch.getEventSocket().register(SubscriptionTypes.STREAM_ONLINE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).build(), null));
+		twitch.getEventSocket().register(SubscriptionTypes.STREAM_OFFLINE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).build(), null));
 	}
 
 //	public void joinChannelById(String... channelIds){
@@ -187,15 +189,8 @@ public class TwitchManager {
 		});
 	}
 
-	/**
-	 * @return a list of channel IDs that are currently live.
-	 */
-	public CompletableFuture<List<String>> requestLiveStates(){
-		return requestLiveUsers(TwitchApiCallType.ID, twitchUsers.stream()
-				.filter(user -> !user.isDummy())
-				.map(TwitchUserObj::getUserId)
-				.toArray(String[]::new))
-			.thenApply(users -> users.stream().map(TwitchUserObj::getUserId).toList());
+	public CompletableFuture<List<Stream>> requestStreamInfo(String... channelIds){
+		return CompletableFuture.supplyAsync(() -> twitch.getHelix().getStreams(null, null, null, 100, null, null, List.of(channelIds), null).execute().getStreams());
 	}
 
 	public CompletableFuture<List<TwitchUserObj>> requestLiveUsers(TwitchApiCallType callType, String... channels) {

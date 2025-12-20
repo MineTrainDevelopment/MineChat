@@ -16,12 +16,13 @@ public class Channel  {
 	private final String returnText; //full string without seperating bye \n
 	private final String audioPath;
 	private final AudioVolume audioVolume;
+	private final String profileImageUrl;
 
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	public Channel(String channelId, String loginName,  String displayName, String chatRole, String chatlogLevel, String greetingText, String goodbyeText, String returnText, String audioPath, AudioVolume audioVolume) {
+	public Channel(String channelId, String loginName,  String displayName, String chatRole, String chatlogLevel, String greetingText, String goodbyeText, String returnText, String audioPath, AudioVolume audioVolume, String profileImageUrl) {
 		this.channelId = channelId;
 		this.loginName = loginName;
 		this.displayName = displayName;
@@ -32,6 +33,7 @@ public class Channel  {
 		this.returnText = returnText;
 		this.audioPath = audioPath;
 		this.audioVolume = audioVolume;
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	@Deprecated
@@ -46,6 +48,7 @@ public class Channel  {
 		this.returnText = resultSet.getString("return_text");
 		this.audioPath = resultSet.getString("audio_path");
 		this.audioVolume = AudioVolume.get(resultSet.getString("audio_volume"));
+		this.profileImageUrl = resultSet.getString("profile_image_url");
 	}
 
 	public String getChannelId() {
@@ -88,6 +91,10 @@ public class Channel  {
 		return audioVolume;
 	}
 
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+
 	public Builder buildCopy() {
 		return builder()
 			.withChannelId(channelId)
@@ -99,7 +106,8 @@ public class Channel  {
 			.withGoodbyText(goodbyeText)
 			.withReturnText(returnText)
 			.withAudioPath(audioPath)
-			.withAudioVolume(audioVolume);
+			.withAudioVolume(audioVolume)
+			.withProfileImageUrl(profileImageUrl);
 	}
 
 	public static class Builder {
@@ -113,6 +121,7 @@ public class Channel  {
 		private String returnText;
 		private String audioPath;
 		private AudioVolume audioVolume;
+		private String profileImageUrl;
 
 		public Builder withChannelId(String channelId) {
 			this.channelId = channelId;
@@ -164,8 +173,13 @@ public class Channel  {
 			return this;
 		}
 
+		public Builder withProfileImageUrl(String profileImageUrl) {
+			this.profileImageUrl = profileImageUrl;
+			return this;
+		}
+
 		public Channel build() {
-			return new Channel(channelId, loginName, displayName, chatRole, chatlogLevel, greetingText, goodbyeText, returnText, audioPath, audioVolume);
+			return new Channel(channelId, loginName, displayName, chatRole, chatlogLevel, greetingText, goodbyeText, returnText, audioPath, audioVolume, profileImageUrl);
 		}
 	}
 }

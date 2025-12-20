@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +19,11 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -149,6 +150,7 @@ public class Main extends Application {
 		titleBar = new TitleBarPane();
 		topPane.setTop(titleBar);
 		macroPane = new MacroPanelPane();
+		macroPane.activeChannelProperty().bind(titleBar.selectedChannelProperty());
 		topPane.setBottom(macroPane);
 
 
@@ -202,14 +204,15 @@ public class Main extends Application {
 		channelManager.init();
 		new AutoReplyManager(); //Load auto replys after fetching channel data.
 
-		CompletableFuture.runAsync(() -> channelManager.getAllChannels().stream()
-			.map(channel -> new ChannelTabButton(channel, titleBar))
-			.forEach(cab -> Platform.runLater(() -> {
-				titleBar.getTabBar().getChildren().add(cab);
-				if (channelManager.getActiveChanneldId() == null) {
-					cab.select();
-				}
-		})));
+		CompletableFuture.runAsync(() -> {
+			List<ChannelViewModel> cvms = getChannelManager().getAllChannels().stream()
+				.map(ChannelViewModel::of)
+				.toList();
+			Platform.runLater(() -> {
+				titleBar.getChannels().addAll(cvms);
+				titleBar.getChannels().stream().findFirst().ifPresent(getChannelManager()::setActiveChannel);
+			});
+		});
 	}
 
 	public static ChannelManager getChannelManager(){

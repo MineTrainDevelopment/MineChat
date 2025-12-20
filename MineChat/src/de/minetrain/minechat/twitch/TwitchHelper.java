@@ -7,6 +7,7 @@ import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatSettings;
 import com.github.twitch4j.helix.domain.Emote;
 import com.github.twitch4j.helix.domain.SentChatMessage;
+import com.github.twitch4j.helix.domain.Stream;
 
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
@@ -26,11 +27,12 @@ public final class TwitchHelper {
 		TwitchManager.instance().joinChannel(channelId);
 	}
 
+	@Deprecated
 	public static void leaveChannel(String... names){
 		TwitchManager.instance().leaveChannel(names);
 	}
 
-
+	@Deprecated
 	public static void leaveAllChannel(){
 		TwitchManager.instance().leaveAllChannel();
 	}
@@ -47,27 +49,24 @@ public final class TwitchHelper {
 		return TwitchManager.instance().requestChatSettings(user);
 	}
 
-	public static CompletableFuture<List<ChatBadgeSet>> requestChannelBadges(String userId) {
-		return TwitchManager.instance().requestChannelBadges(userId);
+	public static CompletableFuture<List<ChatBadgeSet>> requestChannelBadges(String channelId) {
+		return TwitchManager.instance().requestChannelBadges(channelId);
 	}
 
 	public static CompletableFuture<List<ChatBadgeSet>> requestGlobalBadges() {
 		return TwitchManager.instance().requestGlobalBadges();
 	}
 
-	public static CompletableFuture<List<Emote>> requestChannelEmotes(String userId) {
-		return TwitchManager.instance().requestChannelEmotes(userId);
+	public static CompletableFuture<List<Emote>> requestChannelEmotes(String channelId) {
+		return TwitchManager.instance().requestChannelEmotes(channelId);
 	}
 
 	public static CompletableFuture<List<Emote>> requestGlobalEmotes() {
 		return TwitchManager.instance().requestGlobalEmotes();
 	}
 
-	/**
-	 * @return a list of channel IDs that are currently live.
-	 */
-	public static CompletableFuture<List<String>> requestLiveStates(){
-		return TwitchManager.instance().requestLiveStates();
+	public static CompletableFuture<List<Stream>> requestStreamInfo(String... channelIds){
+		return TwitchManager.instance().requestStreamInfo(channelIds);
 	}
 
 	public static CompletableFuture<List<TwitchUserObj>> requestLiveUsers(TwitchApiCallType callType, String... channels){

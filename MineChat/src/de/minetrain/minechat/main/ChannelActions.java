@@ -79,6 +79,8 @@ public class ChannelActions {
 		});
 	}
 
+	/// @deprecated Needs to be redone with properties and bindings.
+	@Deprecated
 	public void loadViewPort() {
 		Main.macroPane.loadMacros(this);
 		Main.messagePanel.getChildren().clear();
