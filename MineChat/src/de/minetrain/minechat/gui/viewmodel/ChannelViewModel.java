@@ -1,7 +1,9 @@
 package de.minetrain.minechat.gui.viewmodel;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
@@ -35,6 +37,8 @@ public class ChannelViewModel {
 	private BooleanProperty selectedProperty;
 	private NotifiableObjectProperty<List<ChatMessage>> messagesProperty;
 
+	private Set<String> participatedUserIds;
+
 	protected ChannelViewModel(String channelId, String channelName, String profileImageUrl, String loginName) {
 		channelIdPropertyInternal().set(channelId);
 		channelNamePropertyInternal().set(channelName);
@@ -42,6 +46,8 @@ public class ChannelViewModel {
 		profileImageSmallPropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 24d, 24d, false, true, true)));
 		profileImageLargePropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 75, 75, false, true, true)));
 		loginNamePropertyInternal().set(loginName);
+
+		participatedUserIds = new HashSet<>();
 
 		// TODO don't report initial value...
 //		liveProperty().addListener((_, _, newValue) -> {
@@ -197,6 +203,10 @@ public class ChannelViewModel {
 			return;
 		}
 		messagesProperty().notifyChange();
+	}
+
+	public Set<String> getParticipatedUserIds(){
+		return participatedUserIds;
 	}
 
 	@Override

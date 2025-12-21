@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
+import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
@@ -61,10 +63,12 @@ public class ChannelActions {
 //		twitchUser.join(); // Zocki disabled...
 	}
 
-	public void notifyMessageAdded() {
+	public void notifyMessageAdded(ChatMessage chatMessage) {
 		Platform.runLater(() -> {
+			ChannelViewModel cvm = Main.channelPane.getChannel();
+			chatMessage.setFirstSessionMessage(cvm.getParticipatedUserIds().add(chatMessage.getSenderId()));
 			if (Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())) {
-				Main.channelPane.getChannel().refreshMessages();
+				cvm.refreshMessages();
 			}
 		});
 	}

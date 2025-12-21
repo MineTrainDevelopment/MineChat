@@ -20,6 +20,8 @@ public final class ChatMessage {
 	private final List<BadgeId> badgeIds;
 	private final boolean isEmoteOnly;
 
+	private transient boolean firstSessionMessage = false;
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -86,6 +88,14 @@ public final class ChatMessage {
 		return isEmoteOnly;
 	}
 
+	public boolean isFirstSessionMessage() {
+		return firstSessionMessage;
+	}
+
+	public void setFirstSessionMessage(boolean firstSessionMessage) {
+		this.firstSessionMessage = firstSessionMessage;
+	}
+
 	public Builder buildCopy() {
 		return builder()
 				.withMessageId(messageId)
@@ -102,7 +112,8 @@ public final class ChatMessage {
 
 	public enum MessageType {
 		TEXT,
-		HIGHLIGHTED
+		HIGHLIGHTED,
+		FIRST_MESSAGE
 	}
 
 	public static class Builder {

@@ -103,7 +103,7 @@ public class TwitchListener {
 
 		ChatMessage chatMessage = createChatMessage(event);
 		EclipseStoreKeeper.root().messages().addMessage(chatMessage);
-		channel.notifyMessageAdded();
+		channel.notifyMessageAdded(chatMessage);
 
 		AutoReplyManager.recordMessage(twitchMessage);
 	}
@@ -125,10 +125,18 @@ public class TwitchListener {
 				event.getColor(),
 				Instant.now(),
 				reply != null ? reply.getParentMessageId() : null,
-				event.getMessageType() == com.github.twitch4j.eventsub.domain.chat.MessageType.CHANNEL_POINTS_HIGHLIGHTED ? MessageType.HIGHLIGHTED : MessageType.TEXT,
+				mapMessageType(event.getMessageType()),
 				tokens,
 				badgeIds
 		);
+	}
+
+	private static MessageType mapMessageType(com.github.twitch4j.eventsub.domain.chat.MessageType messageType) {
+		return switch (messageType) {
+			case CHANNEL_POINTS_HIGHLIGHTED -> MessageType.HIGHLIGHTED;
+			case USER_INTRO -> MessageType.FIRST_MESSAGE;
+			default -> MessageType.TEXT;
+		};
 	}
 
 	private static void createChatMessageToken(String channelId, Fragment fragment, List<ChatMessageToken> tokenList) {
@@ -193,11 +201,11 @@ public class TwitchListener {
 		}
 
 
-		if(twitchMessage.isFirstMessage()){
-//			currentChannelTab.getChatWindow()
-//				.displaySystemInfo("First channel Message.", "@"+event.getUser().getName()+" just left his first chat message on this channel.\n\n"+event.getMessage(),
-//					Settings.highlightUserFirstMessages.getColor(), getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
-		}
+//		if(twitchMessage.isFirstMessage()){
+////			currentChannelTab.getChatWindow()
+////				.displaySystemInfo("First channel Message.", "@"+event.getUser().getName()+" just left his first chat message on this channel.\n\n"+event.getMessage(),
+////					Settings.highlightUserFirstMessages.getColor(), getButton(currentChannelTab, Main.TEXTURE_MANAGER.getWaveButton(), "Say hello to "+event.getUser().getName(), EventButtonType.GREETING, event.getUser().getName()));
+//		}
 
 //		channel.displayMessage(twitchMessage);
 		AutoReplyManager.recordMessage(twitchMessage);

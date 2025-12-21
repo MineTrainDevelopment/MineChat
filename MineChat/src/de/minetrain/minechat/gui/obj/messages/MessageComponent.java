@@ -1,26 +1,16 @@
 package de.minetrain.minechat.gui.obj.messages;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
-import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.main.ChannelActions;
-import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.MineTextFlow;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -30,16 +20,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class MessageComponent extends StackPane {
-	private HighlightString highlight;
-	private boolean isEmoteOnly = true;
-
 
 	private final MineTextFlow titleFlow;
 	private final BorderPane content;
 	private final MineTextFlow messageFlow;
 	private final String defaultStyle;
-
-	static long callCount = 0;
+	private final String contentDefaultStyle;
 
 	public MessageComponent() {
 		setId("message-comp-border");
@@ -59,67 +45,17 @@ public class MessageComponent extends StackPane {
 
 		getChildren().addAll(titlePane, content, createReplyButton());
 		defaultStyle = getStyle();
+		contentDefaultStyle = content.getStyle();
 	}
-
-	@Deprecated
-	public MessageComponent(ChannelActions channel, MessageComponentContent messageContent) {
-		this();
-		//filter out emote only messages
-		if(!messageContent.isValid() || Settings.displayEmoteOnly ? false : messageContent.isEmoteOnly()){
-			return;
-		}
-
-		long lastCall = Instant.now().toEpochMilli();
-		callCount++;
-
-		TwitchMessage twitchMessage = messageContent.twitchMessage();
-
-		if(twitchMessage != null && !twitchMessage.getBadges().isEmpty()){
-			twitchMessage.getBadges().forEach(badge -> titleFlow.appendImage(badge).appendSpace());
-		}
-
-		titleFlow.appendString(messageContent.getUserName(), messageContent.getUserColor()).appendString(": ", 20, Color.WHITE);
-
-
-		formatText(messageContent, channel.getChannelId());
-
-        //Check for emote only again, bcs of bttv emotes.
-        if(isEmoteOnly && !Settings.displayEmoteOnly){
-        	content.setVisible(false);
-        	highlight = null;
-        	return;
-        }
-
-        //message highlights
-        if(highlight != null){
-        	setStyle("-fx-border-color: "+highlight.getBorderColorCode()+";");
-        }
-
-        //twitch highlights.
-		if(twitchMessage != null){
-			if(twitchMessage.isFirstMessageOfInstance()  && Settings.highlightUserFirstMessages.isActive()){
-				setStyle("-fx-border-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
-			}
-
-			if(twitchMessage.isHighlighted() && Settings.displayTwitchHighlighted.isActive()){
-				content.setStyle("-fx-background-color: "+Settings.displayTwitchHighlighted.getColorCode()+";");
-			}
-
-			if(twitchMessage.isFirstMessage() && Settings.highlightUserFirstMessages.isActive()){
-				content.setStyle("-fx-background-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
-				setStyle("-fx-border-color: "+Settings.highlightUserFirstMessages.getColorCode()+";");
-				titleFlow.appendString("  -  First MSG");
-			}
-        }
-
-		setId("message-comp-border");
-
-        //DEBUG
-        System.err.println(Instant.now().toEpochMilli()-lastCall+".ms - "+callCount);
-    }
 
 	public void applyMessage(ChatMessage message) {
 		clearMessage();
+
+		if (message.isEmoteOnly() && !Settings.displayEmoteOnly) {
+			setVisible(false);
+			return;
+		}
+
 		String color = message.getSenderColor();
 		if (StringUtils.isBlank(color)) {
 			color = "#ffffff";
@@ -139,52 +75,38 @@ public class MessageComponent extends StackPane {
 				highlight = appliedHighlight;
 			}
 		}
-		if (highlight != null) {
-			setStyle("-fx-border-color: " + highlight.getBorderColorCode() + ";");
-		}
+
+		applyHighlighting(message, highlight);
 	}
 
 	public void clearMessage() {
 		messageFlow.clear();
 		titleFlow.clear();
 		setStyle(defaultStyle);
+		content.setStyle(contentDefaultStyle);
+		setVisible(true);
 	}
 
-	@Deprecated
-	private void formatText(MessageComponentContent messageContent, String channelId){
-		messageFlow.appendString("["+getTimeStamp(messageContent)+"] ");
-
-		// Cache to prevent unnecessary CPU cycles.
-		Map<String, Emote> emotes = Map.of(); // No emotes for now
-		List<HighlightString> highlights = EclipseStoreKeeper.root().userSettings().computeHighlightStrings(hs -> hs.filter(HighlightString::isEnabled).toList());
-
-		for (String word : messageContent.getMessage().split(" ")) {
-			Emote emote = emotes.get(word);
-			if (emote != null) {
-				messageFlow.appendEmote(emote);
-				messageFlow.appendSpace();
-				continue;
+	private void applyHighlighting(ChatMessage message, HighlightString highlight) {
+		if (Settings.highlightUserFirstMessages.isActive() && message.getMessageType() == ChatMessage.MessageType.FIRST_MESSAGE) {
+			content.setStyle("-fx-background-color: " + Settings.highlightUserFirstMessages.getColorCode() + ";");
+			applyBorderColor(Settings.highlightUserFirstMessages.getColorCode());
+			titleFlow.appendString("  -  First MSG");
+		} else {
+			if (message.getMessageType() == ChatMessage.MessageType.HIGHLIGHTED && Settings.displayTwitchHighlighted.isActive()) {
+				content.setStyle("-fx-background-color: " + Settings.displayTwitchHighlighted.getColorCode() + ";");
 			}
 
-			isEmoteOnly = false;
-			if(word.contains(".") && !word.endsWith(".") && Main.isValidImageURL(word)){
-				messageFlow.appendHyperLink(word);
-				continue;
+			if (message.isFirstSessionMessage() && Settings.highlightUserFirstMessages.isActive()) {
+				applyBorderColor(Settings.highlightUserFirstMessages.getColorCode());
+			} else if (highlight != null) {
+				applyBorderColor(highlight.getBorderColorCode());
 			}
-
-			// This may take to much time...
-			Optional<HighlightString> matchingHighlight = highlights.stream()
-				.filter(hs -> hs.getCompiledPattern().matcher(word).matches())
-				.findFirst();
-			if (matchingHighlight.isPresent()) {
-				messageFlow.appendString(word + " ", matchingHighlight.get().getWordColor());
-				if (this.highlight == null) {
-					this.highlight = matchingHighlight.get();
-				}
-				continue;
-			}
-			messageFlow.appendString(word + " ");
 		}
+	}
+
+	private void applyBorderColor(String colorCode) {
+		setStyle("-fx-border-color: " + colorCode + ";");
 	}
 
 	private Button createReplyButton() {
@@ -217,18 +139,4 @@ public class MessageComponent extends StackPane {
 
 		return DateTimeFormatter.ofPattern(Settings.dateFormat + " | " + Settings.messageTimeFormat);
 	}
-
-	public static String getTimeStamp(MessageComponentContent messageContent) {
-		String pattern = Settings.messageTimeFormat;
-
-		TwitchMessage message = messageContent.twitchMessage();
-		if(message != null && message.isOlderThanHours(24)){
-			String dateFormat = message.isOlderThanDays(7) ? Settings.dateFormat : Settings.dayFormat;
-		    pattern = dateFormat + " | " + pattern;
-		}
-
-		return LocalDateTime.ofEpochSecond(messageContent.getEpochSec()/1000, 0, ZoneId.systemDefault().getRules().getOffset(Instant.now()))
-			.format(DateTimeFormatter.ofPattern(pattern, new Locale(System.getProperty("user.language"), System.getProperty("user.country"))));
-	}
-
 }

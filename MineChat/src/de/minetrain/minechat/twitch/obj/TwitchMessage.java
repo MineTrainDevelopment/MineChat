@@ -82,7 +82,7 @@ public class TwitchMessage {
 		epochTime = Instant.now().toEpochMilli();
 		emoteOnly = event.getMessage().getFragments().stream().allMatch(fragment -> fragment.getType() == Fragment.Type.EMOTE);
 		highlighted = event.getMessageType() == MessageType.CHANNEL_POINTS_HIGHLIGHTED;
-		firstMessages = false; // TODO ?!
+		firstMessages = event.getMessageType() == MessageType.USER_INTRO;
 		this.firstMessageOfInstance = Main.getChannelManager().getChannelActions(channelId).getGreetingsManager().add(userName);
 	}
 
