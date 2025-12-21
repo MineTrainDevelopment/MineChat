@@ -17,14 +17,14 @@ public final class ChatMessage {
 	private final String replyMessageId;
 	private final MessageType messageType;
 	private final List<ChatMessageToken> tokens;
-	private final List<String> badgeIds;
+	private final List<BadgeId> badgeIds;
 	private final boolean isEmoteOnly;
 
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	public ChatMessage(String messageId, String channelId, String senderId, String senderName, String senderColor, Instant timestamp, String replyMessageId, MessageType messageType, ChatMessageToken[] tokens, String[] badgeIds) {
+	public ChatMessage(String messageId, String channelId, String senderId, String senderName, String senderColor, Instant timestamp, String replyMessageId, MessageType messageType, ChatMessageToken[] tokens, BadgeId[] badgeIds) {
 		this.messageId = messageId;
 		this.channelId = channelId;
 		this.senderId = senderId;
@@ -74,7 +74,7 @@ public final class ChatMessage {
 		return tokens;
 	}
 
-	public List<String> getBadgeIds() {
+	public List<BadgeId> getBadgeIds() {
 		return badgeIds;
 	}
 
@@ -84,6 +84,20 @@ public final class ChatMessage {
 
 	public boolean isEmoteOnly() {
 		return isEmoteOnly;
+	}
+
+	public Builder buildCopy() {
+		return builder()
+				.withMessageId(messageId)
+				.withChannelId(channelId)
+				.withSenderId(senderId)
+				.withSenderName(senderName)
+				.withSenderColor(senderColor)
+				.withTimestamp(timestamp)
+				.withReplyMessageId(replyMessageId)
+				.withMessageType(messageType)
+				.withTokens(tokens)
+				.withBadgeIds(badgeIds);
 	}
 
 	public enum MessageType {
@@ -101,7 +115,7 @@ public final class ChatMessage {
 		private String replyMessageId;
 		private MessageType messageType = MessageType.TEXT;
 		private final List<ChatMessageToken> tokens = new ArrayList<>();
-		private final List<String> badgeIds = new ArrayList<>();
+		private final List<BadgeId> badgeIds = new ArrayList<>();
 
 		public Builder withMessageId(String messageId) {
 			this.messageId = messageId;
@@ -143,18 +157,30 @@ public final class ChatMessage {
 			return this;
 		}
 
+		public Builder withTokens(List<ChatMessageToken> tokens) {
+			this.tokens.clear();
+			this.tokens.addAll(tokens);
+			return this;
+		}
+
 		public Builder addToken(ChatMessageToken part) {
 			this.tokens.add(part);
 			return this;
 		}
 
-		public Builder addBadgeId(String badgeId) {
+		public Builder withBadgeIds(List<BadgeId> badgeIds) {
+			this.badgeIds.clear();
+			this.badgeIds.addAll(badgeIds);
+			return this;
+		}
+
+		public Builder addBadgeId(BadgeId badgeId) {
 			this.badgeIds.add(badgeId);
 			return this;
 		}
 
 		public ChatMessage build() {
-			return new ChatMessage(messageId, channelId, senderId, senderName, senderColor, timestamp, replyMessageId, messageType, tokens.toArray(ChatMessageToken[]::new), badgeIds.toArray(String[]::new));
+			return new ChatMessage(messageId, channelId, senderId, senderName, senderColor, timestamp, replyMessageId, messageType, tokens.toArray(ChatMessageToken[]::new), badgeIds.toArray(BadgeId[]::new));
 		}
 	}
 }

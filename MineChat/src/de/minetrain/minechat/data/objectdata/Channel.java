@@ -1,8 +1,5 @@
 package de.minetrain.minechat.data.objectdata;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import de.minetrain.minechat.utils.audio.AudioVolume;
 
 public class Channel  {
@@ -34,21 +31,6 @@ public class Channel  {
 		this.audioPath = audioPath;
 		this.audioVolume = audioVolume;
 		this.profileImageUrl = profileImageUrl;
-	}
-
-	@Deprecated
-	public Channel(ResultSet resultSet) throws SQLException {
-		this.channelId = resultSet.getString("channel_id");
-		this.loginName = resultSet.getString("login_name");
-		this.displayName = resultSet.getString("display_name");
-		this.chatRole = resultSet.getString("chat_role");
-		this.chatlogLevel = resultSet.getString("chatlog_level");
-		this.greetingText = resultSet.getString("greeting_text");
-		this.goodbyeText = resultSet.getString("goodby_text");
-		this.returnText = resultSet.getString("return_text");
-		this.audioPath = resultSet.getString("audio_path");
-		this.audioVolume = AudioVolume.get(resultSet.getString("audio_volume"));
-		this.profileImageUrl = resultSet.getString("profile_image_url");
 	}
 
 	public String getChannelId() {

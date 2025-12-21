@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.serializer.collections.lazy.LazyHashMap;
 
+import de.minetrain.minechat.data.objectdata.Badges;
 import de.minetrain.minechat.data.objectdata.Channels;
 import de.minetrain.minechat.data.objectdata.Credentials;
 import de.minetrain.minechat.data.objectdata.Emotes;
@@ -17,6 +18,7 @@ public class EclipseStoreRoot {
 	private Emotes emotes;
 	private Credentials credentials;
 	private Messages messages;
+	private Badges badges;
 
 	private void addChannelStatistics(String channelId, ChannelStatistics statistics) {
 		getChannelStatics().put(channelId, statistics);
@@ -65,6 +67,14 @@ public class EclipseStoreRoot {
 			EclipseStoreKeeper.storeManager().store(this);
 		}
 		return messages;
+	}
+
+	public Badges badges() {
+		if (badges == null) {
+			badges = new Badges();
+			EclipseStoreKeeper.storeManager().store(this);
+		}
+		return badges;
 	}
 
 	private Map<String, ChannelStatistics> getChannelStatics() {

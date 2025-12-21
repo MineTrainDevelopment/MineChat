@@ -8,6 +8,10 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.ChatMessageToken;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.main.Main;
@@ -30,6 +34,8 @@ import javafx.scene.text.TextFlow;
 
 public class MineTextFlow extends TextFlow {
 
+	private static final Logger LOG = LoggerFactory.getLogger(MineTextFlow.class);
+
 	private static final Map<Integer, Image> imageCache = new ConcurrentHashMap<>();
 
 	private String defaultFontFamily;
@@ -37,6 +43,7 @@ public class MineTextFlow extends TextFlow {
 	private FontPosture defaultFontPosture;
 	private FontWeight defaultFontWeight;
 	private Color defaultFontFill;
+
 	public MineTextFlow(double defaultFontSize) {
 		this("Inter", defaultFontSize, FontPosture.REGULAR, FontWeight.BOLD, Color.WHITE);
 	}
@@ -169,6 +176,23 @@ public class MineTextFlow extends TextFlow {
 		return this;
 	}
 
+	public MineTextFlow appendBadge(String channelId, BadgeId badgeId) {
+		Image badgeImage = Main.getEmoteManager().getBadgeImage1x(channelId, badgeId);
+		if (badgeImage != null) {
+			ImageView imageView = new ImageView(badgeImage) {
+
+				@Override
+				public double getBaselineOffset() {
+					return getImage().getHeight() * 0.75;
+				}
+			};
+			appendImage(imageView);
+		} else {
+			LOG.warn("Badge image not found for badge ID: {}", badgeId);
+		}
+		return this;
+	}
+
 	public MineTextFlow appendToken(ChatMessageToken token) {
 		switch (token.getType()) {
 			case EMOTE -> {
@@ -183,6 +207,7 @@ public class MineTextFlow extends TextFlow {
 					};
 					appendImage(imageView);
 				} else {
+					LOG.warn("Emote image not found for emote ID: {}", token.getEmoteId());
 					appendString(token.getText());
 				}
 			}
@@ -195,11 +220,6 @@ public class MineTextFlow extends TextFlow {
 
 	public MineTextFlow appendImage(Path imagePath) {
 		appendImage(new ImageView( imageCache.computeIfAbsent(imagePath.hashCode(), hash -> new Image(imagePath.toUri().toString()))));
-		return this;
-	}
-
-	public MineTextFlow appendImage(Path imagePath, double pixelSize) {
-		appendImage(new ImageView(imageCache.computeIfAbsent(imagePath.hashCode(), hash -> new Image(imagePath.toUri().toString(), pixelSize, pixelSize, true, false))));
 		return this;
 	}
 

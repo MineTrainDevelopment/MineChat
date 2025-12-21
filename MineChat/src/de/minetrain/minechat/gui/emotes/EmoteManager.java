@@ -20,8 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.Emote;
 import javafx.scene.image.Image;
+import javafx.util.Pair;
 
 public class EmoteManager {
 
@@ -30,10 +32,13 @@ public class EmoteManager {
 	private static final Logger LOG = LoggerFactory.getLogger(EmoteManager.class);
 
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/{}/dark/1.0"; // id, format(static, animated)
+	private static final String TWITCH_BADGE_URL = "https://static-cdn.jtvnw.net/badges/v1/{}/1"; // id
 
 	private final Cache<String, Image> emoteImage1xCache;
 
 	private final Cache<String, Map<String, Emote>> channelIdBttvNameToEmoteCache;
+
+	private final Cache<Pair<String, BadgeId>, Image> badgeImage1xCache;
 
 	/**emoteId, emoteName*/
 	private static final HashMap<String, String> emoteIdToName = new HashMap<>();
@@ -49,7 +54,7 @@ public class EmoteManager {
 		CacheManager cacheManager = cachingProvider.getCacheManager();
 		MutableConfiguration<String,Image> image1xConfig = new MutableConfiguration<String, Image>()
 			.setStoreByValue(false)
-			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES))
+			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.THIRTY_MINUTES))
 			.setCacheLoaderFactory(EmoteExtractorCacheLoader.factoryOf(emote -> new Image(new ByteArrayInputStream(emote.getImage1x()))))
 			.setReadThrough(true);
 		emoteImage1xCache = cacheManager.createCache("emoteImageCacheSmall", image1xConfig);
@@ -61,12 +66,20 @@ public class EmoteManager {
 			.setReadThrough(true);
 
 		channelIdBttvNameToEmoteCache = cacheManager.createCache("channelIdBttvNameToIdCache", channelIdBttvNameToEmoteConfig);
+
+		MutableConfiguration<Pair<String, BadgeId>,Image> badgeImage1xConfig = new MutableConfiguration<Pair<String, BadgeId>, Image>()
+			.setStoreByValue(false)
+			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.THIRTY_MINUTES))
+			.setCacheLoaderFactory(BadgeExtractorCacheLoader.factoryOf(badge -> new Image(new ByteArrayInputStream(badge.getImage1x()))))
+			.setReadThrough(true);
+		badgeImage1xCache = cacheManager.createCache("badgeImageCacheSmall", badgeImage1xConfig);
 	}
 
 	public Image getEmoteImage1x(String emoteId, boolean animated) {
 		Image image = emoteImage1xCache.get(emoteId);
 		if (image == null) {
-			String url = MessageFormatter.basicArrayFormat(TWITCH_EMOTE_URL, new Object[] {emoteId, animated ? "animated" : "static"});
+			LOG.info("Downloading not cached emote image for id: {}", emoteId);
+			String url = MessageFormatter.basicArrayFormat(TWITCH_EMOTE_URL, new Object[] { emoteId, animated ? "animated" : "static" });
 			image = new Image(url, true);
 			emoteImage1xCache.put(emoteId, image);
 		}
@@ -80,6 +93,10 @@ public class EmoteManager {
 	public Emote getBttvEmoteByName(String channelId, String emoteName) {
 		Map<String, Emote> nameToIdMap = getChannelBttvNameToEmoteMap(channelId);
 		return nameToIdMap.get(emoteName);
+	}
+
+	public Image getBadgeImage1x(String channelId, BadgeId badgeId) {
+		return badgeImage1xCache.get(new Pair<>(channelId, badgeId));
 	}
 
 	//This used to load the emote autocompetion.

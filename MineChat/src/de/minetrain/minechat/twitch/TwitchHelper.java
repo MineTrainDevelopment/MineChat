@@ -19,6 +19,8 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
  */
 public final class TwitchHelper {
 
+	public static final String CHANNEL_ID_PUBLIC = "public";
+
 	private TwitchHelper() {
 		// Private constructor to prevent instantiation
 	}

@@ -237,7 +237,7 @@
 }
 #message-comp-title-pane {
     -fx-background-color: transparent;
-    -fx-translate-y: -15;
+    -fx-translate-y: -18;
     -fx-translate-x: 5;
 }
 
@@ -289,7 +289,6 @@
    -fx-background-color: transparent;
 }
 
-/* Modern Scrollbar Styling - nur Farben, keine Größen */
 .scroll-bar {
     -fx-background-color: transparent;
 }

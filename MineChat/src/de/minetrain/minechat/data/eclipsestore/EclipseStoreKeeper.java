@@ -18,10 +18,11 @@ public class EclipseStoreKeeper {
 
 
 	public static void init() {
-		if(instance != null) {
+		if (instance != null) {
 			LOG.warn("EclipseStoreKeeper is already initialized and will be recreated.");
 		}
 		instance = new EclipseStoreKeeper();
+		performTemporaryUpdates();
 	}
 
 	public static EclipseStoreKeeper instance() {
@@ -33,7 +34,7 @@ public class EclipseStoreKeeper {
 
 		root = (EclipseStoreRoot) storageManager.root();
 
-		if(root == null){
+		if (root == null) {
 			root = new EclipseStoreRoot();
 			storageManager.setRoot(root);
 			storageManager.storeRoot();
@@ -46,5 +47,9 @@ public class EclipseStoreKeeper {
 
 	public static EclipseStoreRoot root() {
 		return instance().root;
+	}
+
+	private static void performTemporaryUpdates() {
+		// Currently no temporary updates are needed
 	}
 }

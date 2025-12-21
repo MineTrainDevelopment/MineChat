@@ -33,6 +33,7 @@ public class ChannelManager {
 
 	public void init() {
 		validateUsers().join();
+		loadMissingChannelData();
 		List<Channel> allChannels = getAllChannels();
 		allChannels.forEach(channel -> TwitchHelper.joinChannel(channel.getChannelId()));
 
@@ -155,6 +156,10 @@ public class ChannelManager {
 			});
 	}
 
+	private void loadMissingChannelData() {
+		CompletableFuture.runAsync(() -> getAllChannels().forEach(channel -> TextureManager.downloadMissingChannelData(channel.getChannelId()).join()));
+	}
+
 	private static Channels getChannels() {
 		return EclipseStoreKeeper.root().channels();
 	}
@@ -176,9 +181,9 @@ public class ChannelManager {
 		getChannels().addChannel(newChannel);
 		TwitchHelper.joinChannel(newChannel.getChannelId());
 
-		TextureManager.downloadChannelEmotes(channelId);
-		TextureManager.downloadBttvEmotes(channelId);
-		TextureManager.downloadChannelBadges(channelId);
+		TextureManager.downloadChannelEmotes(channelId, true);
+		TextureManager.downloadBttvEmotes(channelId, true);
+		TextureManager.downloadChannelBadges(channelId, true);
 		Platform.runLater(() -> {
 			ChannelViewModel channelViewModel = ChannelViewModel.of(newChannel);
 			Main.titleBar.getChannels().add(channelViewModel);

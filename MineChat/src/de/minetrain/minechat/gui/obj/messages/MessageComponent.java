@@ -58,6 +58,7 @@ public class MessageComponent extends StackPane {
 		getChildren().addAll(titlePane, content, createReplyButton());
 	}
 
+	@Deprecated
 	public MessageComponent(ChannelActions channel, MessageComponentContent messageContent) {
 		this();
 		//filter out emote only messages
@@ -120,7 +121,9 @@ public class MessageComponent extends StackPane {
 		if (StringUtils.isBlank(color)) {
 			color = "#ffffff";
 		}
-		titleFlow.appendString(message.getSenderName(), ColorManager.decode(color, ColorManager.encode(ColorManager.GUI_BACKGROUND))).appendString(": ", 20, Color.WHITE);
+
+		message.getBadgeIds().forEach(badgeId -> titleFlow.appendSpace().appendBadge(message.getChannelId(), badgeId));
+		titleFlow.appendSpace().appendString(message.getSenderName(), ColorManager.decode(color, ColorManager.encode(ColorManager.GUI_BACKGROUND))).appendString(": ", 20, Color.WHITE);
 
 		Instant messageCreated = message.getTimestamp();
 		DateTimeFormatter selectDateTimeFormatter = selectDateTimeFormatter(messageCreated);
@@ -134,6 +137,7 @@ public class MessageComponent extends StackPane {
 		titleFlow.clear();
 	}
 
+	@Deprecated
 	private void formatText(MessageComponentContent messageContent, String channelId){
 		messageFlow.appendString("["+getTimeStamp(messageContent)+"] ");
 

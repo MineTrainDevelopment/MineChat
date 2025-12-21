@@ -27,7 +27,6 @@ import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.chat.events.channel.UserBanEvent;
 import com.github.twitch4j.chat.events.channel.UserTimeoutEvent;
 import com.github.twitch4j.chat.events.roomstate.SlowModeEvent;
-import com.github.twitch4j.eventsub.domain.chat.Badge;
 import com.github.twitch4j.eventsub.domain.chat.Emote.Format;
 import com.github.twitch4j.eventsub.domain.chat.Fragment;
 import com.github.twitch4j.eventsub.domain.chat.Reply;
@@ -39,6 +38,7 @@ import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.data.objectdata.ChatMessage.MessageType;
 import de.minetrain.minechat.data.objectdata.ChatMessageToken;
@@ -112,7 +112,7 @@ public class TwitchListener {
 		List<ChatMessageToken> tokenList = new ArrayList<>();
 		event.getMessage().getFragments().stream().forEach(fragment -> createChatMessageToken(event.getBroadcasterUserId(), fragment, tokenList));
 		ChatMessageToken[] tokens = tokenList.toArray(ChatMessageToken[]::new);
-		String[] badges = event.getBadges().stream().map(Badge::getId).toArray(String[]::new);
+		BadgeId[] badgeIds = event.getBadges().stream().map(badge -> new BadgeId(badge.getSetId(), badge.getId())).toArray(BadgeId[]::new);
 		Reply reply = event.getReply();
 
 		LOG.debug("Created ChatMessage tokens: {}", (Object) tokens);
@@ -127,7 +127,7 @@ public class TwitchListener {
 				reply != null ? reply.getParentMessageId() : null,
 				event.getMessageType() == com.github.twitch4j.eventsub.domain.chat.MessageType.CHANNEL_POINTS_HIGHLIGHTED ? MessageType.HIGHLIGHTED : MessageType.TEXT,
 				tokens,
-				badges
+				badgeIds
 		);
 	}
 

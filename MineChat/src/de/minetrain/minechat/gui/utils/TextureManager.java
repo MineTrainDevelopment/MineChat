@@ -1,9 +1,6 @@
 package de.minetrain.minechat.gui.utils;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,9 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -36,8 +31,9 @@ import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.Emote.Format;
 import com.google.gson.Gson;
 
-import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.Badge;
+import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteType;
 import de.minetrain.minechat.twitch.TwitchHelper;
@@ -293,36 +289,24 @@ public class TextureManager {
 		return copyButton;
 	}
 
-
-
 	public static void downloadPublicData() {
-		if (!Files.exists(PATH_BADGES.resolve("vip"))) {
-			downloadDefaultBadges();
-		}
+		boolean publicBadgesMissing = EclipseStoreKeeper.root().badges().getBadgesByChannelId(TwitchHelper.CHANNEL_ID_PUBLIC).isEmpty();
+		downloadDefaultBadges(publicBadgesMissing);
 
-		if (EclipseStoreKeeper.root().emotes().getEmotesByChannelId("public").isEmpty()) {
-			downloadDefaultEmotes();
-		}
+		boolean publicEmotesMissing = EclipseStoreKeeper.root().emotes().getEmotesByChannelId(TwitchHelper.CHANNEL_ID_PUBLIC).isEmpty();
+		downloadDefaultEmotes(publicEmotesMissing);
 	}
 
-
-	public static void downloadProfileImage(String uri, String channelId) {
-		try {
-			Path channelPath = PATH_ICONS.resolve(channelId);
-			BufferedImage image = downloadImage(uri);
-			writeImage(image, channelPath.resolve("profile.png"));
-			writeImage(resizeImage(image, new Dimension(18, 18)), channelPath.resolve("profile_18.png"));
-			writeImage(resizeImage(image, new Dimension(25, 25)), channelPath.resolve("profile_25.png"));
-			writeImage(resizeImage(image, new Dimension(75, 75)), channelPath.resolve("profile_75.png"));
-			writeImage(resizeImage(image, new Dimension(80, 80)), channelPath.resolve("profile_80.png"));
-		} catch (IOException e) {
-			LOG.error("Error while downloading image from: {}", uri, e);
-		}
+	public static CompletableFuture<Void> downloadMissingChannelData(String channelId) {
+		return CompletableFuture.allOf(
+				downloadChannelBadges(channelId, false),
+				downloadChannelEmotes(channelId, false),
+				downloadBttvEmotes(channelId, false));
 	}
 
-	public static void downloadChannelBadges(String userId){
-		TwitchHelper.requestChannelBadges(userId)
-			.thenAcceptAsync(bagdes -> downloadBadges(bagdes, userId))
+	public static CompletableFuture<Void> downloadChannelBadges(String userId, boolean forceUpdate){
+		return TwitchHelper.requestChannelBadges(userId)
+			.thenAcceptAsync(bagdes -> downloadBadges(bagdes, userId, forceUpdate))
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading channel badges for user ID: {}", userId, e);
@@ -331,9 +315,9 @@ public class TextureManager {
 			});
 	}
 
-	public static void downloadChannelEmotes(String userId) {
-		TwitchHelper.requestChannelEmotes(userId)
-			.thenAcceptAsync(emotes -> downloadEmotes(emotes, userId))
+	public static CompletableFuture<Void> downloadChannelEmotes(String userId, boolean forceUpdate) {
+		return TwitchHelper.requestChannelEmotes(userId)
+			.thenAcceptAsync(emotes -> downloadEmotes(emotes, userId, forceUpdate))
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading channel emotes for user ID: {}", userId, e);
@@ -342,8 +326,8 @@ public class TextureManager {
 		});
 	}
 
-	public static void downloadBttvEmotes(String userId){
-		CompletableFuture.supplyAsync(() -> {
+	public static CompletableFuture<Void> downloadBttvEmotes(String userId, boolean forceUpdate) {
+		return CompletableFuture.supplyAsync(() -> {
 			try (HttpClient client = HttpClient.newHttpClient()) {
 				HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.betterttv.net/3/cached/users/twitch/" + userId))
 					.header("accept", "application/json")
@@ -369,7 +353,7 @@ public class TextureManager {
 				Thread.currentThread().interrupt();
 				throw new CompletionException(e.getMessage(), e);
 			}
-		}).thenAcceptAsync(emotes -> downloadBttvEmotes(emotes, userId))
+		}).thenAcceptAsync(emotes -> downloadBttvEmotes(emotes, userId, forceUpdate))
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading channel emotes for user ID: {}", userId, e);
@@ -414,9 +398,9 @@ public class TextureManager {
 	}
 
 
-	private static void downloadDefaultBadges(){
+	private static void downloadDefaultBadges(boolean forceUpdate) {
 		TwitchHelper.requestGlobalBadges()
-			.thenAcceptAsync(bagdes -> downloadBadges(bagdes, null))
+			.thenAcceptAsync(bagdes -> downloadBadges(bagdes, TwitchHelper.CHANNEL_ID_PUBLIC, forceUpdate))
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading default badges", e);
@@ -426,9 +410,9 @@ public class TextureManager {
 	}
 
 
-	private static void downloadDefaultEmotes() {
+	private static void downloadDefaultEmotes(boolean forceUpdate) {
 		TwitchHelper.requestGlobalEmotes()
-			.thenAcceptAsync(emotes -> downloadEmotes(emotes, "public"))
+			.thenAcceptAsync(emotes -> downloadEmotes(emotes, TwitchHelper.CHANNEL_ID_PUBLIC, forceUpdate))
 			.handle((_, e) -> {
 				if (e != null) {
 					LOG.error("Error while downloading default badges", e);
@@ -438,33 +422,38 @@ public class TextureManager {
 	}
 
 
-	private static void downloadBadges(List<ChatBadgeSet> bagdes, String channelId) {
+	private static void downloadBadges(List<ChatBadgeSet> bagdes, String channelId, boolean forceUpdate) {
+		List<Badge> newBadges = new ArrayList<>(bagdes.stream().mapToInt(set -> set.getVersions().size()).sum());
 		for (ChatBadgeSet badgeSet : bagdes) {
-			Path setPath = PATH_BADGES.resolve(badgeSet.getSetId());
-			if (channelId != null) {
-				setPath = setPath.resolve("Channel_" + channelId);
-			}
-			for (ChatBadge version : badgeSet.getVersions()) {
-				Path targetPath = setPath.resolve(version.getId());
-				YamlManager config = new YamlManager(targetPath.resolve("meta.yml").toString());
-				config.setString("Name", version.getTitle());
-				config.setString("Description", version.getDescription());
-				config.saveConfigToFile();
-
+			for (ChatBadge twitchBadge : badgeSet.getVersions()) {
+				BadgeId badgeId = new BadgeId(badgeSet.getSetId(), twitchBadge.getId());
+				if (!forceUpdate && EclipseStoreKeeper.root().badges().of(channelId, badgeId) != null) {
+					continue;
+				}
+				LOG.info("{} - Downloading badge: {}", channelId, twitchBadge);
 				try {
-					downloadImage(version.getSmallImageUrl(), targetPath.resolve("1.png"));
-					downloadImage(version.getMediumImageUrl(), targetPath.resolve("2.png"));
-					downloadImage(version.getLargeImageUrl(), targetPath.resolve("3.png"));
+					byte[] image1x = downloadImageData(twitchBadge.getSmallImageUrl());
+					byte[] image2x = downloadImageData(twitchBadge.getMediumImageUrl());
+					byte[] image3x = downloadImageData(twitchBadge.getLargeImageUrl());
+
+					Badge badge = new Badge(badgeId, channelId,
+							twitchBadge.getTitle(), twitchBadge.getDescription(), twitchBadge.getClickAction(),
+							twitchBadge.getClickUrl(), image1x, image2x, image3x);
+					newBadges.add(badge);
 				} catch (IOException e) {
-					LOG.error("Error downloading badge images.", e);
+					LOG.error("Error downloading badge images for badge '{}' in channel ID: {}", twitchBadge.getTitle(), channelId, e);
 				}
 			}
 		}
+		EclipseStoreKeeper.root().badges().addBadges(newBadges);
 	}
 
-	private static void downloadEmotes(List<com.github.twitch4j.helix.domain.Emote> emotes, String channelId) {
+	private static void downloadEmotes(List<com.github.twitch4j.helix.domain.Emote> emotes, String channelId, boolean forceUpdate) {
 		List<Emote> newEmotes = new ArrayList<>(emotes.size());
 		for (var twitchEmote : emotes) {
+			if (!forceUpdate && EclipseStoreKeeper.root().emotes().ofId(twitchEmote.getId()) != null) {
+				continue;
+			}
 			LOG.info("{} - Downloading emote: {}", channelId, twitchEmote);
 			EmoteType type = twitchEmote.getEmoteType() == null || twitchEmote.getTier() == null ? null : EmoteType.get(twitchEmote.getEmoteType(), twitchEmote.getTier().ordinalName());
 			boolean animated = twitchEmote.getFormat().contains(Format.ANIMATED);
@@ -490,9 +479,12 @@ public class TextureManager {
 		EclipseStoreKeeper.root().emotes().addEmotes(newEmotes);
 	}
 
-	private static void downloadBttvEmotes(List<BttvEmote> emotes, String channelId){
+	private static void downloadBttvEmotes(List<BttvEmote> emotes, String channelId, boolean forceUpdate) {
 		List<Emote> newEmotes = new ArrayList<>(emotes.size());
 		for (var bttvEmote : emotes) {
+			if (!forceUpdate && EclipseStoreKeeper.root().emotes().ofId(bttvEmote.getId()) != null) {
+				continue;
+			}
 			LOG.info("{} - Downloading bttv emote: {}", channelId, bttvEmote);
 			try {
 				byte[][] images = new byte[3][];
@@ -511,24 +503,6 @@ public class TextureManager {
 		EclipseStoreKeeper.root().emotes().addEmotes(newEmotes);
 	}
 
-	private static void downloadImage(String url, Path target) throws IOException {
-		LOG.debug("Downloading image from URL: {}", url);
-		try (InputStream in = URI.create(url).toURL().openStream()) {
-			Files.createDirectories(target.getParent());
-			Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-		}
-		LOG.debug("Image downloaded and saved to: {}", target);
-	}
-
-	private static BufferedImage downloadImage(String url) throws IOException {
-		LOG.debug("Downloading image from URL: {}", url);
-		try (InputStream in = URI.create(url).toURL().openStream()) {
-			BufferedImage image = ImageIO.read(in);
-			LOG.debug("Image downloaded");
-			return image;
-		}
-	}
-
 	private static byte[] downloadImageData(String url) throws IOException {
 		LOG.debug("Downloading image from URL: {}", url);
 		try (InputStream in = URI.create(url).toURL().openStream()) {
@@ -536,25 +510,6 @@ public class TextureManager {
 			LOG.debug("Image downloaded");
 			return imageData;
 		}
-	}
-
-	private static void writeImage(BufferedImage scaledImage, Path imagePath) throws IOException {
-		String fileName = imagePath.getFileName().toString();
-		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
-		Files.createDirectories(imagePath.getParent());
-		ImageIO.write(scaledImage, format, imagePath.toFile());
-		LOG.debug("Image saved to: {}", imagePath);
-	}
-
-	private static BufferedImage resizeImage(BufferedImage image, Dimension dimension) {
-		BufferedImage scaledImage = new BufferedImage(dimension.width, dimension.height, image.getType());
-		Graphics2D g2d = scaledImage.createGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.drawImage(image, 0, 0, dimension.width, dimension.height, null);
-		g2d.dispose();
-		return scaledImage;
 	}
 
 	/// Re-encodes the GIF to ensure infinite looping and proper transparency handling.
