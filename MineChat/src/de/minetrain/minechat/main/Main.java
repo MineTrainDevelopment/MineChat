@@ -19,9 +19,7 @@ import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.panes.InputFieldPane;
-import de.minetrain.minechat.gui.panes.MacroPanelPane;
-import de.minetrain.minechat.gui.panes.MessageListView;
+import de.minetrain.minechat.gui.panes.ChannelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
@@ -134,10 +132,9 @@ public class Main extends Application {
 		return oAuth2Token;
 	}
 
-	public static MacroPanelPane macroPane;
 	public static TitleBarPane titleBar;
+	public static ChannelPane channelPane;
 	public static Stage primaryStage;
-	public static MessageListView messageListView;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -145,31 +142,18 @@ public class Main extends Application {
 		primaryStage.setTitle("MineChat - JavaFX rework");
 		primaryStage.initStyle(StageStyle.UNIFIED);
 
-		BorderPane topPane = new BorderPane();
 		titleBar = new TitleBarPane();
-		topPane.setTop(titleBar);
-		macroPane = new MacroPanelPane();
-		macroPane.activeChannelProperty().bind(titleBar.selectedChannelProperty());
-		topPane.setBottom(macroPane);
 
-
-//        Button messagePanel = new Button("Jen");
-//        messagePanel.setPrefSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-//        messagePanel.setStyle("-fx-background-color: #505050; -fx-padding: 5; -fx-text-fill: white; -fx-font-size: 20px");
-//        vBox.getChildren().addAll(new Button("ttt"), tabPane, new Button("ttt"));
-
-		messageListView = new MessageListView();
+		channelPane = new ChannelPane();
+		channelPane.channelProperty().bind(titleBar.selectedChannelProperty());
 
 		BorderPane mainContentPane = new BorderPane();
-		mainContentPane.setTop(topPane);
-		mainContentPane.setCenter(messageListView);
-//		mainContentPane.setCenter(new EmoteSelectorButton(EmoteManager.getEmoteByName("jennyanPls"), EmoteSize.SMALL, EmoteBorderType.DEFAULT));
-		mainContentPane.setBottom(new InputFieldPane());
+		mainContentPane.setTop(titleBar);
+		mainContentPane.setCenter(channelPane);
 
-
-        //Set up the scene
-        Scene scene = new Scene(mainContentPane, 500, 700);
-        scene.setFill(Color.TRANSPARENT);
+		// Set up the scene
+		Scene scene = new Scene(mainContentPane, 500, 700);
+		scene.setFill(Color.TRANSPARENT);
 		scene.getStylesheets().add("style.css");
 
 		//TODO: Keep multiframe in mind.
@@ -184,12 +168,12 @@ public class Main extends Application {
 		//TODO: Keep multiframe in mind.
 		//TODO: Keep multiframe in mind.
 
-        // Set the scene to the stage
+		// Set the scene to the stage
 		primaryStage.setMinWidth(516);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> System.exit(0));
-        isGuiOpen = true;
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		primaryStage.setOnCloseRequest(_ -> System.exit(0));
+		isGuiOpen = true;
 
 		// LoadChannels
 		loadingAsyncProgressLogging(1, "Loading channels.");
@@ -201,6 +185,7 @@ public class Main extends Application {
 			List<ChannelViewModel> cvms = getChannelManager().getAllChannels().stream()
 				.map(ChannelViewModel::of)
 				.toList();
+			cvms.forEach(ChannelViewModel::refreshMessages);
 			Platform.runLater(() -> {
 				titleBar.getChannels().addAll(cvms);
 				titleBar.getChannels().stream().findFirst().ifPresent(getChannelManager()::setActiveChannel);

@@ -1,12 +1,19 @@
 package de.minetrain.minechat.gui.viewmodel;
 
+import java.util.List;
 import java.util.Objects;
 
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
+import de.minetrain.minechat.data.objectdata.ChatMessage;
+import de.minetrain.minechat.gui.utils.NotifiableObjectProperty;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.image.Image;
 
 public class ChannelViewModel {
 
@@ -21,14 +28,19 @@ public class ChannelViewModel {
 	private ReadOnlyStringWrapper channelIdProperty;
 	private ReadOnlyStringWrapper channelNameProperty;
 	private ReadOnlyStringWrapper profileImageUrlProperty;
+	private ReadOnlyObjectWrapper<Image> profileImageSmallProperty;
+	private ReadOnlyObjectWrapper<Image> profileImageLargeProperty;
 	private ReadOnlyStringWrapper loginNameProperty;
 	private BooleanProperty liveProperty;
 	private BooleanProperty selectedProperty;
+	private NotifiableObjectProperty<List<ChatMessage>> messagesProperty;
 
 	protected ChannelViewModel(String channelId, String channelName, String profileImageUrl, String loginName) {
 		channelIdPropertyInternal().set(channelId);
 		channelNamePropertyInternal().set(channelName);
 		profileImageUrlPropertyInternal().set(profileImageUrl);
+		profileImageSmallPropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 24d, 24d, false, true, true)));
+		profileImageLargePropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 75, 75, false, true, true)));
 		loginNamePropertyInternal().set(loginName);
 
 		// TODO don't report initial value...
@@ -84,6 +96,28 @@ public class ChannelViewModel {
 		return profileImageUrlProperty;
 	}
 
+	public ReadOnlyObjectProperty<Image> profileImageSmallProperty() {
+		return profileImageSmallPropertyInternal().getReadOnlyProperty();
+	}
+
+	protected ReadOnlyObjectWrapper<Image> profileImageSmallPropertyInternal() {
+		if (profileImageSmallProperty == null) {
+			profileImageSmallProperty = new ReadOnlyObjectWrapper<>(this, "profileImageSmall");
+		}
+		return profileImageSmallProperty;
+	}
+
+	public ReadOnlyObjectProperty<Image> profileImageLargeProperty() {
+		return profileImageLargePropertyInternal().getReadOnlyProperty();
+	}
+
+	protected ReadOnlyObjectWrapper<Image> profileImageLargePropertyInternal() {
+		if (profileImageLargeProperty == null) {
+			profileImageLargeProperty = new ReadOnlyObjectWrapper<>(this, "profileImageLarge");
+		}
+		return profileImageLargeProperty;
+	}
+
 	protected ReadOnlyStringWrapper loginNamePropertyInternal() {
 		if (loginNameProperty == null) {
 			loginNameProperty = new ReadOnlyStringWrapper(this, "loginName");
@@ -107,6 +141,13 @@ public class ChannelViewModel {
 			selectedProperty = new SimpleBooleanProperty(this, "selected", false);
 		}
 		return selectedProperty;
+	}
+
+	public NotifiableObjectProperty<List<ChatMessage>> messagesProperty() {
+		if (messagesProperty == null) {
+			messagesProperty = new NotifiableObjectProperty<>(this, "messages");
+		}
+		return messagesProperty;
 	}
 
 	public String getChannelId() {
@@ -139,6 +180,23 @@ public class ChannelViewModel {
 
 	public void setSelected(boolean isSelected) {
 		selectedProperty().set(isSelected);
+	}
+
+	public void setMessages(List<ChatMessage> messages) {
+		messagesProperty().set(messages);
+	}
+
+	public List<ChatMessage> getMessages() {
+		return messagesProperty().get();
+	}
+
+	public void refreshMessages() {
+		List<ChatMessage> messages = getMessages();
+		if (messages == null || messages.isEmpty()) {
+			setMessages(EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId()));
+			return;
+		}
+		messagesProperty().notifyChange();
 	}
 
 	@Override

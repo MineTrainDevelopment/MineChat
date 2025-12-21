@@ -99,7 +99,7 @@ public class MacroEditorFrame extends MineDialog {
         		channel.getMacros().createMacro(newMacro);
         	}
 
-        	Main.macroPane.loadMacros();
+//        	Main.macroPane.loadMacros(); TODO: Zocki Refresh macros...
         	emoteSelector = null;
         	closeStage();
         });

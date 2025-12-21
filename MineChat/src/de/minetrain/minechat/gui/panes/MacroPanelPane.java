@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -23,12 +22,11 @@ import javafx.scene.shape.Rectangle;
 
 public class MacroPanelPane extends BorderPane {
 
-
 	private HBox sizeGuideButton = new HBox();
 	private VBox macroRows;
 	private ScrollPane macroScrollPane;
 
-	private ObjectProperty<ChannelViewModel> activeChannelProperty;
+	private ObjectProperty<ChannelViewModel> channelProperty;
 	private final List<MacroButton> macroButtons = new ArrayList<>();
 
 	public MacroPanelPane() {
@@ -103,9 +101,7 @@ public class MacroPanelPane extends BorderPane {
 		ImageView profileImageView = new ImageView();
 		profileImageView.setTranslateY(-6);
 		profileImageView.setTranslateX(-5);
-		profileImageView.imageProperty().bind(activeChannelProperty()
-			.flatMap(ChannelViewModel::profileImageUrlProperty)
-			.map(imageUrl -> new Image(imageUrl, 75, 75, false, true, true)));
+		profileImageView.imageProperty().bind(channelProperty().flatMap(ChannelViewModel::profileImageLargeProperty));
 
 		BorderPane infoPane = new BorderPane();
 		infoPane.setCenter(profileImageView);
@@ -230,19 +226,19 @@ public class MacroPanelPane extends BorderPane {
 		return selector;
 	}
 
-	public ObjectProperty<ChannelViewModel> activeChannelProperty() {
-		if (activeChannelProperty == null) {
-			activeChannelProperty = new SimpleObjectProperty<>(this, "activeChannel");
+	public ObjectProperty<ChannelViewModel> channelProperty() {
+		if (channelProperty == null) {
+			channelProperty = new SimpleObjectProperty<>(this, "channel");
 		}
-		return activeChannelProperty;
+		return channelProperty;
 	}
 
-	public ChannelViewModel getActiveChannel() {
-		return activeChannelProperty().get();
+	public ChannelViewModel getChannel() {
+		return channelProperty().get();
 	}
 
-	public void setActiveChannel(ChannelViewModel channel) {
-		activeChannelProperty().set(channel);
+	public void setChannel(ChannelViewModel channel) {
+		channelProperty().set(channel);
 	}
 
 	public void loadMacros() {

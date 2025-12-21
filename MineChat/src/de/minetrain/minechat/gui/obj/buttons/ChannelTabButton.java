@@ -30,7 +30,6 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -59,8 +58,7 @@ public class ChannelTabButton extends Button {
 	private TitleBarPane parentTitleBar;
 
 	public ChannelTabButton(ChannelViewModel channelViewModel, TitleBarPane titleBarPane) {
-		ImageView profileImageView = createProfileImageView(channelViewModel.getProfileImageUrl());
-		super(channelViewModel.getChannelName(), profileImageView);
+		super(channelViewModel.getChannelName(), createProfileImageView(channelViewModel));
 		this.parentTitleBar = titleBarPane;
 		setFocusTraversable(false);
 		setId("channel-tab");
@@ -68,7 +66,6 @@ public class ChannelTabButton extends Button {
 		channelViewModelPropertyInternal().set(channelViewModel);
 		livePropertyInternal().bind(channelViewModel.liveProperty());
 		selectedPropertyInternal().bind(channelViewModel.selectedProperty());
-		profileImageView.imageProperty().bind(channelViewModel.profileImageUrlProperty().map(ChannelTabButton::createProfileImage));
 
 		selectedProperty().addListener((_, _, newVal) -> {
 			double newMinWidth = newVal.booleanValue() ? computePrefWidth(Double.NEGATIVE_INFINITY) : MIN_WIDTH;
@@ -170,14 +167,11 @@ public class ChannelTabButton extends Button {
 	}
 
 
-	private static ImageView createProfileImageView(String url) {
-		ImageView imageView = new ImageView(createProfileImage(url));
+	private static ImageView createProfileImageView(ChannelViewModel channelViewModel) {
+		ImageView imageView = new ImageView();
+		imageView.imageProperty().bind(channelViewModel.profileImageSmallProperty());
 		imageView.setTranslateX(-5);
 		return imageView;
-	}
-
-	private static Image createProfileImage(String url) {
-		return new Image(url, 24d, 24d, false, true, true);
 	}
 
 	public ReadOnlyObjectProperty<ChannelViewModel> channelViewModelProperty() {

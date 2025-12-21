@@ -71,10 +71,7 @@ public class ChannelManager {
 			return false;
 		}
 		activeChannelId = channelViewModel.getChannelId();
-		Platform.runLater(() -> {
-			Main.titleBar.setSelectedChannel(channelViewModel);
-			getActiveChannelActions().loadViewPort();
-		});
+		Platform.runLater(() -> Main.titleBar.setSelectedChannel(channelViewModel));
 		return true;
 	}
 

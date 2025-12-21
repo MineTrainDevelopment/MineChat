@@ -1,6 +1,5 @@
 package de.minetrain.minechat.main;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -8,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
-import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
@@ -66,20 +64,9 @@ public class ChannelActions {
 	public void notifyMessageAdded() {
 		Platform.runLater(() -> {
 			if (Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())) {
-				if (Main.messageListView.getItems().isEmpty()) {
-					Main.messageListView.setMessages(EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId()));
-				} else {
-					Main.messageListView.messagesProperty().notifyChange();
-				}
+				Main.channelPane.getChannel().refreshMessages();
 			}
 		});
-	}
-
-	public void loadViewPort() {
-		Main.macroPane.loadMacros(this);
-		List<ChatMessage> messages = EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId());
-		LOG.info("Loading {} messages into viewport for channel {}", messages.size(), getChannelId());
-		Main.messageListView.setMessages(messages);
 	}
 
 	public Rectangle getProfilePic(int size) {
