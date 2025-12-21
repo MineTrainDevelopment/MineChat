@@ -115,7 +115,7 @@ public class TwitchListener {
 		BadgeId[] badgeIds = event.getBadges().stream().map(badge -> new BadgeId(badge.getSetId(), badge.getId())).toArray(BadgeId[]::new);
 		Reply reply = event.getReply();
 
-		LOG.debug("Created ChatMessage tokens: {}", (Object) tokens);
+		LOG.info("Created ChatMessage tokens: {}", (Object) tokens);
 
 		return new ChatMessage(
 				event.getMessageId(),
@@ -141,31 +141,22 @@ public class TwitchListener {
 
 	private static void tokenizeText(String channelId, String text, List<ChatMessageToken> tokenList) {
 		String[] words = SPLIT_PATTERN.splitWithDelimiters(text, 0);
-		StringBuilder currentText = new StringBuilder();
 		for (String word : words) {
+			if (word.isEmpty()) {
+				continue;
+			}
 			if (word.length() >= 2 && StringUtils.isNotBlank(word)) {
 				if (WebUtils.isValidUrl(word)) {
-					if (!currentText.isEmpty()) {
-						tokenList.add(ChatMessageToken.createTextToken(currentText.toString()));
-						currentText.setLength(0);
-					}
 					tokenList.add(ChatMessageToken.createLinkToken(word));
 					continue;
 				}
 				Emote emote = Main.getEmoteManager().getBttvEmoteByName(channelId, word);
 				if (emote != null) {
-					if (!currentText.isEmpty()) {
-						tokenList.add(ChatMessageToken.createTextToken(currentText.toString()));
-						currentText.setLength(0);
-					}
 					tokenList.add(ChatMessageToken.createEmoteToken(emote.getEmoteId(), emote.isAnimated(), word));
 					continue;
 				}
 			}
-			currentText.append(word);
-		}
-		if (!currentText.isEmpty()) {
-			tokenList.add(ChatMessageToken.createTextToken(currentText.toString()));
+			tokenList.add(ChatMessageToken.createTextToken(word));
 		}
 	}
 

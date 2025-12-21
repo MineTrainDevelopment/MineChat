@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
@@ -36,6 +37,7 @@ public class MessageComponent extends StackPane {
 	private final MineTextFlow titleFlow;
 	private final BorderPane content;
 	private final MineTextFlow messageFlow;
+	private final String defaultStyle;
 
 	static long callCount = 0;
 
@@ -56,6 +58,7 @@ public class MessageComponent extends StackPane {
 		content.setCenter(messageFlow);
 
 		getChildren().addAll(titlePane, content, createReplyButton());
+		defaultStyle = getStyle();
 	}
 
 	@Deprecated
@@ -129,12 +132,22 @@ public class MessageComponent extends StackPane {
 		DateTimeFormatter selectDateTimeFormatter = selectDateTimeFormatter(messageCreated);
 		messageFlow.appendString("[" + selectDateTimeFormatter.format(messageCreated.atZone(ZoneId.systemDefault())) + "] ");
 
-		message.getTokens().forEach(messageFlow::appendToken);
+		HighlightString highlight = null;
+		for (var token : message.getTokens()) {
+			HighlightString appliedHighlight = messageFlow.appendToken(token);
+			if (highlight == null && appliedHighlight != null) {
+				highlight = appliedHighlight;
+			}
+		}
+		if (highlight != null) {
+			setStyle("-fx-border-color: " + highlight.getBorderColorCode() + ";");
+		}
 	}
 
 	public void clearMessage() {
 		messageFlow.clear();
 		titleFlow.clear();
+		setStyle(defaultStyle);
 	}
 
 	@Deprecated
@@ -143,7 +156,7 @@ public class MessageComponent extends StackPane {
 
 		// Cache to prevent unnecessary CPU cycles.
 		Map<String, Emote> emotes = Map.of(); // No emotes for now
-		List<HighlightString> highlights = Settings.highlightStrings.values().stream().filter(HighlightString::isAktiv).toList();
+		List<HighlightString> highlights = EclipseStoreKeeper.root().userSettings().computeHighlightStrings(hs -> hs.filter(HighlightString::isEnabled).toList());
 
 		for (String word : messageContent.getMessage().split(" ")) {
 			Emote emote = emotes.get(word);
@@ -161,7 +174,7 @@ public class MessageComponent extends StackPane {
 
 			// This may take to much time...
 			Optional<HighlightString> matchingHighlight = highlights.stream()
-				.filter(hs -> hs.getPattern().matcher(word).matches())
+				.filter(hs -> hs.getCompiledPattern().matcher(word).matches())
 				.findFirst();
 			if (matchingHighlight.isPresent()) {
 				messageFlow.appendString(word + " ", matchingHighlight.get().getWordColor());

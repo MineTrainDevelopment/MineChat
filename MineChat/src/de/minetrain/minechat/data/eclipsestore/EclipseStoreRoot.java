@@ -9,6 +9,7 @@ import de.minetrain.minechat.data.objectdata.Channels;
 import de.minetrain.minechat.data.objectdata.Credentials;
 import de.minetrain.minechat.data.objectdata.Emotes;
 import de.minetrain.minechat.data.objectdata.Messages;
+import de.minetrain.minechat.data.objectdata.UserSettings;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 
 public class EclipseStoreRoot {
@@ -19,6 +20,7 @@ public class EclipseStoreRoot {
 	private Credentials credentials;
 	private Messages messages;
 	private Badges badges;
+	private UserSettings userSettings;
 
 	private void addChannelStatistics(String channelId, ChannelStatistics statistics) {
 		getChannelStatics().put(channelId, statistics);
@@ -75,6 +77,14 @@ public class EclipseStoreRoot {
 			EclipseStoreKeeper.storeManager().store(this);
 		}
 		return badges;
+	}
+
+	public UserSettings userSettings() {
+		if (userSettings == null) {
+			userSettings = new UserSettings();
+			EclipseStoreKeeper.storeManager().store(this);
+		}
+		return userSettings;
 	}
 
 	private Map<String, ChannelStatistics> getChannelStatics() {

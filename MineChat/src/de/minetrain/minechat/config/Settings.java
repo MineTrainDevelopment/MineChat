@@ -3,9 +3,6 @@ package de.minetrain.minechat.config;
 import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +10,9 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.enums.AutoReplyState;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
 import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
-import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
-import de.minetrain.minechat.twitch.TwitchManager;
 
 public class Settings{
 	private static final Logger logger = LoggerFactory.getLogger(Settings.class);
@@ -31,7 +25,6 @@ public class Settings{
 	public static String dateFormat; //
 	public static String dayFormat; //
 	/**keyWord, obj*/
-	public static HashMap<String, HighlightString> highlightStrings = new HashMap<String, HighlightString>();
 
 	public static HighlightDefault highlightUserFirstMessages; //
 	public static HighlightDefault highlightUserGoodbyeMessages;
@@ -81,7 +74,6 @@ public class Settings{
 		timeFormat = settings.getString("Variables.TimeFormat", "HH:mm");
 		dateFormat = settings.getString("Variables.DateFormat", "dd:MM:yyyy");
 		dayFormat = settings.getString("Variables.DayFormat", "eeee");
-		highlightStrings = new HashMap<String, HighlightString>();
 
 		highlightUserFirstMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.FirstMessage");
 		highlightUserGoodbyeMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.GoodByeMessage");
@@ -116,63 +108,6 @@ public class Settings{
 
 		new ColorManager(settings);
 	}
-
-	public static void reloadHighlights(){
-		Settings.highlightStrings.clear();
-		DatabaseManager.getMessageHighlight().getAll();
-		generateUserNameRegex();
-	}
-
-	private static void generateUserNameRegex() {
-		if(highlightStrings.isEmpty()){
-			String twitchName = TwitchManager.ownerChannelName;
-			String[] result = twitchName.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)|(?<=\\D)(?=[_-])|(?<=[_-])(?=\\D)");
-			String name = result[0];
-
-			if(result.length > 1){
-				for(int i = 0; i < result.length; i++) {
-					if(Pattern.compile("(?=[a-zA-Z])").matcher(result[i]).find()){
-						name = result[i];
-						break;
-					}
-				}
-
-				String suffix = "";
-				for(int i = 1; i < result.length; i++) {
-					suffix += result[i];
-				}
-
-
-				if(twitchName.startsWith(name)){
-					name = "^"+name+"(?:"+suffix+")?$";
-				}else{
-					//^(?:_Boomy0|_Boomy|Boomy(?:0)?)$
-					String prefix = twitchName.substring(0, twitchName.indexOf(name));
-					suffix = suffix.substring(suffix.indexOf(name)+name.length(), suffix.length());
-					name = "^(?:"+twitchName+"|"+prefix+name+"|"+name+"(?:"+suffix+")?)$";
-				}
-
-			}
-
-
-			if(!highlightStrings.containsKey(name)){
-				DatabaseManager.getMessageHighlight().insert(
-						UUID.randomUUID().toString(),
-						name,
-						ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT),
-						ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT),
-						null,
-						null,
-						true);
-
-
-				DatabaseManager.commit();
-			}
-
-		}
-	}
-
-
 
 	public static void setMessageTimeFormat(String newMessageTimeFormat) {
 		settings.setString("Variables.MessageTime", newMessageTimeFormat, true);
@@ -224,7 +159,7 @@ public class Settings{
 
 
 		settings.setBoolean("Highlights.MessageHighlights.KeyWods.Active", true);
-		settings.setStringList("Highlights.MessageHighlights.KeyWods.List", new ArrayList<String>(), false);
+		settings.setStringList("Highlights.MessageHighlights.KeyWods.List", new ArrayList<>(), false);
 
 		settings.setBoolean("Highlights.MessageHighlights.FirstMessage.Active", true);
 		settings.setString("Highlights.MessageHighlights.FirstMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));

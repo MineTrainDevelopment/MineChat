@@ -2,6 +2,7 @@ package de.minetrain.minechat.twitch;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatSettings;
@@ -116,5 +117,48 @@ public final class TwitchHelper {
 
 	public static TwitchUserObj getSelfUser() {
 		return TwitchManager.instance().getSelfUser();
+	}
+
+	public static String generateNameRegex(String twitchName) {
+		// Split username into parts at boundaries between letters/digits/special chars
+		String[] parts = twitchName.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)|(?<=\\D)(?=[_-])|(?<=[_-])(?=\\D)");
+
+		if (parts.length == 1) {
+			return twitchName; // Single part, return as-is
+		}
+
+		// Find first part containing letters (the actual username base)
+		int baseNameIndex = findBaseName(parts);
+
+		StringBuilder pattern = new StringBuilder();
+		pattern.append("^");
+		if (baseNameIndex > 0) {
+			pattern.append("(?:");
+			for (int i = 0; i < baseNameIndex; i++) {
+				pattern.append(Pattern.quote(parts[i]));
+			}
+			pattern.append(")?");
+		}
+		pattern.append(parts[baseNameIndex]);
+		if (baseNameIndex < parts.length - 1) {
+			pattern.append("(?:");
+			for (int i = baseNameIndex + 1; i < parts.length; i++) {
+				pattern.append(Pattern.quote(parts[i]));
+			}
+			pattern.append(")?");
+		}
+		pattern.append("$");
+		return pattern.toString();
+	}
+
+	private static int findBaseName(String[] parts) {
+		Pattern pattern = Pattern.compile(".*[a-zA-Z].*");
+		for (int i = 0; i < parts.length; i++) {
+			String part = parts[i];
+			if (pattern.matcher(part).matches()) { // Contains at least one letter
+				return i;
+			}
+		}
+		return 0; // Fallback to first part
 	}
 }

@@ -1,61 +1,69 @@
 package de.minetrain.minechat.features.messagehighlight;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
-import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import javafx.scene.paint.Color;
 
 public class HighlightString {
-	private final String uuid;
-	private final String word;
+
+	private final UUID uuid;
+	private final String pattern;
 	private final String wordColorCode;
 	private final String borderColorCode;
 	private final String soundPath;
 	private final AudioVolume soundVolume;
-	private boolean state;
+	private final boolean enabled;
 
-	private transient Pattern pattern;
+	private transient Pattern compiledPattern;
 
-	public HighlightString(ResultSet result) throws SQLException {
-		this.uuid = result.getString("uuid");
-		this.word = result.getString("word");
-		this.wordColorCode = result.getString("word_color");
-		this.borderColorCode = result.getString("border_color");
-		this.soundPath = result.getString("sound");
-		this.soundVolume = AudioVolume.get(result.getString("sound_volume"));
-		this.state = result.getBoolean("state");
+	public HighlightString(String pattern, String wordColorCode, String borderColorCode) {
+		this.uuid = UUID.randomUUID();
+		this.pattern = pattern;
+		this.wordColorCode = wordColorCode;
+		this.borderColorCode = borderColorCode;
+		this.soundPath = null;
+		this.soundVolume = null;
+		this.enabled = true;
 	}
 
-	public void playSound(){
-		if(isPlaySound()){
+	public HighlightString(UUID id, String pattern, String wordColorCode, String borderColorCode, String soundPath, AudioVolume soundVolume, boolean enabled) {
+		this.uuid = id;
+		this.pattern = pattern;
+		this.wordColorCode = wordColorCode;
+		this.borderColorCode = borderColorCode;
+		this.soundPath = soundPath;
+		this.soundVolume = soundVolume;
+		this.enabled = enabled;
+	}
+
+	public void playSound() {
+		if (isPlaySound()) {
 			Main.getAudioManager().playAudioClip(getSoundUri(), soundVolume);
 		}
 	}
 
-	public AudioVolume getSoundVolume(){
+	public AudioVolume getSoundVolume() {
 		return soundVolume;
 	}
 
-	public String getSoundPath(){
-		return AudioManager.RAW_AUDIO_PATH.replace("/", "\\")+soundPath;
+	public String getSoundPath() {
+		return AudioManager.RAW_AUDIO_PATH.replace("/", "\\") + soundPath;
 	}
 
-	public String getSoundUri(){
+	public String getSoundUri() {
 		return AudioManager.createUri(soundPath);
 	}
 
-	public String getUuid() {
+	public UUID getUuid() {
 		return uuid;
 	}
 
-	public String getWord() {
-		return word;
+	public String getPattern() {
+		return pattern;
 	}
 
 	public String getWordColorCode() {
@@ -78,24 +86,70 @@ public class HighlightString {
 		return soundPath != null;
 	}
 
-	public boolean isAktiv() {
-		return state;
+	public boolean isEnabled() {
+		return enabled;
 	}
 
-	public void setAktiv(boolean state) {
-		this.state = state;
-		DatabaseManager.getMessageHighlight().setState(uuid, state);
+	public Builder buildCopy() {
+		return new Builder().withUuid(uuid).withPattern(pattern).withWordColorCode(wordColorCode)
+				.withBorderColorCode(borderColorCode).withSoundPath(soundPath).withSoundVolume(soundVolume)
+				.withEnabled(enabled);
 	}
 
-	public void delete(){
-		DatabaseManager.getMessageHighlight().remove(uuid);
-		Settings.reloadHighlights();
-	}
-
-	public Pattern getPattern() {
-		if (pattern == null) {
-			pattern = Pattern.compile("^" + word + "$", Pattern.CASE_INSENSITIVE);
+	public Pattern getCompiledPattern() {
+		if (compiledPattern == null) {
+			compiledPattern = Pattern.compile("^" + pattern + "$", Pattern.CASE_INSENSITIVE);
 		}
-		return pattern;
+		return compiledPattern;
+	}
+
+	public static class Builder {
+
+		private UUID uuid;
+		private String pattern;
+		private String wordColorCode;
+		private String borderColorCode;
+		private String soundPath;
+		private AudioVolume soundVolume;
+		private boolean enabled;
+
+		public Builder withUuid(UUID uuid) {
+			this.uuid = uuid;
+			return this;
+		}
+
+		public Builder withPattern(String pattern) {
+			this.pattern = pattern;
+			return this;
+		}
+
+		public Builder withWordColorCode(String wordColorCode) {
+			this.wordColorCode = wordColorCode;
+			return this;
+		}
+
+		public Builder withBorderColorCode(String borderColorCode) {
+			this.borderColorCode = borderColorCode;
+			return this;
+		}
+
+		public Builder withSoundPath(String soundPath) {
+			this.soundPath = soundPath;
+			return this;
+		}
+
+		public Builder withSoundVolume(AudioVolume soundVolume) {
+			this.soundVolume = soundVolume;
+			return this;
+		}
+
+		public Builder withEnabled(boolean enabled) {
+			this.enabled = enabled;
+			return this;
+		}
+
+		public HighlightString build() {
+			return new HighlightString(uuid, pattern, wordColorCode, borderColorCode, soundPath, soundVolume, enabled);
+		}
 	}
 }

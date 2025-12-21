@@ -12,7 +12,6 @@ import de.minetrain.minechat.data.databases.AutoReplyDatabase;
 import de.minetrain.minechat.data.databases.CountVariableDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
 import de.minetrain.minechat.data.databases.MacroDatabase;
-import de.minetrain.minechat.data.databases.MessageHighlightDatabase;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase;
 
 public class DatabaseManager {
@@ -23,7 +22,6 @@ public class DatabaseManager {
 	private static AutoReplyDatabase autoReply;
 	private static MacroDatabase macro;
 	private static EmoteDatabase emote;
-	private static MessageHighlightDatabase messageHighlight;
 	private static OwnerCacheDatabase ownerCacheDatabase;
 	private static CountVariableDatabase countVariableDatabase;
 
@@ -32,7 +30,6 @@ public class DatabaseManager {
 			autoReply = new AutoReplyDatabase();
 			macro = new MacroDatabase();
 			emote = new EmoteDatabase();
-			messageHighlight = new MessageHighlightDatabase();
 			ownerCacheDatabase = new OwnerCacheDatabase();
 			countVariableDatabase = new CountVariableDatabase();
 		} catch (SQLException ex) {
@@ -113,10 +110,6 @@ public class DatabaseManager {
 		return emote;
 	}
 
-	public static MessageHighlightDatabase getMessageHighlight() {
-		return messageHighlight;
-	}
-
 	public static OwnerCacheDatabase getOwnerCache() {
 		return ownerCacheDatabase;
 	}
@@ -124,6 +117,4 @@ public class DatabaseManager {
 	public static CountVariableDatabase getCountVariableDatabase() {
 		return countVariableDatabase;
 	}
-
-
 }

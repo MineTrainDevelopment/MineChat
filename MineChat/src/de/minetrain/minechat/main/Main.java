@@ -18,9 +18,11 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.panes.ChannelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -84,7 +86,10 @@ public class Main extends Application {
 			TwitchManager.init(oAuth2Token);
 			new MessageManager();
 			loadingProgressLogging(10, "Prepare message highlight strings.");
-			Settings.reloadHighlights();
+			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
+				String color = ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+				EclipseStoreKeeper.root().userSettings().addHighlightString(new HighlightString(TwitchHelper.generateNameRegex(TwitchHelper.getSelfUser().getDisplayName()), color, color));
+			}
 			loadingProgressLogging(11, "Validate public badges and emotes.");
 			TextureManager.downloadPublicData();
 		} catch (Exception ex) {

@@ -35,7 +35,7 @@ public final class ChatMessage {
 		this.messageType = messageType;
 		this.tokens = List.of(tokens);
 		this.badgeIds = List.of(badgeIds);
-		this.isEmoteOnly = this.tokens.stream().allMatch(token -> token.getType() == TokenType.EMOTE);
+		this.isEmoteOnly = this.tokens.stream().allMatch(token -> token.getType() == TokenType.EMOTE || token.getType() == TokenType.SPACE);
 	}
 
 	public String getMessageId() {

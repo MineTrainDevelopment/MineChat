@@ -1,5 +1,6 @@
 package de.minetrain.minechat.data.objectdata;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
 public final class ChatMessageToken {
@@ -14,7 +15,7 @@ public final class ChatMessageToken {
 	}
 
 	public static ChatMessageToken createTextToken(String text) {
-		return new ChatMessageToken(text, null, false, TokenType.TEXT);
+		return new ChatMessageToken(text, null, false, StringUtils.isBlank(text) ? TokenType.SPACE : TokenType.TEXT);
 	}
 
 	public static ChatMessageToken createEmoteToken(String emoteId, boolean animated, String text) {
@@ -61,7 +62,8 @@ public final class ChatMessageToken {
 		TEXT,
 		EMOTE,
 		LINK,
-		MENTION
+		MENTION,
+		SPACE
 	}
 
 	public static class Builder {

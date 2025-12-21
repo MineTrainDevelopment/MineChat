@@ -5,15 +5,19 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.ChatMessageToken;
 import de.minetrain.minechat.data.objectdata.Emote;
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.main.Main;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Hyperlink;
@@ -43,6 +47,7 @@ public class MineTextFlow extends TextFlow {
 	private FontPosture defaultFontPosture;
 	private FontWeight defaultFontWeight;
 	private Color defaultFontFill;
+	private List<HighlightString> highlightStrings;
 
 	public MineTextFlow(double defaultFontSize) {
 		this("Inter", defaultFontSize, FontPosture.REGULAR, FontWeight.BOLD, Color.WHITE);
@@ -163,14 +168,7 @@ public class MineTextFlow extends TextFlow {
 	 * @return
 	 */
 	public MineTextFlow appendEmote(Emote emote) {
-		ImageView imageView = new ImageView(
-				Main.getEmoteManager().getEmoteImage1x(emote.getEmoteId(), emote.isAnimated())) {
-
-			@Override
-			public double getBaselineOffset() {
-				return getImage().getHeight() * 0.75;
-			}
-		};
+		ImageView imageView = createAlignedImageView(Main.getEmoteManager().getEmoteImage1x(emote.getEmoteId(), emote.isAnimated()));
 //		imageView.setTranslateY(-((DEFAULT_FONT_SIZE - size.getSize()) / 2));
 		appendImage(imageView);
 		return this;
@@ -179,13 +177,7 @@ public class MineTextFlow extends TextFlow {
 	public MineTextFlow appendBadge(String channelId, BadgeId badgeId) {
 		Image badgeImage = Main.getEmoteManager().getBadgeImage1x(channelId, badgeId);
 		if (badgeImage != null) {
-			ImageView imageView = new ImageView(badgeImage) {
-
-				@Override
-				public double getBaselineOffset() {
-					return getImage().getHeight() * 0.75;
-				}
-			};
+			ImageView imageView = createAlignedImageView(badgeImage);
 			appendImage(imageView);
 		} else {
 			LOG.warn("Badge image not found for badge ID: {}", badgeId);
@@ -193,18 +185,12 @@ public class MineTextFlow extends TextFlow {
 		return this;
 	}
 
-	public MineTextFlow appendToken(ChatMessageToken token) {
+	public HighlightString appendToken(ChatMessageToken token) {
 		switch (token.getType()) {
 			case EMOTE -> {
 				Image image = Main.getEmoteManager().getEmoteImage1x(token.getEmoteId(), token.isAnimated());
 				if (image != null) {
-					ImageView imageView = new ImageView(image) {
-
-						@Override
-						public double getBaselineOffset() {
-							return getImage().getHeight() * 0.75;
-						}
-					};
+					ImageView imageView = createAlignedImageView(image);
 					appendImage(imageView);
 				} else {
 					LOG.warn("Emote image not found for emote ID: {}", token.getEmoteId());
@@ -213,9 +199,30 @@ public class MineTextFlow extends TextFlow {
 			}
 			case LINK -> appendHyperLink(token.getText());
 			case MENTION -> appendString(token.getText(), HTMLColors.MAROON);
-			default -> appendString(token.getText());
+			case SPACE -> appendString(token.getText());
+			default -> {
+				Optional<HighlightString> hightlight = getHighlightStrings().stream()
+					.filter(hs -> hs.getCompiledPattern().matcher(token.getText()).matches())
+					.findFirst();
+				if (hightlight.isPresent()) {
+					appendString(token.getText(), hightlight.get().getWordColor());
+					return hightlight.get();
+				} else {
+					appendString(token.getText());
+				}
+			}
 		}
-		return this;
+		return null;
+	}
+
+	private ImageView createAlignedImageView(Image image) {
+		return new ImageView(image) {
+
+			@Override
+			public double getBaselineOffset() {
+				return getImage().getHeight() * 0.75;
+			}
+		};
 	}
 
 	public MineTextFlow appendImage(Path imagePath) {
@@ -279,5 +286,12 @@ public class MineTextFlow extends TextFlow {
 	public MineTextFlow setdDefaultFontFill(Color defaultFontFill) {
 		this.defaultFontFill = defaultFontFill;
 		return this;
+	}
+
+	private List<HighlightString> getHighlightStrings() {
+		if (highlightStrings == null) {
+			highlightStrings = EclipseStoreKeeper.root().userSettings().computeHighlightStrings(hs -> hs.filter(HighlightString::isEnabled).toList());
+		}
+		return highlightStrings;
 	}
 }
