@@ -35,10 +35,10 @@ import de.minetrain.minechat.utils.plugins.PluginManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -143,7 +143,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		Main.primaryStage = primaryStage;
 		primaryStage.setTitle("MineChat - JavaFX rework");
-//        primaryStage.initStyle(StageStyle.TRANSPARENT);
+		primaryStage.initStyle(StageStyle.UNIFIED);
 
 		BorderPane topPane = new BorderPane();
 		titleBar = new TitleBarPane();
@@ -159,10 +159,6 @@ public class Main extends Application {
 //        vBox.getChildren().addAll(new Button("ttt"), tabPane, new Button("ttt"));
 
 		messageListView = new MessageListView();
-
-		Button exit = new Button();
-		exit.setOnAction(e -> System.exit(0));
-//		messageListView.getChildren().add(exit);
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setTop(topPane);

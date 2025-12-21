@@ -71,31 +71,14 @@ public class TitleBarPane extends BorderPane {
 			}
 		});
 
-		Button minimizeButton = new Button();
-		minimizeButton.setFocusTraversable(false);
-		minimizeButton.setMaxSize(30, 30);
-		minimizeButton.setMinSize(30, 30);
-		minimizeButton.setId("program-action");
-
-		Button closeButton = new Button();
-		closeButton.setFocusTraversable(false);
-		closeButton.setMaxSize(30, 30);
-		closeButton.setMinSize(30, 30);
-		closeButton.setId("program-action");
-
 		Rectangle verticalStrut = new Rectangle(5, 26, ColorManager.decode("#0E0E0E"));
 		verticalStrut.setTranslateY(2);
-
-		HBox programActionButtonBox = new HBox(5);
-		programActionButtonBox.getChildren().addAll(new Rectangle(0, 0, Color.PINK), verticalStrut, minimizeButton,
-				closeButton);
 
 		setMinHeight(45);
 		setMaxHeight(45);
 		setId("title-bar");
 		setLeft(settingsButtonContainer);
 		setCenter(tabPane);
-		setRight(programActionButtonBox);
 	}
 
 	public ObservableList<ChannelViewModel> getChannels() {
