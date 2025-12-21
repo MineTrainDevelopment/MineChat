@@ -24,7 +24,7 @@ import javafx.util.Duration;
 
 public class TitleBarPane extends BorderPane {
 
-	private static final Duration ANIMATION_SCROLL_DURATION = Duration.millis(400);
+	private static final Duration ANIMATION_SCROLL_DURATION = Duration.millis(150);
 
 	private final ScrollPane tabPane;
 	private final HBox tabBar;

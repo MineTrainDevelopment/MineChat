@@ -21,6 +21,7 @@ import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.panes.InputFieldPane;
 import de.minetrain.minechat.gui.panes.MacroPanelPane;
+import de.minetrain.minechat.gui.panes.MessageListView;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
@@ -35,9 +36,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -138,8 +137,7 @@ public class Main extends Application {
 	public static MacroPanelPane macroPane;
 	public static TitleBarPane titleBar;
 	public static Stage primaryStage;
-	public static VBox messagePanel;
-	public static ScrollPane messageScrollPane;
+	public static MessageListView messageListView;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -160,17 +158,15 @@ public class Main extends Application {
 //        messagePanel.setStyle("-fx-background-color: #505050; -fx-padding: 5; -fx-text-fill: white; -fx-font-size: 20px");
 //        vBox.getChildren().addAll(new Button("ttt"), tabPane, new Button("ttt"));
 
-		// TODO Use ListView for better performance with many messages.
-        messagePanel = new VBox(0);
-        messageScrollPane = new ScrollPane(messagePanel);
+		messageListView = new MessageListView();
 
-        Button exit = new Button();
-        exit.setOnAction(e -> System.exit(0));
-        messagePanel.getChildren().add(exit);
+		Button exit = new Button();
+		exit.setOnAction(e -> System.exit(0));
+//		messageListView.getChildren().add(exit);
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setTop(topPane);
-		mainContentPane.setCenter(messageScrollPane);
+		mainContentPane.setCenter(messageListView);
 //		mainContentPane.setCenter(new EmoteSelectorButton(EmoteManager.getEmoteByName("jennyanPls"), EmoteSize.SMALL, EmoteBorderType.DEFAULT));
 		mainContentPane.setBottom(new InputFieldPane());
 

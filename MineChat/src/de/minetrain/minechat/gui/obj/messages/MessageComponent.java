@@ -115,6 +115,7 @@ public class MessageComponent extends StackPane {
     }
 
 	public void applyMessage(ChatMessage message) {
+		clearMessage();
 		String color = message.getSenderColor();
 		if (StringUtils.isBlank(color)) {
 			color = "#ffffff";
@@ -126,6 +127,11 @@ public class MessageComponent extends StackPane {
 		messageFlow.appendString("[" + selectDateTimeFormatter.format(messageCreated.atZone(ZoneId.systemDefault())) + "] ");
 
 		message.getTokens().forEach(messageFlow::appendToken);
+	}
+
+	public void clearMessage() {
+		messageFlow.clear();
+		titleFlow.clear();
 	}
 
 	private void formatText(MessageComponentContent messageContent, String channelId){

@@ -1,5 +1,6 @@
 package de.minetrain.minechat.data.objectdata;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,10 +51,11 @@ public class Messages extends StripeLockScope {
 	}
 
 	public List<ChatMessage> getMessagesByChannelId(String channelId) {
-		return read(channelId, () -> {
-			List<ChatMessage> channelMessages = channelIdToMessages.get(channelId);
-			return channelMessages != null ? channelMessages.stream().toList() : List.of();
-		});
+		List<ChatMessage> list = channelIdToMessages.get(channelId);
+		if (list == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(list);
 	}
 
 	public <T> T computeByChannelId(String channelId, Function<Stream<ChatMessage>, T> function) {

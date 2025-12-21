@@ -73,7 +73,9 @@ public class ChannelTabButton extends Button {
 		selectedProperty().addListener((_, _, newVal) -> {
 			double newMinWidth = newVal.booleanValue() ? computePrefWidth(Double.NEGATIVE_INFINITY) : MIN_WIDTH;
 			Timeline timeline = new Timeline(new KeyFrame(ANIMATION_RESIZE_DURATION, new KeyValue(minWidthProperty(), newMinWidth, Interpolator.EASE_BOTH)));
-			timeline.setOnFinished(_ -> Platform.runLater(() -> parentTitleBar.scrollToTab(this)));
+			if (newVal.booleanValue()) {
+				timeline.setOnFinished(_ -> Platform.runLater(() -> parentTitleBar.scrollToTab(this)));
+			}
 			timeline.play();
 		});
 

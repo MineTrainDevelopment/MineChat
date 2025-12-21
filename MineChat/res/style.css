@@ -59,7 +59,6 @@
 	
 	-fx-background-radius: 5px;
 	-fx-background-color: -custom-base-background;
-	-fx-background-insets: 0, 0 0 0 2;
 
 	/*-fx-min-width: 34px; */
 	-fx-max-width: 150px;
@@ -294,9 +293,13 @@
    -fx-background-color: transparent;
 }
 
+.list-view {
+   -fx-background-color: transparent;
+}
 
-
-
+.list-view .list-cell {
+   -fx-background-color: transparent;
+}
 
 .root{
 	-background-color: #282828;

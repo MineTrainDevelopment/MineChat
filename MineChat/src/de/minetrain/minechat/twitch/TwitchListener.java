@@ -84,7 +84,7 @@ public class TwitchListener {
 	/// @param event The [ChannelChatMessageEvent] object containing information about the message.
 	@EventSubscriber
 	public void onChannelMessage(ChannelChatMessageEvent event) {
-		LOG.info("EventSub ChannelMessage: {} | {}", event.getChatterUserName(), event.getMessage().getText());
+		LOG.debug("EventSub ChannelMessage: {} | {}", event.getChatterUserName(), event.getMessage().getText());
 		ChannelActions channel = Main.getChannelManager().getChannelActions(event.getBroadcasterUserId());
 		channel.getStatistics().addMessage(event.getChatterUserName(), event.getChatterUserId(), event.getMessage().getText());
 		TwitchMessage twitchMessage = new TwitchMessage(event);
@@ -103,7 +103,7 @@ public class TwitchListener {
 
 		ChatMessage chatMessage = createChatMessage(event);
 		EclipseStoreKeeper.root().messages().addMessage(chatMessage);
-		channel.displayMessage(chatMessage);
+		channel.notifyMessageAdded();
 
 		AutoReplyManager.recordMessage(twitchMessage);
 	}
@@ -115,7 +115,7 @@ public class TwitchListener {
 		String[] badges = event.getBadges().stream().map(Badge::getId).toArray(String[]::new);
 		Reply reply = event.getReply();
 
-		LOG.info("Created ChatMessage tokens: {}", (Object) tokens);
+		LOG.debug("Created ChatMessage tokens: {}", (Object) tokens);
 
 		return new ChatMessage(
 				event.getMessageId(),

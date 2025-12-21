@@ -1,8 +1,7 @@
 package de.minetrain.minechat.main;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Gatherers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.macros.ChannelMacros;
 import de.minetrain.minechat.gui.emotes.ChannelEmotes;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
@@ -65,39 +63,23 @@ public class ChannelActions {
 //		twitchUser.join(); // Zocki disabled...
 	}
 
-	public void displayMessage(ChatMessage message){
-		if(Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())){
-			addToViewPort(message);
-		}
-	}
-
-	private void addToViewPort(ChatMessage message){
+	public void notifyMessageAdded() {
 		Platform.runLater(() -> {
-			MessageComponent messageComponent = new MessageComponent();
-			messageComponent.applyMessage(message);
-			Main.messagePanel.getChildren().add(messageComponent);
+			if (Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())) {
+				if (Main.messageListView.getItems().isEmpty()) {
+					Main.messageListView.setMessages(EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId()));
+				} else {
+					Main.messageListView.messagesProperty().notifyChange();
+				}
+			}
 		});
 	}
 
-	/// @deprecated Needs to be redone with properties and bindings.
-	@Deprecated
 	public void loadViewPort() {
 		Main.macroPane.loadMacros(this);
-		Main.messagePanel.getChildren().clear();
-		CompletableFuture.runAsync(() -> {
-			EclipseStoreKeeper.root().messages().computeByChannelId(getChannelId(), messages -> {
-				messages.map(message -> {
-					MessageComponent mc = new MessageComponent();
-					mc.applyMessage(message);
-					return mc;
-				}).gather(Gatherers.windowFixed(50)).forEach(batch -> Platform.runLater(() -> Main.messagePanel.getChildren().addAll(batch)));
-				return null;
-			});
-			LOG.info("Loaded {} messages for viewport of channel {}", Main.messagePanel.getChildren().size(), getChannelId());
-		}).exceptionally(e -> {
-			LOG.error("Failed to load viewport for channel {}", getChannelId(), e);
-			return null;
-		});
+		List<ChatMessage> messages = EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId());
+		LOG.info("Loading {} messages into viewport for channel {}", messages.size(), getChannelId());
+		Main.messageListView.setMessages(messages);
 	}
 
 	public Rectangle getProfilePic(int size) {

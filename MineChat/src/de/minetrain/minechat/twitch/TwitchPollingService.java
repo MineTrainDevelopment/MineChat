@@ -1,7 +1,10 @@
 package de.minetrain.minechat.twitch;
 
+import static java.util.stream.Collectors.toUnmodifiableSet;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -66,11 +69,10 @@ public class TwitchPollingService {
 
 	private void pollStreamInfo() {
 		try {
-			List<Stream> streams = TwitchHelper.requestStreamInfo(Main.getChannelManager().getAllChannels().stream().map(Channel::getChannelId).toArray(String[]::new)).get();
-			streams.forEach(stream -> {
-				boolean isLive = "live".equals(stream.getType());
-				Main.getChannelManager().setChannelLiveStatus(stream.getUserId(), isLive);
-			});
+			Set<String> liveChannelIds = TwitchHelper.requestStreamInfo(Main.getChannelManager().getAllChannels().stream().map(Channel::getChannelId).toArray(String[]::new)).get().stream()
+				.map(Stream::getUserId)
+				.collect(toUnmodifiableSet());
+			Main.titleBar.getChannels().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId())));
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching stream info for channels.", e.getCause());
 		} catch (InterruptedException e) {
