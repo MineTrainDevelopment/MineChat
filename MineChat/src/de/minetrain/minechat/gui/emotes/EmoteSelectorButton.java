@@ -1,55 +1,37 @@
 package de.minetrain.minechat.gui.emotes;
 
-import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteSize;
+import de.minetrain.minechat.data.objectdata.Emote;
+import de.minetrain.minechat.main.Main;
+import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
-import javafx.scene.paint.Color;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
 public class EmoteSelectorButton extends Button {
-	private final EmoteSize size;
-	
-	public EmoteSelectorButton(EmoteLegacy emote, EmoteSize size, int borderWidth) {
-		this(emote, size, emote.getBorderType(), borderWidth);
-	}
-	
-	public EmoteSelectorButton(EmoteLegacy emote, EmoteSize size, EmoteBorderType borderType) {
-		this(emote, size, borderType, 2);
-	}
-	
-	public EmoteSelectorButton(EmoteLegacy emote, EmoteSize size, EmoteBorderType borderType, int borderWidth) {
-		this.size = size;
-		setId("emote_border");
-		setStyle("-fx-border-color: "+borderType.getHexCode()+"; -fx-border-width: "+borderWidth+"px;");
-		setGraphic(emote.getEmoteNode(size, size.getSize()));
+
+	private static final double EMOTE_SIZE = 24D;
+
+	public EmoteSelectorButton(Emote emote) {
+		setId("emote-button");
+
+		ImageView imageView = new ImageView(Main.getEmoteManager().getEmoteImage1x(emote.getEmoteId(), emote.isAnimated()));
+		imageView.setFitHeight(EMOTE_SIZE);
+		imageView.setFitWidth(EMOTE_SIZE);
+		imageView.setPreserveRatio(true);
+		StackPane wrapper = new StackPane();
+		wrapper.setMinSize(EMOTE_SIZE, EMOTE_SIZE);
+		wrapper.getChildren().add(imageView);
+
+		setGraphic(wrapper);
 		setTooltip(new Tooltip(emote.getName()));
-		
-		int borderSize = borderWidth*2;
-		setMinSize(size.getSize() + borderSize, size.getSize()+borderSize);
-		setMaxSize(size.getSize() + borderSize, size.getSize() + borderSize);
-	}
-	
-	public void changeImage(EmoteLegacy emote){
-		setGraphic(emote.getEmoteNode(size, size.getSize()));
-	}
-	
-	
-	
-	
-	
-	
-	public enum EmoteBorderType{
-		DEFAULT("#0e0e0e"), 
-		TIER_2("#9a9a00"), 
-		TIER_3("#9a0000"), 
-		BITS("#a400ff"), 
-		FOLLOW("#0054de");
 
-		private String hexCode;
-		public String getHexCode(){return hexCode;}
-		public Color getColor(){return Color.web(hexCode);}
-		EmoteBorderType(String hexCode) {
-			this.hexCode = hexCode;
+		switch (emote.getEmoteType()) {
+			case SUB_2 -> pseudoClassStateChanged(PseudoClass.getPseudoClass("tier2"), true);
+			case SUB_3 -> pseudoClassStateChanged(PseudoClass.getPseudoClass("tier3"), true);
+			case BIT -> pseudoClassStateChanged(PseudoClass.getPseudoClass("bits"), true);
+			case FOLLOW -> pseudoClassStateChanged(PseudoClass.getPseudoClass("follow"), true);
+			default ->  { /* Not special css class */ }
 		}
-	};
-
+	}
 }

@@ -10,7 +10,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -28,12 +28,11 @@ public class TitleBarPane extends BorderPane {
 
 	private final ScrollPane tabPane;
 	private final HBox tabBar;
-	private final ObservableList<ChannelViewModel> channels;
-	private ObjectProperty<ChannelViewModel> selectedChannel;
+	private final ListChangeListener<ChannelViewModel> listChangeListener;
+	private ObjectProperty<ObservableList<ChannelViewModel>>channels;
 
 	public TitleBarPane() {
-		channels = FXCollections.observableArrayList();
-		channels.addListener(this::handleListChange);
+		listChangeListener = this::handleListChange;
 
 		Button settingsButton = new Button();
 		settingsButton.setFocusTraversable(false);
@@ -54,7 +53,6 @@ public class TitleBarPane extends BorderPane {
 
 		tabBar = new HBox(5);
 		tabBar.setAlignment(Pos.CENTER_LEFT);
-//        ChannelManager.getAllChannels().forEach(channel -> tabBar.getChildren().add(new ChannelTabButton(channel, this))); //Moved to channel manager.
 
 		tabPane = new ScrollPane(tabBar);
 		tabPane.setFocusTraversable(false);
@@ -79,10 +77,6 @@ public class TitleBarPane extends BorderPane {
 		setId("title-bar");
 		setLeft(settingsButtonContainer);
 		setCenter(tabPane);
-	}
-
-	public ObservableList<ChannelViewModel> getChannels() {
-		return channels;
 	}
 
 	public HBox getTabBar() {
@@ -120,30 +114,43 @@ public class TitleBarPane extends BorderPane {
 		new Timeline(new KeyFrame(ANIMATION_SCROLL_DURATION, new KeyValue(tabPane.hvalueProperty(), targetHvalue, Interpolator.EASE_BOTH))).play();
 	}
 
-	private void handleListChange(Change<? extends ChannelViewModel> change) {
-		while (change.next()) {
-			if (change.wasRemoved()) {
-				tabBar.getChildren().remove(change.getFrom(), change.getTo());
+	public void handleListChange(Change<? extends ChannelViewModel> c) {
+		while (c.next()) {
+			if (c.wasRemoved()) {
+				tabBar.getChildren().subList(c.getFrom(), c.getFrom() + c.getRemovedSize()).clear();
 			}
-			if (change.wasAdded()) {
-				change.getAddedSubList().forEach(cvm -> cvm.selectedProperty().bind(selectedChannelProperty().isEqualTo(cvm)));
-				tabBar.getChildren().addAll(change.getFrom(), change.getAddedSubList().stream().map(channel -> new ChannelTabButton(channel, this)).toList());
+			if (c.wasAdded()) {
+				for (int i = c.getFrom(); i < c.getTo(); i++) {
+					ChannelViewModel addedChannel = c.getList().get(i);
+					ChannelTabButton tabButton = new ChannelTabButton(addedChannel, this);
+					tabBar.getChildren().add(i, tabButton);
+				}
 			}
 		}
 	}
 
-	public ObjectProperty<ChannelViewModel> selectedChannelProperty() {
-		if (selectedChannel == null) {
-			selectedChannel = new SimpleObjectProperty<>(this, "selectedChannel");
+	public ObjectProperty<ObservableList<ChannelViewModel>> channelsProperty() {
+		if (channels == null) {
+			channels = new SimpleObjectProperty<>(this, "channels");
+			channels.addListener((_, oldList, newList) -> {
+				if (oldList != null) {
+					oldList.removeListener(listChangeListener);
+				}
+				tabBar.getChildren().clear();
+				if (newList != null) {
+					tabBar.getChildren().addAll(newList.stream().map(cvm -> new ChannelTabButton(cvm, this)).toList());
+					newList.addListener(listChangeListener);
+				}
+			});
 		}
-		return selectedChannel;
+		return channels;
 	}
 
-	public void setSelectedChannel(ChannelViewModel channel) {
-		selectedChannelProperty().set(channel);
+	public ObservableList<ChannelViewModel> getChannels() {
+		return channelsProperty().get();
 	}
 
-	public ChannelViewModel getSelectedChannel() {
-		return selectedChannelProperty().get();
+	public void setChannels(ObservableList<ChannelViewModel> channels) {
+		channelsProperty().set(channels);
 	}
 }

@@ -115,7 +115,7 @@ public class TwitchListener {
 		BadgeId[] badgeIds = event.getBadges().stream().map(badge -> new BadgeId(badge.getSetId(), badge.getId())).toArray(BadgeId[]::new);
 		Reply reply = event.getReply();
 
-		LOG.info("Created ChatMessage tokens: {}", (Object) tokens);
+		LOG.debug("Created ChatMessage tokens: {}", (Object) tokens);
 
 		return new ChatMessage(
 				event.getMessageId(),

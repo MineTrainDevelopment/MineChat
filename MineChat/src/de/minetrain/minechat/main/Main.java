@@ -7,8 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +22,6 @@ import de.minetrain.minechat.gui.panes.ChannelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -33,7 +30,6 @@ import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -150,7 +146,6 @@ public class Main extends Application {
 		titleBar = new TitleBarPane();
 
 		channelPane = new ChannelPane();
-		channelPane.channelProperty().bind(titleBar.selectedChannelProperty());
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setTop(titleBar);
@@ -186,16 +181,8 @@ public class Main extends Application {
 		channelManager.init();
 		new AutoReplyManager(); //Load auto replys after fetching channel data.
 
-		CompletableFuture.runAsync(() -> {
-			List<ChannelViewModel> cvms = getChannelManager().getAllChannels().stream()
-				.map(ChannelViewModel::of)
-				.toList();
-			cvms.forEach(ChannelViewModel::refreshMessages);
-			Platform.runLater(() -> {
-				titleBar.getChannels().addAll(cvms);
-				titleBar.getChannels().stream().findFirst().ifPresent(getChannelManager()::setActiveChannel);
-			});
-		});
+		titleBar.channelsProperty().bind(channelManager.channelsProperty());
+		channelPane.channelProperty().bind(channelManager.activeChannelProperty());
 
 		TwitchPollingService twitchPollingService = new TwitchPollingService();
 		twitchPollingService.start();

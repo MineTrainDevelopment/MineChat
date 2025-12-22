@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,21 @@ import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class ChannelManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChannelManager.class);
 
 	private Map<String, ChannelActions> channels = new HashMap<>();
-	private String activeChannelId;
+
+	private ObjectProperty<ChannelViewModel> activeChannelProperty;
+	private ReadOnlyObjectWrapper<ObservableList<ChannelViewModel>> channelsProperty;
 
 	public void init() {
 		validateUsers().join();
@@ -37,20 +46,28 @@ public class ChannelManager {
 		List<Channel> allChannels = getAllChannels();
 		allChannels.forEach(channel -> TwitchHelper.joinChannel(channel.getChannelId()));
 
+		List<ChannelViewModel> channelList = allChannels.stream().map(this::createNewChannelViewModel).toList();
+		channelsPropertyInternal().set(FXCollections.observableArrayList(channelList));
+
 		if (allChannels.isEmpty()) {
 			addChannel(TwitchHelper.getSelfUser().getUserId());
 		}
+
+		CompletableFuture.delayedExecutor(300L, TimeUnit.MILLISECONDS).execute(() -> {
+			if (!channelsProperty().get().isEmpty()) {
+				setActiveChannel(channelsProperty().get().getFirst());
+			}
+		});
 	}
 
 	public String getActiveChanneldId() {
-		return activeChannelId;
+		ChannelViewModel activeChannel = getActiveChannel();
+		return activeChannel != null ? activeChannel.getChannelId() : null;
 	}
 
 	public ChannelActions getActiveChannelActions() {
-		if (activeChannelId == null) {
-			return null;
-		}
-		return getChannelActions(activeChannelId);
+		ChannelViewModel activeChannel = getActiveChannel();
+		return activeChannel != null ? getChannelActions(activeChannel.getChannelId()) : null;
 	}
 
 	/// Gets the ChannelActions for the given channel id.
@@ -60,19 +77,6 @@ public class ChannelManager {
 	/// @return The ChannelActions for the given channel id.
 	public ChannelActions getChannelActions(String channelId) {
 		return channels.computeIfAbsent(channelId, key -> new ChannelActions(getChannel(key)));
-	}
-
-	/// Sets the active channel.
-	///
-	/// @param channelViewModel The channel to set as active.
-	/// @return true if the active channel was changed, false if it was already the active channel.
-	public boolean setActiveChannel(ChannelViewModel channelViewModel) {
-		if (channelViewModel.getChannelId().equals(activeChannelId)) {
-			return false;
-		}
-		activeChannelId = channelViewModel.getChannelId();
-		Platform.runLater(() -> Main.titleBar.setSelectedChannel(channelViewModel));
-		return true;
 	}
 
 	/// Sets the active channel by channel id.
@@ -114,12 +118,42 @@ public class ChannelManager {
 		findViewModel(channelId).ifPresent(cvm -> cvm.setLive(isLive));
 	}
 
+	public ObjectProperty<ChannelViewModel> activeChannelProperty() {
+		if (activeChannelProperty == null) {
+			activeChannelProperty = new SimpleObjectProperty<>(this, "activeChannel");
+		}
+		return activeChannelProperty;
+	}
+
+	public void setActiveChannel(ChannelViewModel channel) {
+		if (!Platform.isFxApplicationThread()) {
+			Platform.runLater(() -> setActiveChannel(channel));
+			return;
+		}
+		activeChannelProperty().set(channel);
+	}
+
+	public ChannelViewModel getActiveChannel() {
+		return activeChannelProperty().get();
+	}
+
+	protected ReadOnlyObjectWrapper<ObservableList<ChannelViewModel>> channelsPropertyInternal() {
+		if (channelsProperty == null) {
+			channelsProperty = new ReadOnlyObjectWrapper<>(this, "channels");
+		}
+		return channelsProperty;
+	}
+
+	public ReadOnlyObjectProperty<ObservableList<ChannelViewModel>> channelsProperty() {
+		return channelsPropertyInternal().getReadOnlyProperty();
+	}
+
 	/// Finds the ChannelViewModel for the given channel id.
 	///
 	/// @param channelId The channel id to find the ChannelViewModel for.
 	/// @return An Optional containing the ChannelViewModel if found, or empty if not found.
 	private Optional<ChannelViewModel> findViewModel(String channelId) {
-		return Main.titleBar.getChannels().stream()
+		return channelsProperty().get().stream()
 			.filter(c -> c.getChannelId().equals(channelId))
 			.findFirst();
 	}
@@ -181,11 +215,16 @@ public class ChannelManager {
 		TextureManager.downloadChannelEmotes(channelId, true);
 		TextureManager.downloadBttvEmotes(channelId, true);
 		TextureManager.downloadChannelBadges(channelId, true);
-		Platform.runLater(() -> {
-			ChannelViewModel channelViewModel = ChannelViewModel.of(newChannel);
-			Main.titleBar.getChannels().add(channelViewModel);
-			setActiveChannel(channelViewModel);
-		});
+		ChannelViewModel cvm = createNewChannelViewModel(newChannel);
+		channelsProperty().get().add(cvm);
+		setActiveChannel(cvm);
 		return newChannel;
+	}
+
+	private ChannelViewModel createNewChannelViewModel(Channel channel) {
+		ChannelViewModel cvm = ChannelViewModel.of(channel);
+		cvm.refreshMessages();
+		cvm.selectedProperty().bind(activeChannelProperty().isEqualTo(cvm));
+		return cvm;
 	}
 }

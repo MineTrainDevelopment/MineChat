@@ -72,7 +72,7 @@ public class TwitchPollingService {
 			Set<String> liveChannelIds = TwitchHelper.requestStreamInfo(Main.getChannelManager().getAllChannels().stream().map(Channel::getChannelId).toArray(String[]::new)).get().stream()
 				.map(Stream::getUserId)
 				.collect(toUnmodifiableSet());
-			Main.titleBar.getChannels().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId())));
+			Main.getChannelManager().channelsProperty().get().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId())));
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching stream info for channels.", e.getCause());
 		} catch (InterruptedException e) {

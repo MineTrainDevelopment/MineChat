@@ -2,16 +2,10 @@ package de.minetrain.minechat.gui.frames.emote_selector;
 
 import java.util.List;
 
-import de.minetrain.minechat.gui.emotes.ChannelEmotes;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy;
-import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteSelectorButton;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy.EmoteSize;
-import de.minetrain.minechat.main.ChannelActions;
 import javafx.scene.control.TitledPane;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.GridPane;
-
+import javafx.scene.layout.FlowPane;
 
 //Some sort of emtoe select event to append to a frame.
 //  - When i select an emote in the current instance of this frame, it triggers an event that
@@ -20,69 +14,28 @@ import javafx.scene.layout.GridPane;
 //Option to dispose or close frame.
 //  - A new select listner whould be requert to open the frame again??
 public class EmoteSelectorBatche extends TitledPane {
-	private static final int maxItemsPerRow = 8;
-	private EmoteSelectorChannelButton batcheButton;
-	private final ChannelActions channel;
-	private final EmoteSelector emoteSelector;
-	private final GridPane grid = new GridPane();
-	
-	public EmoteSelectorBatche(ChannelActions channel, EmoteSelectorChannelButton batcheButton, EmoteSelector emoteSelector) {
-		this(channel, channel.getChannel().getDisplayName(), emoteSelector);
-		this.batcheButton = batcheButton;
-	}
-	
-	public EmoteSelectorBatche(ChannelActions channel, String name, EmoteSelector emoteSelector) {
-		this.channel = channel;
-		this.emoteSelector = emoteSelector;
-		
+
+	public EmoteSelectorBatche(String name, List<Emote> emotes) {
 		setText(name);
-		setContent(grid);
 		setBorder(null);
+		FlowPane flowPane = new FlowPane();
+		setContent(flowPane);
 //		setExpanded(false);
-		
-		grid.setHgap(5); 
-		grid.setVgap(5);
-		loadEmotes();
+		flowPane.setHgap(5);
+		flowPane.setVgap(5);
+		loadEmotes(flowPane, emotes);
 	}
 
-	private void loadEmotes() {
-		int columIndex = 0;
-		int rowIndex = 0;
-		
-		List<EmoteLegacy> emotes;
-		if(channel != null){
-			emotes = ChannelEmotes.sortEmotesByEasterEgg(channel, channel.getChannelEmotes().getAllEmotes());
-		}else if(getText().equalsIgnoreCase("Favorite")){
-			emotes = EmoteManager.getAllFavoriteEmotes(true);
-		}else{
-			emotes = EmoteManager.getAllDefaultEmotes();
-		}
-		
-		for(EmoteLegacy emote : emotes){
-			EmoteSelectorButton selectorButton = new EmoteSelectorButton(emote, EmoteSize.SMALL, 2);
-			selectorButton.setOnAction(event -> emoteSelector.fireSelectEvent(emote));
-			selectorButton.setOnMouseClicked(event -> {
-				if(event.getButton().equals(MouseButton.SECONDARY) && emoteSelector.favoriteEmoteBatche != null){
-					emote.toggleFavorite();
-					emoteSelector.favoriteEmoteBatche.grid.getChildren().clear();
-					emoteSelector.favoriteEmoteBatche.loadEmotes();
-				}
-			});
-			
-			grid.add(selectorButton, columIndex, rowIndex);
-
-			columIndex++;
-			if(columIndex == maxItemsPerRow){
-				columIndex = 0;
-				rowIndex++;
-			}
-		};
+	private void loadEmotes(FlowPane flowPane, List<Emote> emotes) {
+		List<EmoteSelectorButton> buttons = emotes.stream().map(EmoteSelectorButton::new).toList();
+		flowPane.getChildren().addAll(buttons);
+//			selectorButton.setOnAction(event -> emoteSelector.fireSelectEvent(emote)); // TODO selection action
+//			selectorButton.setOnMouseClicked(event -> { // TODO favorite action
+//				if (event.getButton().equals(MouseButton.SECONDARY) && emoteSelector.favoriteEmoteBatche != null) {
+//					emote.toggleFavorite();
+//					emoteSelector.favoriteEmoteBatche.grid.getChildren().clear();
+//					emoteSelector.favoriteEmoteBatche.loadEmotes();
+//				}
+//			});
 	}
-	
-	public void scrollPrirorty(boolean priority){
-		if(batcheButton != null){
-			batcheButton.setColor(priority);
-		}
-	}
-
 }

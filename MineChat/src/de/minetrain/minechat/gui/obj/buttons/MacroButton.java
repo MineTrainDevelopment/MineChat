@@ -35,16 +35,17 @@ public class MacroButton extends Button{
         minWidthProperty().bind(scaleRefrence.widthProperty());
 
 
-        //NOTE: Right click gets consumed bsc the computePrefWidth behaves strangely.
-        setOnMouseClicked(event -> {
-        	if (event.getButton() == MouseButton.SECONDARY) {
-        		//Open channel editor
+		// NOTE: Right click gets consumed bsc the computePrefWidth behaves strangely.
+		setOnMouseClicked(event -> {
+			if (event.getButton() == MouseButton.SECONDARY) {
+				// Open channel editor
 //        		if(macro != null){
-        			new MacroEditorFrame(macro, macroType, button_id);
+				MacroEditorFrame macroDialog = new MacroEditorFrame(macro, macroType, button_id);
+				macroDialog.showAndWait();
 //        		}
-                event.consume();
-                return;
-            }
+				event.consume();
+				return;
+			}
 
         	if(macro != null){
         		MessageManager.sendMessage(macro);

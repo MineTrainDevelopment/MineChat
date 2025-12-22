@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.minetrain.minechat.data.DatabaseManager;
-import de.minetrain.minechat.gui.emotes.EmoteSelectorButton.EmoteBorderType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -164,26 +163,6 @@ public class EmoteLegacy {
 	@Deprecated
 	public boolean isDummyData() {
 		return dummyData;
-	}
-
-	@Deprecated
-	public EmoteBorderType getBorderType(){
-		switch (emoteType) {
-		case BIT:
-			return EmoteBorderType.BITS;
-
-		case FOLLOW:
-			return EmoteBorderType.FOLLOW;
-
-		case SUB_2:
-			return EmoteBorderType.TIER_2;
-
-		case SUB_3:
-			return EmoteBorderType.TIER_2;
-
-		default:
-			return EmoteBorderType.DEFAULT;
-		}
 	}
 
 	public enum EmoteSize {

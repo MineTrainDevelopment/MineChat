@@ -1,41 +1,43 @@
 package de.minetrain.minechat.gui.frames.emote_selector;
 
-import de.minetrain.minechat.main.ChannelActions;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
 public class EmoteSelectorChannelButton extends Button {
-	private static final String default_style = "-fx-min-width: 34; -fx-max-width: 34;";
-	private EmoteSelectorBatche emoteBatche;
-	
-	public EmoteSelectorChannelButton(ChannelActions channel, EmoteSelector emoteSelector) {
+	private static final PseudoClass SELECTED_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("selected");
+	private static final double PROFILE_IMAGE_SIZE = 28D;
+
+	private BooleanProperty selectedProperty;
+
+	public EmoteSelectorChannelButton(ChannelViewModel channel) {
 		setFocusTraversable(false);
-        setId("channel-tab");
-        setStyle(default_style);
-        
-        Rectangle imageView = channel.getProfilePic(24);
-        imageView.setTranslateX(-5);
-		setGraphic(imageView);
-		
-		setOnAction(event -> {
-			if(emoteBatche != null){
-				emoteSelector.scrollToEmoteBatch(emoteBatche);
-			}
-		});
-	}
-	
-	
-	public void setColor(boolean select){
-		if(select){
-			setStyle(default_style+" -fx-background-color: green;");
-			return;
-		}
-		
-		setStyle(default_style);
-	}
-	
-	public void setParentBatche(EmoteSelectorBatche emoteBatche){
-		this.emoteBatche = emoteBatche;
+		setId("channel-button");
+
+		ImageView imageView = new ImageView();
+		imageView.imageProperty().bind(channel.profileImageSmallProperty());
+		imageView.setFitHeight(PROFILE_IMAGE_SIZE);
+		imageView.setFitWidth(PROFILE_IMAGE_SIZE);
+		imageView.setPreserveRatio(true);
+		StackPane wrapper = new StackPane();
+		wrapper.setMinSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+		wrapper.getChildren().add(imageView);
+		setGraphic(wrapper);
 	}
 
+	public BooleanProperty selectedProperty() {
+		if (selectedProperty == null) {
+			selectedProperty = new SimpleBooleanProperty(this, "selected", false) {
+				@Override
+				protected void invalidated() {
+					pseudoClassStateChanged(SELECTED_PSEUDOCLASS_STATE, get());
+				}
+			};
+		}
+		return selectedProperty;
+	}
 }

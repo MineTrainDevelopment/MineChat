@@ -43,8 +43,8 @@ public class ChannelViewModel {
 		channelIdPropertyInternal().set(channelId);
 		channelNamePropertyInternal().set(channelName);
 		profileImageUrlPropertyInternal().set(profileImageUrl);
-		profileImageSmallPropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 24d, 24d, false, true, true)));
-		profileImageLargePropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 75, 75, false, true, true)));
+		profileImageSmallPropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 24D, 24D, false, true, true)));
+		profileImageLargePropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 75D, 75D, false, true, true)));
 		loginNamePropertyInternal().set(loginName);
 
 		participatedUserIds = new HashSet<>();
