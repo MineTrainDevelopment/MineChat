@@ -1,6 +1,5 @@
 package de.minetrain.minechat.gui.panes;
 
-import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
 import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
@@ -42,9 +41,9 @@ public class TitleBarPane extends BorderPane {
 		settingsButton.setOnMouseClicked(event -> {
 			System.err.println("TODO: Settings");
 
-			new EmoteSelector(false, emote -> {
-				System.err.println(emote.getName());
-			});
+//			new EmoteSelector(false, emote -> {
+//				System.err.println(emote.getName());
+//			});
 
 		});
 

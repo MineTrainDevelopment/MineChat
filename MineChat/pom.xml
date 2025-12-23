@@ -87,6 +87,11 @@
 			<version>${javafx.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.fxmisc.flowless</groupId>
+			<artifactId>flowless</artifactId>
+			<version>0.7.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.store</groupId>
 			<artifactId>storage-embedded</artifactId>
 			<version>${eclipse.store.version}</version>

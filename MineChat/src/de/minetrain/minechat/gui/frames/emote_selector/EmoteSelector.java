@@ -2,144 +2,119 @@ package de.minetrain.minechat.gui.frames.emote_selector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
+import org.fxmisc.flowless.Cell;
+import org.fxmisc.flowless.VirtualFlow;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Emote;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import de.minetrain.minechat.main.Main;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 public class EmoteSelector extends MineDialog<Emote> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EmoteSelector.class);
 
-	private final ScrollPane emoteBatchsPane;
-	private final VBox batches = new VBox(5);
-	private EmoteSelectEvent selectEvent;
-	public EmoteSelectorBatche favoriteEmoteBatche;
 	private boolean closeOnSelect = true;
+	private ObjectProperty<Emote> selectedEmoteProperty;
 
-	public EmoteSelector(EmoteSelectEvent selectEvent) {
-		this(false, selectEvent);
-	}
-
-	public EmoteSelector(boolean showAndWait, EmoteSelectEvent selectEvent) {
+	public EmoteSelector() {
 		setTitle("Emote Selector");
 		setWidth(400);
 		setHeight(400);
-		this.selectEvent = selectEvent;
 
 		BorderPane layout = new BorderPane();
 
 		VBox channelButtons = new VBox(5);
 		channelButtons.setAlignment(Pos.CENTER_LEFT);
 
-//		ScrollPane test = new ScrollPane(new EmoteSelectorBatche(ChannelManager.getChannel("99351845")));
-		emoteBatchsPane = new ScrollPane(batches);
-		emoteBatchsPane.setFocusTraversable(false);
-		emoteBatchsPane.setFitToHeight(true);
-		emoteBatchsPane.setFitToWidth(true);
-//        test.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		emoteBatchsPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		ObservableList<EmoteBatchViewModel> emoteBatches = FXCollections.observableArrayList();
+		VirtualFlow<EmoteBatchViewModel, Cell<EmoteBatchViewModel, EmoteBatchPane>> virtualFlow = VirtualFlow.createVertical(emoteBatches, EmoteBatchPane::new);
 
-		ObjectBinding<Node> firstVisibleBatche = createFirstVisibleNodeBinding();
+		emoteBatches.add(new EmoteBatchViewModel("Favorite", List.of()));
 
-		favoriteEmoteBatche = new EmoteSelectorBatche("Favorite", List.of());
-		batches.getChildren().add(favoriteEmoteBatche);
-
-		Main.getChannelManager().channelsProperty().get().forEach(channel -> {
-			List<Emote> twitchEmotes = EclipseStoreKeeper.root().emotes().getEmotesByChannelId(channel.getChannelId());
-			List<Emote> bttvEmotes = EclipseStoreKeeper.root().emotes().getBttvEmotesByChannelId(channel.getChannelId());
+		CompletableFuture.runAsync(() -> Main.getChannelManager().channelsProperty().get().forEach(channel -> {
+			Set<Emote> twitchEmotes = EclipseStoreKeeper.root().emotes().getEmotesByChannelId(channel.getChannelId());
+			Set<Emote> bttvEmotes = EclipseStoreKeeper.root().emotes().getBttvEmotesByChannelId(channel.getChannelId());
 			if (!twitchEmotes.isEmpty() || !bttvEmotes.isEmpty()) {
 				EmoteSelectorChannelButton channelButton = new EmoteSelectorChannelButton(channel);
-				channelButtons.getChildren().add(channelButton);
 
 				List<Emote> allEmotes = new ArrayList<>(twitchEmotes.size() + bttvEmotes.size());
 				allEmotes.addAll(twitchEmotes);
 				allEmotes.addAll(bttvEmotes);
-				EmoteSelectorBatche selectorBatche = new EmoteSelectorBatche(channel.getChannelName(), allEmotes);
-				batches.getChildren().add(selectorBatche);
-
-				channelButton.selectedProperty().bind(firstVisibleBatche.isEqualTo(selectorBatche));
-				channelButton.setOnAction(_ -> scrollToEmoteBatch(selectorBatche));
+				Platform.runLater(() -> {
+					channelButtons.getChildren().add(channelButton);
+					int index = emoteBatches.size();
+					emoteBatches.add(createEmoteBatchViewModel(channel.getChannelName(), allEmotes));
+					channelButton.selectedProperty().bind(Bindings.createBooleanBinding(() -> index == virtualFlow.visibleCells().stream().map(Cell::getNode).mapToInt(EmoteBatchPane::getIndex).min().orElse(-1), virtualFlow.visibleCells()));
+					channelButton.setOnAction(_ -> virtualFlow.showAsFirst(index));
+				});
 			}
-		});
-		batches.getChildren().add(new EmoteSelectorBatche("Default", List.of()));
+		})).thenAccept(_ -> Platform.runLater(() -> emoteBatches.add(new EmoteBatchViewModel("Default", List.of()))));
 
 		ScrollPane tabPane = new ScrollPane(channelButtons);
-		tabPane.setStyle("-fx-border-width: 10; -fx-border-color: transparent;");
+//		tabPane.setStyle("-fx-border-width: 10; -fx-border-color: transparent;");
 		tabPane.setFocusTraversable(false);
 		tabPane.setFitToHeight(true);
 		tabPane.setFitToWidth(true);
 		tabPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		tabPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
+		virtualFlow.show(0);
 		layout.setRight(tabPane);
-		layout.setCenter(emoteBatchsPane);
+		layout.setCenter(new VirtualizedScrollPane<>(virtualFlow));
 		getDialogPane().setContent(layout);
+
+		if (closeOnSelect) {
+			selectedEmoteProperty().addListener((_, _, newEmote) -> {
+				if (newEmote != null) {
+					setResult(newEmote);
+					close();
+				}
+			});
+		}
 	}
 
-	private ObjectBinding<Node> createFirstVisibleNodeBinding() {
-		return Bindings.createObjectBinding(() -> {
-			double scrollHeight = emoteBatchsPane.getViewportBounds().getHeight();
-			double contentHeight = batches.getHeight();
-			double scrollTop = emoteBatchsPane.getVvalue() * (contentHeight - scrollHeight);
-
-			return batches.getChildren().stream().filter(node -> {
-				double nodeY = node.getLayoutY();
-				double nodeHeight = node.getLayoutBounds().getHeight();
-				return nodeY < scrollTop + scrollHeight && nodeY + nodeHeight > scrollTop;
-			}).findFirst().orElse(null);
-		}, emoteBatchsPane.vvalueProperty(), emoteBatchsPane.viewportBoundsProperty(), batches.heightProperty());
+	public ObjectProperty<Emote> selectedEmoteProperty() {
+		if (selectedEmoteProperty == null) {
+			selectedEmoteProperty = new SimpleObjectProperty<>(this, "selectedEmote");
+		}
+		return selectedEmoteProperty;
 	}
 
-	public void scrollToEmoteBatch(EmoteSelectorBatche batch) {
-		double targetValue = batch.getLayoutY()
-				* (1 / (batches.getHeight() - emoteBatchsPane.getViewportBounds().getHeight()));
+	public void setSelectedEmote(Emote emote) {
+		selectedEmoteProperty().set(emote);
+	}
 
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400),
-				new KeyValue(emoteBatchsPane.vvalueProperty(), targetValue, Interpolator.EASE_BOTH)));
-		timeline.play();
+	public Emote getSelectedEmote() {
+		return selectedEmoteProperty().get();
+	}
+
+	private EmoteBatchViewModel createEmoteBatchViewModel(String name, List<Emote> allEmotes) {
+		return new EmoteBatchViewModel(name, allEmotes, selectedEmoteProperty());
 	}
 
 	public void setCloseOnSelect(boolean closeOnSelect) {
 		this.closeOnSelect = closeOnSelect;
 	}
 
-	public void fireSelectEvent(EmoteLegacy emote) {
-		if (selectEvent != null) {
-			selectEvent.onSelect(emote);
-//			if (closeOnSelect) {
-//				closeStage();
-//			}
-		}
-	}
-
-	public void setOnSelect(EmoteSelectEvent event) {
-		selectEvent = event;
-	}
-
-	public interface EmoteSelectEvent {
-		void onSelect(EmoteLegacy emote);
-	}
-
 	@Override
 	protected Emote yieldResultOnSuccess() {
-		return null; // TODO Return selected emote if needed
+		return selectedEmoteProperty().get();
 	}
 }

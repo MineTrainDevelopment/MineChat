@@ -1,12 +1,12 @@
 package de.minetrain.minechat.gui.frames;
 
+import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.data.objectdata.MacroData;
 import de.minetrain.minechat.features.macros.MacroObject;
 import de.minetrain.minechat.features.macros.MacroType;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectorButton;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -14,7 +14,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class MacroEditorFrame extends MineDialog<MacroData> {
-	private EmoteLegacy selectedEmote;
+
+	private Emote selectedEmote;
 	private EmoteSelector emoteSelector;
 
 	public MacroEditorFrame(MacroObject macro, MacroType macroType, int button_id) {
@@ -27,10 +28,12 @@ public class MacroEditorFrame extends MineDialog<MacroData> {
 
 		TextField titleInputField = new TextField(title);
 
-		Button emoteButton = new Button("E");
+		EmoteSelectorButton emoteButton = new EmoteSelectorButton();
 		emoteButton.setOnAction(_ -> {
-			EmoteSelector emoteSelector = new EmoteSelector(_ -> {});
-			emoteSelector.showAndWait();
+			new EmoteSelector().showAndWait().ifPresent(newEmote -> {
+				selectedEmote = newEmote;
+				emoteButton.setEmote(newEmote);
+			});
 		});
 //		emoteButton.setOnMouseClicked(event -> {
 //			if (emoteSelector == null) {

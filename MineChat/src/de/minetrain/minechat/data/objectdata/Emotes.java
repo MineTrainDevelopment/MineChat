@@ -2,6 +2,7 @@ package de.minetrain.minechat.data.objectdata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -72,17 +73,17 @@ public class Emotes extends LockScope {
 		return read(() -> emoteIdToEmote.get(emoteId));
 	}
 
-	public List<Emote> getEmotesByChannelId(String channelId) {
+	public Set<Emote> getEmotesByChannelId(String channelId) {
 		return read(() -> {
 			Set<Emote> set = Lazy.get(channelIdToEmotes.get(channelId));
-			return set != null ? set.stream().toList() : List.of();
+			return set != null ? Collections.unmodifiableSet(set) : Collections.emptySet();
 		});
 	}
 
-	public List<Emote> getBttvEmotesByChannelId(String channelId) {
+	public Set<Emote> getBttvEmotesByChannelId(String channelId) {
 		return read(() -> {
 			Set<Emote> set = Lazy.get(channelIdToBttvEmotes.get(channelId));
-			return set != null ? set.stream().toList() : List.of();
+			return set != null ? Collections.unmodifiableSet(set) : Collections.emptySet();
 		});
 	}
 
