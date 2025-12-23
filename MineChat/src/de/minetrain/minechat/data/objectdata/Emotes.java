@@ -51,7 +51,7 @@ public class Emotes extends LockScope {
 
 	public void addEmotes(Collection<Emote> emotes, PersistenceStoring persister) {
 		write(() -> {
-			List<Object> changedObjects = new ArrayList<>(emotes.size() * 3 + 1);
+			List<Object> changedObjects = new ArrayList<>(emotes.size() * 2 + 1);
 			for (Emote emote : emotes) {
 				if (emote.getEmoteType() == EmoteType.BTTV) {
 					addToMap(channelIdToBttvEmotes, emote.getChannelId(), emote, changedObjects);
@@ -119,6 +119,7 @@ public class Emotes extends LockScope {
 			changedObjects.add(map);
 		} else {
 			Set<Emote> set = lazy.get();
+			set.remove(emote);
 			set.add(emote);
 			changedObjects.add(set);
 		}

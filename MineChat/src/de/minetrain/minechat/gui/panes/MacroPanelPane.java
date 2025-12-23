@@ -1,14 +1,10 @@
 package de.minetrain.minechat.gui.panes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.minetrain.minechat.features.macros.MacroType;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
-import de.minetrain.minechat.main.ChannelActions;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,43 +18,49 @@ import javafx.scene.shape.Rectangle;
 
 public class MacroPanelPane extends BorderPane {
 
-	private HBox sizeGuideButton = new HBox();
 	private VBox macroRows;
 	private ScrollPane macroScrollPane;
 
+	private HBox macroRow1;
+	private HBox macroRow2;
+	private HBox emoteMacroRow;
+
 	private ObjectProperty<ChannelViewModel> channelProperty;
-	private final List<MacroButton> macroButtons = new ArrayList<>();
 
 	public MacroPanelPane() {
-		sizeGuideButton.setStyle("-fx-background-color: lime;");
-		sizeGuideButton.setPrefWidth(MacroButton.MAX_WIDTH);
-		sizeGuideButton.setMinWidth(MacroButton.MIN_WIDTH);
-		sizeGuideButton.setMaxWidth(MacroButton.MAX_WIDTH);
+		macroRow1 = new HBox(10D);
+		macroRow2 = new HBox(10D);
+		emoteMacroRow = new HBox(6D);
+		channelProperty().addListener((_, _, newChannel) -> {
+			if (newChannel != null) {
+				int macrosCount = newChannel.getMacros().size() / 2;
+				ensureSize(macroRow1.getChildren(), macrosCount);
+				ensureSize(macroRow2.getChildren(), macrosCount);
+				ensureSize(emoteMacroRow.getChildren(), newChannel.getEmoteMacros().size());
+				for (int i = 0; i < macrosCount; i++) {
+					Node node = macroRow1.getChildren().get(i);
+					if (node instanceof MacroButton mb) {
+						mb.setMacro(newChannel.getMacros().get(i));
+					}
+					node = macroRow2.getChildren().get(i);
+					if (node instanceof MacroButton mb) {
+						mb.setMacro(newChannel.getMacros().get(macrosCount + i));
+					}
+				}
+				for (int i = 0; i < newChannel.getEmoteMacros().size(); i++) {
+					Node node = emoteMacroRow.getChildren().get(i);
+					if (node instanceof MacroButton mb) {
+						mb.setMacro(newChannel.getEmoteMacros().get(i));
+					}
+				}
+			} else {
+				macroRow1.getChildren().clear();
+				macroRow2.getChildren().clear();
+				emoteMacroRow.getChildren().clear();
+			}
+		});
 
-		HBox sizeGuideButton2 = new HBox();
-		sizeGuideButton2.setStyle("-fx-background-color: lime;");
-		sizeGuideButton2.setPrefWidth(sizeGuideButton.getPrefWidth());
-		sizeGuideButton2.setMinWidth(sizeGuideButton.getMinWidth());
-		sizeGuideButton2.setMaxWidth(sizeGuideButton.getMaxWidth());
-
-		HBox sizeGuideButton3 = new HBox();
-		sizeGuideButton3.setStyle("-fx-background-color: lime;");
-		sizeGuideButton3.setPrefWidth(sizeGuideButton.getPrefWidth());
-		sizeGuideButton3.setMinWidth(sizeGuideButton.getMinWidth());
-		sizeGuideButton3.setMaxWidth(sizeGuideButton.getMaxWidth());
-
-		HBox sizeGuide = new HBox(5);
-		sizeGuide.getChildren().add(new Rectangle(0, 0, Color.TRANSPARENT));
-		sizeGuide.getChildren().add(sizeGuideButton);
-		sizeGuide.getChildren().add(new Rectangle(0, 0, Color.TRANSPARENT));
-		sizeGuide.getChildren().add(sizeGuideButton2);
-		sizeGuide.getChildren().add(new Rectangle(0, 0, Color.TRANSPARENT));
-		sizeGuide.getChildren().add(sizeGuideButton3);
-		sizeGuide.getChildren().add(new Rectangle(0, 0, Color.TRANSPARENT));
-		sizeGuide.setPrefWidth(Double.NEGATIVE_INFINITY);
-		sizeGuide.setMaxHeight(0);
-
-		macroRows = new VBox(5, createRow(0), createRow(1));
+		macroRows = new VBox(5, macroRow1, macroRow2);
 //		macroRows = new VBox(5, createRow(), createRow(), createMacroEmoteRow());
 
 		macroScrollPane = new ScrollPane(macroRows);
@@ -76,7 +78,7 @@ public class MacroPanelPane extends BorderPane {
 			}
 		});
 
-		ScrollPane emoteMacroScrollPane = new ScrollPane(createMacroEmoteRow(2));
+		ScrollPane emoteMacroScrollPane = new ScrollPane(emoteMacroRow);
 		emoteMacroScrollPane.setFocusTraversable(false);
 		emoteMacroScrollPane.setFitToHeight(true);
 		emoteMacroScrollPane.setFitToWidth(true);
@@ -111,49 +113,12 @@ public class MacroPanelPane extends BorderPane {
 		setMinHeight(132);
 		setMaxHeight(132);
 		setId("macro-panel");
-		setCenter(new VBox(sizeGuide, macroScrollPane, emoteMacroScrollPane));
+		VBox macrosPanel = new VBox(macroScrollPane, emoteMacroScrollPane);
+//		VBox.setVgrow(macroScrollPane, Priority.ALWAYS);
+//		VBox.setVgrow(emoteMacroScrollPane, Priority.ALWAYS);
+		setCenter(macrosPanel);
 		setRight(new HBox(new Rectangle(5, 5, Color.TRANSPARENT), infoPane, new Rectangle(5, 5, Color.TRANSPARENT)));
 //        setRight(programActionButtonBox);
-	}
-
-	private HBox createMacroEmoteRow(int rowId) {
-		HBox emoteMacros = new HBox(5);
-		emoteMacros.setTranslateX(4);
-
-		for (int i = 0; i < 18; i++) {// 200
-			emoteMacros.getChildren().add(createEmoteMacroButton((rowId * 10) + i));
-			System.err.println("Add emote");
-		}
-
-		// Add a placeholder to match the pixel with from macro and emote scroll pane.
-		emoteMacros.getChildren().add(new Rectangle(0, 0, Color.TRANSPARENT));
-		return emoteMacros;
-	}
-
-	private HBox createRow(int rowId) {
-		HBox row = new HBox(10);
-		for (int i = 0; i < 6; i++) {// 100
-
-			row.getChildren().add(createMacroButton((rowId * 10) + i));
-			System.err.println("Add macro");
-		}
-
-		// Add a placeholder to match the pixel with from macro and emote scroll pane.
-		row.getChildren().add(new Rectangle(0, 0, Color.TRANSPARENT));
-		row.setTranslateX(4);
-		return row;
-	}
-
-	private Button createMacroButton(int buttonId) {
-		MacroButton macroButton = new MacroButton(MacroType.TEXT, buttonId, sizeGuideButton);
-		macroButtons.add(macroButton);
-		return macroButton;
-	}
-
-	private Button createEmoteMacroButton(int buttonId) {
-		MacroButton macroButton = new MacroButton(MacroType.EMOTE, buttonId, sizeGuideButton).asEmoteOnly();
-		macroButtons.add(macroButton);
-		return macroButton;
 	}
 
 	public HBox createRowSelector() {
@@ -172,6 +137,7 @@ public class MacroPanelPane extends BorderPane {
 		rightKey.setPrefSize(35, 35);
 		rightKey.setFocusTraversable(false);
 
+		// TODO Whatever we tried to do...
 		rightKey.setOnAction(e -> {
 			int visibleButtons = 0;
 			boolean firstRow = true;
@@ -241,11 +207,12 @@ public class MacroPanelPane extends BorderPane {
 		channelProperty().set(channel);
 	}
 
-	public void loadMacros() {
-		macroButtons.forEach(MacroButton::setMacro);
-	}
-
-	public void loadMacros(ChannelActions channel) {
-		macroButtons.forEach(button -> button.setMacro(channel));
+	private void ensureSize(ObservableList<Node> macroButtons, int size) {
+		while (macroButtons.size() > size) {
+			macroButtons.remove(size, macroButtons.size());
+		}
+		while (macroButtons.size() < size) {
+			macroButtons.add(new MacroButton());
+		}
 	}
 }

@@ -1,5 +1,5 @@
 #macro-key{
-	-fx-border-width: 4px;
+	-fx-border-width: 3px;
 	-fx-border-radius: 8px;
 	-fx-border-color: -custom-border-color;
 	-fx-background-radius: 16px;
@@ -15,6 +15,18 @@
 	/*-fx-padding: 0 0 0 7; */
 	-fx-padding: 0 0 0 5;
 	-fx-alignment: center-left;
+
+	-fx-min-width: 87px;
+	-fx-max-width: 113.5px;
+	-fx-min-height: 35px;
+	-fx-pref-width: 113.5px;
+}
+
+#macro-key:emote {
+	-fx-min-width: 35px;
+	-fx-max-width: 35px;
+	-fx-pref-width: 35px;
+	
 }
 
 #macro-key:pressed:hover {
@@ -70,7 +82,7 @@
 }
 
 #channel-tab:live {
-	-custom-base-background: #EB0400;
+	-custom-base-background: #8B0000;
 }
 
 #channel-tab:hover {
@@ -79,6 +91,10 @@
 
 #channel-tab:selected, #channel-tab:selected:hover {
 	-fx-background-color: -custom-base-background, -custom-selected-overlay;
+}
+
+#channel-tab:selected:live, #channel-tab:selected:live:hover {
+	-fx-background-color: #EB0400;
 }
 
 #channel-tab:pressed:hover {

@@ -1,17 +1,9 @@
 package de.minetrain.minechat.twitch.obj;
 
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,17 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.eventsub.domain.chat.Badge;
-import com.github.twitch4j.eventsub.domain.chat.Emote;
 import com.github.twitch4j.eventsub.domain.chat.Fragment;
 import com.github.twitch4j.eventsub.domain.chat.MessageType;
 import com.github.twitch4j.eventsub.domain.chat.Reply;
 import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
 
-import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.gui.emotes.EmoteLegacy;
-import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.emotes.WebEmote;
-import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.TwitchHelper;
 
@@ -52,7 +39,6 @@ public class TwitchMessage {
 	private final String userName;
 	private final String userColorCode;
 	private final String[] badgeTags;
-	private final List<String> webEmotesPaths;
 
 	private final Long epochTime;
 	private final boolean emoteOnly;
@@ -77,7 +63,6 @@ public class TwitchMessage {
 		String color = event.getColor();
 		userColorCode = StringUtils.isNoneBlank(color) ? color : "#ffffff";
 		badgeTags = event.getBadges().stream().map(Badge::getId).toArray(String[]::new);
-		webEmotesPaths = event.getMessage().getFragments().stream().map(Fragment::getEmote).filter(Objects::nonNull).map(Emote::getId).toList();
 
 		epochTime = Instant.now().toEpochMilli();
 		emoteOnly = event.getMessage().getFragments().stream().allMatch(fragment -> fragment.getType() == Fragment.Type.EMOTE);
@@ -103,9 +88,6 @@ public class TwitchMessage {
 		this.firstMessages = ircMessage.getTagValue("first-msg").orElse("0").equals("1") ? true : false;
 		this.firstMessageOfInstance = Main.getChannelManager().getChannelActions(channelId).getGreetingsManager().add(userName);
 
-		String emotes = ircMessage.getTagValue("emotes").orElse(null);
-
-		webEmotesPaths = (emotes != null ? Arrays.asList(emotes.split("/")) : List.of());
     	badgeTags = ircMessage.getTagValue("badges").orElse("").split(",");
 
     	//TODO: Implement this in a nother location
@@ -113,74 +95,6 @@ public class TwitchMessage {
 //			GreetingsManager greetingsManager = ChannelManager.getChannel(channelId).getGreetingsManager();
 //			mentionedUserNames.forEach(name -> greetingsManager.setMentioned(name.toLowerCase()));
 //		}
-	}
-
-	private HashMap<String, WebEmote> getWebEmotes() {
-//		emotesv2_5d1cdac68be9419486d3be49d78ae402:0-6,8-14,16-22,24-30,32-38
-		HashMap<String, WebEmote> emoteSet = new HashMap<>();
-		if(webEmotesPaths != null){
-			webEmotesPaths.forEach(emote -> {
-				String[] emoteSplit = emote.split(":");
-				String emoteId = emoteSplit[0];
-				String[] emoteLocations = emoteSplit[1].split(",");
-
-				if(emoteLocations != null && emoteLocations.length != 0){
-					String[] emoteLocation = emoteLocations[0].split("-");
-					String emoteName = message.substring(Integer.parseInt(emoteLocation[0]), Integer.parseInt(emoteLocation[1])+1);
-
-					emoteSet.put(emoteName, webEmoteCache.computeIfAbsent(emote, key -> {
-						try {
-							return new WebEmote(emoteName, emoteId);
-						} catch (MalformedURLException ex) {
-							logger.debug("Can�t load web emote for -> "+emoteName, ex);
-						}
-						return null;
-					}));
-				}
-			});
-		}
-		return emoteSet;
-	}
-
-	private final HashMap<String, EmoteLegacy> getInstalltEmotes() {
-		HashMap<String, EmoteLegacy> emoteSet = new HashMap<>();//Name, emote
-
-    	Arrays.stream(message.split(" ")).parallel().forEach(word -> {
-
-			EmoteLegacy emoteByName = EmoteManager.getChannelEmoteByName(channelId, word);
-			if(emoteByName != null) {
-				emoteSet.put(emoteByName.getName(), emoteByName);
-			}else if(Settings.emoteBlendinOnDisplaying){
-				emoteByName = EmoteManager.getEmoteByName(word);
-				if(emoteByName != null){
-					emoteSet.put(emoteByName.getName(), emoteByName);
-				}
-			}
-
-		});
-
-    	return emoteSet;
-    }
-
-	public ArrayList<Path> getBadges() {
-		ArrayList<Path> paths = new ArrayList<>();
-		Arrays.asList(badgeTags).forEach(badge -> {
-			Path path = Path.of(TextureManager.badgePath+badge+"/1.png");
-
-			if(badge.startsWith("subscriber") || badge.startsWith("bits")){
-				String channelBadgePath = TextureManager.badgePath+badge.substring(0, badge.indexOf("/"))+"/Channel_"+channelId+"";
-
-				if(Files.exists(Paths.get(channelBadgePath))){
-					path = Path.of(channelBadgePath+badge.substring(badge.indexOf("/"))+"/1.png");
-				}
-			}
-
-			if (Files.exists(path)) {
-				paths.add(path);
-			}
-		});
-
-		return paths;
 	}
 
 	public boolean isOlderThanHours(int hours){
@@ -276,15 +190,6 @@ public class TwitchMessage {
 	public String getRawBadgeTags() {
 		return String.join(", ", getBadgeTags());
 	}
-
-	public HashMap<String, EmoteLegacy> getEmoteSet() {
-		HashMap<String, EmoteLegacy> emoteSet = getInstalltEmotes();
-		HashMap<String, WebEmote> webEmotes = getWebEmotes();
-		webEmotes.keySet().removeAll(emoteSet.keySet());
-		emoteSet.putAll(webEmotes);
-		return emoteSet;
-	}
-
 
 	@Override
 	public String toString() {

@@ -1,10 +1,9 @@
 package de.minetrain.minechat.gui.frames;
 
 import de.minetrain.minechat.data.objectdata.Emote;
-import de.minetrain.minechat.data.objectdata.MacroData;
-import de.minetrain.minechat.features.macros.MacroObject;
-import de.minetrain.minechat.features.macros.MacroType;
-import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelector;
+import de.minetrain.minechat.data.objectdata.Macro;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectionDialog;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectorButton;
 import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import javafx.scene.control.TextArea;
@@ -13,46 +12,42 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-public class MacroEditorFrame extends MineDialog<MacroData> {
+public class MacroEditorDialog extends MineDialog<Macro> {
 
-	private Emote selectedEmote;
-	private EmoteSelector emoteSelector;
+	private Macro.Builder macroBuilder;
+	private TextField titleInputField;
+	private TextArea outputInputField;
 
-	public MacroEditorFrame(MacroObject macro, MacroType macroType, int button_id) {
+	public MacroEditorDialog(Macro.Builder macro) {
 		setTitle("Edit this macro:");
 		setWidth(420);
 		setHeight(300);
 
-		String title = macro != null ? macro.getTitle() : "";
-		String output = "";
+		macroBuilder = macro;
 
-		TextField titleInputField = new TextField(title);
+		titleInputField = new TextField(macro.getTitle());
 
 		EmoteSelectorButton emoteButton = new EmoteSelectorButton();
+		if (macro.getEmoteId() != null) {
+			Emote emote = EmoteManager.getEmoteById(macro.getEmoteId());
+			emoteButton.setEmote(emote);
+		}
 		emoteButton.setOnAction(_ -> {
-			new EmoteSelector().showAndWait().ifPresent(newEmote -> {
-				selectedEmote = newEmote;
+			new EmoteSelectionDialog().showAndWait().ifPresent(newEmote -> {
+				macroBuilder.withEmoteId(newEmote.getEmoteId());
 				emoteButton.setEmote(newEmote);
 			});
 		});
-//		emoteButton.setOnMouseClicked(event -> {
-//			if (emoteSelector == null) {
-//				emoteSelector = new EmoteSelector(newEmote -> {
-//					selectedEmote = newEmote;
-//					emoteButton.changeImage(newEmote);
-//					titleInputField.setPromptText(newEmote.getName());
-//				});
-//			} else {
-//				emoteSelector.openStage(false);
-//			}
-//		});
 
 		titleInputField.setId("message-input-field");
 //		titleInputField.setPromptText(selectedEmote.getName());
 		titleInputField.setFocusTraversable(false);
 		titleInputField.minHeightProperty().bind(emoteButton.heightProperty());
 
-		TextArea outputInputField = new TextArea(output);
+		outputInputField = new TextArea();
+		if (macro.getOutput() != null) {
+			outputInputField.setText(String.join("\n", macro.getOutput()));
+		}
 		outputInputField.setId("message-input-field");
 		outputInputField.setPromptText("""
 			Output text
@@ -71,7 +66,10 @@ public class MacroEditorFrame extends MineDialog<MacroData> {
 	}
 
 	@Override
-	protected MacroData yieldResultOnSuccess() {
-		return null; // TODO: Implement MacroData creation based on user input
+	protected Macro yieldResultOnSuccess() {
+		return macroBuilder
+				.withTitle(titleInputField.getText().trim())
+				.withOutput(outputInputField.getText().lines().toList())
+				.build();
 	}
 }

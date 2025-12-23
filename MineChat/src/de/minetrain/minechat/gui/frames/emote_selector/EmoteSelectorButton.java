@@ -1,21 +1,12 @@
 package de.minetrain.minechat.gui.frames.emote_selector;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.gui.emotes.EmoteType;
-import de.minetrain.minechat.main.Main;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 
 public class EmoteSelectorButton extends Button {
 
@@ -23,8 +14,6 @@ public class EmoteSelectorButton extends Button {
 	private static final PseudoClass TIER3_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("tier3");
 	private static final PseudoClass BITS_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("bits");
 	private static final PseudoClass FOLLOW_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("follow");
-	private static final double EMOTE_SIZE = 24D;
-	private static final ExecutorService IMAGE_LOADER = Executors.newVirtualThreadPerTaskExecutor();
 
 	private ObjectProperty<Emote> emoteProperty;
 
@@ -36,30 +25,20 @@ public class EmoteSelectorButton extends Button {
 	public EmoteSelectorButton() {
 		setId("emote-button");
 
-		ImageView imageView = new ImageView();
+		EmoteView emoteView = new EmoteView();
+		emoteView.emoteProperty().bind(emoteProperty());
+
 		emoteProperty().addListener((_, oldEmote, newEmote) -> {
 			if (oldEmote != null) {
 				setPseudoClassForEmoteType(oldEmote.getEmoteType(), false);
-				imageView.setImage(null);
 			}
 			if (newEmote != null) {
 				setPseudoClassForEmoteType(newEmote.getEmoteType(), true);
-				CompletableFuture.runAsync(() -> {
-					Image image = Main.getEmoteManager().getEmoteImage1x(newEmote.getEmoteId(), newEmote.isAnimated());
-					Platform.runLater(() -> imageView.setImage(image));
-				}, IMAGE_LOADER);
 			}
 		});
-		tooltipProperty().bind(emoteProperty.map(emote -> new Tooltip(emote.getName())));
+		tooltipProperty().bind(emoteProperty().map(emote -> new Tooltip(emote.getName())));
 
-		imageView.setFitHeight(EMOTE_SIZE);
-		imageView.setFitWidth(EMOTE_SIZE);
-		imageView.setPreserveRatio(true);
-		StackPane wrapper = new StackPane();
-		wrapper.setMinSize(EMOTE_SIZE, EMOTE_SIZE);
-		wrapper.getChildren().add(imageView);
-
-		setGraphic(wrapper);
+		setGraphic(emoteView);
 	}
 
 	public ObjectProperty<Emote> emoteProperty() {

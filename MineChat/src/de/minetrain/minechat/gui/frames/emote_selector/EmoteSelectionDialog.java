@@ -26,14 +26,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class EmoteSelector extends MineDialog<Emote> {
+public class EmoteSelectionDialog extends MineDialog<Emote> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EmoteSelector.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EmoteSelectionDialog.class);
 
 	private boolean closeOnSelect = true;
 	private ObjectProperty<Emote> selectedEmoteProperty;
 
-	public EmoteSelector() {
+	public EmoteSelectionDialog() {
 		setTitle("Emote Selector");
 		setWidth(400);
 		setHeight(400);

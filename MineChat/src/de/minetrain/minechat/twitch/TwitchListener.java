@@ -44,8 +44,6 @@ import de.minetrain.minechat.data.objectdata.ChatMessage.MessageType;
 import de.minetrain.minechat.data.objectdata.ChatMessageToken;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
-import de.minetrain.minechat.gui.emotes.ChannelEmotes;
-import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -193,10 +191,10 @@ public class TwitchListener {
     		MessageManager.setLastMessage(event.getMessage());
     		DatabaseManager.getOwnerCache().insert(twitchMessage);
 
-    		ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getChannel().getId());
-    		if(channelEmotes != null){
-    			channelEmotes.setSubTier("tier"+event.getSubscriptionTier());
-    		}
+//    		ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getChannel().getId());
+//    		if(channelEmotes != null){
+//    			channelEmotes.setSubTier("tier"+event.getSubscriptionTier());
+//    		}
 
 		}
 

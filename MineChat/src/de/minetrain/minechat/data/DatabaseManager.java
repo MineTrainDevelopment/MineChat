@@ -11,7 +11,6 @@ import org.sqlite.SQLiteConfig;
 import de.minetrain.minechat.data.databases.AutoReplyDatabase;
 import de.minetrain.minechat.data.databases.CountVariableDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
-import de.minetrain.minechat.data.databases.MacroDatabase;
 import de.minetrain.minechat.data.databases.OwnerCacheDatabase;
 
 public class DatabaseManager {
@@ -20,7 +19,6 @@ public class DatabaseManager {
 	public static Connection connection = null;
 
 	private static AutoReplyDatabase autoReply;
-	private static MacroDatabase macro;
 	private static EmoteDatabase emote;
 	private static OwnerCacheDatabase ownerCacheDatabase;
 	private static CountVariableDatabase countVariableDatabase;
@@ -28,7 +26,6 @@ public class DatabaseManager {
 	public DatabaseManager() {
 		try {
 			autoReply = new AutoReplyDatabase();
-			macro = new MacroDatabase();
 			emote = new EmoteDatabase();
 			ownerCacheDatabase = new OwnerCacheDatabase();
 			countVariableDatabase = new CountVariableDatabase();
@@ -100,10 +97,6 @@ public class DatabaseManager {
 
 	public static AutoReplyDatabase getAutoReply() {
 		return autoReply;
-	}
-
-	public static MacroDatabase getMacro() {
-		return macro;
 	}
 
 	public static EmoteDatabase getEmote() {

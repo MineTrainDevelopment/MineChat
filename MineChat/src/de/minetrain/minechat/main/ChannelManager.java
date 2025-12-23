@@ -1,8 +1,10 @@
 package de.minetrain.minechat.main;
 
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.groupingBy;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,12 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.Channels;
+import de.minetrain.minechat.data.objectdata.Macro;
+import de.minetrain.minechat.data.objectdata.Macros;
+import de.minetrain.minechat.features.macros.MacroType;
+import de.minetrain.minechat.features.macros.MacroViewModel;
+import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.frames.MacroEditorDialog;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
@@ -34,6 +42,8 @@ import javafx.collections.ObservableList;
 public class ChannelManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChannelManager.class);
+	private static final int MACROS_PER_CHANNEL = 12;
+	private static final int EMOTE_MACROS_PER_CHANNEL = 18;
 
 	private Map<String, ChannelActions> channels = new HashMap<>();
 
@@ -148,6 +158,14 @@ public class ChannelManager {
 		return channelsPropertyInternal().getReadOnlyProperty();
 	}
 
+	public void editMacro(MacroViewModel macro) {
+		Macro.Builder builder =  macro.toMacro().buildCopy();
+		new MacroEditorDialog(builder).showAndWait().ifPresent(editedMacro -> {
+			macro.apply(editedMacro);
+			getMacros().addMacro(editedMacro);
+		});
+	}
+
 	/// Finds the ChannelViewModel for the given channel id.
 	///
 	/// @param channelId The channel id to find the ChannelViewModel for.
@@ -195,6 +213,10 @@ public class ChannelManager {
 		return EclipseStoreKeeper.root().channels();
 	}
 
+	private static Macros getMacros() {
+		return EclipseStoreKeeper.root().macros();
+	}
+
 	private static Channel createChannelFromTwitchUser(TwitchUserObj twitchUser) {
 		return new Channel(twitchUser.getUserId(), twitchUser.getLoginName(), twitchUser.getDisplayName(),
 				"Viewer", null,"Hello {USER} HeyGuys\nWelcome {USER} HeyGuys", "By {USER}!\nHave a good one! {USER} <3",
@@ -223,8 +245,23 @@ public class ChannelManager {
 
 	private ChannelViewModel createNewChannelViewModel(Channel channel) {
 		ChannelViewModel cvm = ChannelViewModel.of(channel);
+		Map<MacroType, List<Macro>> macrosByType = getMacros().computeByChannelId(channel.getChannelId(), macros -> macros.sorted(Comparator.comparing(Macro::getIndex)).collect(groupingBy(Macro::getMacroType)));
+		cvm.getMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.TEXT, MACROS_PER_CHANNEL));
+		cvm.getEmoteMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.EMOTE, EMOTE_MACROS_PER_CHANNEL));
+
 		cvm.refreshMessages();
 		cvm.selectedProperty().bind(activeChannelProperty().isEqualTo(cvm));
 		return cvm;
+	}
+
+	private MacroViewModel[] createMacroViewModels(ChannelViewModel cvm, Map<MacroType, List<Macro>> macros, MacroType type, int count) {
+		MacroViewModel[] macroViewModels = new MacroViewModel[count];
+		macros.getOrDefault(type, List.of()).forEach(m -> macroViewModels[m.getIndex()] = MacroViewModel.of(m, cvm, EmoteManager.getEmoteById(m.getEmoteId())));
+		for (int i = 0; i < macroViewModels.length; i++) {
+			if (macroViewModels[i] == null) {
+				macroViewModels[i] = new MacroViewModel(cvm, i, type);
+			}
+		}
+		return macroViewModels;
 	}
 }

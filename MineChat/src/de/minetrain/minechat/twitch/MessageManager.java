@@ -8,7 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
@@ -74,11 +74,12 @@ public class MessageManager {
     	}
     }
 
-    public static void sendMessage(MacroObject macro) {
-    	try {
-    		sendMessage(Main.getChannelManager().getChannelActions(macro.getChannelId()), macro.getRandomOutput());
+	public static void sendMessage(MacroViewModel macro) {
+		try {
+			sendMessage(Main.getChannelManager().getChannelActions(macro.getChannel().getChannelId()),
+					macro.getRandomOutput());
 		} catch (Exception ex) {
-			logger.error("Can´t send message from a macro:",ex);
+			logger.error("Can´t send message from a macro:", ex);
 		}
 	}
 

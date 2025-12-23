@@ -2,7 +2,7 @@ package de.minetrain.minechat.utils.events;
 
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.OutboundChatMessage;
 
@@ -34,12 +34,12 @@ public enum MineChatEventType{
 	EXECUTE_MACRO {
 		@Override
 		public void fireEvent(MineChatEvents event, Object obj) {
-			if(!(obj instanceof MacroObject)){
-				throwFireError("Can´t fire onExecuteMacroEvent!", obj, MacroObject.class);
+			if(!(obj instanceof MacroViewModel)){
+				throwFireError("Can´t fire onExecuteMacroEvent!", obj, MacroViewModel.class);
 				return;
 			}
 
-			event.onExecuteMacroEvent((MacroObject) obj);
+			event.onExecuteMacroEvent((MacroViewModel) obj);
 		}
 	};
 

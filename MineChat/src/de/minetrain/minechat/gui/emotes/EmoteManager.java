@@ -1,12 +1,7 @@
 package de.minetrain.minechat.gui.emotes;
 
 import java.io.ByteArrayInputStream;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
@@ -20,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.Emote;
 import javafx.scene.image.Image;
@@ -32,7 +28,6 @@ public class EmoteManager {
 	private static final Logger LOG = LoggerFactory.getLogger(EmoteManager.class);
 
 	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/{}/dark/1.0"; // id, format(static, animated)
-	private static final String TWITCH_BADGE_URL = "https://static-cdn.jtvnw.net/badges/v1/{}/1"; // id
 
 	private final Cache<String, Image> emoteImage1xCache;
 
@@ -40,14 +35,9 @@ public class EmoteManager {
 
 	private final Cache<Pair<String, BadgeId>, Image> badgeImage1xCache;
 
-	/**emoteId, emoteName*/
-	private static final HashMap<String, String> emoteIdToName = new HashMap<>();
-	/**emoteName, emoteId*/
-	private static final HashMap<String, String> emoteNameToId = new HashMap<>();
-	/**emoteId, emote*/
-	private static final HashMap<String, EmoteLegacy> emotes = new HashMap<>();
-	/**channelId, ChannelEmotes*/
-	private static final HashMap<String, ChannelEmotes> channelEmotes = new HashMap<>();
+	public static Emote getEmoteById(String emoteId){
+		return  EclipseStoreKeeper.root().emotes().ofId(emoteId);
+	}
 
 	public EmoteManager() {
 		CachingProvider cachingProvider = Caching.getCachingProvider();
@@ -75,6 +65,10 @@ public class EmoteManager {
 		badgeImage1xCache = cacheManager.createCache("badgeImageCacheSmall", badgeImage1xConfig);
 	}
 
+	/// Get emote image from cache or download it if not cached yet.
+	///
+	/// @param emoteId The ID of the emote.
+	/// @param animated Whether the emote is animated, only relevant when not locally available.
 	public Image getEmoteImage1x(String emoteId, boolean animated) {
 		Image image = emoteImage1xCache.get(emoteId);
 		if (image == null) {
@@ -112,88 +106,5 @@ public class EmoteManager {
 //				.forEach(emote -> MineTextArea.addToStaticEmoteDictionary(new SuggestionObj(emote)));
 //		});
 //	}
-
-	public static void clear(){
-		LOG.debug("Clear all emotes from cache.");
-		emotes.clear();
-		emoteIdToName.clear();
-		emoteNameToId.clear();
-	}
-
-	public static void clearChannel(){
-		LOG.debug("Clear all channel emotes from cache.");
-		channelEmotes.clear();
-	}
-
-	public static void addEmote(EmoteLegacy emote){
-		LOG.debug("Adding emote -> "+emote.getName()+":"+emote.getEmoteId());
-		emotes.put(emote.getEmoteId(), emote);
-		emoteIdToName.put(emote.getEmoteId(), emote.getName());
-		emoteNameToId.put(emote.getName(), emote.getEmoteId());
-	}
-
-	public static void addChannel(String channelId, ChannelEmotes channelEmote){
-		LOG.debug("Adding channel emote set -> "+channelId);
-		channelEmotes.put(channelId, channelEmote);
-	}
-
-	// TODO Zocki: Remove static methods and use instance methods with caching
-
-	public static HashMap<String, EmoteLegacy> getAllEmotes(){
-		return emotes;
-	}
-
-	public static List<EmoteLegacy> getAllFavoriteEmotes(boolean considerNameDuplication){
-		List<EmoteLegacy> emotes = getAllEmotes().values().stream()
-				.filter(emote -> emote.isFavorite())
-				.collect(Collectors.toList());
-
-		if(considerNameDuplication){
-			emotes = emotes.stream()
-				.collect(Collectors.toMap(EmoteLegacy::getName, emote -> emote, (existing, replacement) -> existing))
-				.values().stream().collect(Collectors.toList());
-		}
-
-		return emotes.stream().sorted(Comparator.comparing(EmoteLegacy::getName)).collect(Collectors.toList());
-	}
-
-	public static List<EmoteLegacy> getAllDefaultEmotes(){
-		return getAllEmotes().values().stream()
-				.filter(emote -> emote.getEmoteType().equals(EmoteType.DEFAULT))
-				.sorted(Comparator.comparing(EmoteLegacy::getName))
-				.collect(Collectors.toList());
-	}
-
-	public static EmoteLegacy getEmoteById(String emoteId){
-		return emotes.containsKey(emoteId) ? emotes.get(emoteId) : null;
-	}
-
-	/**
-	 * @param channelId
-	 * @return may be null, if no emotes are installed for the user.
-	 */
-	public static ChannelEmotes getChannelEmotes(String channelId){
-		return channelEmotes.get(channelId);
-	}
-
-	public static HashMap<String, ChannelEmotes> getChannelEmotes(){
-		return channelEmotes;
-	}
-
-	public static EmoteLegacy getEmoteByName(String emoteName){
-		return emoteNameToId.containsKey(emoteName) ? getEmoteById(emoteNameToId.get(emoteName)) : null;
-	}
-
-	public static EmoteLegacy getChannelEmoteByName(String channelId, String emoteName){
-		if(getChannelEmotes(channelId) == null){
-			return null;
-		}
-
-		HashMap<String, String> emotesByName = getChannelEmotes(channelId).getEmotesByName();
-		return emotesByName.containsKey(emoteName) ? getEmoteById(emotesByName.get(emoteName)) : null;
-	}
-
-	public static Map<String, EmoteLegacy> getPublicEmotes(){
-		return getAllEmotes().entrySet().stream().filter(entry -> entry.getValue().isGlobal()).collect(Collectors.toMap(Entry::getKey, Entry::getValue, (old, neew) -> old));
-	}
 }
+

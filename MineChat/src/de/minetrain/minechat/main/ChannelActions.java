@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
-import de.minetrain.minechat.features.macros.ChannelMacros;
-import de.minetrain.minechat.gui.emotes.ChannelEmotes;
-import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
@@ -31,7 +28,6 @@ public class ChannelActions {
 	private final GreetingsManager greetingsManager;
 	private final MessageHistory messageHistory;
 	private final TwitchUserObj twitchUser;
-	private final ChannelMacros macros;
 
 	private final Channel channel;
 
@@ -50,7 +46,6 @@ public class ChannelActions {
 		this.twitchUser = TwitchHelper.requestTwitchUser(TwitchApiCallType.ID, channel.getChannelId()).join();
 		this.greetingsManager = new GreetingsManager();
 		this.messageHistory = new MessageHistory();
-		this.macros = new ChannelMacros(channel.getChannelId());
 
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "emotesv2_6cc7fdb3cca74bdc80c49f4199b6d001", 00, "Test 1", "Macro-V2 | test_1".split("q")));
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "emotesv2_2f6e7f957a37440e92fc33c66be7c0c2", 10, "Test 2", "Macro-V2 | test_2".split("q")));
@@ -112,16 +107,5 @@ public class ChannelActions {
 
 	public Channel getChannel() {
 		return channel;
-	}
-
-	public ChannelMacros getMacros() {
-		return macros;
-	}
-
-	/**
-	 * @return may be null, if no emotes are installed for the user.
-	 */
-	public ChannelEmotes getChannelEmotes(){
-		return EmoteManager.getChannelEmotes(channel.getChannelId());
 	}
 }

@@ -1,6 +1,6 @@
 package de.minetrain.minechat.utils.events;
 
-import de.minetrain.minechat.features.macros.MacroObject;
+import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.OutboundChatMessage;
 
@@ -13,5 +13,5 @@ abstract class EventListener implements MineChatEvents{
 	public void onSentMessageEvent(OutboundChatMessage message){}
 
 	@Override
-	public void onExecuteMacroEvent(MacroObject macro){}
+	public void onExecuteMacroEvent(MacroViewModel macro){}
 }
