@@ -11,7 +11,6 @@ import org.sqlite.SQLiteConfig;
 import de.minetrain.minechat.data.databases.AutoReplyDatabase;
 import de.minetrain.minechat.data.databases.CountVariableDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
-import de.minetrain.minechat.data.databases.OwnerCacheDatabase;
 
 public class DatabaseManager {
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
@@ -20,14 +19,12 @@ public class DatabaseManager {
 
 	private static AutoReplyDatabase autoReply;
 	private static EmoteDatabase emote;
-	private static OwnerCacheDatabase ownerCacheDatabase;
 	private static CountVariableDatabase countVariableDatabase;
 
 	public DatabaseManager() {
 		try {
 			autoReply = new AutoReplyDatabase();
 			emote = new EmoteDatabase();
-			ownerCacheDatabase = new OwnerCacheDatabase();
 			countVariableDatabase = new CountVariableDatabase();
 		} catch (SQLException ex) {
 			logger.error("Can´t prepare all databases.", ex);
@@ -101,10 +98,6 @@ public class DatabaseManager {
 
 	public static EmoteDatabase getEmote() {
 		return emote;
-	}
-
-	public static OwnerCacheDatabase getOwnerCache() {
-		return ownerCacheDatabase;
 	}
 
 	public static CountVariableDatabase getCountVariableDatabase() {

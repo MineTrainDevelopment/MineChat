@@ -36,7 +36,6 @@ import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
@@ -90,7 +89,6 @@ public class TwitchListener {
 		if (event.getChatterUserId().equals(TwitchHelper.getSelfUser().getUserId())) {
 			channel.getMessageHistory().addSendedMessages(event.getMessage().getText());
 			MessageManager.setLastMessage(event.getMessage().getText());
-			DatabaseManager.getOwnerCache().insert(twitchMessage);
 
 			// TODO unnecessary?
 //			ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getBroadcasterUserId());
@@ -189,7 +187,6 @@ public class TwitchListener {
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
 			channel.getMessageHistory().addSendedMessages(event.getMessage());
     		MessageManager.setLastMessage(event.getMessage());
-    		DatabaseManager.getOwnerCache().insert(twitchMessage);
 
 //    		ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getChannel().getId());
 //    		if(channelEmotes != null){
