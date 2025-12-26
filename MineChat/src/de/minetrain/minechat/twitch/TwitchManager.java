@@ -9,14 +9,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +30,6 @@ import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.ITwitchClient;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatBadgeSetList;
@@ -50,11 +47,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
 import de.minetrain.minechat.twitch.obj.TokenValidateResponse;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.OutboundChatMessage;
-import io.github.bucket4j.Bandwidth;
 
 /**
  * The TwitchManager class is responsible for creating and managing a Twitch client instance.
@@ -456,35 +450,6 @@ public class TwitchManager {
 			.withEnableEventSocket(true)
 			.withDefaultAuthToken(new OAuth2Credential("twitch", oAuth2Token))
 			.withEnableHelix(true)
-			.withChatAccount(new OAuth2Credential("twitch", oAuth2Token))
-			.withChatChannelMessageLimit(Bandwidth.builder().capacity(1L).refillGreedy(1, Duration.ofMillis(300)).id("per-channel-limit").build())
-			.withEnableChat(true)
 			.build();
-	}
-
-	/**
-	 * Sends a message to the specified Twitch chat.
-	 *
-	 * @param channel The name of the Twitch channel to send the message to.
-	 * @param message The message to be sent to the Twitch chat channel.
-	 */
-	private void sendMessage(String channel, String message) {
-		LOG.debug("Sending message -> message"); // Log the sent message.
-		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin")); // Set the default time zone.
-
-		// Send the message to the specified Twitch chat.
-		twitch.getChat().sendMessage(channel, message);
-	}
-
-	/**
-	 * Sends a message to the specified Twitch chat channel using the information from the provided {@link ChannelMessageEvent}.
-	 *
-	 * @param event The {@link ChannelMessageEvent} containing information about the chat channel and user.
-	 * @param message The message to be sent to the Twitch chat channel.
-	 */
-	private void replyMessage(OutboundChatMessage message) {
-		TwitchMessage replyMessage = message.getChannel().replyMessage;
-		twitch.getChat().sendMessage(message.getChannel().getChannel().getLoginName(), message.getMessage(), replyMessage.getClient_nonce(), replyMessage.getReplyId());
-		message.getChannel().getGreetingsManager().setMentioned(replyMessage.getUserName().toLowerCase());
 	}
 }
