@@ -92,6 +92,11 @@
 			<version>0.7.4</version>
 		</dependency>
 		<dependency>
+			<groupId>org.fxmisc.richtext</groupId>
+			<artifactId>richtextfx</artifactId>
+			<version>0.11.7</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.store</groupId>
 			<artifactId>storage-embedded</artifactId>
 			<version>${eclipse.store.version}</version>

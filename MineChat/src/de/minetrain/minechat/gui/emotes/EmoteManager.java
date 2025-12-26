@@ -18,6 +18,8 @@ import org.slf4j.helpers.MessageFormatter;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.Emote;
+import de.minetrain.minechat.gui.viewmodel.EmoteViewModel;
+import de.minetrain.minechat.gui.viewmodel.IEmoteViewModel;
 import javafx.scene.image.Image;
 import javafx.util.Pair;
 
@@ -34,6 +36,8 @@ public class EmoteManager {
 	private final Cache<String, Map<String, Emote>> channelIdBttvNameToEmoteCache;
 
 	private final Cache<Pair<String, BadgeId>, Image> badgeImage1xCache;
+
+	private final Cache<String, Map<String, EmoteViewModel>> channelIdNameToEmoteCache;
 
 	public static Emote getEmoteById(String emoteId){
 		return  EclipseStoreKeeper.root().emotes().ofId(emoteId);
@@ -63,6 +67,22 @@ public class EmoteManager {
 			.setCacheLoaderFactory(BadgeExtractorCacheLoader.factoryOf(badge -> new Image(new ByteArrayInputStream(badge.getImage1x()))))
 			.setReadThrough(true);
 		badgeImage1xCache = cacheManager.createCache("badgeImageCacheSmall", badgeImage1xConfig);
+
+		MutableConfiguration<String, Map<String, EmoteViewModel>> channelIdNameToEmoteConfig = new MutableConfiguration<String, Map<String, EmoteViewModel>>()
+			.setStoreByValue(false);
+		channelIdNameToEmoteCache = cacheManager.createCache("channelIdNameToEmoteCache", channelIdNameToEmoteConfig);
+	}
+
+	public void cacheAvailableEmotesByName(String channelId, Map<String, EmoteViewModel> availableEmotes) {
+		channelIdNameToEmoteCache.put(channelId, availableEmotes);
+	}
+
+	public IEmoteViewModel getEmoteByName(String channelId, String emoteName) {
+		Map<String, EmoteViewModel> nameToEmoteMap = channelIdNameToEmoteCache.get(channelId);
+		if (nameToEmoteMap != null) {
+			return nameToEmoteMap.get(emoteName);
+		}
+		return null;
 	}
 
 	/// Get emote image from cache or download it if not cached yet.

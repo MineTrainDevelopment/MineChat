@@ -68,7 +68,8 @@ public class TwitchManager {
 
 	private static final String[] REQUIRED_OAUTH2_SCOPES = new String[] {
 		"user:read:chat",
-		"user:write:chat"
+		"user:write:chat",
+		"user:read:emotes"
 	};
 
 	public record LiveMetaData(String title, String game, Instant startTime, int viewer, String[] tags){};
@@ -219,6 +220,19 @@ public class TwitchManager {
 				}
 				return users;
 			}));
+	}
+
+	public CompletableFuture<List<Emote>> requestAvailableUserEmotes(String channelId) {
+		return CompletableFuture.supplyAsync(() -> {
+			ArrayList<Emote> result = new ArrayList<>();
+			String cursor = null;
+			do {
+				 EmoteList emotes = twitch.getHelix().getUserEmotes(null, ownerTwitchUser.getUserId(), channelId, cursor).execute();
+				 result.addAll(emotes.getEmotes());
+				 cursor = emotes.getPagination().getCursor();
+			} while (cursor != null);
+			return result;
+		});
 	}
 
 	/**

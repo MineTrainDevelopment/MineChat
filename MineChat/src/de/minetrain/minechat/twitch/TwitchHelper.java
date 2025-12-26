@@ -76,6 +76,10 @@ public final class TwitchHelper {
 		return TwitchManager.instance().requestLiveUsers(callType, channels);
 	}
 
+	public static CompletableFuture<List<Emote>> requestAvailableUserEmotes(String channelId) {
+		return TwitchManager.instance().requestAvailableUserEmotes(channelId);
+	}
+
 	/**
 	 * A method to retrieve a Twitch user based on their username or user ID.
 	 *

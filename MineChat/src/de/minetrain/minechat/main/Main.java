@@ -177,14 +177,14 @@ public class Main extends Application {
 
 		// LoadChannels
 		loadingAsyncProgressLogging(1, "Loading channels.");
-		channelManager = new ChannelManager();
+		TwitchPollingService twitchPollingService = new TwitchPollingService();
+		channelManager = new ChannelManager(twitchPollingService);
 		channelManager.init();
 		new AutoReplyManager(); //Load auto replys after fetching channel data.
 
 		titleBar.channelsProperty().bind(channelManager.channelsProperty());
 		channelPane.channelProperty().bind(channelManager.activeChannelProperty());
 
-		TwitchPollingService twitchPollingService = new TwitchPollingService();
 		twitchPollingService.start();
 	}
 

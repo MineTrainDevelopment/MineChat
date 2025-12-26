@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.minetrain.minechat.data.objectdata.Emote;
+import de.minetrain.minechat.gui.viewmodel.IEmoteViewModel;
 import de.minetrain.minechat.main.Main;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -18,10 +18,20 @@ public class EmoteView extends StackPane {
 	private static final ExecutorService IMAGE_LOADER = Executors.newVirtualThreadPerTaskExecutor();
 	private static final double EMOTE_SIZE = 24D;
 
-	private ObjectProperty<Emote> emoteProperty;
+	private ObjectProperty<IEmoteViewModel> emoteProperty;
 
 	public EmoteView() {
-		ImageView imageView = new ImageView();
+		this(false);
+	}
+
+	public EmoteView(boolean adjustBaseline) {
+		ImageView imageView = new ImageView() {
+
+			@Override
+			public double getBaselineOffset() {
+				return adjustBaseline && getImage() != null ? getImage().getHeight() * 0.75 : super.getBaselineOffset();
+			}
+		};
 		imageView.setFitHeight(EMOTE_SIZE);
 		imageView.setFitWidth(EMOTE_SIZE);
 		imageView.setPreserveRatio(true);
@@ -40,18 +50,18 @@ public class EmoteView extends StackPane {
 		getChildren().add(imageView);
 	}
 
-	public ObjectProperty<Emote> emoteProperty() {
+	public ObjectProperty<IEmoteViewModel> emoteProperty() {
 		if (emoteProperty == null) {
 			emoteProperty = new SimpleObjectProperty<>(this, "emote");
 		}
 		return emoteProperty;
 	}
 
-	public Emote getEmote() {
+	public IEmoteViewModel getEmote() {
 		return emoteProperty().get();
 	}
 
-	public void setEmote(Emote emote) {
+	public void setEmote(IEmoteViewModel emote) {
 		emoteProperty().set(emote);
 	}
 }

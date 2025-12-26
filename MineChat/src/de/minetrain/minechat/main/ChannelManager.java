@@ -28,6 +28,7 @@ import de.minetrain.minechat.gui.frames.MacroEditorDialog;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
+import de.minetrain.minechat.twitch.TwitchPollingService;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioVolume;
@@ -46,9 +47,19 @@ public class ChannelManager {
 	private static final int EMOTE_MACROS_PER_CHANNEL = 18;
 
 	private Map<String, ChannelActions> channels = new HashMap<>();
+	private TwitchPollingService twitchPollingService;
 
 	private ObjectProperty<ChannelViewModel> activeChannelProperty;
 	private ReadOnlyObjectWrapper<ObservableList<ChannelViewModel>> channelsProperty;
+
+	public ChannelManager(TwitchPollingService twitchPollingService) {
+		this.twitchPollingService = twitchPollingService;
+		activeChannelProperty().addListener((_, _, newChannel) -> {
+			if (newChannel != null) {
+				this.twitchPollingService.queueAvailableEmotesRefresh(newChannel.getChannelId());
+			}
+		});
+	}
 
 	public void init() {
 		validateUsers().join();

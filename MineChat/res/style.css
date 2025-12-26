@@ -189,6 +189,12 @@
 	-fx-background-color: #505050;
 }
 
+#input-field-pane {
+	-fx-border-radius: 0px;
+	-fx-border-width: 10px;
+	-fx-border-color: transparent;
+}
+
 #message-input-field{
 	-fx-border-radius: 5px;
 	-fx-border-width: 2px;

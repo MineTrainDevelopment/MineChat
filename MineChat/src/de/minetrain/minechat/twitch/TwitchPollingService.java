@@ -1,22 +1,27 @@
 package de.minetrain.minechat.twitch;
 
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.twitch4j.helix.domain.Emote.Format;
 import com.github.twitch4j.helix.domain.Stream;
 
 import de.minetrain.minechat.data.objectdata.Channel;
+import de.minetrain.minechat.gui.viewmodel.EmoteViewModel;
 import de.minetrain.minechat.main.Main;
 
 /// A service that polls Twitch information at regular intervals.
@@ -42,6 +47,13 @@ public class TwitchPollingService {
 		}
 		polling = true;
 		scheduledTasks.add(executorService.scheduleAtFixedRate(this::pollStreamInfo, 0, 5L, TimeUnit.SECONDS));
+	}
+
+	public void queueAvailableEmotesRefresh(String channelId) {
+		if (!isPolling()) {
+			throw new IllegalStateException("Polling service is not running.");
+		}
+		scheduledTasks.add(executorService.schedule(() -> pollAvailableEmotes(channelId), 0, TimeUnit.SECONDS));
 	}
 
 	public void stop() {
@@ -77,6 +89,21 @@ public class TwitchPollingService {
 			LOG.error("Error fetching stream info for channels.", e.getCause());
 		} catch (InterruptedException e) {
 			LOG.error("Stream info polling was interrupted.", e);
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	private void pollAvailableEmotes(String channelId) {
+		try {
+			Map<String, EmoteViewModel> emotes = TwitchHelper.requestAvailableUserEmotes(channelId).get().stream()
+				.map(emote -> new EmoteViewModel(emote.getId(), emote.getName(), emote.getFormat().contains(Format.ANIMATED)))
+				.collect(toMap(EmoteViewModel::getName, Function.identity(), (e1, _) -> e1));
+
+			Main.getEmoteManager().cacheAvailableEmotesByName(channelId, emotes);
+		} catch (ExecutionException e) {
+			LOG.error("Error fetching available emotes for channel id: {}", channelId, e.getCause());
+		} catch (InterruptedException e) {
+			LOG.error("Emote polling was interrupted for channel id: {}", channelId, e);
 			Thread.currentThread().interrupt();
 		}
 	}

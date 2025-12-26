@@ -5,8 +5,9 @@ import java.util.Objects;
 import org.eclipse.serializer.reference.Lazy;
 
 import de.minetrain.minechat.gui.emotes.EmoteType;
+import de.minetrain.minechat.gui.viewmodel.IEmoteViewModel;
 
-public class Emote {
+public class Emote implements IEmoteViewModel {
 
 	private final String emoteId;
 	private final String channelId;
@@ -50,6 +51,7 @@ public class Emote {
 		this.image4x = image4x;
 	}
 
+	@Override
 	public String getEmoteId() {
 		return emoteId;
 	}
@@ -58,6 +60,7 @@ public class Emote {
 		return channelId;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -70,6 +73,7 @@ public class Emote {
 		return favorite;
 	}
 
+	@Override
 	public boolean isAnimated() {
 		return animated;
 	}
