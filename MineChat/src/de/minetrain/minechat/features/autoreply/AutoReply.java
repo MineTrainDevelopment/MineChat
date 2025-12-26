@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.Random;
 
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -76,11 +77,12 @@ public class AutoReply {
 		messageCounter.clear();
 
 		ChannelActions channelActions = Main.getChannelManager().getChannelActions(channelId);
-		OutboundChatMessage chatMessage = new OutboundChatMessage(channelActions, TwitchManager.ownerChannelName, getOutput());
+		ChannelViewModel cvm = Main.getChannelManager().channelsProperty().get().stream().filter(c -> c.getChannelId().equals(channelId)).findFirst().orElse(null);
+		OutboundChatMessage chatMessage = new OutboundChatMessage(channelActions, cvm, TwitchManager.ownerChannelName, getOutput());
 		if (isChatReply()) {
 			channelActions.replyMessage = message;
 		}
-		MessageManager.getDefaultMessageHandler().addMessage(chatMessage);
+		MessageManager.sendMessage(chatMessage);
 	}
 
 	public String getUuid() {

@@ -11,11 +11,13 @@ import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.gui.utils.NotifiableObjectProperty;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -38,6 +40,8 @@ public class ChannelViewModel {
 	private ReadOnlyStringWrapper loginNameProperty;
 	private BooleanProperty liveProperty;
 	private BooleanProperty selectedProperty;
+	private BooleanProperty moderatedProperty;
+	private IntegerProperty slowModeWaitTimeProperty;
 	private NotifiableObjectProperty<List<ChatMessage>> messagesProperty;
 	private ObservableList<MacroViewModel> macros;
 	private ObservableList<MacroViewModel> emoteMacros;
@@ -156,6 +160,20 @@ public class ChannelViewModel {
 		return selectedProperty;
 	}
 
+	public BooleanProperty moderatedProperty() {
+		if (moderatedProperty == null) {
+			moderatedProperty = new SimpleBooleanProperty(this, "moderated", false);
+		}
+		return moderatedProperty;
+	}
+
+	public IntegerProperty slowModeWaitTimeProperty() {
+		if (slowModeWaitTimeProperty == null) {
+			slowModeWaitTimeProperty = new SimpleIntegerProperty(this, "slowModeWaitTime", 0);
+		}
+		return slowModeWaitTimeProperty;
+	}
+
 	public NotifiableObjectProperty<List<ChatMessage>> messagesProperty() {
 		if (messagesProperty == null) {
 			messagesProperty = new NotifiableObjectProperty<>(this, "messages");
@@ -193,6 +211,22 @@ public class ChannelViewModel {
 
 	public void setSelected(boolean isSelected) {
 		selectedProperty().set(isSelected);
+	}
+
+	public boolean isModerated() {
+		return moderatedProperty().get();
+	}
+
+	public void setModerated(boolean isModerated) {
+		moderatedProperty().set(isModerated);
+	}
+
+	public int getSlowModeWaitTime() {
+		return slowModeWaitTimeProperty().get();
+	}
+
+	public void setSlowModeWaitTime(int waitTimeInSeconds) {
+		slowModeWaitTimeProperty().set(waitTimeInSeconds);
 	}
 
 	public void setMessages(List<ChatMessage> messages) {

@@ -40,6 +40,8 @@ import com.github.twitch4j.helix.domain.ChatMessage;
 import com.github.twitch4j.helix.domain.ChatSettings;
 import com.github.twitch4j.helix.domain.Emote;
 import com.github.twitch4j.helix.domain.EmoteList;
+import com.github.twitch4j.helix.domain.ModeratedChannel;
+import com.github.twitch4j.helix.domain.ModeratedChannelList;
 import com.github.twitch4j.helix.domain.SentChatMessage;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
@@ -69,7 +71,8 @@ public class TwitchManager {
 	private static final String[] REQUIRED_OAUTH2_SCOPES = new String[] {
 		"user:read:chat",
 		"user:write:chat",
-		"user:read:emotes"
+		"user:read:emotes",
+		"user:read:moderated_channels"
 	};
 
 	public record LiveMetaData(String title, String game, Instant startTime, int viewer, String[] tags){};
@@ -220,6 +223,13 @@ public class TwitchManager {
 				}
 				return users;
 			}));
+	}
+
+	public CompletableFuture<List<ModeratedChannel>> requestModeratedChannel() {
+		return CompletableFuture.supplyAsync(() -> {
+			ModeratedChannelList channelList = twitch.getHelix().getModeratedChannels(null, ownerTwitchUser.getUserId(), 100, null).execute();
+			return channelList.getChannels();
+		});
 	}
 
 	public CompletableFuture<List<Emote>> requestAvailableUserEmotes(String channelId) {

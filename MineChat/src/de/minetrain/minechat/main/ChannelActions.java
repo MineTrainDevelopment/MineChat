@@ -15,7 +15,6 @@ import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import de.minetrain.minechat.utils.MessageHistory;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
@@ -26,7 +25,6 @@ public class ChannelActions {
 	private static final Logger LOG = LoggerFactory.getLogger(ChannelActions.class);
 
 	private final GreetingsManager greetingsManager;
-	private final MessageHistory messageHistory;
 	private final TwitchUserObj twitchUser;
 
 	private final Channel channel;
@@ -45,7 +43,6 @@ public class ChannelActions {
 		this.channel = channel;
 		this.twitchUser = TwitchHelper.requestTwitchUser(TwitchApiCallType.ID, channel.getChannelId()).join();
 		this.greetingsManager = new GreetingsManager();
-		this.messageHistory = new MessageHistory();
 
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "emotesv2_6cc7fdb3cca74bdc80c49f4199b6d001", 00, "Test 1", "Macro-V2 | test_1".split("q")));
 //		macros.createMacro(new MacroObject(MacroType.TEXT, "emotesv2_2f6e7f957a37440e92fc33c66be7c0c2", 10, "Test 2", "Macro-V2 | test_2".split("q")));
@@ -91,10 +88,6 @@ public class ChannelActions {
 
 	public GreetingsManager getGreetingsManager() {
 		return greetingsManager;
-	}
-
-	public MessageHistory getMessageHistory() {
-		return messageHistory;
 	}
 
 	public boolean isModerator() {

@@ -22,7 +22,6 @@ import de.minetrain.minechat.gui.panes.ChannelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
-import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.TwitchPollingService;
@@ -80,7 +79,6 @@ public class Main extends Application {
 			}
 			loadingProgressLogging(9, "Connecting to Twitch Helix.");
 			TwitchManager.init(oAuth2Token);
-			new MessageManager();
 			loadingProgressLogging(10, "Prepare message highlight strings.");
 			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
 				String color = ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);

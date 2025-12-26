@@ -18,7 +18,6 @@ import com.github.twitch4j.chat.events.channel.CheerEvent;
 import com.github.twitch4j.chat.events.channel.ClearChatEvent;
 import com.github.twitch4j.chat.events.channel.DeleteMessageEvent;
 import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
-import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.ModAnnouncementEvent;
 import com.github.twitch4j.chat.events.channel.RaidCancellationEvent;
 import com.github.twitch4j.chat.events.channel.RaidEvent;
@@ -26,7 +25,6 @@ import com.github.twitch4j.chat.events.channel.RewardGiftEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.chat.events.channel.UserBanEvent;
 import com.github.twitch4j.chat.events.channel.UserTimeoutEvent;
-import com.github.twitch4j.chat.events.roomstate.SlowModeEvent;
 import com.github.twitch4j.eventsub.domain.chat.Emote.Format;
 import com.github.twitch4j.eventsub.domain.chat.Fragment;
 import com.github.twitch4j.eventsub.domain.chat.Reply;
@@ -87,9 +85,6 @@ public class TwitchListener {
 		TwitchMessage twitchMessage = new TwitchMessage(event);
 
 		if (event.getChatterUserId().equals(TwitchHelper.getSelfUser().getUserId())) {
-			channel.getMessageHistory().addSendedMessages(event.getMessage().getText());
-			MessageManager.setLastMessage(event.getMessage().getText());
-
 			// TODO unnecessary?
 //			ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getBroadcasterUserId());
 //			if (channelEmotes != null) {
@@ -185,9 +180,6 @@ public class TwitchListener {
 
 
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
-			channel.getMessageHistory().addSendedMessages(event.getMessage());
-    		MessageManager.setLastMessage(event.getMessage());
-
 //    		ChannelEmotes channelEmotes = EmoteManager.getChannelEmotes(event.getChannel().getId());
 //    		if(channelEmotes != null){
 //    			channelEmotes.setSubTier("tier"+event.getSubscriptionTier());
@@ -325,29 +317,6 @@ public class TwitchListener {
     	if(!Settings.displayModActions.isActive()){return;}
 
     }
-
-
-    /**
-     * NOTE: This is currently broken in Twitch4J:1.18
-     */
-    @EventSubscriber
-    public void onSlowMode(SlowModeEvent event){
-    	LOG.info("Change slow mode to -> "+event.getTime());
-    	MessageManager.channelSlowMods.put(event.getChannel().getId(), event.getTime()*1000);
-    }
-
-    /**
-     * This is temporary, untill the {@link SlowModeEvent} is patched.
-     * @param event
-     */
-    @EventSubscriber
-    public void onIRCMessageMode(IRCMessageEvent event){
-    	if(event.getEscapedTags().containsKey("slow")){
-        	MessageManager.channelSlowMods.put(event.getChannel().getId(), Long.valueOf(String.valueOf(event.getEscapedTags().get("slow")))*1000);
-        	System.err.println(event.getEscapedTags());
-    	}
-    }
-
 
     @EventSubscriber
     public void onChatConnectionState(ChatConnectionStateEvent event){

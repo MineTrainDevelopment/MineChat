@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatSettings;
 import com.github.twitch4j.helix.domain.Emote;
+import com.github.twitch4j.helix.domain.ModeratedChannel;
 import com.github.twitch4j.helix.domain.SentChatMessage;
 import com.github.twitch4j.helix.domain.Stream;
 
@@ -74,6 +75,10 @@ public final class TwitchHelper {
 
 	public static CompletableFuture<List<TwitchUserObj>> requestLiveUsers(TwitchApiCallType callType, String... channels){
 		return TwitchManager.instance().requestLiveUsers(callType, channels);
+	}
+
+	public static CompletableFuture<List<ModeratedChannel>> requestModeratedChannel() {
+		return TwitchManager.instance().requestModeratedChannel();
 	}
 
 	public static CompletableFuture<List<Emote>> requestAvailableUserEmotes(String channelId) {

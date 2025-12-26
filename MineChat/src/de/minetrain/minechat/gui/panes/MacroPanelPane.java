@@ -2,6 +2,7 @@ package de.minetrain.minechat.gui.panes;
 
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
+import de.minetrain.minechat.twitch.MessageManager;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -88,6 +89,7 @@ public class MacroPanelPane extends BorderPane {
 		emoteMacroScrollPane.hvalueProperty().bind(macroScrollPane.hvalueProperty());
 
 		Button queueButton = new Button("Queue: 0");
+		queueButton.textProperty().bind(MessageManager.queueSizeProperty().map(value -> "Queue: " + value));
 		queueButton.setId("small-border-button");
 		queueButton.setMaxSize(100, 35);
 		queueButton.setMinSize(100, 35);

@@ -21,6 +21,7 @@ import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -34,9 +35,12 @@ public class OutboundChatMessage {
 	private final String messageRaw;
 	private final String senderNamem;
 	private final ChannelActions channel;
+	private final ChannelViewModel channelViewModel;
+	private long sendTime;
 
-	public OutboundChatMessage(ChannelActions channel, String senderNamem, String message) {
+	public OutboundChatMessage(ChannelActions channel, ChannelViewModel channelViewModel, String senderNamem, String message) {
 		this.channel = channel;
+		this.channelViewModel = channelViewModel;
 		this.messageRaw = message;
 		this.senderNamem = senderNamem;
 
@@ -141,7 +145,19 @@ public class OutboundChatMessage {
 		return channel;
 	}
 
+	public ChannelViewModel getChannelViewModel() {
+		return channelViewModel;
+	}
+
 	public String getMessageRaw() {
 		return messageRaw;
+	}
+
+	public long getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(long sendTime) {
+		this.sendTime = sendTime;
 	}
 }

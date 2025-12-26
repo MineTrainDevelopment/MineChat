@@ -57,6 +57,7 @@ public class ChannelManager {
 		activeChannelProperty().addListener((_, _, newChannel) -> {
 			if (newChannel != null) {
 				this.twitchPollingService.queueAvailableEmotesRefresh(newChannel.getChannelId());
+				this.twitchPollingService.queueModeratedChannelsRefresh();
 			}
 		});
 	}

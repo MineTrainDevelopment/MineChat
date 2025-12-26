@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.twitch4j.helix.domain.Emote.Format;
+import com.github.twitch4j.helix.domain.ModeratedChannel;
 import com.github.twitch4j.helix.domain.Stream;
 
 import de.minetrain.minechat.data.objectdata.Channel;
@@ -54,6 +55,13 @@ public class TwitchPollingService {
 			throw new IllegalStateException("Polling service is not running.");
 		}
 		scheduledTasks.add(executorService.schedule(() -> pollAvailableEmotes(channelId), 0, TimeUnit.SECONDS));
+	}
+
+	public void queueModeratedChannelsRefresh() {
+		if (!isPolling()) {
+			throw new IllegalStateException("Polling service is not running.");
+		}
+		scheduledTasks.add(executorService.schedule(this::pollModeratedChannels, 0, TimeUnit.SECONDS));
 	}
 
 	public void stop() {
@@ -104,6 +112,18 @@ public class TwitchPollingService {
 			LOG.error("Error fetching available emotes for channel id: {}", channelId, e.getCause());
 		} catch (InterruptedException e) {
 			LOG.error("Emote polling was interrupted for channel id: {}", channelId, e);
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	private void pollModeratedChannels() {
+		try {
+			Set<String> moderatedChannelIds = TwitchHelper.requestModeratedChannel().get().stream().map(ModeratedChannel::getBroadcasterId).collect(toUnmodifiableSet());
+			Main.getChannelManager().channelsProperty().get().forEach(channel -> channel.setModerated(moderatedChannelIds.contains(channel.getChannelId())));
+		} catch (ExecutionException e) {
+			LOG.error("Error fetching moderated channels.", e.getCause());
+		} catch (InterruptedException e) {
+			LOG.error("Moderated channel polling was interrupted.", e);
 			Thread.currentThread().interrupt();
 		}
 	}
