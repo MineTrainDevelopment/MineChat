@@ -1,21 +1,16 @@
 package de.minetrain.minechat.main;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
-import de.minetrain.minechat.data.objectdata.ChatMessage;
-import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -53,16 +48,6 @@ public class ChannelActions {
 //		macros.createMacro(new MacroObject(MacroType.EMOTE, "emotesv2_662fe5cfd480497f98bd3ec7b953817a", 21, "Test 6", "Macro-V2 | test_6".split("q")));
 
 //		twitchUser.join(); // Zocki disabled...
-	}
-
-	public void notifyMessageAdded(ChatMessage chatMessage) {
-		Platform.runLater(() -> {
-			ChannelViewModel cvm = Main.channelPane.getChannel();
-			chatMessage.setFirstSessionMessage(cvm.getParticipatedUserIds().add(chatMessage.getSenderId()));
-			if (Objects.equals(getChannelId(), Main.getChannelManager().getActiveChanneldId())) {
-				cvm.refreshMessages();
-			}
-		});
 	}
 
 	public Rectangle getProfilePic(int size) {

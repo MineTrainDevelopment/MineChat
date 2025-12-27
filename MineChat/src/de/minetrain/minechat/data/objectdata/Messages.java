@@ -17,21 +17,23 @@ public class Messages extends StripeLockScope {
 
 	private final Map<String, List<ChatMessage>> channelIdToMessages = new ConcurrentHashMap<>();
 
-	public void addMessage(ChatMessage message) {
-		addMessage(message, EclipseStoreKeeper.storeManager());
+	public int addMessage(ChatMessage message) {
+		return addMessage(message, EclipseStoreKeeper.storeManager());
 	}
 
-	public void addMessage(ChatMessage message, PersistenceStoring persister) {
-		write(message.getChannelId(), () -> {
+	public int addMessage(ChatMessage message, PersistenceStoring persister) {
+		return write(message.getChannelId(), () -> {
 			List<ChatMessage> channelMessages = channelIdToMessages.get(message.getChannelId());
 			if (channelMessages == null) {
 				channelMessages = new LazyArrayList<>();
 				channelMessages.add(message);
 				channelIdToMessages.put(message.getChannelId(), channelMessages);
 				write(this, () -> persister.store(channelIdToMessages));
+				return 0;
 			} else {
 				channelMessages.add(message);
 				persister.store(channelMessages);
+				return channelMessages.size() - 1;
 			}
 		});
 	}
@@ -51,10 +53,19 @@ public class Messages extends StripeLockScope {
 	}
 
 	public List<ChatMessage> getMessagesByChannelId(String channelId) {
-		List<ChatMessage> list = channelIdToMessages.get(channelId);
-		if (list == null) {
-			return Collections.emptyList();
+		List<ChatMessage> list = read(channelId, () -> channelIdToMessages.get(channelId));
+		if (list != null) {
+			return Collections.unmodifiableList(list);
 		}
+		list = write(channelId, () -> {
+			List<ChatMessage> channelMessages = channelIdToMessages.get(channelId);
+			if (channelMessages == null) {
+				channelMessages = new LazyArrayList<>();
+				channelIdToMessages.put(channelId, channelMessages);
+				write(this, () -> EclipseStoreKeeper.storeManager().store(channelIdToMessages));
+			}
+			return channelMessages;
+		});
 		return Collections.unmodifiableList(list);
 	}
 

@@ -49,6 +49,7 @@ import de.minetrain.minechat.utils.WebUtils;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
 import de.minetrain.minechat.utils.events.MineChatEventType;
+import javafx.application.Platform;
 
 /**
  * A listener for Twitch events such as streams going live or offline and channel messages.
@@ -104,8 +105,11 @@ public class TwitchListener {
 		}
 
 		ChatMessage chatMessage = createChatMessage(event);
-		EclipseStoreKeeper.root().messages().addMessage(chatMessage);
-		channel.notifyMessageAdded(chatMessage);
+		int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
+		Main.getChannelManager().channelsProperty().get().stream()
+			.filter(cvm -> cvm.getChannelId().equals(event.getBroadcasterUserId()))
+			.findFirst()
+			.ifPresent(cvm -> Platform.runLater(() -> cvm.getMessages().notifyAdd(index)));
 
 		AutoReplyManager.recordMessage(twitchMessage);
 	}

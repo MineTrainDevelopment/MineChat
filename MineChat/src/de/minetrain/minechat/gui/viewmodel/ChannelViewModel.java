@@ -1,7 +1,6 @@
 package de.minetrain.minechat.gui.viewmodel;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,15 +8,17 @@ import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.macros.MacroViewModel;
-import de.minetrain.minechat.gui.utils.NotifiableObjectProperty;
+import de.minetrain.minechat.gui.utils.NotifiableObservableListWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -46,7 +47,7 @@ public class ChannelViewModel {
 	private BooleanProperty moderatedProperty;
 	/// Slow mode wait time in seconds
 	private IntegerProperty slowModeWaitTimeProperty;
-	private NotifiableObjectProperty<List<ChatMessage>> messagesProperty;
+	private ObjectProperty<NotifiableObservableListWrapper<ChatMessage>> messagesProperty;
 	private ObservableList<MacroViewModel> macros;
 	private ObservableList<MacroViewModel> emoteMacros;
 
@@ -178,9 +179,9 @@ public class ChannelViewModel {
 		return slowModeWaitTimeProperty;
 	}
 
-	public NotifiableObjectProperty<List<ChatMessage>> messagesProperty() {
+	public ObjectProperty<NotifiableObservableListWrapper<ChatMessage>> messagesProperty() {
 		if (messagesProperty == null) {
-			messagesProperty = new NotifiableObjectProperty<>(this, "messages");
+			messagesProperty = new SimpleObjectProperty<>(this, "messages");
 		}
 		return messagesProperty;
 	}
@@ -233,21 +234,16 @@ public class ChannelViewModel {
 		slowModeWaitTimeProperty().set(waitTimeInSeconds);
 	}
 
-	public void setMessages(List<ChatMessage> messages) {
+	public void setMessages(NotifiableObservableListWrapper<ChatMessage> messages) {
 		messagesProperty().set(messages);
 	}
 
-	public List<ChatMessage> getMessages() {
+	public NotifiableObservableListWrapper<ChatMessage> getMessages() {
 		return messagesProperty().get();
 	}
 
-	public void refreshMessages() {
-		List<ChatMessage> messages = getMessages();
-		if (messages == null || messages.isEmpty()) {
-			setMessages(EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId()));
-			return;
-		}
-		messagesProperty().notifyChange();
+	public void initMessages() {
+		setMessages(new NotifiableObservableListWrapper<>(EclipseStoreKeeper.root().messages().getMessagesByChannelId(getChannelId())));
 	}
 
 	public ObservableList<MacroViewModel> getMacros() {

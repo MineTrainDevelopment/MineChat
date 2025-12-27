@@ -261,7 +261,7 @@ public class ChannelManager {
 		cvm.getMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.TEXT, MACROS_PER_CHANNEL));
 		cvm.getEmoteMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.EMOTE, EMOTE_MACROS_PER_CHANNEL));
 
-		cvm.refreshMessages();
+		cvm.initMessages();
 		cvm.selectedProperty().bind(activeChannelProperty().isEqualTo(cvm));
 		return cvm;
 	}
