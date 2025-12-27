@@ -1,11 +1,9 @@
-package de.minetrain.minechat.gui.frames;
+package de.minetrain.minechat.gui.frames.dialogs;
 
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.data.objectdata.Macro;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectionDialog;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectorButton;
-import de.minetrain.minechat.gui.frames.parant.MineDialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;

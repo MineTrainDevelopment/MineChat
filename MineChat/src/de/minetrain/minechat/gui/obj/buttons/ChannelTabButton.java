@@ -12,6 +12,7 @@ import com.sun.javafx.logging.PlatformLogger;
 import com.sun.javafx.logging.PlatformLogger.Level;
 import com.sun.javafx.util.Logging;
 
+import de.minetrain.minechat.gui.panes.TabButton;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelManager;
@@ -29,7 +30,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -44,28 +44,28 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-public class ChannelTabButton extends Button {
+public class ChannelTabButton extends TabButton {
 	private static final Logger LOG = LoggerFactory.getLogger(ChannelTabButton.class);
 	private static final double MIN_WIDTH = 34d;
 	private static final Duration ANIMATION_RESIZE_DURATION = Duration.millis(150);
 	private static final PseudoClass LIVE_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("live");
-	private static final PseudoClass SELECTED_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("selected");
 
 	private ReadOnlyObjectWrapper<ChannelViewModel> channelViewModelProperty;
 	private ReadOnlyBooleanWrapper liveProperty;
-	private ReadOnlyBooleanWrapper selectedProperty;
 
 	private TitleBarPane parentTitleBar;
 
 	public ChannelTabButton(ChannelViewModel channelViewModel, TitleBarPane titleBarPane) {
-		super(channelViewModel.getChannelName(), createProfileImageView(channelViewModel));
+		super();
 		this.parentTitleBar = titleBarPane;
+		textProperty().bind(channelViewModel.channelNameProperty());
+		setGraphic(createProfileImageView(channelViewModel));
 		setFocusTraversable(false);
 		setId("channel-tab");
 		setMinWidth(MIN_WIDTH);
 		channelViewModelPropertyInternal().set(channelViewModel);
 		livePropertyInternal().bind(channelViewModel.liveProperty());
-		selectedPropertyInternal().bind(channelViewModel.selectedProperty());
+		selectedProperty().bind(channelViewModel.selectedProperty());
 
 		selectedProperty().addListener((_, _, newVal) -> {
 			double newMinWidth = newVal.booleanValue() ? computePrefWidth(Double.NEGATIVE_INFINITY) : MIN_WIDTH;
@@ -203,26 +203,6 @@ public class ChannelTabButton extends Button {
 			};
 		}
 		return liveProperty;
-	}
-
-	public ReadOnlyBooleanProperty selectedProperty() {
-		return selectedPropertyInternal().getReadOnlyProperty();
-	}
-
-	protected ReadOnlyBooleanWrapper selectedPropertyInternal() {
-		if (selectedProperty == null) {
-			selectedProperty = new ReadOnlyBooleanWrapper(this, "selected") {
-				@Override
-				protected void invalidated() {
-					PlatformLogger logger = Logging.getInputLogger();
-					if (logger.isLoggable(Level.FINER)) {
-						logger.finer(this + " selected=" + get());
-					}
-					pseudoClassStateChanged(SELECTED_PSEUDOCLASS_STATE, get());
-				}
-			};
-		}
-		return selectedProperty;
 	}
 
 	public ChannelViewModel getChannelViewModel() {

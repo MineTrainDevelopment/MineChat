@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.frames.parant;
+package de.minetrain.minechat.gui.frames.dialogs;
 
 import de.minetrain.minechat.main.Main;
 import javafx.scene.control.ButtonType;

@@ -1,4 +1,4 @@
-package de.minetrain.minechat.gui.frames.emote_selector;
+package de.minetrain.minechat.gui.frames.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Emote;
-import de.minetrain.minechat.gui.frames.parant.MineDialog;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteBatchPane;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteBatchViewModel;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectorChannelButton;
 import de.minetrain.minechat.main.Main;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

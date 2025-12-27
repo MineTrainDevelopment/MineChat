@@ -323,6 +323,38 @@
 	-fx-border-width: 2;
 }
 
+#tab-button {
+	-fx-background-color: -background-color;
+	-fx-background-radius: 5px 0 0 5px;
+	-fx-padding: 5px;
+	-fx-background-insets: 0;
+	
+	-fx-font-family: "Inter";
+	-fx-font-size: 13px;
+	-fx-font-style: normal;
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-alignment: center-left;
+}
+
+#tab-button:hover {
+	-fx-background-color: -background-color, -custom-hover-overlay;
+}
+
+#tab-button:pressed:hover {
+	-fx-scale-y: 0.97;
+	-fx-scale-x: 0.97;
+}
+
+#tab-button:selected, #tab-button:selected:hover {
+	-fx-background-color: -message-comp-background;
+}
+
+#dialog-content {
+	-fx-background-color: -message-comp-background;
+	-fx-background-radius: 5px;
+}
+
 
 
 .hyperlink {

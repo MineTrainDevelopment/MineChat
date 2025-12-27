@@ -24,7 +24,7 @@ import de.minetrain.minechat.data.objectdata.Macros;
 import de.minetrain.minechat.features.macros.MacroType;
 import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.frames.MacroEditorDialog;
+import de.minetrain.minechat.gui.frames.dialogs.MacroEditorDialog;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;

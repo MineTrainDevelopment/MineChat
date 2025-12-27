@@ -1,5 +1,6 @@
 package de.minetrain.minechat.gui.panes;
 
+import de.minetrain.minechat.gui.frames.dialogs.SettingsDialog;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -101,6 +102,7 @@ public class MacroPanelPane extends BorderPane {
 		statisticsButton.setMinSize(185, 35);
 		statisticsButton.setFocusTraversable(false);
 		statisticsButton.setTranslateY(-7);
+		statisticsButton.setOnAction(_ -> new SettingsDialog().showAndWait());
 
 		ImageView profileImageView = new ImageView();
 		profileImageView.setTranslateY(-6);
