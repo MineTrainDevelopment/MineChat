@@ -105,11 +105,13 @@ public class TwitchListener {
 		}
 
 		ChatMessage chatMessage = createChatMessage(event);
-		int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
 		Main.getChannelManager().channelsProperty().get().stream()
 			.filter(cvm -> cvm.getChannelId().equals(event.getBroadcasterUserId()))
 			.findFirst()
-			.ifPresent(cvm -> Platform.runLater(() -> cvm.getMessages().notifyAdd(index)));
+			.ifPresent(cvm -> Platform.runLater(() -> {
+				int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
+				cvm.getMessages().notifyAdd(index);
+			}));
 
 		AutoReplyManager.recordMessage(twitchMessage);
 	}
