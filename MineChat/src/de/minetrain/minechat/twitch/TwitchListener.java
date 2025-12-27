@@ -29,6 +29,7 @@ import com.github.twitch4j.eventsub.domain.chat.Emote.Format;
 import com.github.twitch4j.eventsub.domain.chat.Fragment;
 import com.github.twitch4j.eventsub.domain.chat.Reply;
 import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
+import com.github.twitch4j.eventsub.events.ChannelChatSettingsUpdateEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorAddEvent;
 import com.github.twitch4j.eventsub.events.ChannelModeratorRemoveEvent;
 import com.github.twitch4j.pubsub.events.MidrollRequestEvent;
@@ -72,6 +73,16 @@ public class TwitchListener {
 		for(int i=0; i>50; i++){
 			System.err.println("Ad brake - "+event.getChannelId());
 		}
+	}
+
+	/// Handles the event when the chat settings of a channel are updated.
+	///
+	/// @param event The [ChannelChatSettingsUpdateEvent] object containing information about the updated settings.
+	@EventSubscriber
+	public void onChannelChatSettingsUpdate(ChannelChatSettingsUpdateEvent event) {
+		Main.getChannelManager().channelsProperty().get().stream().filter(channel -> channel.getChannelId().equals(event.getBroadcasterUserId())).findFirst().ifPresent(channel -> {
+			channel.setSlowModeWaitTime(event.isSlowMode().booleanValue() ? event.getSlowModeWaitTimeSeconds() : 0);
+		});
 	}
 
 	/// Handles the event when a message is sent in the channel.

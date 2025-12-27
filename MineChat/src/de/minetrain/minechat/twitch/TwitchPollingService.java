@@ -24,6 +24,7 @@ import com.github.twitch4j.helix.domain.Stream;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.gui.viewmodel.EmoteViewModel;
 import de.minetrain.minechat.main.Main;
+import javafx.application.Platform;
 
 /// A service that polls Twitch information at regular intervals.
 ///
@@ -54,14 +55,21 @@ public class TwitchPollingService {
 		if (!isPolling()) {
 			throw new IllegalStateException("Polling service is not running.");
 		}
-		scheduledTasks.add(executorService.schedule(() -> pollAvailableEmotes(channelId), 0, TimeUnit.SECONDS));
+		scheduledTasks.add(executorService.schedule(() -> pollAvailableEmotes(channelId), 0, TimeUnit.NANOSECONDS));
 	}
 
 	public void queueModeratedChannelsRefresh() {
 		if (!isPolling()) {
 			throw new IllegalStateException("Polling service is not running.");
 		}
-		scheduledTasks.add(executorService.schedule(this::pollModeratedChannels, 0, TimeUnit.SECONDS));
+		scheduledTasks.add(executorService.schedule(this::pollModeratedChannels, 0, TimeUnit.NANOSECONDS));
+	}
+
+	public void queueChannelChatSettingsRefresh() {
+		if (!isPolling()) {
+			throw new IllegalStateException("Polling service is not running.");
+		}
+		scheduledTasks.add(executorService.schedule(this::pollChannelChatSettings, 0, TimeUnit.NANOSECONDS));
 	}
 
 	public void stop() {
@@ -92,7 +100,7 @@ public class TwitchPollingService {
 			Set<String> liveChannelIds = TwitchHelper.requestStreamInfo(Main.getChannelManager().getAllChannels().stream().map(Channel::getChannelId).toArray(String[]::new)).get().stream()
 				.map(Stream::getUserId)
 				.collect(toUnmodifiableSet());
-			Main.getChannelManager().channelsProperty().get().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId())));
+			Platform.runLater(() -> Main.getChannelManager().channelsProperty().get().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId()))));
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching stream info for channels.", e.getCause());
 		} catch (InterruptedException e) {
@@ -119,12 +127,25 @@ public class TwitchPollingService {
 	private void pollModeratedChannels() {
 		try {
 			Set<String> moderatedChannelIds = TwitchHelper.requestModeratedChannel().get().stream().map(ModeratedChannel::getBroadcasterId).collect(toUnmodifiableSet());
-			Main.getChannelManager().channelsProperty().get().forEach(channel -> channel.setModerated(moderatedChannelIds.contains(channel.getChannelId())));
+			Platform.runLater(() -> Main.getChannelManager().channelsProperty().get().forEach(channel -> channel.setModerated(moderatedChannelIds.contains(channel.getChannelId()))));
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching moderated channels.", e.getCause());
 		} catch (InterruptedException e) {
 			LOG.error("Moderated channel polling was interrupted.", e);
 			Thread.currentThread().interrupt();
 		}
+	}
+
+	private void pollChannelChatSettings() {
+		Main.getChannelManager().channelsProperty().get().forEach(channel -> {
+			try {
+				TwitchHelper.requestChannelChatSettings(channel.getChannelId()).thenAccept(chatSettings -> Platform.runLater(() -> channel.setSlowModeWaitTime(chatSettings.isSlowMode().booleanValue() ? chatSettings.getSlowModeWaitTime() : 0))).get();
+			} catch (InterruptedException e) {
+				LOG.error("Chat settings polling was interrupted for channel id: {}", channel.getChannelId(), e);
+				Thread.currentThread().interrupt();
+			} catch (ExecutionException e) {
+				LOG.error("Error fetching chat settings for channel id: {}", channel.getChannelId(), e.getCause());
+			}
+		});
 	}
 }

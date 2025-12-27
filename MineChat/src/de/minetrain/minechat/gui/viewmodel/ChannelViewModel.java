@@ -38,9 +38,13 @@ public class ChannelViewModel {
 	private ReadOnlyObjectWrapper<Image> profileImageSmallProperty;
 	private ReadOnlyObjectWrapper<Image> profileImageLargeProperty;
 	private ReadOnlyStringWrapper loginNameProperty;
+	/// Indicates whether the channel is currently live streaming
 	private BooleanProperty liveProperty;
+	/// Indicates whether the channel is currently selected in the UI
 	private BooleanProperty selectedProperty;
+	/// Indicates whether the channel is moderated by the active user
 	private BooleanProperty moderatedProperty;
+	/// Slow mode wait time in seconds
 	private IntegerProperty slowModeWaitTimeProperty;
 	private NotifiableObjectProperty<List<ChatMessage>> messagesProperty;
 	private ObservableList<MacroViewModel> macros;

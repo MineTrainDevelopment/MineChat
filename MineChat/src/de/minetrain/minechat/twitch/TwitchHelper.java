@@ -81,6 +81,10 @@ public final class TwitchHelper {
 		return TwitchManager.instance().requestModeratedChannel();
 	}
 
+	public static CompletableFuture<ChatSettings> requestChannelChatSettings(String channelId) {
+		return TwitchManager.instance().requestChannelChatSettings(channelId);
+	}
+
 	public static CompletableFuture<List<Emote>> requestAvailableUserEmotes(String channelId) {
 		return TwitchManager.instance().requestAvailableUserEmotes(channelId);
 	}

@@ -184,6 +184,7 @@ public class Main extends Application {
 		channelPane.channelProperty().bind(channelManager.activeChannelProperty());
 
 		twitchPollingService.start();
+		twitchPollingService.queueChannelChatSettingsRefresh();
 	}
 
 	public static ChannelManager getChannelManager(){

@@ -111,6 +111,7 @@ public class TwitchManager {
 	public void joinChannel(String channeldId) {
 		LOG.info("Joining channel: {}", channeldId);
 		twitch.getEventSocket().register(SubscriptionTypes.CHANNEL_CHAT_MESSAGE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).userId(getSelfUser().getUserId()).build(), null));
+		twitch.getEventSocket().register(SubscriptionTypes.CHANNEL_CHAT_SETTINGS_UPDATE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).userId(getSelfUser().getUserId()).build(), null));
 	}
 
 //	public void joinChannelById(String... channelIds){
@@ -224,6 +225,10 @@ public class TwitchManager {
 			ModeratedChannelList channelList = twitch.getHelix().getModeratedChannels(null, ownerTwitchUser.getUserId(), 100, null).execute();
 			return channelList.getChannels();
 		});
+	}
+
+	public CompletableFuture<ChatSettings> requestChannelChatSettings(String channelId) {
+		return CompletableFuture.supplyAsync(() -> twitch.getHelix().getChatSettings(null, channelId, null).execute().getChatSettings());
 	}
 
 	public CompletableFuture<List<Emote>> requestAvailableUserEmotes(String channelId) {

@@ -335,6 +335,10 @@ public class TextureManager {
 					.GET()
 					.build();
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				if (response.statusCode() == 404) {
+					LOG.warn("No BTTV emotes found for user ID: {}", userId);
+					return List.<BttvEmote>of();
+				}
 				if (response.statusCode() != 200) {
 					throw new IllegalStateException("Failed to fetch BTTV emotes, status code: " + response.statusCode());
 				}

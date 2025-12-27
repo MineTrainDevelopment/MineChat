@@ -147,7 +147,7 @@ public class AsyncMessageHandler {
 		if (outboundChatMessage == null) {
 			return overallDelay;
 		}
-		long channelDelay = outboundChatMessage.getSendTime() + Math.max(1000L, channel.getSlowModeWaitTime()) - System.currentTimeMillis();
+		long channelDelay = outboundChatMessage.getSendTime() + Math.max(1000L, channel.getSlowModeWaitTime() * 1000L) - System.currentTimeMillis();
 		return Math.max(overallDelay, channelDelay);
 	}
 
