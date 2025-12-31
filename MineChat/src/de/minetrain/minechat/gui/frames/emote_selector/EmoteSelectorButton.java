@@ -23,7 +23,7 @@ public class EmoteSelectorButton extends Button {
 	}
 
 	public EmoteSelectorButton() {
-		setId("emote-button");
+		getStyleClass().add("emote-button");
 
 		EmoteView emoteView = new EmoteView();
 		emoteView.emoteProperty().bind(emoteProperty());

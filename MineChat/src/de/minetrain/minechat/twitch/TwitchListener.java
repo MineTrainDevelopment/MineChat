@@ -110,6 +110,7 @@ public class TwitchListener {
 			.findFirst()
 			.ifPresent(cvm -> Platform.runLater(() -> {
 				int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
+				chatMessage.setFirstSessionMessage(cvm.getParticipatedUserIds().add(chatMessage.getSenderId()));
 				cvm.getMessages().notifyAdd(index);
 			}));
 

@@ -16,7 +16,6 @@ import javafx.scene.layout.StackPane;
 public class EmoteView extends StackPane {
 
 	private static final ExecutorService IMAGE_LOADER = Executors.newVirtualThreadPerTaskExecutor();
-	private static final double EMOTE_SIZE = 24D;
 
 	private ObjectProperty<IEmoteViewModel> emoteProperty;
 
@@ -25,6 +24,7 @@ public class EmoteView extends StackPane {
 	}
 
 	public EmoteView(boolean adjustBaseline) {
+		getStyleClass().add("emote-view");
 		ImageView imageView = new ImageView() {
 
 			@Override
@@ -32,8 +32,8 @@ public class EmoteView extends StackPane {
 				return adjustBaseline && getImage() != null ? getImage().getHeight() * 0.75 : super.getBaselineOffset();
 			}
 		};
-		imageView.setFitHeight(EMOTE_SIZE);
-		imageView.setFitWidth(EMOTE_SIZE);
+		imageView.fitHeightProperty().bind(minHeightProperty());
+		imageView.fitWidthProperty().bind(minWidthProperty());
 		imageView.setPreserveRatio(true);
 		emoteProperty().addListener((_, oldEmote, newEmote) -> {
 			if (oldEmote != null) {
@@ -46,7 +46,6 @@ public class EmoteView extends StackPane {
 				}, IMAGE_LOADER);
 			}
 		});
-		setMinSize(EMOTE_SIZE, EMOTE_SIZE);
 		getChildren().add(imageView);
 	}
 

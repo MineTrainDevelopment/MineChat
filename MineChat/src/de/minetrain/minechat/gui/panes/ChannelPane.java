@@ -25,6 +25,7 @@ public class ChannelPane extends VBox {
 	private ObjectProperty<ChannelViewModel> channelProperty;
 
 	public ChannelPane() {
+		getStyleClass().add("channel-pane");
 		marcoPanelPane = new MacroPanelPane();
 		marcoPanelPane.channelProperty().bind(channelProperty());
 		messageVirtualFlow = VirtualFlow.createVertical(new NotifiableObservableListWrapper<>(new ArrayList<>()), MessageCell::new);

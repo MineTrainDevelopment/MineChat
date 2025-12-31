@@ -12,6 +12,7 @@ import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.utils.MineTextFlow;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -21,31 +22,30 @@ import javafx.scene.paint.Color;
 
 public class MessageComponent extends StackPane {
 
+	private final StackPane border;
 	private final MineTextFlow titleFlow;
 	private final BorderPane content;
 	private final MineTextFlow messageFlow;
-	private final String defaultStyle;
-	private final String contentDefaultStyle;
 
 	public MessageComponent() {
-		setId("message-comp-border");
+		getStyleClass().add("message-component");
+
+		border = new StackPane();
+		border.getStyleClass().add("border");
 
 		titleFlow = new MineTextFlow(20);
-		titleFlow.setId("message-comp-title");
-		Pane titlePane = new Pane(titleFlow);
-		titlePane.setId("message-comp-title-pane");
-		StackPane.setAlignment(titlePane, Pos.TOP_LEFT);
+		titleFlow.getStyleClass().add("title");
+		Pane titleWrapper = new Pane(titleFlow);
 
 		messageFlow = new MineTextFlow(16d);
-		messageFlow.setStyle("-fx-padding: 0 5 0 5;");
 		content = new BorderPane();
-		content.setId("message-comp-background");
+		content.getStyleClass().add("content");
 		content.setLeft(createWaveButton());
 		content.setCenter(messageFlow);
+		BorderPane.setMargin(content.getLeft(), new Insets(5D));
+		BorderPane.setMargin(content.getCenter(), new Insets(5D, 5D, 5D, 0D));
 
-		getChildren().addAll(titlePane, content, createReplyButton());
-		defaultStyle = getStyle();
-		contentDefaultStyle = content.getStyle();
+		getChildren().addAll(border, titleWrapper, content, createReplyButton());
 	}
 
 	public void applyMessage(ChatMessage message) {
@@ -82,8 +82,8 @@ public class MessageComponent extends StackPane {
 	public void clearMessage() {
 		messageFlow.clear();
 		titleFlow.clear();
-		setStyle(defaultStyle);
-		content.setStyle(contentDefaultStyle);
+		border.setStyle(null);
+		content.setStyle(null);
 		setVisible(true);
 	}
 
@@ -106,12 +106,11 @@ public class MessageComponent extends StackPane {
 	}
 
 	private void applyBorderColor(String colorCode) {
-		setStyle("-fx-border-color: " + colorCode + ";");
+		border.setStyle("-fx-border-color: " + colorCode + ";");
 	}
 
 	private Button createReplyButton() {
 		Button replyButton = new Button();
-		replyButton.setPrefSize(28, 28);
 		BorderPane.setAlignment(replyButton, Pos.CENTER);
 		StackPane.setAlignment(replyButton, Pos.TOP_RIGHT);
 		replyButton.visibleProperty().bind(hoverProperty());
@@ -121,7 +120,6 @@ public class MessageComponent extends StackPane {
 
 	private Button createWaveButton() {
 		Button waveButton = new Button();
-		waveButton.setPrefSize(25, 25);
 		BorderPane.setAlignment(waveButton, Pos.CENTER);
 		return waveButton;
 	}

@@ -17,7 +17,7 @@ public class TabButton extends Button {
 
 	public TabButton() {
 		super();
-		setId("tab-button");
+		getStyleClass().add("tab-button");
 	}
 
 	public BooleanProperty selectedProperty() {

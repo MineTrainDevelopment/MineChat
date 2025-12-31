@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.release>25</maven.compiler.release>
-		<javafx.version>25-ea+21</javafx.version>
+		<javafx.version>25.0.1</javafx.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<snakeyaml.version>2.4</snakeyaml.version>
 		<twitch4j.version>1.25.0</twitch4j.version>

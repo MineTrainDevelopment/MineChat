@@ -31,13 +31,11 @@ public class TitleBarPane extends BorderPane {
 	private ObjectProperty<ObservableList<ChannelViewModel>>channels;
 
 	public TitleBarPane() {
+		getStyleClass().add("title-bar");
 		listChangeListener = this::handleListChange;
 
 		Button settingsButton = new Button();
 		settingsButton.setFocusTraversable(false);
-		settingsButton.setMaxSize(30, 30);
-		settingsButton.setMinSize(30, 30);
-		settingsButton.setId("program-action");
 		settingsButton.setOnMouseClicked(event -> {
 			System.err.println("TODO: Settings");
 
@@ -59,8 +57,6 @@ public class TitleBarPane extends BorderPane {
 		tabPane.setFitToWidth(true);
 		tabPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		tabPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		tabPane.setMinHeight(40);
-		tabPane.setTranslateY(-3);
 
 		tabPane.setOnScroll(event -> {
 			if (event.getDeltaX() == 0 && event.getDeltaY() != 0) {
@@ -71,9 +67,6 @@ public class TitleBarPane extends BorderPane {
 		Rectangle verticalStrut = new Rectangle(5, 26, ColorManager.decode("#0E0E0E"));
 		verticalStrut.setTranslateY(2);
 
-		setMinHeight(45);
-		setMaxHeight(45);
-		setId("title-bar");
 		setLeft(settingsButtonContainer);
 		setCenter(tabPane);
 	}

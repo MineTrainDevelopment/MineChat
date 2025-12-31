@@ -15,27 +15,19 @@ import javafx.scene.input.MouseButton;
 
 public class MacroButton extends Button {
 
-	public static final double MIN_WIDTH = 85d;
-	public static final double MAX_WIDTH = 110d;
-	public static final double HEIGHT = 35d;
-
 	private static final PseudoClass EMOTE_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("emote");
 
 	private ObjectProperty<MacroViewModel> macroProperty;
 	private ReadOnlyBooleanWrapper emoteProperty;
 
 	public MacroButton() {
-		setId("macro-key");
+		getStyleClass().add("macro-button");
 		setFocusTraversable(false);
 		textProperty().bind(macroProperty().flatMap(MacroViewModel::titleProperty));
 		emotePropertyInternal().bind(macroProperty().flatMap(MacroViewModel::macroTypeProperty).map(type -> type == MacroType.EMOTE));
 		EmoteView emoteView = new EmoteView();
 		emoteView.emoteProperty().bind(macroProperty().flatMap(MacroViewModel::emoteProperty));
 		setGraphic(emoteView);
-
-		setMinWidth(MIN_WIDTH);
-		setMaxWidth(MAX_WIDTH);
-		setPrefWidth(getMaxWidth());
 
 		setOnAction(_ -> {
 			MacroViewModel macro = getMacro();

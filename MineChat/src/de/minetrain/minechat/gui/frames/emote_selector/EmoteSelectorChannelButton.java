@@ -1,43 +1,26 @@
 package de.minetrain.minechat.gui.frames.emote_selector;
 
+import de.minetrain.minechat.gui.panes.TabButton;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.css.PseudoClass;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
-public class EmoteSelectorChannelButton extends Button {
-	private static final PseudoClass SELECTED_PSEUDOCLASS_STATE = PseudoClass.getPseudoClass("selected");
-	private static final double PROFILE_IMAGE_SIZE = 28D;
-
-	private BooleanProperty selectedProperty;
+public class EmoteSelectorChannelButton extends TabButton {
 
 	public EmoteSelectorChannelButton(ChannelViewModel channel) {
 		setFocusTraversable(false);
-		setId("channel-button");
+		getStyleClass().add("channel-button");
+
+		StackPane wrapper = new StackPane();
+		wrapper.getStyleClass().add("image-wrapper");
 
 		ImageView imageView = new ImageView();
 		imageView.imageProperty().bind(channel.profileImageSmallProperty());
-		imageView.setFitHeight(PROFILE_IMAGE_SIZE);
-		imageView.setFitWidth(PROFILE_IMAGE_SIZE);
+		imageView.fitHeightProperty().bind(wrapper.minHeightProperty());
+		imageView.fitWidthProperty().bind(wrapper.minWidthProperty());
 		imageView.setPreserveRatio(true);
-		StackPane wrapper = new StackPane();
-		wrapper.setMinSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
 		wrapper.getChildren().add(imageView);
-		setGraphic(wrapper);
-	}
 
-	public BooleanProperty selectedProperty() {
-		if (selectedProperty == null) {
-			selectedProperty = new SimpleBooleanProperty(this, "selected", false) {
-				@Override
-				protected void invalidated() {
-					pseudoClassStateChanged(SELECTED_PSEUDOCLASS_STATE, get());
-				}
-			};
-		}
-		return selectedProperty;
+		setGraphic(wrapper);
 	}
 }

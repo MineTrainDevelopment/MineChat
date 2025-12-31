@@ -60,6 +60,7 @@ public class ChatInputField extends GenericStyledArea<Void, Either<String, IEmot
 				}
 			)
 		);
+		getStyleClass().add("chat-input-field");
 
 		Nodes.addInputMap(this, InputMap.consume(EventPattern.keyPressed(new KeyCodeCombination(KeyCode.ENTER, ModifierValue.UP, ModifierValue.UP, ModifierValue.UP, ModifierValue.UP, ModifierValue.UP)), _ -> fireActionEvent()));
 	}

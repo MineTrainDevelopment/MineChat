@@ -12,13 +12,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
-public class MacroPanelPane extends BorderPane {
+public class MacroPanelPane extends GridPane {
 
 	private VBox macroRows;
 	private ScrollPane macroScrollPane;
@@ -30,6 +31,22 @@ public class MacroPanelPane extends BorderPane {
 	private ObjectProperty<ChannelViewModel> channelProperty;
 
 	public MacroPanelPane() {
+		getStyleClass().add("macro-pane");
+
+		RowConstraints row0 = new RowConstraints();
+		row0.setPercentHeight(33D);
+		RowConstraints row1 = new RowConstraints();
+		row1.setPercentHeight(33D);
+		RowConstraints row2 = new RowConstraints();
+		row2.setPercentHeight(33D);
+		getRowConstraints().addAll(row0, row1, row2);
+
+		ColumnConstraints col0 = new ColumnConstraints();
+		ColumnConstraints col1 = new ColumnConstraints();
+		ColumnConstraints col2 = new ColumnConstraints();
+		col2.setMinWidth(100D);
+		getColumnConstraints().addAll(col0, col1, col2);
+
 		macroRow1 = new HBox(10D);
 		macroRow2 = new HBox(10D);
 		emoteMacroRow = new HBox(6D);
@@ -62,82 +79,67 @@ public class MacroPanelPane extends BorderPane {
 			}
 		});
 
-		macroRows = new VBox(5, macroRow1, macroRow2);
-//		macroRows = new VBox(5, createRow(), createRow(), createMacroEmoteRow());
+		macroRows = new VBox(5D, macroRow1, macroRow2);
 
 		macroScrollPane = new ScrollPane(macroRows);
-		macroScrollPane.setFocusTraversable(false);
 		macroScrollPane.setFitToHeight(true);
 		macroScrollPane.setFitToWidth(true);
 		macroScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		macroScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		macroScrollPane.setTranslateY(-1);
-
 		macroScrollPane.setOnScroll(event -> {
 			if (event.getDeltaX() == 0 && event.getDeltaY() != 0) {
-				macroScrollPane
-						.setHvalue(macroScrollPane.getHvalue() - event.getDeltaY() * 0.3 / macroScrollPane.getWidth());
+				macroScrollPane.setHvalue(macroScrollPane.getHvalue() - event.getDeltaY() / this.macroRows.getWidth());
 			}
 		});
 
 		ScrollPane emoteMacroScrollPane = new ScrollPane(emoteMacroRow);
-		emoteMacroScrollPane.setFocusTraversable(false);
 		emoteMacroScrollPane.setFitToHeight(true);
 		emoteMacroScrollPane.setFitToWidth(true);
 		emoteMacroScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		emoteMacroScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		emoteMacroScrollPane.setTranslateY(2);
-		emoteMacroScrollPane.hvalueProperty().bind(macroScrollPane.hvalueProperty());
+		emoteMacroScrollPane.setOnScroll(event -> {
+			if (event.getDeltaX() == 0 && event.getDeltaY() != 0) {
+				emoteMacroScrollPane.setHvalue(emoteMacroScrollPane.getHvalue() - event.getDeltaY() / this.emoteMacroRow.getWidth());
+			}
+		});
+		emoteMacroScrollPane.hvalueProperty().bindBidirectional(macroScrollPane.hvalueProperty());
+
+		createInfoPane();
+
+		add(macroScrollPane, 0, 0, 1, 2);
+		add(emoteMacroScrollPane, 0, 2);
+		HBox.setHgrow(macroScrollPane, Priority.ALWAYS);
+		HBox.setHgrow(emoteMacroScrollPane, Priority.ALWAYS);
+	}
+
+	private void createInfoPane() {
+		ImageView profileImageView = new ImageView();
+		profileImageView.imageProperty().bind(channelProperty().flatMap(ChannelViewModel::profileImageLargeProperty));
+		add(profileImageView, 1, 0, 1, 2);
 
 		Button queueButton = new Button("Queue: 0");
 		queueButton.textProperty().bind(MessageManager.queueSizeProperty().map(value -> "Queue: " + value));
-		queueButton.setId("small-border-button");
-		queueButton.setMaxSize(100, 35);
-		queueButton.setMinSize(100, 35);
 		queueButton.setFocusTraversable(false);
+		queueButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		add(queueButton, 2, 1, 1, 1);
 
-		Button statisticsButton = new Button("Settings");
-		statisticsButton.setId("small-border-button");
-		statisticsButton.setMaxSize(185, 35);
-		statisticsButton.setMinSize(185, 35);
+		Button statisticsButton = new Button("Statistics");
 		statisticsButton.setFocusTraversable(false);
-		statisticsButton.setTranslateY(-7);
 		statisticsButton.setOnAction(_ -> new SettingsDialog().showAndWait());
-
-		ImageView profileImageView = new ImageView();
-		profileImageView.setTranslateY(-6);
-		profileImageView.setTranslateX(-5);
-		profileImageView.imageProperty().bind(channelProperty().flatMap(ChannelViewModel::profileImageLargeProperty));
-
-		BorderPane infoPane = new BorderPane();
-		infoPane.setCenter(profileImageView);
-		infoPane.setRight(new VBox(5, createRowSelector(), queueButton));
-		infoPane.setBottom(statisticsButton);
-
-		setMinHeight(132);
-		setMaxHeight(132);
-		setId("macro-panel");
-		VBox macrosPanel = new VBox(macroScrollPane, emoteMacroScrollPane);
-//		VBox.setVgrow(macroScrollPane, Priority.ALWAYS);
-//		VBox.setVgrow(emoteMacroScrollPane, Priority.ALWAYS);
-		setCenter(macrosPanel);
-		setRight(new HBox(new Rectangle(5, 5, Color.TRANSPARENT), infoPane, new Rectangle(5, 5, Color.TRANSPARENT)));
-//        setRight(programActionButtonBox);
+		statisticsButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		add(statisticsButton, 1, 2, 2, 1);
 	}
 
 	public HBox createRowSelector() {
 		Button leftKey = new Button();
-		leftKey.setId("small-border-button");
 		leftKey.setPrefSize(35, 35);
 		leftKey.setFocusTraversable(false);
 
 		Label profilePic = new Label("0");
 		profilePic.setMinSize(36, 35);
 		profilePic.setMaxSize(36, 35);
-		profilePic.setId("row-selector-indicator");
 
 		Button rightKey = new Button();
-		rightKey.setId("small-border-button");
 		rightKey.setPrefSize(35, 35);
 		rightKey.setFocusTraversable(false);
 

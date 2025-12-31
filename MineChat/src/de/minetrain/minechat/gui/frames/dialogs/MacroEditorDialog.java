@@ -17,7 +17,7 @@ public class MacroEditorDialog extends MineDialog<Macro> {
 	private TextArea outputInputField;
 
 	public MacroEditorDialog(Macro.Builder macro) {
-		setTitle("Edit this macro:");
+		setTitle("Edit macro");
 		setWidth(420);
 		setHeight(300);
 
@@ -37,7 +37,6 @@ public class MacroEditorDialog extends MineDialog<Macro> {
 			});
 		});
 
-		titleInputField.setId("message-input-field");
 //		titleInputField.setPromptText(selectedEmote.getName());
 		titleInputField.setFocusTraversable(false);
 		titleInputField.minHeightProperty().bind(emoteButton.heightProperty());
@@ -46,7 +45,6 @@ public class MacroEditorDialog extends MineDialog<Macro> {
 		if (macro.getOutput() != null) {
 			outputInputField.setText(String.join("\n", macro.getOutput()));
 		}
-		outputInputField.setId("message-input-field");
 		outputInputField.setPromptText("""
 			Output text
 			Line split (ENTER key) == Random output text list

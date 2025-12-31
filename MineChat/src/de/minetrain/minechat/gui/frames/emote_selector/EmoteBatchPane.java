@@ -33,7 +33,7 @@ public class EmoteBatchPane extends TitledPane implements Cell<EmoteBatchViewMod
 	}
 
 	public EmoteBatchPane() {
-		setBorder(null);
+		setFocusTraversable(false);
 		FlowPane flowPane = new FlowPane();
 		setContent(flowPane);
 //		setExpanded(false);

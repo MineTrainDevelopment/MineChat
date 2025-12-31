@@ -21,12 +21,9 @@ public class InputFieldPane extends BorderPane {
 	private static final Logger LOG = LoggerFactory.getLogger(InputFieldPane.class);
 
 	public InputFieldPane() {
-		setId("input-field-pane");
+		getStyleClass().add("input-pane");
 		Button sendButton = new Button();
 		sendButton.setId("send-button");
-		sendButton.setPrefSize(70, 35);
-		sendButton.setMinSize(70, 35);
-		sendButton.setMaxSize(70, 35);
 
 		SVGPath svg = new SVGPath();
 		svg.setContent("M44 1V5C44 6.66667 43 10 39 10C35 10 13.3333 10 3 10M3 10L11 18M3 10L11 2");
@@ -40,13 +37,9 @@ public class InputFieldPane extends BorderPane {
 
 //        TextArea inputField = new TextArea();
 		ChatInputField inputField = new ChatInputField();
-		inputField.setId("message-input-field");
 //		inputField.setPromptText(new Text("Enter your chat message..."));
 		inputField.setFocusTraversable(false);
 //        inputField.setWrapText(true);
-		inputField.setMinHeight(35);
-		inputField.setPrefHeight(35);
-		inputField.setMaxHeight(200);
 		inputField.setOnAction(_ -> {
 			// TODO: Add message to statistics and history
 //			getStatistics().addMessage(message.getSenderName(), channel.getChannelId(), message.getMessage());
@@ -92,9 +85,6 @@ public class InputFieldPane extends BorderPane {
 //        Label infoBox = new Label("test\nte");
 		infoBox.setId("message-info-field");
 //        infoBox.setEditable(false);
-		infoBox.setMinHeight(35);
-		infoBox.setMaxHeight(105);
-		infoBox.setMaxWidth(Double.POSITIVE_INFINITY);
 //        infoBox.prefColumnCountProperty().bind(infoBox.textProperty().length());
 
 		VBox infoBoxContainer = new VBox(5);

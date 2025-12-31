@@ -61,7 +61,7 @@ public class ChannelTabButton extends TabButton {
 		textProperty().bind(channelViewModel.channelNameProperty());
 		setGraphic(createProfileImageView(channelViewModel));
 		setFocusTraversable(false);
-		setId("channel-tab");
+		getStyleClass().add("channel-tab-button");
 		setMinWidth(MIN_WIDTH);
 		channelViewModelPropertyInternal().set(channelViewModel);
 		livePropertyInternal().bind(channelViewModel.liveProperty());

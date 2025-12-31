@@ -146,13 +146,15 @@ public class Main extends Application {
 		channelPane = new ChannelPane();
 
 		BorderPane mainContentPane = new BorderPane();
+		mainContentPane.setId("main-pane");
 		mainContentPane.setTop(titleBar);
 		mainContentPane.setCenter(channelPane);
 
 		// Set up the scene
 		Scene scene = new Scene(mainContentPane, 500, 700);
 		scene.setFill(Color.TRANSPARENT);
-		scene.getStylesheets().add("style.css");
+//		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add("style_v2.css");
 
 		//TODO: Keep multiframe in mind.
 		//TODO: Keep multiframe in mind.

@@ -353,9 +353,26 @@
 #dialog-content {
 	-fx-background-color: -message-comp-background;
 	-fx-background-radius: 5px;
+	-fx-padding: 10px;
 }
 
+#settings-title-text {
+	-fx-font-family: "Inter";
+	-fx-font-size: 18px;
+	-fx-font-style: normal;
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-padding: 0 0 5px 0;
+}
 
+#settings-functions-bar {
+	-fx-spacing: 5px;
+	-fx-padding: 0 0 0 5px;
+}
+
+#settings-additional-pane {
+	-fx-padding: 5px 0 0 0;
+}
 
 .hyperlink {
 	-fx-text-fill: #00FFFF;
