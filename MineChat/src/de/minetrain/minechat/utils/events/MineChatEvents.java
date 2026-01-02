@@ -1,6 +1,6 @@
 package de.minetrain.minechat.utils.events;
 
-import de.minetrain.minechat.features.macros.MacroViewModel;
+import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.OutboundChatMessage;
 

@@ -1,8 +1,8 @@
 package de.minetrain.minechat.gui.obj.buttons;
 
 import de.minetrain.minechat.features.macros.MacroType;
-import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteView;
+import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 import javafx.beans.property.ObjectProperty;

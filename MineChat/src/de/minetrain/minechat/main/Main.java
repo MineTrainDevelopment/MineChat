@@ -180,7 +180,7 @@ public class Main extends Application {
 		TwitchPollingService twitchPollingService = new TwitchPollingService();
 		channelManager = new ChannelManager(twitchPollingService);
 		channelManager.init();
-		new AutoReplyManager(); //Load auto replys after fetching channel data.
+		new AutoReplyManager();
 
 		titleBar.channelsProperty().bind(channelManager.channelsProperty());
 		channelPane.channelProperty().bind(channelManager.activeChannelProperty());

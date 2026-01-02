@@ -80,13 +80,13 @@ public class Macro {
 
 	public Builder buildCopy() {
 		return Macro.builder()
-				.withUuid(this.uuid)
-				.withChannelId(this.channelId)
-				.withMacroType(this.macroType)
-				.withIndex(this.index)
-				.withTitle(this.title)
-				.withEmoteId(this.emoteId)
-				.withOutput(this.output != null ? List.of(this.output) : null);
+				.withUuid(uuid)
+				.withChannelId(channelId)
+				.withMacroType(macroType)
+				.withIndex(index)
+				.withTitle(title)
+				.withEmoteId(emoteId)
+				.withOutput(output != null ? List.of(output) : null);
 	}
 
 	public static class Builder {

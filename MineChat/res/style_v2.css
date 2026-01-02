@@ -34,6 +34,13 @@
         derive(-fx-base,60%) 35%,
         derive(-fx-base,80%) 50%
      );
+
+	-fx-hover-accent: ladder(
+        -fx-accent,
+        derive(-fx-accent,20%) 20%,
+        derive(-fx-accent,30%) 35%,
+        derive(-fx-accent,40%) 50%
+     );
 }
 
 .button,
@@ -67,8 +74,6 @@
 .scroll-bar > .increment-button:pressed,
 .scroll-bar > .decrement-button:pressed,
 .choice-box:showing,
-.combo-box-base:showing,
-.combo-box-base:editable:showing > .arrow-button,
 .spinner .increment-arrow-button:pressed,
 .spinner .decrement-arrow-button:pressed,
 .tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:pressed {
@@ -89,7 +94,59 @@
 .html-editor {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
+	-fx-background-radius: 8px;
 	-fx-padding: 0;
+}
+
+.table-view .column-header-background,
+.tree-table-view > .column-header-background {
+    -fx-background-color: -fx-body-color;
+    -fx-background-insets: 0;
+	-fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header,
+.tree-table-view .column-header,
+.table-view .filler,
+.tree-table-view .filler,
+.table-view > .column-header-background > .show-hide-columns-button,
+.tree-table-view > .column-header-background > .show-hide-columns-button,
+.table-view:constrained-resize .filler,
+.tree-table-view:constrained-resize .filler {
+    -fx-background-color: -fx-body-color;
+    -fx-background-insets: 0;
+	-fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header .label,
+.tree-table-view .column-header .label {
+    -fx-alignment: center-left;
+	-fx-padding: 0 0 0 5px;
+}
+
+.combo-box-popup > .list-view {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-insets: 0;
+	-fx-background-radius: 8px;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2) , 12, 0.0 , 0 , 8 );
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+	-fx-padding: 5px 0 5px 10px;
+    -fx-background-insets: 2px;
+	-fx-background-radius: 8px;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-hover-accent;
+
+}
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-background;
+    -fx-background-insets: 2px;
 }
 
 .scroll-bar {
@@ -332,6 +389,10 @@
 
 .settings-content > .additional-settings {
 	-fx-padding: 5px 0 0 0;
+}
+
+.settings-content .table-view {
+    -fx-background-color: -fx-control-inner-background;
 }
 
 .chat-input-field {

@@ -77,6 +77,13 @@ public class Macros extends LockScope {
 		return read(() -> idToMacro.get(macroId));
 	}
 
+	public void clear() {
+		write(() -> {
+			channelIdToMacros.clear();
+			idToMacro.clear();
+		});
+	}
+
 	private static <K> void addToMap(Map<K, Lazy<Set<Macro>>> map, K key, Macro macro, List<Object> changedObjects) {
 		Lazy<Set<Macro>> lazy = map.get(key);
 		if (lazy == null) {

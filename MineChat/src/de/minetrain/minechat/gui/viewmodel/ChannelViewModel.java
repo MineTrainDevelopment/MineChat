@@ -7,7 +7,6 @@ import java.util.Set;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
-import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.gui.utils.NotifiableObservableListWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -50,6 +49,7 @@ public class ChannelViewModel {
 	private ObjectProperty<NotifiableObservableListWrapper<ChatMessage>> messagesProperty;
 	private ObservableList<MacroViewModel> macros;
 	private ObservableList<MacroViewModel> emoteMacros;
+	private ObservableList<AutoReplyViewModel> autoReplies;
 
 	private Set<String> participatedUserIds;
 
@@ -63,6 +63,8 @@ public class ChannelViewModel {
 
 		macros = FXCollections.observableArrayList();
 		emoteMacros = FXCollections.observableArrayList();
+		autoReplies = FXCollections.observableArrayList();
+
 		participatedUserIds = new HashSet<>();
 
 		// TODO don't report initial value...
@@ -198,6 +200,14 @@ public class ChannelViewModel {
 		return profileImageUrlProperty().get();
 	}
 
+	public Image getProfileImageSmall() {
+		return profileImageSmallProperty().get();
+	}
+
+	public Image getProfileImageLarge() {
+		return profileImageLargeProperty().get();
+	}
+
 	public String getLoginName() {
 		return loginNameProperty().get();
 	}
@@ -252,6 +262,10 @@ public class ChannelViewModel {
 
 	public ObservableList<MacroViewModel> getEmoteMacros() {
 		return emoteMacros;
+	}
+
+	public ObservableList<AutoReplyViewModel> getAutoReplies() {
+		return autoReplies;
 	}
 
 	public Set<String> getParticipatedUserIds(){

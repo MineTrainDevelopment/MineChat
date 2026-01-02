@@ -30,12 +30,10 @@ public class MacroEditorDialog extends MineDialog<Macro> {
 			Emote emote = EmoteManager.getEmoteById(macro.getEmoteId());
 			emoteButton.setEmote(emote);
 		}
-		emoteButton.setOnAction(_ -> {
-			new EmoteSelectionDialog().showAndWait().ifPresent(newEmote -> {
-				macroBuilder.withEmoteId(newEmote.getEmoteId());
-				emoteButton.setEmote(newEmote);
-			});
-		});
+		emoteButton.setOnAction(_ -> new EmoteSelectionDialog().showAndWait().ifPresent(newEmote -> {
+			macroBuilder.withEmoteId(newEmote.getEmoteId());
+			emoteButton.setEmote(newEmote);
+		}));
 
 //		titleInputField.setPromptText(selectedEmote.getName());
 		titleInputField.setFocusTraversable(false);

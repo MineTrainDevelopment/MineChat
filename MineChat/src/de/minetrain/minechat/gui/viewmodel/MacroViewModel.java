@@ -1,4 +1,4 @@
-package de.minetrain.minechat.features.macros;
+package de.minetrain.minechat.gui.viewmodel;
 
 import java.util.Objects;
 import java.util.Random;
@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.data.objectdata.Macro;
+import de.minetrain.minechat.features.macros.MacroType;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
-import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -30,16 +30,16 @@ public class MacroViewModel {
 
 	private int previousRandom = 0;
 
-	public static MacroViewModel of(Macro macroData, ChannelViewModel channel, Emote emote) {
+	public static MacroViewModel of(Macro macro, ChannelViewModel channel, Emote emote) {
 		MacroViewModel macroViewModel = new MacroViewModel(
-			macroData.getUuid(),
+			macro.getUuid(),
 			channel,
-			macroData.getMacroType(),
-			macroData.getIndex()
+			macro.getMacroType(),
+			macro.getIndex()
 		);
 		macroViewModel.setEmote(emote);
-		macroViewModel.setTitle(macroData.getTitle());
-		macroViewModel.setOutput(macroData.getOutput());
+		macroViewModel.setTitle(macro.getTitle());
+		macroViewModel.setOutput(macro.getOutput());
 		return macroViewModel;
 	}
 
@@ -193,5 +193,25 @@ public class MacroViewModel {
 	public Macro toMacro() {
 		Emote emote = getEmote();
 		return new Macro(getUuid(), getChannel().getChannelId(), getMacroType(), getIndex(), getTitle(), emote != null ? emote.getEmoteId() : null, getOutput());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getUuid());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		MacroViewModel other = (MacroViewModel) obj;
+		return Objects.equals(getUuid(), other.getUuid());
 	}
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -17,16 +18,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.AutoReplies;
+import de.minetrain.minechat.data.objectdata.AutoReply.Builder;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.Channels;
 import de.minetrain.minechat.data.objectdata.Macro;
 import de.minetrain.minechat.data.objectdata.Macros;
 import de.minetrain.minechat.features.macros.MacroType;
-import de.minetrain.minechat.features.macros.MacroViewModel;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
+import de.minetrain.minechat.gui.frames.dialogs.AutoReplyEditDialog;
 import de.minetrain.minechat.gui.frames.dialogs.MacroEditorDialog;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
+import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchPollingService;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
@@ -136,10 +141,6 @@ public class ChannelManager {
 		return channels.values().stream().toList();
 	}
 
-	public void setChannelLiveStatus(String channelId, boolean isLive) {
-		findViewModel(channelId).ifPresent(cvm -> cvm.setLive(isLive));
-	}
-
 	public ObjectProperty<ChannelViewModel> activeChannelProperty() {
 		if (activeChannelProperty == null) {
 			activeChannelProperty = new SimpleObjectProperty<>(this, "activeChannel");
@@ -176,6 +177,36 @@ public class ChannelManager {
 			macro.apply(editedMacro);
 			getMacros().addMacro(editedMacro);
 		});
+	}
+
+	public Optional<AutoReplyViewModel> createAutoReply() {
+		Builder builder = de.minetrain.minechat.data.objectdata.AutoReply.builder()
+			.withUuid(UUID.randomUUID())
+			.withDelay(0)
+			.withMessagesPerMinute(1);
+		return new AutoReplyEditDialog(builder).showAndWait().map(editedAutoReply -> {
+			getAutoReplies().addAutoReply(editedAutoReply);
+			ChannelViewModel cvm = Main.getChannelManager().channelsProperty().get().stream()
+				.filter(channel -> Objects.equals(channel.getChannelId(), editedAutoReply.getChannelId()))
+				.findFirst()
+				.orElse(null);
+			AutoReplyViewModel autoReplyViewModel = AutoReplyViewModel.of(editedAutoReply, cvm);
+			cvm.getAutoReplies().add(autoReplyViewModel);
+			return autoReplyViewModel;
+		});
+	}
+
+	public void editAutoReply(AutoReplyViewModel autoReply) {
+		Builder builder = autoReply.toAutoReply().buildCopy();
+		new AutoReplyEditDialog(builder).showAndWait().ifPresent(editedAutoReply -> {
+			autoReply.apply(editedAutoReply);
+			getAutoReplies().addAutoReply(editedAutoReply);
+		});
+	}
+
+	public boolean deleteAutoReply(AutoReplyViewModel autoReply) {
+		autoReply.getChannel().getAutoReplies().remove(autoReply);
+		return getAutoReplies().removeAutoReply(autoReply.getUuid());
 	}
 
 	/// Finds the ChannelViewModel for the given channel id.
@@ -229,6 +260,10 @@ public class ChannelManager {
 		return EclipseStoreKeeper.root().macros();
 	}
 
+	private static AutoReplies getAutoReplies() {
+		return EclipseStoreKeeper.root().autoReplies();
+	}
+
 	private static Channel createChannelFromTwitchUser(TwitchUserObj twitchUser) {
 		return new Channel(twitchUser.getUserId(), twitchUser.getLoginName(), twitchUser.getDisplayName(),
 				"Viewer", null,"Hello {USER} HeyGuys\nWelcome {USER} HeyGuys", "By {USER}!\nHave a good one! {USER} <3",
@@ -260,6 +295,7 @@ public class ChannelManager {
 		Map<MacroType, List<Macro>> macrosByType = getMacros().computeByChannelId(channel.getChannelId(), macros -> macros.sorted(Comparator.comparing(Macro::getIndex)).collect(groupingBy(Macro::getMacroType)));
 		cvm.getMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.TEXT, MACROS_PER_CHANNEL));
 		cvm.getEmoteMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.EMOTE, EMOTE_MACROS_PER_CHANNEL));
+		cvm.getAutoReplies().addAll(getAutoReplies().computeByChannelId(channel.getChannelId(), autoReplies -> autoReplies.map(autoReply -> AutoReplyViewModel.of(autoReply, cvm)).toList()));
 
 		cvm.initMessages();
 		cvm.selectedProperty().bind(activeChannelProperty().isEqualTo(cvm));
