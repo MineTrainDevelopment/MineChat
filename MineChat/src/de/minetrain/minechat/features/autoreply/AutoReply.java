@@ -77,7 +77,7 @@ public class AutoReply {
 		messageCounter.clear();
 
 		ChannelActions channelActions = Main.getChannelManager().getChannelActions(channelId);
-		ChannelViewModel cvm = Main.getChannelManager().channelsProperty().get().stream().filter(c -> c.getChannelId().equals(channelId)).findFirst().orElse(null);
+		ChannelViewModel cvm = Main.getChannelManager().getChannelViewModel(channelId);
 		OutboundChatMessage chatMessage = new OutboundChatMessage(channelActions, cvm, TwitchManager.ownerChannelName, getOutput());
 		if (isChatReply()) {
 			channelActions.replyMessage = message;

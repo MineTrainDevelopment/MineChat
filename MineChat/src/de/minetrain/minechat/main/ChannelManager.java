@@ -2,8 +2,12 @@ package de.minetrain.minechat.main;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +34,7 @@ import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.frames.dialogs.AutoReplyEditDialog;
 import de.minetrain.minechat.gui.frames.dialogs.MacroEditorDialog;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.gui.utils.UiDispatcher;
 import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
@@ -37,13 +43,10 @@ import de.minetrain.minechat.twitch.TwitchPollingService;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import de.minetrain.minechat.utils.audio.AudioVolume;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 public class ChannelManager {
 
@@ -51,13 +54,15 @@ public class ChannelManager {
 	private static final int MACROS_PER_CHANNEL = 12;
 	private static final int EMOTE_MACROS_PER_CHANNEL = 18;
 
-	private Map<String, ChannelActions> channels = new HashMap<>();
+	private Map<String, ChannelActions> channelsLegacy = new HashMap<>();
 	private TwitchPollingService twitchPollingService;
 
 	private ObjectProperty<ChannelViewModel> activeChannelProperty;
-	private ReadOnlyObjectWrapper<ObservableList<ChannelViewModel>> channelsProperty;
+	private ObservableMap<String, ChannelViewModel> channels;
 
 	public ChannelManager(TwitchPollingService twitchPollingService) {
+		channels = FXCollections.observableHashMap();
+
 		this.twitchPollingService = twitchPollingService;
 		activeChannelProperty().addListener((_, _, newChannel) -> {
 			if (newChannel != null) {
@@ -73,16 +78,18 @@ public class ChannelManager {
 		List<Channel> allChannels = getAllChannels();
 		allChannels.forEach(channel -> TwitchHelper.joinChannel(channel.getChannelId()));
 
-		List<ChannelViewModel> channelList = allChannels.stream().map(this::createNewChannelViewModel).toList();
-		channelsPropertyInternal().set(FXCollections.observableArrayList(channelList));
+		Map<String, ChannelViewModel> channelMap = allChannels.stream().map(this::createNewChannelViewModel).collect(toMap(ChannelViewModel::getChannelId, Function.identity()));
+		channels.putAll(channelMap);
 
 		if (allChannels.isEmpty()) {
-			addChannel(TwitchHelper.getSelfUser().getUserId());
+			addChannel(TwitchHelper.getSelfUser().getUserId(), 0);
 		}
 
 		CompletableFuture.delayedExecutor(300L, TimeUnit.MILLISECONDS).execute(() -> {
-			if (!channelsProperty().get().isEmpty()) {
-				setActiveChannel(channelsProperty().get().getFirst());
+			if (!getChannelViewModels().isEmpty()) {
+				getChannelViewModels().stream()
+					.min(Comparator.comparingInt(ChannelViewModel::getSortIndex))
+					.ifPresent(this::setActiveChannel);
 			}
 		});
 	}
@@ -103,23 +110,17 @@ public class ChannelManager {
 	/// @param channelId The channel id to get the ChannelActions for.
 	/// @return The ChannelActions for the given channel id.
 	public ChannelActions getChannelActions(String channelId) {
-		return channels.computeIfAbsent(channelId, key -> new ChannelActions(getChannel(key)));
-	}
-
-	/// Sets the active channel by channel id.
-	///
-	/// @param channelId The channel id to set as active.
-	public void setActiveChannel(String channelId) {
-		findViewModel(channelId).ifPresent(this::setActiveChannel);
+		return channelsLegacy.computeIfAbsent(channelId, key -> new ChannelActions(getChannel(key)));
 	}
 
 	/// Adds a new channel to the ChannelManager.
 	/// If the channel already exists, null is returned.
 	///
 	/// @param channelId The channel id to add.
+	/// @param insertIndex The index to insert the channel at.
 	/// @return The newly created Channel, or null if the channel already exists.
-	public Channel addChannel(String channelId) {
-		return getChannel(channelId) == null ? createNewChannel(channelId) : null;
+	public Channel addChannel(String channelId, int insertIndex) {
+		return getChannel(channelId) == null ? createNewChannel(channelId, insertIndex) : null;
 	}
 
 	/// Gets the Channel object for the given channel id.
@@ -137,8 +138,20 @@ public class ChannelManager {
 		return getChannels().all();
 	}
 
+	public Collection<ChannelViewModel> getChannelViewModels() {
+		return channels.values();
+	}
+
+	public ChannelViewModel getChannelViewModel(String channelId) {
+		return channels.get(channelId);
+	}
+
+	public ObservableMap<String, ChannelViewModel> getChannelViewModelMap() {
+		return channels;
+	}
+
 	public Collection<ChannelActions> getAllChannelActions(){
-		return channels.values().stream().toList();
+		return channelsLegacy.values().stream().toList();
 	}
 
 	public ObjectProperty<ChannelViewModel> activeChannelProperty() {
@@ -149,26 +162,35 @@ public class ChannelManager {
 	}
 
 	public void setActiveChannel(ChannelViewModel channel) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> setActiveChannel(channel));
-			return;
-		}
-		activeChannelProperty().set(channel);
+		UiDispatcher.runOnUiThread(() -> activeChannelProperty().set(channel));
 	}
 
 	public ChannelViewModel getActiveChannel() {
 		return activeChannelProperty().get();
 	}
 
-	protected ReadOnlyObjectWrapper<ObservableList<ChannelViewModel>> channelsPropertyInternal() {
-		if (channelsProperty == null) {
-			channelsProperty = new ReadOnlyObjectWrapper<>(this, "channels");
+	public void moveChannel(ChannelViewModel moveChannel, ChannelViewModel targetChannel) {
+		List<ChannelViewModel> channelList = new ArrayList<>(getChannelViewModels());
+		channelList.sort(Comparator.comparingInt(ChannelViewModel::getSortIndex));
+		int moveIndex = channelList.indexOf(moveChannel);
+		int targetIndex = channelList.indexOf(targetChannel);
+		if (moveIndex < targetIndex) {
+			Collections.rotate(channelList.subList(moveIndex, targetIndex + 1), -1);
+		} else {
+			Collections.rotate(channelList.subList(targetIndex, moveIndex + 1), 1);
 		}
-		return channelsProperty;
-	}
-
-	public ReadOnlyObjectProperty<ObservableList<ChannelViewModel>> channelsProperty() {
-		return channelsPropertyInternal().getReadOnlyProperty();
+		for (int i = 0; i < channelList.size(); i++) {
+			channelList.get(i).setSortIndex(i);
+		}
+		List<Channel> updatedChannels = getChannels().all().stream()
+			.map(c -> {
+				String channelId = c.getChannelId();
+				ChannelViewModel channelViewModel = getChannelViewModel(channelId);
+				return channelViewModel.getSortIndex() != c.getSortIndex() ?
+					c.buildCopy().withSortIndex(channelViewModel.getSortIndex()).build()
+					: null;
+			}).filter(Objects::nonNull).toList();
+		getChannels().addChannels(updatedChannels);
 	}
 
 	public void editMacro(MacroViewModel macro) {
@@ -186,10 +208,7 @@ public class ChannelManager {
 			.withMessagesPerMinute(1);
 		return new AutoReplyEditDialog(builder).showAndWait().map(editedAutoReply -> {
 			getAutoReplies().addAutoReply(editedAutoReply);
-			ChannelViewModel cvm = Main.getChannelManager().channelsProperty().get().stream()
-				.filter(channel -> Objects.equals(channel.getChannelId(), editedAutoReply.getChannelId()))
-				.findFirst()
-				.orElse(null);
+			ChannelViewModel cvm = getChannelViewModel(editedAutoReply.getChannelId());
 			AutoReplyViewModel autoReplyViewModel = AutoReplyViewModel.of(editedAutoReply, cvm);
 			cvm.getAutoReplies().add(autoReplyViewModel);
 			return autoReplyViewModel;
@@ -207,16 +226,6 @@ public class ChannelManager {
 	public boolean deleteAutoReply(AutoReplyViewModel autoReply) {
 		autoReply.getChannel().getAutoReplies().remove(autoReply);
 		return getAutoReplies().removeAutoReply(autoReply.getUuid());
-	}
-
-	/// Finds the ChannelViewModel for the given channel id.
-	///
-	/// @param channelId The channel id to find the ChannelViewModel for.
-	/// @return An Optional containing the ChannelViewModel if found, or empty if not found.
-	private Optional<ChannelViewModel> findViewModel(String channelId) {
-		return channelsProperty().get().stream()
-			.filter(c -> c.getChannelId().equals(channelId))
-			.findFirst();
 	}
 
 	/// Validates and updates the login names of all persisted channels.
@@ -264,29 +273,41 @@ public class ChannelManager {
 		return EclipseStoreKeeper.root().autoReplies();
 	}
 
-	private static Channel createChannelFromTwitchUser(TwitchUserObj twitchUser) {
-		return new Channel(twitchUser.getUserId(), twitchUser.getLoginName(), twitchUser.getDisplayName(),
+	private static Channel createChannelFromTwitchUser(TwitchUserObj twitchUser, int insertIndex) {
+		return new Channel(twitchUser.getUserId(), twitchUser.getLoginName(), twitchUser.getDisplayName(), insertIndex,
 				"Viewer", null,"Hello {USER} HeyGuys\nWelcome {USER} HeyGuys", "By {USER}!\nHave a good one! {USER} <3",
 				"Welcome back {USER} <3\nwb {USER} HeyGuys",
 				null, AudioVolume.VOLUME_100, twitchUser.getProfileImageUrl());
 	}
 
-	private Channel createNewChannel(String channelId) {
+	private Channel createNewChannel(String channelId, int insertIndex) {
 		TwitchUserObj channel = TwitchHelper.requestTwitchUser(TwitchApiCallType.ID, channelId).join();
 		if (channel.isDummy()) {
 			return null;
 		}
 
-		Channel newChannel = createChannelFromTwitchUser(channel);
-		getChannels().addChannel(newChannel);
+		ArrayList<Channel> updateChannels = getChannels().all().stream()
+			.filter(c -> c.getSortIndex() >= insertIndex)
+			.map(c -> c.buildCopy().withSortIndex(c.getSortIndex() + 1).build())
+			.collect(toCollection(ArrayList::new));
+		Channel newChannel = createChannelFromTwitchUser(channel, insertIndex);
+		updateChannels.add(newChannel);
+		getChannels().addChannels(updateChannels);
 		TwitchHelper.joinChannel(newChannel.getChannelId());
 
 		TextureManager.downloadChannelEmotes(channelId, true);
 		TextureManager.downloadBttvEmotes(channelId, true);
 		TextureManager.downloadChannelBadges(channelId, true);
 		ChannelViewModel cvm = createNewChannelViewModel(newChannel);
-		channelsProperty().get().add(cvm);
-		setActiveChannel(cvm);
+		UiDispatcher.runOnUiThread(() -> {
+			channels.forEach((_, eachCvm) -> {
+				if (eachCvm.getSortIndex() >= insertIndex) {
+					eachCvm.setSortIndex(eachCvm.getSortIndex() + 1);
+				}
+			});
+			channels.put(newChannel.getChannelId(), cvm);
+			CompletableFuture.delayedExecutor(300L, TimeUnit.MILLISECONDS).execute(() -> setActiveChannel(cvm));
+		});
 		return newChannel;
 	}
 

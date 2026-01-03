@@ -163,7 +163,7 @@ public class AutoReplyViewModel {
 	}
 
 	public void apply(AutoReply autoReply) {
-		setChannel(Main.getChannelManager().channelsProperty().get().stream().filter(c -> c.getChannelId().equals(autoReply.getChannelId())).findFirst().orElse(null));
+		setChannel(Main.getChannelManager().getChannelViewModel(autoReply.getChannelId()));
 		setEnabled(autoReply.isEnabled());
 		setMessagesPerMinute(autoReply.getMessagesPerMinute());
 		setDelay(autoReply.getDelay());

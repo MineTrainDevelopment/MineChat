@@ -1,5 +1,11 @@
 package de.minetrain.minechat.gui.panes;
 
+import static java.util.stream.Collectors.toSet;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Set;
+
 import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
@@ -7,9 +13,8 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ListChangeListener;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -27,12 +32,13 @@ public class TitleBarPane extends BorderPane {
 
 	private final ScrollPane tabPane;
 	private final HBox tabBar;
-	private final ListChangeListener<ChannelViewModel> listChangeListener;
-	private ObjectProperty<ObservableList<ChannelViewModel>>channels;
+	private ObservableList<ChannelViewModel> channels;
+
 
 	public TitleBarPane() {
 		getStyleClass().add("title-bar");
-		listChangeListener = this::handleListChange;
+		channels = FXCollections.observableList(new ArrayList<>(), cvm -> new Observable[] { cvm.sortIndexProperty() });
+		channels.addListener(this::handleListChange);
 
 		Button settingsButton = new Button();
 		settingsButton.setFocusTraversable(false);
@@ -109,40 +115,23 @@ public class TitleBarPane extends BorderPane {
 	public void handleListChange(Change<? extends ChannelViewModel> c) {
 		while (c.next()) {
 			if (c.wasRemoved()) {
-				tabBar.getChildren().subList(c.getFrom(), c.getFrom() + c.getRemovedSize()).clear();
+				Set<String> removedChannelIds = c.getRemoved().stream().map(ChannelViewModel::getChannelId).collect(toSet());
+				tabBar.getChildren().removeIf(nullOrButton -> {
+					if (nullOrButton instanceof ChannelTabButton tabButton) {
+						return removedChannelIds.contains(tabButton.getChannelViewModel().getChannelId());
+					}
+					return false;
+				});
 			}
 			if (c.wasAdded()) {
-				for (int i = c.getFrom(); i < c.getTo(); i++) {
-					ChannelViewModel addedChannel = c.getList().get(i);
-					ChannelTabButton tabButton = new ChannelTabButton(addedChannel, this);
-					tabBar.getChildren().add(i, tabButton);
-				}
+				c.getAddedSubList().stream().map(cvm -> new ChannelTabButton(cvm, this)).forEach(tabBar.getChildren()::add);
 			}
 		}
-	}
-
-	public ObjectProperty<ObservableList<ChannelViewModel>> channelsProperty() {
-		if (channels == null) {
-			channels = new SimpleObjectProperty<>(this, "channels");
-			channels.addListener((_, oldList, newList) -> {
-				if (oldList != null) {
-					oldList.removeListener(listChangeListener);
-				}
-				tabBar.getChildren().clear();
-				if (newList != null) {
-					tabBar.getChildren().addAll(newList.stream().map(cvm -> new ChannelTabButton(cvm, this)).toList());
-					newList.addListener(listChangeListener);
-				}
-			});
-		}
-		return channels;
+		tabBar.getChildren().sort(Comparator.comparingInt(
+			node -> node instanceof ChannelTabButton ctb ? ctb.getChannelViewModel().getSortIndex() : Integer.MAX_VALUE));
 	}
 
 	public ObservableList<ChannelViewModel> getChannels() {
-		return channelsProperty().get();
-	}
-
-	public void setChannels(ObservableList<ChannelViewModel> channels) {
-		channelsProperty().set(channels);
+		return channels;
 	}
 }

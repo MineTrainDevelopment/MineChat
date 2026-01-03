@@ -22,6 +22,7 @@ import de.minetrain.minechat.gui.panes.ChannelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.TwitchPollingService;
@@ -29,6 +30,7 @@ import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.events.EventManager;
 import de.minetrain.minechat.utils.plugins.PluginManager;
 import javafx.application.Application;
+import javafx.collections.MapChangeListener.Change;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -182,26 +184,34 @@ public class Main extends Application {
 		channelManager.init();
 		new AutoReplyManager();
 
-		titleBar.channelsProperty().bind(channelManager.channelsProperty());
+		channelManager.getChannelViewModelMap().addListener((Change<? extends String, ? extends ChannelViewModel> change) -> {
+			if (change.wasRemoved()) {
+				titleBar.getChannels().remove(change.getValueRemoved());
+			}
+			if (change.wasAdded()) {
+				titleBar.getChannels().add(change.getValueAdded());
+			}
+		});
+		titleBar.getChannels().setAll(channelManager.getChannelViewModels());
 		channelPane.channelProperty().bind(channelManager.activeChannelProperty());
 
 		twitchPollingService.start();
 		twitchPollingService.queueChannelChatSettingsRefresh();
 	}
 
-	public static ChannelManager getChannelManager(){
+	public static ChannelManager getChannelManager() {
 		return channelManager;
 	}
 
-	public static AudioManager getAudioManager(){
+	public static AudioManager getAudioManager() {
 		return audioManager;
 	}
 
-	public static EventManager getEventManager(){
+	public static EventManager getEventManager() {
 		return eventManager;
 	}
 
-	public static EmoteManager getEmoteManager(){
+	public static EmoteManager getEmoteManager() {
 		return emoteManager;
 	}
 

@@ -1,8 +1,5 @@
 package de.minetrain.minechat.gui.obj.buttons;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -111,16 +108,7 @@ public class ChannelTabButton extends TabButton {
 		Dragboard dragboard = event.getDragboard();
 
 		if (event.getGestureSource() instanceof ChannelTabButton ctb) {
-			int sourceIndex = parentTitleBar.getChannels().indexOf(ctb.getChannelViewModel());
-			int targetIndex = parentTitleBar.getChannels().indexOf(this.getChannelViewModel());
-			List<ChannelViewModel> tempList = new ArrayList<>(parentTitleBar.getChannels());
-			if (sourceIndex < targetIndex) {
-				Collections.rotate(tempList.subList(sourceIndex, targetIndex + 1), -1);
-			} else {
-				Collections.rotate(tempList.subList(targetIndex, sourceIndex + 1), 1);
-			}
-			// Handle as single permutation to avoid multiple change events.
-			parentTitleBar.getChannels().setAll(tempList);
+			Main.getChannelManager().moveChannel(ctb.getChannelViewModel(), getChannelViewModel());
 			event.setDropCompleted(true);
 			event.consume();
 			return;
@@ -131,13 +119,12 @@ public class ChannelTabButton extends TabButton {
 			.thenAccept(user -> {
 				ChannelManager channelManager = Main.getChannelManager();
 				if (user != null && !user.isDummy()) {
-					parentTitleBar.getChannels().stream()
-						.filter(cvm -> cvm.getChannelId().equals(user.getUserId()))
-						.findFirst()
-						.ifPresentOrElse(
-							channelManager::setActiveChannel,
-							() -> channelManager.addChannel(user.getUserId())
-						);
+					ChannelViewModel cvm = channelManager.getChannelViewModel(user.getUserId());
+					if (cvm == null) {
+						channelManager.addChannel(user.getUserId(), getChannelViewModel().getSortIndex());
+					} else {
+						channelManager.setActiveChannel(cvm);
+					}
 				}
 			}).exceptionally(e -> {
 				LOG.error("Failed to extract user from dragged url: {}", url, e);
@@ -147,7 +134,6 @@ public class ChannelTabButton extends TabButton {
 		event.setDropCompleted(true);
 		event.consume();
 	}
-
 
 	private void handleDrag(MouseEvent event) {
 		Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);

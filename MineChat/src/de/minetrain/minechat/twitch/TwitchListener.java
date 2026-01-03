@@ -42,6 +42,7 @@ import de.minetrain.minechat.data.objectdata.ChatMessage.MessageType;
 import de.minetrain.minechat.data.objectdata.ChatMessageToken;
 import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TwitchMessage;
@@ -81,9 +82,7 @@ public class TwitchListener {
 	/// @param event The [ChannelChatSettingsUpdateEvent] object containing information about the updated settings.
 	@EventSubscriber
 	public void onChannelChatSettingsUpdate(ChannelChatSettingsUpdateEvent event) {
-		Main.getChannelManager().channelsProperty().get().stream().filter(channel -> channel.getChannelId().equals(event.getBroadcasterUserId())).findFirst().ifPresent(channel -> {
-			channel.setSlowModeWaitTime(event.isSlowMode().booleanValue() ? event.getSlowModeWaitTimeSeconds() : 0);
-		});
+		Main.getChannelManager().getChannelViewModel(event.getBroadcasterUserId()).setSlowModeWaitTime(event.isSlowMode().booleanValue() ? event.getSlowModeWaitTimeSeconds() : 0);
 	}
 
 	/// Handles the event when a message is sent in the channel.
@@ -105,15 +104,12 @@ public class TwitchListener {
 		}
 
 		ChatMessage chatMessage = createChatMessage(event);
-		Main.getChannelManager().channelsProperty().get().stream()
-			.filter(cvm -> cvm.getChannelId().equals(event.getBroadcasterUserId()))
-			.findFirst()
-			.ifPresent(cvm -> Platform.runLater(() -> {
-				int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
-				chatMessage.setFirstSessionMessage(cvm.getParticipatedUserIds().add(chatMessage.getSenderId()));
-				cvm.getMessages().notifyAdd(index);
-			}));
-
+		Platform.runLater(() ->{
+			ChannelViewModel cvm = Main.getChannelManager().getChannelViewModel(event.getBroadcasterUserId());
+			int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
+			chatMessage.setFirstSessionMessage(cvm.getParticipatedUserIds().add(chatMessage.getSenderId()));
+			cvm.getMessages().notifyAdd(index);
+		});
 		AutoReplyManager.recordMessage(twitchMessage);
 	}
 

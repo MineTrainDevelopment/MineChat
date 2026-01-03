@@ -1,6 +1,7 @@
 package de.minetrain.minechat.gui.frames.dialogs;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +17,7 @@ import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteBatchPane;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteBatchViewModel;
 import de.minetrain.minechat.gui.frames.emote_selector.EmoteSelectorChannelButton;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.Main;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -50,7 +52,7 @@ public class EmoteSelectionDialog extends MineDialog<Emote> {
 
 		emoteBatches.add(new EmoteBatchViewModel("Favorite", List.of()));
 
-		CompletableFuture.runAsync(() -> Main.getChannelManager().channelsProperty().get().forEach(channel -> {
+		CompletableFuture.runAsync(() -> Main.getChannelManager().getChannelViewModels().stream().sorted(Comparator.comparing(ChannelViewModel::getChannelName, String.CASE_INSENSITIVE_ORDER)).forEach(channel -> {
 			Set<Emote> twitchEmotes = EclipseStoreKeeper.root().emotes().getEmotesByChannelId(channel.getChannelId());
 			Set<Emote> bttvEmotes = EclipseStoreKeeper.root().emotes().getBttvEmotesByChannelId(channel.getChannelId());
 			if (!twitchEmotes.isEmpty() || !bttvEmotes.isEmpty()) {

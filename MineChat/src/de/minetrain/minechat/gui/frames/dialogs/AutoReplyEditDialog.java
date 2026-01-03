@@ -1,6 +1,7 @@
 package de.minetrain.minechat.gui.frames.dialogs;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 
 import de.minetrain.minechat.data.objectdata.AutoReply;
@@ -37,7 +38,9 @@ public class AutoReplyEditDialog extends MineDialog<AutoReply> {
 
 		GridPane contentRoot = createRootGrid();
 
-		channelSelector = new ComboBox<>(Main.getChannelManager().channelsProperty().get());
+		channelSelector = new ComboBox<>();
+		channelSelector.getItems().addAll(Main.getChannelManager().getChannelViewModels());
+		channelSelector.getItems().sort(Comparator.comparing(ChannelViewModel::getChannelName, String.CASE_INSENSITIVE_ORDER));
 		channelSelector.setMaxWidth(Double.MAX_VALUE);
 		channelSelector.setCellFactory(_ -> new ChannelCell());
 		channelSelector.setButtonCell(channelSelector.getCellFactory().call(null));

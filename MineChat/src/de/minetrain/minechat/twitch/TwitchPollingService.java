@@ -21,7 +21,7 @@ import com.github.twitch4j.helix.domain.Emote.Format;
 import com.github.twitch4j.helix.domain.ModeratedChannel;
 import com.github.twitch4j.helix.domain.Stream;
 
-import de.minetrain.minechat.data.objectdata.Channel;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.EmoteViewModel;
 import de.minetrain.minechat.main.Main;
 import javafx.application.Platform;
@@ -97,10 +97,10 @@ public class TwitchPollingService {
 
 	private void pollStreamInfo() {
 		try {
-			Set<String> liveChannelIds = TwitchHelper.requestStreamInfo(Main.getChannelManager().getAllChannels().stream().map(Channel::getChannelId).toArray(String[]::new)).get().stream()
+			Set<String> liveChannelIds = TwitchHelper.requestStreamInfo(Main.getChannelManager().getChannelViewModels().stream().map(ChannelViewModel::getChannelId).toArray(String[]::new)).get().stream()
 				.map(Stream::getUserId)
 				.collect(toUnmodifiableSet());
-			Platform.runLater(() -> Main.getChannelManager().channelsProperty().get().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId()))));
+			Platform.runLater(() -> Main.getChannelManager().getChannelViewModels().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId()))));
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching stream info for channels.", e.getCause());
 		} catch (InterruptedException e) {
@@ -127,7 +127,7 @@ public class TwitchPollingService {
 	private void pollModeratedChannels() {
 		try {
 			Set<String> moderatedChannelIds = TwitchHelper.requestModeratedChannel().get().stream().map(ModeratedChannel::getBroadcasterId).collect(toUnmodifiableSet());
-			Platform.runLater(() -> Main.getChannelManager().channelsProperty().get().forEach(channel -> channel.setModerated(moderatedChannelIds.contains(channel.getChannelId()))));
+			Platform.runLater(() -> Main.getChannelManager().getChannelViewModels().forEach(channel -> channel.setModerated(moderatedChannelIds.contains(channel.getChannelId()))));
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching moderated channels.", e.getCause());
 		} catch (InterruptedException e) {
@@ -137,7 +137,7 @@ public class TwitchPollingService {
 	}
 
 	private void pollChannelChatSettings() {
-		Main.getChannelManager().channelsProperty().get().forEach(channel -> {
+		Main.getChannelManager().getChannelViewModels().forEach(channel -> {
 			try {
 				TwitchHelper.requestChannelChatSettings(channel.getChannelId()).thenAccept(chatSettings -> Platform.runLater(() -> channel.setSlowModeWaitTime(chatSettings.isSlowMode().booleanValue() ? chatSettings.getSlowModeWaitTime() : 0))).get();
 			} catch (InterruptedException e) {

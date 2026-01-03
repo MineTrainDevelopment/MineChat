@@ -6,6 +6,7 @@ public class Channel  {
 	private final String channelId;
 	private final String loginName;
 	private final String displayName;
+	private final int sortIndex;
 	private final String chatRole; //Viwer, MODERATOR, VIP
 	private final String chatlogLevel; //null, Highlight, everything
 	private final String greetingText; //full string without seperating bye \n
@@ -19,10 +20,11 @@ public class Channel  {
 		return new Builder();
 	}
 
-	public Channel(String channelId, String loginName,  String displayName, String chatRole, String chatlogLevel, String greetingText, String goodbyeText, String returnText, String audioPath, AudioVolume audioVolume, String profileImageUrl) {
+	public Channel(String channelId, String loginName,  String displayName, int sortIndex, String chatRole, String chatlogLevel, String greetingText, String goodbyeText, String returnText, String audioPath, AudioVolume audioVolume, String profileImageUrl) {
 		this.channelId = channelId;
 		this.loginName = loginName;
 		this.displayName = displayName;
+		this.sortIndex = sortIndex;
 		this.chatRole = chatRole;
 		this.chatlogLevel = chatlogLevel;
 		this.greetingText = greetingText;
@@ -43,6 +45,10 @@ public class Channel  {
 
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	public int getSortIndex() {
+		return sortIndex;
 	}
 
 	public String getChatRole() {
@@ -82,6 +88,7 @@ public class Channel  {
 			.withChannelId(channelId)
 			.withLoginName(loginName)
 			.withDisplayName(displayName)
+			.withSortIndex(sortIndex)
 			.withChatRole(chatRole)
 			.withChatlogLevel(chatlogLevel)
 			.withGreetingText(greetingText)
@@ -96,6 +103,7 @@ public class Channel  {
 		private String channelId;
 		private String loginName;
 		private String displayName;
+		private int sortIndex;
 		private String chatRole;
 		private String chatlogLevel;
 		private String greetingText;
@@ -117,6 +125,11 @@ public class Channel  {
 
 		public Builder withDisplayName(String displayName) {
 			this.displayName = displayName;
+			return this;
+		}
+
+		public Builder withSortIndex(int sortIndex) {
+			this.sortIndex = sortIndex;
 			return this;
 		}
 
@@ -161,7 +174,7 @@ public class Channel  {
 		}
 
 		public Channel build() {
-			return new Channel(channelId, loginName, displayName, chatRole, chatlogLevel, greetingText, goodbyeText, returnText, audioPath, audioVolume, profileImageUrl);
+			return new Channel(channelId, loginName, displayName, sortIndex, chatRole, chatlogLevel, greetingText, goodbyeText, returnText, audioPath, audioVolume, profileImageUrl);
 		}
 	}
 }

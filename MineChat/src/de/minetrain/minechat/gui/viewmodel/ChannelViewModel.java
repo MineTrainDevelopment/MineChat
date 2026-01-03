@@ -24,12 +24,12 @@ import javafx.scene.image.Image;
 
 public class ChannelViewModel {
 
-	public static ChannelViewModel of(String channelId, String channelName, String profileImageUrl, String loginName) {
-		return new ChannelViewModel(channelId, channelName, profileImageUrl, loginName);
+	public static ChannelViewModel of(String channelId, String channelName, int sortIndex, String profileImageUrl, String loginName) {
+		return new ChannelViewModel(channelId, channelName, sortIndex, profileImageUrl, loginName);
 	}
 
 	public static ChannelViewModel of(Channel channel) {
-		return of(channel.getChannelId(), channel.getDisplayName(), channel.getProfileImageUrl(), channel.getLoginName());
+		return of(channel.getChannelId(), channel.getDisplayName(), channel.getSortIndex(), channel.getProfileImageUrl(), channel.getLoginName());
 	}
 
 	private ReadOnlyStringWrapper channelIdProperty;
@@ -38,6 +38,7 @@ public class ChannelViewModel {
 	private ReadOnlyObjectWrapper<Image> profileImageSmallProperty;
 	private ReadOnlyObjectWrapper<Image> profileImageLargeProperty;
 	private ReadOnlyStringWrapper loginNameProperty;
+	private IntegerProperty sortIndexProperty;
 	/// Indicates whether the channel is currently live streaming
 	private BooleanProperty liveProperty;
 	/// Indicates whether the channel is currently selected in the UI
@@ -53,9 +54,10 @@ public class ChannelViewModel {
 
 	private Set<String> participatedUserIds;
 
-	protected ChannelViewModel(String channelId, String channelName, String profileImageUrl, String loginName) {
+	protected ChannelViewModel(String channelId, String channelName, int sortIndex, String profileImageUrl, String loginName) {
 		channelIdPropertyInternal().set(channelId);
 		channelNamePropertyInternal().set(channelName);
+		sortIndexProperty().set(sortIndex);
 		profileImageUrlPropertyInternal().set(profileImageUrl);
 		profileImageSmallPropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 24D, 24D, false, true, true)));
 		profileImageLargePropertyInternal().bind(profileImageUrlProperty().map(url -> new Image(url, 75D, 75D, false, true, true)));
@@ -153,6 +155,13 @@ public class ChannelViewModel {
 		return loginNamePropertyInternal().getReadOnlyProperty();
 	}
 
+	public IntegerProperty sortIndexProperty() {
+		if (sortIndexProperty == null) {
+			sortIndexProperty = new SimpleIntegerProperty(this, "sortIndex", 0);
+		}
+		return sortIndexProperty;
+	}
+
 	public BooleanProperty liveProperty() {
 		if (liveProperty == null) {
 			liveProperty = new SimpleBooleanProperty(this, "live", false);
@@ -210,6 +219,14 @@ public class ChannelViewModel {
 
 	public String getLoginName() {
 		return loginNameProperty().get();
+	}
+
+	public int getSortIndex() {
+		return sortIndexProperty().get();
+	}
+
+	public void setSortIndex(int index) {
+		sortIndexProperty().set(index);
 	}
 
 	public boolean isLive() {

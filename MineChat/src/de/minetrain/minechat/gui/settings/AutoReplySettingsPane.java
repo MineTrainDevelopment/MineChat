@@ -1,5 +1,6 @@
 package de.minetrain.minechat.gui.settings;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
@@ -67,8 +68,9 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 		addFunctionsBarItem(editAutoReplyButton);
 		addFunctionsBarItem(deleteAutoReplyButton);
 
-		autoReplyTable.getItems().setAll(Main.getChannelManager().channelsProperty().get().stream()
-				.flatMap(channel -> channel.getAutoReplies().stream())
-				.toList());
+		autoReplyTable.getItems().setAll(Main.getChannelManager().getChannelViewModels().stream()
+			.sorted(Comparator.comparing(ChannelViewModel::getChannelName, String.CASE_INSENSITIVE_ORDER))
+			.flatMap(channel -> channel.getAutoReplies().stream().sorted(Comparator.comparing(AutoReplyViewModel::getUuid)))
+			.toList());
 	}
 }
