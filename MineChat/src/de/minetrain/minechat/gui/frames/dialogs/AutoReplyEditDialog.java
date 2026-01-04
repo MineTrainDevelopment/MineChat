@@ -3,6 +3,7 @@ package de.minetrain.minechat.gui.frames.dialogs;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import de.minetrain.minechat.data.objectdata.AutoReply;
 import de.minetrain.minechat.gui.input.ChatInputField;
@@ -69,7 +70,15 @@ public class AutoReplyEditDialog extends MineDialog<AutoReply> {
 		triggerPatternField = new TextField();
 		triggerPatternField.setPromptText("Trigger pattern (Regex)");
 		triggerPatternField.setText(autoReply.getPattern());
-		// TODO regex validation
+		triggerPatternField.focusedProperty().addListener((_, _, isNowFocused) -> {
+			if (!isNowFocused.booleanValue()) {
+				try {
+					Pattern.compile(triggerPatternField.getText());
+				} catch (Exception e) {
+					triggerPatternField.setText(Pattern.quote(triggerPatternField.getText()));
+				}
+			}
+		});
 		contentRoot.add(triggerPatternField, 0, 2, 3, 1);
 
 		replyMessageArea = new ChatInputField();

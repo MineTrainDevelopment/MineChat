@@ -3,6 +3,9 @@ package de.minetrain.minechat.gui.settings;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
+import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.enums.AutoReplyState;
+import de.minetrain.minechat.gui.panes.TooltipTableCell;
 import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.Main;
@@ -13,6 +16,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 
 public class AutoReplySettingsPane extends SettingsContentPane {
@@ -25,6 +29,8 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 		setCenter(autoReplyTable);
 
 		CheckBox onlyObserveActiveChannel = new CheckBox("Only observe active channel");
+		onlyObserveActiveChannel.setSelected(Settings.autoReplyState == AutoReplyState.CURRENT_TAB);
+		onlyObserveActiveChannel.selectedProperty().addListener((_, _, newVal) -> Settings.setAutoReplyState(newVal.booleanValue() ? AutoReplyState.CURRENT_TAB : AutoReplyState.ALL));
 		addAddtionalSettingsPane(onlyObserveActiveChannel);
 
 		Button addAutoReplyButton = new Button("Add");
@@ -47,7 +53,6 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 				autoReplyTable.getItems().remove(autoReplyViewModel);
 				autoReplyTable.getSelectionModel().clearSelection();
 			}
-			autoReplyTable.requestFocus();
 		});
 		deleteAutoReplyButton.disableProperty().bind(autoReplyTable.getSelectionModel().selectedItemProperty().isNull());
 		addFunctionsBarItem(addAutoReplyButton);
@@ -76,10 +81,12 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 		patternColumn.setPrefWidth(100D);
 		patternColumn.setCellValueFactory(data -> data.getValue().patternProperty());
 		patternColumn.setComparator(Comparator.comparing(Pattern::pattern, String.CASE_INSENSITIVE_ORDER));
+		patternColumn.setCellFactory(TooltipTableCell.forTableColumn());
 		TableColumn<AutoReplyViewModel, String> messageColumn = new TableColumn<>("Message");
 		messageColumn.setPrefWidth(300D);
 		messageColumn.setCellValueFactory(data -> data.getValue().outputProperty().map(output -> String.join("; ", output)));
 		messageColumn.setComparator(String.CASE_INSENSITIVE_ORDER);
+		messageColumn.setCellFactory(TooltipTableCell.forTableColumn());
 		autoReplyTable.getColumns().add(enabledColumn);
 		autoReplyTable.getColumns().add(channelColumn);
 		autoReplyTable.getColumns().add(patternColumn);
@@ -102,8 +109,10 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 				if (empty || item == null) {
 					setText(null);
 					setGraphic(null);
+					setTooltip(null);
 				} else {
 					setText(item);
+					setTooltip(new Tooltip(item));
 					AutoReplyViewModel rowItem = getTableRow().getItem();
 					if (rowItem != null && rowItem.getChannel() != null) {
 						imageView.setImage(rowItem.getChannel().getProfileImageSmall());
