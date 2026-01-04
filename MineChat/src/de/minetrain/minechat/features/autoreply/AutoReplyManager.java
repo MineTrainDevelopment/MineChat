@@ -1,76 +1,50 @@
 package de.minetrain.minechat.features.autoreply;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Instant;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.AutoReplyState;
-import de.minetrain.minechat.data.DatabaseManager;
+import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
+import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
+import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
+import de.minetrain.minechat.twitch.MessageManager;
+import de.minetrain.minechat.twitch.TwitchManager;
+import de.minetrain.minechat.utils.OutboundChatMessage;
 
 public class AutoReplyManager {
-	/** ChannelID, (trigger, autoReply) */
-	private static Map<String, HashMap<String, AutoReply>> autoReplys = new HashMap<>();
 
-	public AutoReplyManager() {
-		DatabaseManager.getAutoReply().getAll();
-	}
-
-	public static void addAutoReply(AutoReply autoReply){
-		autoReplys.computeIfAbsent(autoReply.getChannelId(), k -> new HashMap<>());
-		autoReplys.get(autoReply.getChannelId()).put(autoReply.getTrigger(), autoReply);
-
-	}
-
-	public static void deleteAutoReply(AutoReply autoReply){
-		autoReplys.computeIfAbsent(autoReply.getChannelId(), k -> new HashMap<>());
-		HashMap<String, AutoReply> channelReplys = autoReplys.get(autoReply.getChannelId());
-
-		if(channelReplys.containsKey(autoReply.getTrigger())){
-			channelReplys.remove(autoReply.getTrigger());
-			DatabaseManager.getAutoReply().remove(autoReply.getUuid());
-		}
-
-	}
-
-	public static void recordMessage(TwitchMessage message){
-		if(!autoReplys.containsKey(message.getChannelId())){
+	public void handleMessage(String channelId, String messageId, String message, Instant timestamp) {
+		if (Settings.autoReplyState == AutoReplyState.CURRENT_TAB && !Objects.equals(Main.getChannelManager().getActiveChanneldId(), channelId)) {
 			return;
 		}
 
-		if (Settings.autoReplyState.equals(AutoReplyState.CURRENT_TAB)
-				&& !Objects.equals(Main.getChannelManager().getActiveChanneldId(), message.getChannelId())) {
+		ChannelViewModel channelViewModel = Main.getChannelManager().getChannelViewModel(channelId);
+		channelViewModel.getAutoReplies().stream()
+			.filter(AutoReplyViewModel::isEnabled)
+			.filter(arvm -> arvm.getPattern().matcher(message).matches())
+			.forEach(arvm -> tryFire(arvm, messageId, timestamp));
+	}
+
+	private void tryFire(AutoReplyViewModel autoReply, String messageId, Instant timestamp) {
+		if(autoReply.getLastFired().plusSeconds(autoReply.getDelay()).isAfter(timestamp)) {
 			return;
 		}
 
-		List<String> usedTrigger = getAutoReplyTrigger(message.getChannelId()).stream()
-	        .filter(word -> message.getMessage().toLowerCase().contains(word.toLowerCase()))
-	        .collect(Collectors.toList());
+		autoReply.getLastMessageHits().removeIf(time -> time.plusSeconds(60).isBefore(timestamp));
+		autoReply.getLastMessageHits().add(timestamp);
+		if (autoReply.getLastMessageHits().size() < autoReply.getMessagesPerMinute()) {
+			return;
+		}
 
-		usedTrigger.forEach(trigger -> autoReplys.get(message.getChannelId()).get(trigger).fire(message));
+		autoReply.setLastFired(timestamp);
+		autoReply.getLastMessageHits().clear();
 
+		String channelId = autoReply.getChannel().getChannelId();
+		ChannelActions channelActions = Main.getChannelManager().getChannelActions(channelId);
+		ChannelViewModel cvm = Main.getChannelManager().getChannelViewModel(channelId);
+		OutboundChatMessage chatMessage = new OutboundChatMessage(channelActions, cvm, TwitchManager.ownerChannelName, autoReply.getRandomOutput(), autoReply.isReply() ?  messageId : null);
+		MessageManager.sendMessage(chatMessage);
 	}
-
-	/**
-	 * ChannelId, replys
-	 * @return
-	 */
-	public static Map<String, HashMap<String, AutoReply>> getAutoReplys(){
-		return autoReplys;
-	}
-
-	/**
-	 * @return All Triggers from a channel.
-	 */
-	public static List<String> getAutoReplyTrigger(String channelId){
-		autoReplys.computeIfAbsent(channelId, k -> new HashMap<>());
-		return autoReplys.get(channelId).entrySet().stream()
-		        .map(Map.Entry::getKey)
-		        .collect(Collectors.toList());
-	}
-
 }

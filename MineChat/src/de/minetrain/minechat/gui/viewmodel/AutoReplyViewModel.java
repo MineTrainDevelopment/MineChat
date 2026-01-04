@@ -1,6 +1,8 @@
 package de.minetrain.minechat.gui.viewmodel;
 
+import java.time.Instant;
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -8,22 +10,29 @@ import de.minetrain.minechat.data.objectdata.AutoReply;
 import de.minetrain.minechat.main.Main;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 
 public class AutoReplyViewModel {
+
+	private static final Random RANDOM = new Random();
 
 	private ObjectProperty<UUID> uuidProperty;
 	private ObjectProperty<ChannelViewModel> channelProperty;
 	private BooleanProperty enabledProperty;
 	private IntegerProperty messagesPerMinuteProperty;
-	/// Delay in seconds before the auto-reply is sent
+	/// Delay in seconds before the next auto-reply is sent
 	private IntegerProperty delayProperty;
 	private ObjectProperty<Pattern> patternProperty;
 	private BooleanProperty replyProperty;
 	private ObjectProperty<String[]> outputProperty;
+	private ObjectProperty<Instant> lastFiredProperty;
+	private ListProperty<Instant> lastMessageHitsProperty;
 
 	public static AutoReplyViewModel of(AutoReply autoReply, ChannelViewModel channel) {
 		AutoReplyViewModel autoReplyViewModel = new AutoReplyViewModel();
@@ -158,8 +167,43 @@ public class AutoReplyViewModel {
 		return outputProperty().get();
 	}
 
+	public String getRandomOutput() {
+		String[] output = getOutput();
+		return output[RANDOM.nextInt(output.length)];
+	}
+
 	public void setOutput(String... output) {
 		outputProperty().set(output);
+	}
+
+	public ObjectProperty<Instant> lastFiredProperty() {
+		if (lastFiredProperty == null) {
+			lastFiredProperty = new SimpleObjectProperty<>(this, "lastFired");
+		}
+		return lastFiredProperty;
+	}
+
+	public Instant getLastFired() {
+		return lastFiredProperty().get();
+	}
+
+	public void setLastFired(Instant lastFired) {
+		lastFiredProperty().set(lastFired);
+	}
+
+	public ListProperty<Instant> lastMessageHitsProperty() {
+		if (lastMessageHitsProperty == null) {
+			lastMessageHitsProperty = new SimpleListProperty<>(this, "lastMessageHits");
+		}
+		return lastMessageHitsProperty;
+	}
+
+	public ObservableList<Instant> getLastMessageHits() {
+		return lastMessageHitsProperty().get();
+	}
+
+	public void setLastMessageHits(ObservableList<Instant> hits) {
+		lastMessageHitsProperty().set(hits);
 	}
 
 	public void apply(AutoReply autoReply) {

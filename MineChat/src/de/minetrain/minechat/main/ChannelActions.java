@@ -8,7 +8,6 @@ import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
 import de.minetrain.minechat.twitch.obj.GreetingsManager;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 import javafx.scene.image.Image;
@@ -25,14 +24,6 @@ public class ChannelActions {
 	private final Channel channel;
 
 	private String chatRole = "viwer";
-
-
-	/**
-	 * This needs to be replaced, and is just here, so i don�t lose track of it.
-	 * <br> may move it to a channel message handler of some sort.
-	 * <p> thats also the reason, this has no getter/setters and is public.
-	 */
-	public TwitchMessage replyMessage = null;
 
 	public ChannelActions(Channel channel) {
 		this.channel = channel;

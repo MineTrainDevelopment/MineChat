@@ -53,7 +53,7 @@ public class AsyncMessageHandler {
 	///
 	/// @param message The out bound chat message to be sent.
 	public void queueMessage(OutboundChatMessage message) {
-		writeQueue(() -> queuedSends.add(new QueuedMessage(message, getChannelExecutor(message.getChannel().getChannelId()).submit(() -> sendMessage(message)))));
+		writeQueue(() -> queuedSends.add(new QueuedMessage(message, getChannelExecutor(message.getChannelViewModel().getChannelId()).submit(() -> sendMessage(message)))));
 	}
 
 	/// An observable property representing the size of the message queue.
@@ -95,16 +95,14 @@ public class AsyncMessageHandler {
 		}
 		writeQueue(() -> queuedSends.removeIf(queuedMessage -> queuedMessage.message() == chatMessage));
 		LOG.info("Sending message: {}", chatMessage.getMessage());
-		TwitchMessage replyMessage = chatMessage.getChannel().replyMessage;
 		try {
-			TwitchHelper.sendMessage(chatMessage.getChannel().getChannelId(), chatMessage.getMessage(),
-				replyMessage != null ? replyMessage.getMessageId() : null).thenAccept(sentMessage -> {
-					if (sentMessage.getDropReason() != null) {
-						LOG.warn("Message was dropped: {} Reason: {}", chatMessage.getMessage(), sentMessage.getDropReason().getMessage());
-					} else {
-						LOG.info("Message sent successfully: {}", chatMessage.getMessage());
-					}
-				}).get();
+			TwitchHelper.sendMessage(chatMessage.getChannelViewModel().getChannelId(), chatMessage.getMessage(), chatMessage.getReplyId()).thenAccept(sentMessage -> {
+				if (sentMessage.getDropReason() != null) {
+					LOG.warn("Message was dropped: {} Reason: {}", chatMessage.getMessage(), sentMessage.getDropReason().getMessage());
+				} else {
+					LOG.info("Message sent successfully: {}", chatMessage.getMessage());
+				}
+			}).get();
 			chatMessage.setSendTime(System.currentTimeMillis());
 			writeHistory(() -> messageHistory.offerLast(chatMessage));
 		} catch (InterruptedException e) {

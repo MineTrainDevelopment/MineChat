@@ -44,7 +44,7 @@ public class InputFieldPane extends BorderPane {
 			// TODO: Add message to statistics and history
 //			getStatistics().addMessage(message.getSenderName(), channel.getChannelId(), message.getMessage());
 //			getMessageHistory().addSendedMessages(message.getMessageRaw());
-			MessageManager.sendMessage(Main.getChannelManager().getActiveChannelActions(), Main.getChannelManager().getActiveChannel(), inputField.getPlainText());
+			MessageManager.sendMessage(Main.getChannelManager().getActiveChannelActions(), Main.getChannelManager().getActiveChannel(), inputField.getPlainText(), null);
 			inputField.clear();
 		});
 

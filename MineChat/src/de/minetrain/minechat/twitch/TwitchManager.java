@@ -92,20 +92,24 @@ public class TwitchManager {
 		twitch = buildClient(oAuth2Token);
 
 //		Main.LOADINGBAR.setProgress("Join Twitch channels Helix", 60);
-		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchListener());
 		ownerTwitchUser = new TwitchUserObj(twitch.getHelix().getUsers(null, null, null).execute().getUsers().getFirst());
 		ownerChannelName = ownerTwitchUser.getLoginName();
 	}
 
-	public static void init(String oAuth2Token) {
+	public static TwitchManager init(String oAuth2Token) {
 		if(instance != null) {
 			LOG.warn("TwitchManager is already initialized and will be recreated!");
 		}
 		instance = new TwitchManager(oAuth2Token);
+		return instance;
 	}
 
 	public static TwitchManager instance() {
 		return instance;
+	}
+
+	public void registerListener(Object listener) {
+		twitch.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(listener);
 	}
 
 	public void joinChannel(String channeldId) {

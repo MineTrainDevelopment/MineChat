@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
 
-import de.minetrain.minechat.data.databases.AutoReplyDatabase;
 import de.minetrain.minechat.data.databases.CountVariableDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
 
@@ -17,13 +16,11 @@ public class DatabaseManager {
 	public static final String DATABASE_URL = "jdbc:sqlite:data/data.db";
 	public static Connection connection = null;
 
-	private static AutoReplyDatabase autoReply;
 	private static EmoteDatabase emote;
 	private static CountVariableDatabase countVariableDatabase;
 
 	public DatabaseManager() {
 		try {
-			autoReply = new AutoReplyDatabase();
 			emote = new EmoteDatabase();
 			countVariableDatabase = new CountVariableDatabase();
 		} catch (SQLException ex) {
@@ -89,11 +86,6 @@ public class DatabaseManager {
 		} catch (Exception e) {
 			logger.error("Error executing database action", e);
 		}
-	}
-
-
-	public static AutoReplyDatabase getAutoReply() {
-		return autoReply;
 	}
 
 	public static EmoteDatabase getEmote() {

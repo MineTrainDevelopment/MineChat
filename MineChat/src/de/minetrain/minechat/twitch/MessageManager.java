@@ -32,13 +32,13 @@ public class MessageManager {
 	/// @param channelViewModel The channel view model associated with the channel.
 	/// @param message The message to be sent.
 	/// @see [MessageManager#sendMessage(OutboundChatMessage)]
-	public static void sendMessage(ChannelActions channel, ChannelViewModel channelViewModel, String message) {
+	public static void sendMessage(ChannelActions channel, ChannelViewModel channelViewModel, String message, String replyId) {
 		if (message.length() > MAX_MESSAGE_LENGTH) {
-			splitString(message).forEach(newMessage -> sendMessage(channel, channelViewModel, newMessage));
+			splitString(message).forEach(newMessage -> sendMessage(channel, channelViewModel, newMessage, replyId));
 			return;
 		}
 
-		sendMessage(new OutboundChatMessage(channel, channelViewModel, TwitchManager.ownerChannelName, message));
+		sendMessage(new OutboundChatMessage(channel, channelViewModel, TwitchManager.ownerChannelName, message, replyId));
 	}
 
 	/// Queues an outbound chat message for sending.
@@ -55,7 +55,7 @@ public class MessageManager {
 	/// @see [MessageManager#sendMessage(ChannelActions, ChannelViewModel, String)]
 	public static void sendMessage(MacroViewModel macro) {
 		try {
-			sendMessage(Main.getChannelManager().getChannelActions(macro.getChannel().getChannelId()), macro.getChannel(), macro.getRandomOutput());
+			sendMessage(Main.getChannelManager().getChannelActions(macro.getChannel().getChannelId()), macro.getChannel(), macro.getRandomOutput(), null);
 		} catch (Exception ex) {
 			LOG.error("Unable to send macro message: " + ex.getMessage(), ex);
 		}

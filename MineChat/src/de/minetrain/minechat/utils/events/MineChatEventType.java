@@ -3,21 +3,9 @@ package de.minetrain.minechat.utils.events;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.OutboundChatMessage;
 
 public enum MineChatEventType{
-	INCOMING_MESSAGE {
-        @Override
-        public void fireEvent(MineChatEvents event, Object obj) {
-            if (!(obj instanceof TwitchMessage)) {
-                throwFireError("Can't fire onIncomingMessageEvent!", obj, TwitchMessage.class);
-                return;
-            }
-
-            event.onIncomingMessageEvent((TwitchMessage) obj);
-        }
-    },
 
 	SENT_MESSAGE {
 		@Override
@@ -54,18 +42,8 @@ public enum MineChatEventType{
 
 	public static MineChatEventType[] getAllEvents(){
 		return new MineChatEventType[]{
-				INCOMING_MESSAGE,
 				SENT_MESSAGE,
 				EXECUTE_MACRO
-		};
-	}
-
-	/**
-	 * @return {@link MineChatEventType#INCOMING_MESSAGE} <br> {@link MineChatEventType#MESSAGE_HIGHLITE}
-	 */
-	public static MineChatEventType[] getAllMessageEvents(){
-		return new MineChatEventType[]{
-				INCOMING_MESSAGE,
 		};
 	}
 }

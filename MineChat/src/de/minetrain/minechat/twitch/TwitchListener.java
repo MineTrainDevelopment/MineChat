@@ -45,11 +45,9 @@ import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.twitch.obj.TwitchMessage;
 import de.minetrain.minechat.utils.WebUtils;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import de.minetrain.minechat.utils.audio.DefaultAudioFiles;
-import de.minetrain.minechat.utils.events.MineChatEventType;
 import javafx.application.Platform;
 
 /**
@@ -66,8 +64,14 @@ public class TwitchListener {
 
 	private static final Pattern SPLIT_PATTERN = Pattern.compile("\\s+");
 
+	private AutoReplyManager autoReplyManager;
+
 	public static int messagesTEMP = 0;
 //	private LiveNotification liveNotification = new LiveNotification();
+
+	public TwitchListener(AutoReplyManager autoReplyManager) {
+		this.autoReplyManager = autoReplyManager;
+	}
 
 	@EventSubscriber
 	public void onMidrollRequest(MidrollRequestEvent event){
@@ -90,10 +94,10 @@ public class TwitchListener {
 	/// @param event The [ChannelChatMessageEvent] object containing information about the message.
 	@EventSubscriber
 	public void onChannelMessage(ChannelChatMessageEvent event) {
+		Instant timestamp = Instant.now();
 		LOG.debug("EventSub ChannelMessage: {} | {}", event.getChatterUserName(), event.getMessage().getText());
 		ChannelActions channel = Main.getChannelManager().getChannelActions(event.getBroadcasterUserId());
 		channel.getStatistics().addMessage(event.getChatterUserName(), event.getChatterUserId(), event.getMessage().getText());
-		TwitchMessage twitchMessage = new TwitchMessage(event);
 
 		if (event.getChatterUserId().equals(TwitchHelper.getSelfUser().getUserId())) {
 			// TODO unnecessary?
@@ -103,17 +107,17 @@ public class TwitchListener {
 //			}
 		}
 
-		ChatMessage chatMessage = createChatMessage(event);
+		ChatMessage chatMessage = createChatMessage(event, timestamp);
 		Platform.runLater(() ->{
 			ChannelViewModel cvm = Main.getChannelManager().getChannelViewModel(event.getBroadcasterUserId());
 			int index = EclipseStoreKeeper.root().messages().addMessage(chatMessage);
 			chatMessage.setFirstSessionMessage(cvm.getParticipatedUserIds().add(chatMessage.getSenderId()));
 			cvm.getMessages().notifyAdd(index);
 		});
-		AutoReplyManager.recordMessage(twitchMessage);
+		autoReplyManager.handleMessage(event.getBroadcasterUserId(), event.getMessageId(), event.getMessage().getCleanedText(), timestamp);
 	}
 
-	private static ChatMessage createChatMessage(ChannelChatMessageEvent event) {
+	private static ChatMessage createChatMessage(ChannelChatMessageEvent event, Instant timestamp) {
 		List<ChatMessageToken> tokenList = new ArrayList<>();
 		event.getMessage().getFragments().stream().forEach(fragment -> createChatMessageToken(event.getBroadcasterUserId(), fragment, tokenList));
 		ChatMessageToken[] tokens = tokenList.toArray(ChatMessageToken[]::new);
@@ -128,7 +132,7 @@ public class TwitchListener {
 				event.getChatterUserId(),
 				event.getChatterUserName(),
 				event.getColor(),
-				Instant.now(),
+				timestamp,
 				reply != null ? reply.getParentMessageId() : null,
 				mapMessageType(event.getMessageType()),
 				tokens,
@@ -189,8 +193,8 @@ public class TwitchListener {
 
 		ChannelActions channel = Main.getChannelManager().getChannelActions(event.getChannel().getId());
 		channel.getStatistics().addMessage(event.getUser().getName(), event.getUser().getId(), event.getMessage());
-		TwitchMessage twitchMessage = new TwitchMessage(event.getMessageEvent(), event.getMessage());
-		Main.eventManager.fireEvent(MineChatEventType.INCOMING_MESSAGE, twitchMessage);
+//		TwitchMessage twitchMessage = new TwitchMessage(event.getMessageEvent(), event.getMessage());
+//		Main.eventManager.fireEvent(MineChatEventType.INCOMING_MESSAGE, twitchMessage);
 
 
 		if(event.getUser().getName().equals(TwitchManager.ownerChannelName)){
@@ -209,7 +213,7 @@ public class TwitchListener {
 //		}
 
 //		channel.displayMessage(twitchMessage);
-		AutoReplyManager.recordMessage(twitchMessage);
+//		AutoReplyManager.recordMessage(twitchMessage);
 	}
 
 

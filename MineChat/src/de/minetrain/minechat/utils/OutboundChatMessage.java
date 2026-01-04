@@ -34,16 +34,15 @@ public class OutboundChatMessage {
 	private final String message;
 	private final String messageRaw;
 	private final String senderNamem;
-	private final ChannelActions channel;
 	private final ChannelViewModel channelViewModel;
+	private final String replyId;
 	private long sendTime;
 
-	public OutboundChatMessage(ChannelActions channel, ChannelViewModel channelViewModel, String senderNamem, String message) {
-		this.channel = channel;
+	public OutboundChatMessage(ChannelActions channel, ChannelViewModel channelViewModel, String senderNamem, String message, String replyId) {
 		this.channelViewModel = channelViewModel;
 		this.messageRaw = message;
 		this.senderNamem = senderNamem;
-
+		this.replyId = replyId;
 
 //		https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/time/format/DateTimeFormatter.html#patterns
 		if(message.contains("{")){
@@ -141,16 +140,16 @@ public class OutboundChatMessage {
 		return senderNamem;
 	}
 
-	public ChannelActions getChannel() {
-		return channel;
-	}
-
 	public ChannelViewModel getChannelViewModel() {
 		return channelViewModel;
 	}
 
 	public String getMessageRaw() {
 		return messageRaw;
+	}
+
+	public String getReplyId() {
+		return replyId;
 	}
 
 	public long getSendTime() {
