@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class AutoReplyViewModel {
@@ -193,7 +194,7 @@ public class AutoReplyViewModel {
 
 	public ListProperty<Instant> lastMessageHitsProperty() {
 		if (lastMessageHitsProperty == null) {
-			lastMessageHitsProperty = new SimpleListProperty<>(this, "lastMessageHits");
+			lastMessageHitsProperty = new SimpleListProperty<>(this, "lastMessageHits", FXCollections.observableArrayList());
 		}
 		return lastMessageHitsProperty;
 	}

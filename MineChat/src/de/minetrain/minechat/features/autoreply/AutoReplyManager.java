@@ -28,7 +28,8 @@ public class AutoReplyManager {
 	}
 
 	private void tryFire(AutoReplyViewModel autoReply, String messageId, Instant timestamp) {
-		if(autoReply.getLastFired().plusSeconds(autoReply.getDelay()).isAfter(timestamp)) {
+		Instant lastFired = autoReply.getLastFired();
+		if(lastFired != null && lastFired.plusSeconds(autoReply.getDelay()).isAfter(timestamp)) {
 			return;
 		}
 
