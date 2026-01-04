@@ -1,6 +1,7 @@
 package de.minetrain.minechat.data.objectdata;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AutoReply {
@@ -59,6 +60,26 @@ public class AutoReply {
 
 	public boolean isReply() {
 		return reply;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(uuid);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		AutoReply other = (AutoReply) obj;
+		return Objects.equals(uuid, other.uuid);
 	}
 
 	public Builder buildCopy() {

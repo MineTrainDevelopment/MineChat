@@ -1,5 +1,7 @@
 package de.minetrain.minechat.data.objectdata;
 
+import java.util.Objects;
+
 import de.minetrain.minechat.utils.audio.AudioVolume;
 
 public class Channel  {
@@ -81,6 +83,26 @@ public class Channel  {
 
 	public String getProfileImageUrl() {
 		return profileImageUrl;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(channelId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Channel other = (Channel) obj;
+		return Objects.equals(channelId, other.channelId);
 	}
 
 	public Builder buildCopy() {

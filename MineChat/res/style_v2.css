@@ -20,6 +20,8 @@
 	-fx-outer-border: black;
 	-fx-inner-border: black;
 
+	-fx-selection-bar-non-focused: derive(-fx-accent, -30%);
+
 	-fx-font-family: "Inter";
 	-fx-font-style: normal;
 	-fx-font-weight: bold;
@@ -98,6 +100,11 @@
 	-fx-padding: 0;
 }
 
+.table-view,
+.tree-table-view {
+    -fx-table-cell-border-color: transparent;
+}
+
 .table-view .column-header-background,
 .tree-table-view > .column-header-background {
     -fx-background-color: -fx-body-color;
@@ -122,6 +129,40 @@
 .tree-table-view .column-header .label {
     -fx-alignment: center-left;
 	-fx-padding: 0 0 0 5px;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:focused,
+.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
+.tree-table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:focused,
+.table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused,
+.tree-table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell > .tree-table-cell:focused {
+    -fx-background-color: -fx-background;
+    -fx-background-insets: 0;
+}
+
+/* Selected rows */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected,
+.tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled:selected,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell .table-cell:selected,
+.tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell .tree-table-cell:selected {
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: -fx-hover-accent;
+}
+
+/* Selected when control is not focused */
+.list-cell:filled:selected,
+.tree-cell:filled:selected,
+.table-row-cell:filled:selected,
+.tree-table-row-cell:filled:selected,
+.table-row-cell:filled > .table-cell:selected,
+.tree-table-row-cell:filled > .tree-table-cell:selected {
+    -fx-table-cell-border-color: transparent;
 }
 
 .combo-box-popup > .list-view {

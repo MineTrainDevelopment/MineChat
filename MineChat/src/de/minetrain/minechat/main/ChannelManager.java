@@ -223,6 +223,10 @@ public class ChannelManager {
 		});
 	}
 
+	public void updateAutoReply(AutoReplyViewModel autoReply) {
+		getAutoReplies().addAutoReply(autoReply.toAutoReply());
+	}
+
 	public boolean deleteAutoReply(AutoReplyViewModel autoReply) {
 		autoReply.getChannel().getAutoReplies().remove(autoReply);
 		return getAutoReplies().removeAutoReply(autoReply.getUuid());

@@ -106,7 +106,7 @@ public class EmoteManager {
 
 	public Emote getBttvEmoteByName(String channelId, String emoteName) {
 		Map<String, Emote> nameToIdMap = getChannelBttvNameToEmoteMap(channelId);
-		return nameToIdMap.get(emoteName);
+		return nameToIdMap != null ? nameToIdMap.get(emoteName) : null;
 	}
 
 	public Image getBadgeImage1x(String channelId, BadgeId badgeId) {
