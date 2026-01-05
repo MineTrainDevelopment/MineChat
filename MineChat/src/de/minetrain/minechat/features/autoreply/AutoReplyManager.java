@@ -10,8 +10,6 @@ import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
-import de.minetrain.minechat.twitch.TwitchManager;
-import de.minetrain.minechat.utils.OutboundChatMessage;
 
 public class AutoReplyManager {
 
@@ -45,7 +43,6 @@ public class AutoReplyManager {
 		String channelId = autoReply.getChannel().getChannelId();
 		ChannelActions channelActions = Main.getChannelManager().getChannelActions(channelId);
 		ChannelViewModel cvm = Main.getChannelManager().getChannelViewModel(channelId);
-		OutboundChatMessage chatMessage = new OutboundChatMessage(channelActions, cvm, TwitchManager.ownerChannelName, autoReply.getRandomOutput(), autoReply.isReply() ?  messageId : null);
-		MessageManager.sendMessage(chatMessage);
+		MessageManager.sendMessage(channelActions, cvm, autoReply.getRandomOutput(), autoReply.isReply() ?  messageId : null);
 	}
 }

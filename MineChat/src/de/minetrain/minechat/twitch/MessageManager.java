@@ -2,10 +2,14 @@ package de.minetrain.minechat.twitch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.CountVariable;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.main.ChannelActions;
@@ -20,6 +24,9 @@ public class MessageManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MessageManager.class);
 	private static final int MAX_MESSAGE_LENGTH = 490;
+	/// A regex pattern to identify count variable placeholders in messages.
+	/// The pattern matches strings like {COUNT_X_VARIABLE}, {C_DISPLAY_VARIABLE}, etc.
+	private static final Pattern COUNT_VARIABLE_PATTERN = Pattern.compile("\\{C(?:OUNT)?_(?:(\\d+|D(?:ISPLAY)?)_)?([A-Z]+)\\}");
 
 	private static MessageManager instance = new MessageManager();
 
@@ -33,19 +40,20 @@ public class MessageManager {
 	/// @param message The message to be sent.
 	/// @see [MessageManager#sendMessage(OutboundChatMessage)]
 	public static void sendMessage(ChannelActions channel, ChannelViewModel channelViewModel, String message, String replyId) {
-		if (message.length() > MAX_MESSAGE_LENGTH) {
-			splitString(message).forEach(newMessage -> sendMessage(channel, channelViewModel, newMessage, replyId));
+		String processedMessage = processMessageString(message);
+		if (processedMessage.length() > MAX_MESSAGE_LENGTH) {
+			splitString(processedMessage).forEach(newMessage -> sendMessage(channel, channelViewModel, newMessage, replyId));
 			return;
 		}
 
-		sendMessage(new OutboundChatMessage(channel, channelViewModel, TwitchManager.ownerChannelName, message, replyId));
+		sendMessage(new OutboundChatMessage(channel, channelViewModel, TwitchManager.ownerChannelName, processedMessage, replyId));
 	}
 
 	/// Queues an outbound chat message for sending.
 	///
 	/// @param chatMessage The outbound chat message to be sent.
 	/// @see [AsyncMessageHandler#queueMessage(OutboundChatMessage)]
-	public static void sendMessage(OutboundChatMessage chatMessage) {
+	protected static void sendMessage(OutboundChatMessage chatMessage) {
 		instance().getMessageHandler().queueMessage(chatMessage);
 	}
 
@@ -73,6 +81,24 @@ public class MessageManager {
 	/// @return The current queue size.
 	public static int getQueueSize() {
 		return queueSizeProperty().get();
+	}
+
+	private static String processMessageString(String rawMessage) {
+		Matcher matcher = COUNT_VARIABLE_PATTERN.matcher(rawMessage);
+		StringBuilder processedMessage = new StringBuilder();
+		while (matcher.find()) {
+			String action = matcher.group(1);
+			matcher.appendReplacement(processedMessage, Long.toString(processCountVariable(matcher.group(2), action != null ? action : "1")));
+		}
+		matcher.appendTail(processedMessage);
+		return processedMessage.toString();
+	}
+
+	private static long processCountVariable(String variable, String action) {
+		CountVariable countVariable = action.startsWith("D")
+			? EclipseStoreKeeper.root().countVariables().getOrCreateCountVariable(variable)
+			: EclipseStoreKeeper.root().countVariables().getAndIncrementCountVariable(variable, Integer.parseInt(action));
+		return countVariable.getValue();
 	}
 
 	/// Splits a long message into smaller chunks that fit within the maximum

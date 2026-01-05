@@ -7,6 +7,7 @@ import org.eclipse.serializer.collections.lazy.LazyHashMap;
 import de.minetrain.minechat.data.objectdata.AutoReplies;
 import de.minetrain.minechat.data.objectdata.Badges;
 import de.minetrain.minechat.data.objectdata.Channels;
+import de.minetrain.minechat.data.objectdata.CountVariables;
 import de.minetrain.minechat.data.objectdata.Credentials;
 import de.minetrain.minechat.data.objectdata.Emotes;
 import de.minetrain.minechat.data.objectdata.Macros;
@@ -25,6 +26,7 @@ public class EclipseStoreRoot {
 	private UserSettings userSettings;
 	private Macros macros;
 	private AutoReplies autoReplies;
+	private CountVariables countVariables;
 
 	private void addChannelStatistics(String channelId, ChannelStatistics statistics) {
 		getChannelStatics().put(channelId, statistics);
@@ -105,6 +107,14 @@ public class EclipseStoreRoot {
 			EclipseStoreKeeper.storeManager().store(this);
 		}
 		return autoReplies;
+	}
+
+	public CountVariables countVariables() {
+		if (countVariables == null) {
+			countVariables = new CountVariables();
+			EclipseStoreKeeper.storeManager().store(this);
+		}
+		return countVariables;
 	}
 
 	private Map<String, ChannelStatistics> getChannelStatics() {

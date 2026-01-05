@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
 
-import de.minetrain.minechat.data.databases.CountVariableDatabase;
 import de.minetrain.minechat.data.databases.EmoteDatabase;
 
 public class DatabaseManager {
@@ -17,12 +16,10 @@ public class DatabaseManager {
 	public static Connection connection = null;
 
 	private static EmoteDatabase emote;
-	private static CountVariableDatabase countVariableDatabase;
 
 	public DatabaseManager() {
 		try {
 			emote = new EmoteDatabase();
-			countVariableDatabase = new CountVariableDatabase();
 		} catch (SQLException ex) {
 			logger.error("Can´t prepare all databases.", ex);
 			System.exit(1);
@@ -90,9 +87,5 @@ public class DatabaseManager {
 
 	public static EmoteDatabase getEmote() {
 		return emote;
-	}
-
-	public static CountVariableDatabase getCountVariableDatabase() {
-		return countVariableDatabase;
 	}
 }
