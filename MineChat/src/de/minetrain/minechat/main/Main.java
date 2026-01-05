@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.data.DatabaseManager;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
@@ -51,9 +50,6 @@ public class Main extends Application {
 	public static boolean isGuiOpen = false;
 
 	public static void test(String[] args) throws Exception {
-		loadingProgressLogging(1, "Initialising database manager");
-		new DatabaseManager();
-
 		loadingProgressLogging(2, "Prepare eclipse store.");
 		EclipseStoreKeeper.init();
 
