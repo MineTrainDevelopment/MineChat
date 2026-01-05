@@ -34,14 +34,18 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 		addAddtionalSettingsPane(onlyObserveActiveChannel);
 
 		Button addAutoReplyButton = new Button("Add");
-		addAutoReplyButton.setOnAction(_ -> Main.getChannelManager().createAutoReply().ifPresent(newAutoReply -> {
-			autoReplyTable.getItems().add(newAutoReply);
-			autoReplyTable.getSelectionModel().select(newAutoReply);
+		addAutoReplyButton.setOnAction(_ -> {
+			Main.getChannelManager().createAutoReply().ifPresent(newAutoReply -> {
+				autoReplyTable.getItems().add(newAutoReply);
+				autoReplyTable.getSelectionModel().select(newAutoReply);
+				autoReplyTable.sort();
+			});
 			autoReplyTable.requestFocus();
-		}));
+		});
 		Button editAutoReplyButton = new Button("Edit");
 		editAutoReplyButton.setOnAction(_ -> {
 			Main.getChannelManager().editAutoReply(autoReplyTable.getSelectionModel().getSelectedItem());
+			autoReplyTable.sort();
 			autoReplyTable.requestFocus();
 		});
 		editAutoReplyButton.disableProperty().bind(autoReplyTable.getSelectionModel().selectedItemProperty().isNull());

@@ -64,6 +64,14 @@ public class CountVariable {
 			return this;
 		}
 
+		public String getName() {
+			return name;
+		}
+
+		public long getValue() {
+			return value;
+		}
+
 		public CountVariable build() {
 			return new CountVariable(name, value);
 		}

@@ -1,7 +1,9 @@
 package de.minetrain.minechat.twitch;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.CountVariable;
+import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.main.ChannelActions;
@@ -81,6 +84,47 @@ public class MessageManager {
 	/// @return The current queue size.
 	public static int getQueueSize() {
 		return queueSizeProperty().get();
+	}
+
+	/// Creates a new count variable through a dialog and adds it to the store.
+	///
+	/// @return An optional containing the created count variable, or empty if creation was cancelled.
+	/// @see [CountVariableEditDialog]
+	public static Optional<CountVariable> createCountVariable() {
+		return new CountVariableEditDialog(CountVariable.builder()).showAndWait().map(editedCountVariable -> {
+			EclipseStoreKeeper.root().countVariables().addCountVariable(editedCountVariable);
+			return editedCountVariable;
+		});
+	}
+
+	/// Edits an existing count variable through a dialog and updates it in the store.
+	///
+	/// @param countVariable The count variable to be edited.
+	/// @return An optional containing the edited count variable, or empty if editing was cancelled.
+	/// @see [CountVariableEditDialog]
+	public static Optional<CountVariable> editCountVariable(CountVariable countVariable) {
+		return new CountVariableEditDialog(countVariable.buildCopy()).showAndWait().map(editedCountVariable -> {
+			if (!editedCountVariable.getName().equals(countVariable.getName())) {
+				EclipseStoreKeeper.root().countVariables().removeCountVariable(countVariable.getName());
+			}
+			EclipseStoreKeeper.root().countVariables().addCountVariable(editedCountVariable);
+			return editedCountVariable;
+		});
+	}
+
+	/// Deletes a count variable from the store.
+	///
+	/// @param countVariable The count variable to be deleted.
+	/// @return True if the count variable was successfully deleted, false otherwise.
+	public static boolean deleteCountVariable(CountVariable countVariable) {
+		return EclipseStoreKeeper.root().countVariables().removeCountVariable(countVariable.getName()) != null;
+	}
+
+	/// Retrieves all count variables from the store.
+	///
+	/// @return A collection of all count variables.
+	public static Collection<CountVariable> getAllCountVariables() {
+		return EclipseStoreKeeper.root().countVariables().getAllCountVariables();
 	}
 
 	private static String processMessageString(String rawMessage) {

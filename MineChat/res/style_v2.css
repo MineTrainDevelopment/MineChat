@@ -165,6 +165,10 @@
     -fx-table-cell-border-color: transparent;
 }
 
+.table-cell {
+    -fx-padding: 0.166667em 0.166667em 0.166667em 5px;
+}
+
 .combo-box-popup > .list-view {
     -fx-background-color: -fx-control-inner-background;
     -fx-background-insets: 0;

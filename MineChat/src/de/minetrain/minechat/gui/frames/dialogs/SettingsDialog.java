@@ -1,5 +1,7 @@
 package de.minetrain.minechat.gui.frames.dialogs;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import de.minetrain.minechat.config.Settings;
@@ -20,12 +22,14 @@ public class SettingsDialog extends MineDialog<Settings> {
 
 	private ObjectProperty<TabButton> selectedTabProperty;
 	private StackPane contentPane;
+	private Map<String, Node> contentPanes;
 
 	public SettingsDialog() {
 		setTitle("Settings");
 		setWidth(800);
 		setHeight(600);
 
+		contentPanes = new HashMap<>();
 		BorderPane dialogRoot = new BorderPane();
 		dialogRoot.getStyleClass().add("settings-dialog");
 		getDialogPane().setContent(dialogRoot);
@@ -66,7 +70,7 @@ public class SettingsDialog extends MineDialog<Settings> {
 		button.selectedProperty().bind(selectedTabProperty().isEqualTo(button));
 		button.setOnAction(_ -> {
 			selectedTabProperty().set(button);
-			contentPane.getChildren().setAll(contentSupplier.get());
+			contentPane.getChildren().setAll(contentPanes.computeIfAbsent(title, _ -> contentSupplier.get()));
 		});
 		return button;
 	}
