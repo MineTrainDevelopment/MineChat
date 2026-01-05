@@ -31,16 +31,6 @@ public final class TwitchHelper {
 		TwitchManager.instance().joinChannel(channelId);
 	}
 
-	@Deprecated
-	public static void leaveChannel(String... names){
-		TwitchManager.instance().leaveChannel(names);
-	}
-
-	@Deprecated
-	public static void leaveAllChannel(){
-		TwitchManager.instance().leaveAllChannel();
-	}
-
 	public static void shutdown() {
 		TwitchManager.instance().shutdown();
 	}

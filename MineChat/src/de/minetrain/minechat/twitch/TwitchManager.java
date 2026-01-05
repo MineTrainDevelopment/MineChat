@@ -118,32 +118,6 @@ public class TwitchManager {
 		twitch.getEventSocket().register(SubscriptionTypes.CHANNEL_CHAT_SETTINGS_UPDATE.prepareSubscription(builder -> builder.broadcasterUserId(channeldId).userId(getSelfUser().getUserId()).build(), null));
 	}
 
-//	public void joinChannelById(String... channelIds){
-//		getTwitchUsers(TwitchApiCallType.ID, channelIds).forEach(channel -> {
-//			if(!channel.isDummy() && !twitch.getChat().getChannels().contains(channel.getLoginName())){
-//				logger.info("Joining channel: "+channel.getLoginName());
-//				twitch.getChat().joinChannel(channel.getLoginName());
-//				twitch.getClientHelper().enableFollowEventListener(channel.getLoginName());
-//			}
-//		});
-//	}
-
-	public void leaveChannel(String... names) {
-		if (names == null || names.length == 0 || String.join("", names).isBlank()) {
-			return;
-		}
-		for (String name : names) {
-			LOG.info("Leaving channel: {}", name);
-			twitch.getChat().leaveChannel(name);
-			twitch.getClientHelper().disableFollowEventListener(name);
-			twitch.getClientHelper().disableStreamEventListener(name);
-		}
-	}
-
-	public void leaveAllChannel(){
-		twitch.getChat().getChannels().forEach(this::leaveChannel);
-	}
-
 	public void shutdown() {
 		LOG.info("Shutting down Twitch client.");
 		twitch.close();

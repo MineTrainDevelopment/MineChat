@@ -98,9 +98,6 @@ public class Main extends Application {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-//		    	DatabaseManager.getChannelStatistics().saveAllChannelStatistics();
-//		    	EclipseStoreTest.getStoreRoot().saveAllChannelStatistics();
-				TwitchHelper.leaveAllChannel();
 				TwitchHelper.shutdown();
 			}
 		});
