@@ -19,8 +19,6 @@ import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
-import de.minetrain.minechat.main.ChannelActions;
-import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
 import de.minetrain.minechat.utils.OutboundChatMessage;
 import javafx.beans.property.IntegerProperty;
@@ -44,18 +42,17 @@ public class MessageManager {
 	/// Sends a message to the specified channel, splitting it into multiple
 	/// messages if it exceeds the maximum length.
 	///
-	/// @param channel The channel actions to send the message to.
 	/// @param channelViewModel The channel view model associated with the channel.
 	/// @param message The message to be sent.
 	/// @see [MessageManager#sendMessage(OutboundChatMessage)]
-	public static void sendMessage(ChannelActions channel, ChannelViewModel channelViewModel, String message, String replyId) {
+	public static void sendMessage(ChannelViewModel channelViewModel, String message, String replyId) {
 		String processedMessage = instance().processMessageString(message, channelViewModel);
 		if (processedMessage.length() > MAX_MESSAGE_LENGTH) {
-			splitString(processedMessage).forEach(newMessage -> sendMessage(channel, channelViewModel, newMessage, replyId));
+			splitString(processedMessage).forEach(newMessage -> sendMessage(channelViewModel, newMessage, replyId));
 			return;
 		}
 
-		sendMessage(new OutboundChatMessage(channel, channelViewModel, TwitchManager.ownerChannelName, processedMessage, replyId));
+		sendMessage(new OutboundChatMessage(channelViewModel, TwitchManager.ownerChannelName, processedMessage, replyId));
 	}
 
 	/// Queues an outbound chat message for sending.
@@ -72,7 +69,7 @@ public class MessageManager {
 	/// @see [MessageManager#sendMessage(ChannelActions, ChannelViewModel, String)]
 	public static void sendMessage(MacroViewModel macro) {
 		try {
-			sendMessage(Main.getChannelManager().getChannelActions(macro.getChannel().getChannelId()), macro.getChannel(), macro.getRandomOutput(), null);
+			sendMessage(macro.getChannel(), macro.getRandomOutput(), null);
 		} catch (Exception ex) {
 			LOG.error("Unable to send macro message: " + ex.getMessage(), ex);
 		}

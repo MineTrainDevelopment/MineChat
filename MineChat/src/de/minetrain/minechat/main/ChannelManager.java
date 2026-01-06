@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,7 +53,6 @@ public class ChannelManager {
 	private static final int MACROS_PER_CHANNEL = 12;
 	private static final int EMOTE_MACROS_PER_CHANNEL = 18;
 
-	private Map<String, ChannelActions> channelsLegacy = new HashMap<>();
 	private TwitchPollingService twitchPollingService;
 
 	private ObjectProperty<ChannelViewModel> activeChannelProperty;
@@ -99,20 +97,6 @@ public class ChannelManager {
 		return activeChannel != null ? activeChannel.getChannelId() : null;
 	}
 
-	public ChannelActions getActiveChannelActions() {
-		ChannelViewModel activeChannel = getActiveChannel();
-		return activeChannel != null ? getChannelActions(activeChannel.getChannelId()) : null;
-	}
-
-	/// Gets the ChannelActions for the given channel id.
-	/// If the ChannelActions does not exist, it will be created.
-	///
-	/// @param channelId The channel id to get the ChannelActions for.
-	/// @return The ChannelActions for the given channel id.
-	public ChannelActions getChannelActions(String channelId) {
-		return channelsLegacy.computeIfAbsent(channelId, key -> new ChannelActions(getChannel(key)));
-	}
-
 	/// Adds a new channel to the ChannelManager.
 	/// If the channel already exists, null is returned.
 	///
@@ -148,10 +132,6 @@ public class ChannelManager {
 
 	public ObservableMap<String, ChannelViewModel> getChannelViewModelMap() {
 		return channels;
-	}
-
-	public Collection<ChannelActions> getAllChannelActions(){
-		return channelsLegacy.values().stream().toList();
 	}
 
 	public ObjectProperty<ChannelViewModel> activeChannelProperty() {

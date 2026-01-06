@@ -7,7 +7,6 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.config.enums.AutoReplyState;
 import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
-import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.MessageManager;
 
@@ -41,8 +40,7 @@ public class AutoReplyManager {
 		autoReply.getLastMessageHits().clear();
 
 		String channelId = autoReply.getChannel().getChannelId();
-		ChannelActions channelActions = Main.getChannelManager().getChannelActions(channelId);
 		ChannelViewModel cvm = Main.getChannelManager().getChannelViewModel(channelId);
-		MessageManager.sendMessage(channelActions, cvm, autoReply.getRandomOutput(), autoReply.isReply() ?  messageId : null);
+		MessageManager.sendMessage(cvm, autoReply.getRandomOutput(), autoReply.isReply() ?  messageId : null);
 	}
 }
