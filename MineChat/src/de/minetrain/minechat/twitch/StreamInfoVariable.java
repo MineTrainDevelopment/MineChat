@@ -5,9 +5,9 @@ import java.util.function.Function;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
 
-public class StreamInfoVariable extends SimpleVariable {
+public class StreamInfoVariable extends SimpleChannelVariable {
 
-	public StreamInfoVariable(String id, Function<StreamInfoViewModel, String> valueFunction, String... names) {
-		super(id, valueFunction.compose(ChannelViewModel::getStreamInfo), names);
+	public StreamInfoVariable(Function<StreamInfoViewModel, String> valueFunction, String... names) {
+		super(valueFunction.compose(ChannelViewModel::getStreamInfo), names);
 	}
 }

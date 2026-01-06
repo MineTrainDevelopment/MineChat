@@ -1,24 +1,18 @@
 package de.minetrain.minechat.twitch;
 
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 
-public class SimpleVariable implements IVariable {
+public class SimpleChannelVariable implements IVariable {
 
-	private final String id;
 	private final String[] names;
 	private final Function<ChannelViewModel, String> valueFunction;
 
-	public SimpleVariable(String id, Function<ChannelViewModel, String> valueFunction, String... names) {
-		this.id = id;
+	public SimpleChannelVariable(Function<ChannelViewModel, String> valueFunction, String... names) {
 		this.names = names;
 		this.valueFunction = valueFunction;
-	}
-
-	@Override
-	public String getId() {
-		return id;
 	}
 
 	@Override
@@ -27,7 +21,7 @@ public class SimpleVariable implements IVariable {
 	}
 
 	@Override
-	public String retrieveValue(ChannelViewModel channelViewModel) {
+	public String retrieveValue(ChannelViewModel channelViewModel, LocalDateTime localDateTime) {
 		return valueFunction.apply(channelViewModel);
 	}
 }

@@ -66,9 +66,7 @@ public class TwitchManager {
 		"user:read:chat",
 		"user:write:chat",
 		"user:read:emotes",
-		"user:read:moderated_channels",
-		"bits:read",
-		"channel:read:subscriptions"
+		"user:read:moderated_channels"
 	};
 
 	public record LiveMetaData(String title, String game, Instant startTime, int viewer, String[] tags){};

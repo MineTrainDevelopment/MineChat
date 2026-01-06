@@ -1,14 +1,11 @@
 package de.minetrain.minechat.twitch;
 
+import java.time.LocalDateTime;
+
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import javafx.scene.input.Clipboard;
 
 public class ClipboardVariable implements IVariable {
-
-	@Override
-	public String getId() {
-		return "clipboard";
-	}
 
 	@Override
 	public String[] getNames() {
@@ -16,7 +13,7 @@ public class ClipboardVariable implements IVariable {
 	}
 
 	@Override
-	public String retrieveValue(ChannelViewModel channelViewModel) {
+	public String retrieveValue(ChannelViewModel channelViewModel, LocalDateTime localDateTime) {
 		String string = Clipboard.getSystemClipboard().getString();
 		return string != null ? string : "";
 	}

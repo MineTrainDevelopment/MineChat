@@ -2,6 +2,8 @@ package de.minetrain.minechat.twitch;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.CountVariable;
 import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
@@ -131,6 +134,7 @@ public class MessageManager {
 	}
 
 	private String processMessageString(String rawMessage, ChannelViewModel channelViewModel) {
+		LocalDateTime now = LocalDateTime.now();
 		Matcher matcher = COUNT_VARIABLE_PATTERN.matcher(rawMessage);
 		StringBuilder processedMessage = new StringBuilder();
 		while (matcher.find()) {
@@ -146,7 +150,7 @@ public class MessageManager {
 			String name = matcher.group(1);
 			IVariable variable = getVariable(name);
 			if (variable != null) {
-				matcher.appendReplacement(processedMessage, variable.retrieveValue(channelViewModel));
+				matcher.appendReplacement(processedMessage, variable.retrieveValue(channelViewModel, now));
 			}
 		}
 		matcher.appendTail(processedMessage);
@@ -225,15 +229,18 @@ public class MessageManager {
 		messageHandler = new AsyncMessageHandler();
 
 		registerVariable(new ClipboardVariable());
-		registerVariable(new SimpleVariable("streamer", cvm -> "@" + cvm.getChannelName(), "STREAMER", "CHANNEL"));
-		registerVariable(new SimpleVariable("myself", _ -> "@" + TwitchHelper.getSelfUser().getDisplayName(), "MYSELF", "ME", "SELF"));
-		registerVariable(new StreamInfoVariable("gameId", StreamInfoViewModel::getGameId, "GAME_ID"));
-		registerVariable(new StreamInfoVariable("gameName", StreamInfoViewModel::getGameName, "GAME"));
-		registerVariable(new StreamInfoVariable("title", StreamInfoViewModel::getTitle, "TITLE"));
-		registerVariable(new StreamInfoVariable("tags", streamInfo -> String.join(", ", streamInfo.getTags()), "TAGS"));
-		registerVariable(new StreamInfoVariable("viewerCount", streamInfo -> Integer.toString(streamInfo.getViewerCount()), "VIEWER"));
-		registerVariable(new StreamInfoVariable("startedAt", streamInfo -> streamInfo.getStartedAt().toString(), "STARTED_AT")); // TODO nullsafe and formatting (as property?)
-		registerVariable(new StreamInfoVariable("uptime", streamInfo -> Duration.between(streamInfo.getStartedAt(), Instant.now()).toString(), "UPTIME")); // TODO nullsafe and formatting (as property?)
+		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat)), "TIME"));
+		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat)), "DATE"));
+		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat)), "DAY"));
+		registerVariable(new SimpleChannelVariable(cvm -> "@" + cvm.getChannelName(), "STREAMER", "CHANNEL"));
+		registerVariable(new SimpleChannelVariable(_ -> "@" + TwitchHelper.getSelfUser().getDisplayName(), "MYSELF", "ME", "SELF"));
+		registerVariable(new StreamInfoVariable(StreamInfoViewModel::getGameId, "GAME_ID"));
+		registerVariable(new StreamInfoVariable(StreamInfoViewModel::getGameName, "GAME"));
+		registerVariable(new StreamInfoVariable(StreamInfoViewModel::getTitle, "TITLE"));
+		registerVariable(new StreamInfoVariable(streamInfo -> String.join(", ", streamInfo.getTags()), "TAGS"));
+		registerVariable(new StreamInfoVariable(streamInfo -> Integer.toString(streamInfo.getViewerCount()), "VIEWER"));
+		registerVariable(new StreamInfoVariable(streamInfo -> streamInfo.getStartedAt().toString(), "STARTED_AT")); // TODO nullsafe and formatting (as property?)
+		registerVariable(new StreamInfoVariable(streamInfo -> Duration.between(streamInfo.getStartedAt(), Instant.now()).toString(), "UPTIME")); // TODO nullsafe and formatting (as property?)
 	}
 
 	private void registerVariable(IVariable variable) {
