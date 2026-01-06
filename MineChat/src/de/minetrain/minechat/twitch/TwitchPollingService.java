@@ -23,6 +23,7 @@ import com.github.twitch4j.helix.domain.Stream;
 
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.EmoteViewModel;
+import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
 import de.minetrain.minechat.main.Main;
 import javafx.application.Platform;
 
@@ -97,10 +98,37 @@ public class TwitchPollingService {
 
 	private void pollStreamInfo() {
 		try {
-			Set<String> liveChannelIds = TwitchHelper.requestStreamInfo(Main.getChannelManager().getChannelViewModels().stream().map(ChannelViewModel::getChannelId).toArray(String[]::new)).get().stream()
-				.map(Stream::getUserId)
-				.collect(toUnmodifiableSet());
-			Platform.runLater(() -> Main.getChannelManager().getChannelViewModels().forEach(channelViewModel -> channelViewModel.setLive(liveChannelIds.contains(channelViewModel.getChannelId()))));
+			Map<String, Stream> liveChannels = TwitchHelper.requestStreamInfo(Main.getChannelManager().getChannelViewModels().stream().map(ChannelViewModel::getChannelId).toArray(String[]::new)).get().stream()
+				.collect(toMap(Stream::getUserId, Function.identity()));
+			Platform.runLater(() -> {
+				Main.getChannelManager().getChannelViewModels().forEach(channel -> {
+					Stream stream = liveChannels.get(channel.getChannelId());
+					StreamInfoViewModel streamInfo = channel.getStreamInfo();
+					if (stream != null) {
+						channel.setLive(true);
+						streamInfo.setGameId(stream.getGameId());
+						streamInfo.setGameName(stream.getGameName());
+						streamInfo.setTitle(stream.getTitle());
+						streamInfo.getTags().setAll(stream.getTags() != null ? stream.getTags() : List.of());
+						streamInfo.setViewerCount(stream.getViewerCount());
+						streamInfo.setStartedAt(stream.getStartedAtInstant());
+						streamInfo.setMature(stream.isMature() != null && stream.isMature());
+						streamInfo.setLanguage(stream.getLanguage());
+						streamInfo.setThumbnailUrlTemplate(stream.getThumbnailUrlTemplate());
+					} else {
+						channel.setLive(false);
+						streamInfo.setGameId("");
+						streamInfo.setGameName("");
+						streamInfo.setTitle("");
+						streamInfo.getTags().clear();
+						streamInfo.setViewerCount(0);
+						streamInfo.setStartedAt(null);
+						streamInfo.setMature(false);
+						streamInfo.setLanguage("");
+						streamInfo.setThumbnailUrlTemplate(null);
+					}
+				});
+			});
 		} catch (ExecutionException e) {
 			LOG.error("Error fetching stream info for channels.", e.getCause());
 		} catch (InterruptedException e) {

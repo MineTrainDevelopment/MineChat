@@ -52,6 +52,8 @@ public class ChannelViewModel {
 	private ObservableList<MacroViewModel> emoteMacros;
 	private ObservableList<AutoReplyViewModel> autoReplies;
 
+	private ReadOnlyObjectWrapper<StreamInfoViewModel> streamInfoProperty;
+
 	private Set<String> participatedUserIds;
 
 	protected ChannelViewModel(String channelId, String channelName, int sortIndex, String profileImageUrl, String loginName) {
@@ -287,6 +289,21 @@ public class ChannelViewModel {
 
 	public Set<String> getParticipatedUserIds(){
 		return participatedUserIds;
+	}
+
+	protected ReadOnlyObjectWrapper<StreamInfoViewModel> streamInfoPropertyInternal() {
+		if (streamInfoProperty == null) {
+			streamInfoProperty = new ReadOnlyObjectWrapper<>(this, "streamInfo", new StreamInfoViewModel());
+		}
+		return streamInfoProperty;
+	}
+
+	public ReadOnlyObjectProperty<StreamInfoViewModel> streamInfoProperty() {
+		return streamInfoPropertyInternal().getReadOnlyProperty();
+	}
+
+	public StreamInfoViewModel getStreamInfo() {
+		return streamInfoProperty().get();
 	}
 
 	@Override

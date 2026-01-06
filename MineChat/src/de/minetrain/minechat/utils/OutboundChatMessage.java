@@ -1,13 +1,7 @@
 package de.minetrain.minechat.utils;
 
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -18,11 +12,7 @@ import com.github.twitch4j.common.enums.SubscriptionPlan;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.ChannelActions;
-import de.minetrain.minechat.twitch.TwitchHelper;
-import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.obj.ChannelStatistics;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj;
-import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
 
 public class OutboundChatMessage {
 	private static final Logger logger = LoggerFactory.getLogger(OutboundChatMessage.class);
@@ -45,40 +35,10 @@ public class OutboundChatMessage {
 			Locale locale = new Locale(System.getProperty("user.language"), System.getProperty("user.country"));
 			ChannelStatistics statistics = channel.getStatistics();
 
-			String clipBoard = "";
-			try {
-				clipBoard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-			} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
-				logger.info("Can´t readout the System ClipBoard. It may be empty.");
-			}
-
-			if(message.contains("{VIEWER}") || message.contains("{UPTIME}") || message.contains("{GAME}") || message.contains("{TITLE}") || message.contains("{TAGS}")){
-				String channelId = channel.getChannelId();
-				List<TwitchUserObj> liveUseres = TwitchHelper.requestLiveUsers(TwitchApiCallType.ID, channelId).join().stream()
-						.filter(user -> user.getUserId().equals(channelId)).toList();
-
-				if(!liveUseres.isEmpty()){
-					TwitchUserObj user = liveUseres.get(0);
-					message = message
-						.replace("{VIEWER}", String.valueOf(user.getStreamViewer()))
-						.replace("{UPTIME}", user.getStreamLiveSince())
-						.replace("{GAME}", user.getStreamGame())
-						.replace("{TITLE}", user.getStreamTitle())
-						.replace("{TAGS}", String.join(", ", user.getStreamTags()));
-				}
-			}
-
 			message = message
 					.replace("{TIME}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat, locale)))
 					.replace("{DATE}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat, locale)))
 					.replace("{DAY}", localDateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat, locale)))
-					.replace("{STREAMER}", "@"+channel.getChannel().getLoginName())
-					.replace("{MYSELF}", "@"+TwitchManager.ownerChannelName)
-					.replace("{VIEWER}", "0")
-					.replace("{UPTIME}", "0")
-					.replace("{GAME}", "\"\"")
-					.replace("{TITLE}", "\"\"")
-					.replace("{TAGS}", "\"\"")
 					.replace("{MY_MESSAGES}", ""+statistics.getTotalSelfMessages())
 					.replace("{TOTAL_MESSAGES}", ""+statistics.getTotalMessages())
 					.replace("{TOTAL_UNIQUE_MESSAGES}", ""+statistics.getTotalUniqueMessages())
@@ -89,11 +49,7 @@ public class OutboundChatMessage {
 					.replace("{TOTAL_GIFTSUB_2}", ""+statistics.getTotalGiftedSubs(SubscriptionPlan.TIER2))
 					.replace("{TOTAL_GIFTSUB_3}", ""+statistics.getTotalGiftedSubs(SubscriptionPlan.TIER3))
 					.replace("{TOTAL_NEWSUB}", ""+statistics.getTotalNewSubs())
-					.replace("{TOTAL_BITS}", ""+statistics.getTotalBits())
-					.replace("{ClipBoard}", clipBoard)
-					.replace("{CLIP_BOARD}", clipBoard)
-					.replace("{Clip}", clipBoard)
-					.replace("{CLIP}", clipBoard);
+					.replace("{TOTAL_BITS}", ""+statistics.getTotalBits());
 			this.message = message;
 		}else{
 			this.message = message;

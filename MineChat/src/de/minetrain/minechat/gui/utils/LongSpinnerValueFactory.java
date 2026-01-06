@@ -26,7 +26,7 @@ public class LongSpinnerValueFactory extends SpinnerValueFactory<Long> {
 		setAmountToStepBy(amountToStepBy);
 		setConverter(new LongStringConverter());
 
-		valueProperty().addListener((o, oldValue, newValue) -> {
+		valueProperty().addListener((_, _, newValue) -> {
 			if (newValue == null) {
 				return;
 			}

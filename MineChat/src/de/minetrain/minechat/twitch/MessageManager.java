@@ -1,8 +1,11 @@
 package de.minetrain.minechat.twitch;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +18,7 @@ import de.minetrain.minechat.data.objectdata.CountVariable;
 import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
+import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
 import de.minetrain.minechat.main.ChannelActions;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
@@ -30,10 +34,12 @@ public class MessageManager {
 	/// A regex pattern to identify count variable placeholders in messages.
 	/// The pattern matches strings like {COUNT_X_VARIABLE}, {C_DISPLAY_VARIABLE}, etc.
 	private static final Pattern COUNT_VARIABLE_PATTERN = Pattern.compile("\\{C(?:OUNT)?_(?:(\\d+|D(?:ISPLAY)?)_)?([A-Z]+)\\}");
+	private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\{(\\w+)\\}");
 
 	private static MessageManager instance = new MessageManager();
 
 	private AsyncMessageHandler messageHandler;
+	private Map<String, IVariable> variables;
 
 	/// Sends a message to the specified channel, splitting it into multiple
 	/// messages if it exceeds the maximum length.
@@ -43,7 +49,7 @@ public class MessageManager {
 	/// @param message The message to be sent.
 	/// @see [MessageManager#sendMessage(OutboundChatMessage)]
 	public static void sendMessage(ChannelActions channel, ChannelViewModel channelViewModel, String message, String replyId) {
-		String processedMessage = processMessageString(message);
+		String processedMessage = instance().processMessageString(message, channelViewModel);
 		if (processedMessage.length() > MAX_MESSAGE_LENGTH) {
 			splitString(processedMessage).forEach(newMessage -> sendMessage(channel, channelViewModel, newMessage, replyId));
 			return;
@@ -127,12 +133,24 @@ public class MessageManager {
 		return EclipseStoreKeeper.root().countVariables().getAllCountVariables();
 	}
 
-	private static String processMessageString(String rawMessage) {
+	private String processMessageString(String rawMessage, ChannelViewModel channelViewModel) {
 		Matcher matcher = COUNT_VARIABLE_PATTERN.matcher(rawMessage);
 		StringBuilder processedMessage = new StringBuilder();
 		while (matcher.find()) {
 			String action = matcher.group(1);
 			matcher.appendReplacement(processedMessage, Long.toString(processCountVariable(matcher.group(2), action != null ? action : "1")));
+		}
+		matcher.appendTail(processedMessage);
+		String intermediateMessage = processedMessage.toString();
+
+		matcher = VARIABLE_PATTERN.matcher(intermediateMessage);
+		processedMessage = new StringBuilder();
+		while (matcher.find()) {
+			String name = matcher.group(1);
+			IVariable variable = getVariable(name);
+			if (variable != null) {
+				matcher.appendReplacement(processedMessage, variable.retrieveValue(channelViewModel));
+			}
 		}
 		matcher.appendTail(processedMessage);
 		return processedMessage.toString();
@@ -208,6 +226,27 @@ public class MessageManager {
 
 	private MessageManager() {
 		messageHandler = new AsyncMessageHandler();
+
+		registerVariable(new ClipboardVariable());
+		registerVariable(new SimpleVariable("streamer", cvm -> "@" + cvm.getChannelName(), "STREAMER", "CHANNEL"));
+		registerVariable(new SimpleVariable("myself", _ -> "@" + TwitchHelper.getSelfUser().getDisplayName(), "MYSELF", "ME", "SELF"));
+		registerVariable(new StreamInfoVariable("gameId", StreamInfoViewModel::getGameId, "GAME_ID"));
+		registerVariable(new StreamInfoVariable("gameName", StreamInfoViewModel::getGameName, "GAME"));
+		registerVariable(new StreamInfoVariable("title", StreamInfoViewModel::getTitle, "TITLE"));
+		registerVariable(new StreamInfoVariable("tags", streamInfo -> String.join(", ", streamInfo.getTags()), "TAGS"));
+		registerVariable(new StreamInfoVariable("viewerCount", streamInfo -> Integer.toString(streamInfo.getViewerCount()), "VIEWER"));
+		registerVariable(new StreamInfoVariable("startedAt", streamInfo -> streamInfo.getStartedAt().toString(), "STARTED_AT")); // TODO nullsafe and formatting (as property?)
+		registerVariable(new StreamInfoVariable("uptime", streamInfo -> Duration.between(streamInfo.getStartedAt(), Instant.now()).toString(), "UPTIME")); // TODO nullsafe and formatting (as property?)
+	}
+
+	private void registerVariable(IVariable variable) {
+		for (String names : variable.getNames()) {
+			variables.put(names, variable);
+		}
+	}
+
+	private IVariable getVariable(String name) {
+		return variables.get(name);
 	}
 
 	private AsyncMessageHandler getMessageHandler() {
