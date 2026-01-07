@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +19,9 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.CountVariable;
+import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
+import de.minetrain.minechat.gui.frames.dialogs.HighlightEditDialog;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
@@ -133,6 +136,48 @@ public class MessageManager {
 		return EclipseStoreKeeper.root().countVariables().getAllCountVariables();
 	}
 
+	/// Creates a new highlight string through a dialog and adds it to the store.
+	///
+	/// @return An optional containing the created highlight string, or empty if creation was cancelled.
+	/// @see [HighlightEditDialog]
+	public static Optional<HighlightString> createHighlightString() {
+		return new HighlightEditDialog(HighlightString.builder()).showAndWait().map(editedHighlight -> {
+			EclipseStoreKeeper.root().userSettings().addHighlightString(editedHighlight);
+			return editedHighlight;
+		});
+	}
+
+	/// Edits an existing highlight string through a dialog and updates it in the store.
+	///
+	/// @param highlightString The highlight string to be edited.
+	/// @return An optional containing the edited highlight string, or empty if editing was cancelled.
+	/// @see [HighlightEditDialog]
+	public static Optional<HighlightString> editHighlightString(HighlightString highlightString) {
+		return new HighlightEditDialog(highlightString.buildCopy()).showAndWait().map(editedHighlight -> {
+			EclipseStoreKeeper.root().userSettings().addHighlightString(editedHighlight);
+			return editedHighlight;
+		});
+	}
+
+	public static void updateHighlightString(HighlightString highlightString) {
+		EclipseStoreKeeper.root().userSettings().addHighlightString(highlightString);
+	}
+
+	/// Deletes a highlight string from the store.
+	///
+	/// @param highlightString The highlight string to be deleted.
+	/// @return True if the highlight string was successfully deleted, false otherwise.
+	public static boolean deleteHighlightString(HighlightString highlightString) {
+		return EclipseStoreKeeper.root().userSettings().removeHighlightString(highlightString.getUuid()) != null;
+	}
+
+	/// Retrieves all highlight strings from the store.
+	///
+	/// @return A collection of all highlight strings.
+	public static Collection<HighlightString> getAllHighlightStrings() {
+		return EclipseStoreKeeper.root().userSettings().getAllHighlightStrings();
+	}
+
 	private String processMessageString(String rawMessage, ChannelViewModel channelViewModel) {
 		LocalDateTime now = LocalDateTime.now();
 		Matcher matcher = COUNT_VARIABLE_PATTERN.matcher(rawMessage);
@@ -228,6 +273,7 @@ public class MessageManager {
 	private MessageManager() {
 		messageHandler = new AsyncMessageHandler();
 
+		variables = new HashMap<>();
 		registerVariable(new ClipboardVariable());
 		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat)), "TIME"));
 		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat)), "DATE"));

@@ -153,6 +153,7 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 						AutoReplyViewModel autoReply = getTableRow().getItem();
 						autoReply.setEnabled(checkBox.isSelected());
 						Main.getChannelManager().updateAutoReply(autoReply);
+						getTableColumn().getTableView().sort();
 					});
 				}
 			}

@@ -1,5 +1,7 @@
 package de.minetrain.minechat.data.objectdata;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,14 +29,15 @@ public class UserSettings extends LockScope {
 		});
 	}
 
-	public void removeHighlightString(UUID uuid) {
-		removeHighlightString(uuid, EclipseStoreKeeper.storeManager());
+	public HighlightString removeHighlightString(UUID uuid) {
+		return removeHighlightString(uuid, EclipseStoreKeeper.storeManager());
 	}
 
-	public void removeHighlightString(UUID uuid, PersistenceStoring persister) {
-		write(() -> {
-			highlightStrings.remove(uuid);
+	public HighlightString removeHighlightString(UUID uuid, PersistenceStoring persister) {
+		return write(() -> {
+			HighlightString removedHighlightString = highlightStrings.remove(uuid);
 			persister.store(highlightStrings);
+			return removedHighlightString;
 		});
 	}
 
@@ -44,5 +47,9 @@ public class UserSettings extends LockScope {
 
 	public <T> T computeHighlightStrings(Function<Stream<HighlightString>, T> function) {
 		return read(() -> function.apply(highlightStrings.values().stream()));
+	}
+
+	public Collection<HighlightString> getAllHighlightStrings() {
+		return read(() -> Collections.unmodifiableCollection(highlightStrings.values()));
 	}
 }

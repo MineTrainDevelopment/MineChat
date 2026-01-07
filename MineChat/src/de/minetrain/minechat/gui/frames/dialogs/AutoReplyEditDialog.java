@@ -33,7 +33,6 @@ public class AutoReplyEditDialog extends MineDialog<AutoReply> {
 	public AutoReplyEditDialog(AutoReply.Builder autoReply) {
 		setTitle("Edit auto reply");
 		setWidth(450);
-		setHeight(350);
 
 		autoReplyBuilder = autoReply;
 
@@ -60,7 +59,7 @@ public class AutoReplyEditDialog extends MineDialog<AutoReply> {
 		replyCheckbox = new CheckBox("Reply to trigger message");
 		replyCheckbox.setSelected(autoReply.isReply());
 		contentRoot.add(replyCheckbox, 0, 1);
-		Label delayLabel = new Label("Reply delay (sec):");
+		Label delayLabel = new Label("Reply delay (s):");
 		contentRoot.add(delayLabel, 1, 1);
 		delaySpinner = new Spinner<>(0, 9999, 0);
 		delaySpinner.setEditable(true);

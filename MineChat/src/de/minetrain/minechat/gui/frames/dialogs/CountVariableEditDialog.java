@@ -23,7 +23,6 @@ public class CountVariableEditDialog extends MineDialog<CountVariable> {
 	public CountVariableEditDialog(CountVariable.Builder countVariable) {
 		setTitle("Edit count variable");
 		setWidth(450);
-		setHeight(200);
 
 		countVariableBuilder = countVariable;
 

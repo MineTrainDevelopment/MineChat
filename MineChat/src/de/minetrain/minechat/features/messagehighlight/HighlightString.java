@@ -20,6 +20,10 @@ public class HighlightString {
 
 	private transient Pattern compiledPattern;
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public HighlightString(String pattern, String wordColorCode, String borderColorCode) {
 		this.uuid = UUID.randomUUID();
 		this.pattern = pattern;
@@ -146,6 +150,34 @@ public class HighlightString {
 		public Builder withEnabled(boolean enabled) {
 			this.enabled = enabled;
 			return this;
+		}
+
+		public UUID getUuid() {
+			return uuid;
+		}
+
+		public String getPattern() {
+			return pattern;
+		}
+
+		public String getWordColorCode() {
+			return wordColorCode;
+		}
+
+		public String getBorderColorCode() {
+			return borderColorCode;
+		}
+
+		public String getSoundPath() {
+			return soundPath;
+		}
+
+		public AudioVolume getSoundVolume() {
+			return soundVolume;
+		}
+
+		public boolean isEnabled() {
+			return enabled;
 		}
 
 		public HighlightString build() {

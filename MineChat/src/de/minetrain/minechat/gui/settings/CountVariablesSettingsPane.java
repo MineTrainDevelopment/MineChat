@@ -78,7 +78,6 @@ public class CountVariablesSettingsPane extends SettingsContentPane {
 
 	private TableView<CountVariable> createCountVariableTable() {
 		TableView<CountVariable> countVariableTable = new TableView<>();
-		countVariableTable.setEditable(true);
 		TableColumn<CountVariable, String> nameColumn = new TableColumn<>("Name");
 		nameColumn.setPrefWidth(350D);
 		nameColumn.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
