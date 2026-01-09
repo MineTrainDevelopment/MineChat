@@ -3,6 +3,7 @@ package de.minetrain.minechat.features.messagehighlight;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.audio.AudioVolume;
@@ -12,33 +13,35 @@ public class HighlightString {
 
 	private final UUID uuid;
 	private final String pattern;
-	private final String wordColorCode;
-	private final String borderColorCode;
+	private final int wordColor;
+	private final int borderColor;
 	private final String soundPath;
 	private final AudioVolume soundVolume;
 	private final boolean enabled;
 
 	private transient Pattern compiledPattern;
+	private transient Color cachedWordColor;
+	private transient Color cachedBorderColor;
 
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	public HighlightString(String pattern, String wordColorCode, String borderColorCode) {
+	public HighlightString(String pattern, int wordColor, int borderColor) {
 		this.uuid = UUID.randomUUID();
 		this.pattern = pattern;
-		this.wordColorCode = wordColorCode;
-		this.borderColorCode = borderColorCode;
+		this.wordColor = wordColor;
+		this.borderColor = borderColor;
 		this.soundPath = null;
 		this.soundVolume = null;
 		this.enabled = true;
 	}
 
-	public HighlightString(UUID id, String pattern, String wordColorCode, String borderColorCode, String soundPath, AudioVolume soundVolume, boolean enabled) {
+	public HighlightString(UUID id, String pattern, int wordColor, int borderColor, String soundPath, AudioVolume soundVolume, boolean enabled) {
 		this.uuid = id;
 		this.pattern = pattern;
-		this.wordColorCode = wordColorCode;
-		this.borderColorCode = borderColorCode;
+		this.wordColor = wordColor;
+		this.borderColor = borderColor;
 		this.soundPath = soundPath;
 		this.soundVolume = soundVolume;
 		this.enabled = enabled;
@@ -70,20 +73,26 @@ public class HighlightString {
 		return pattern;
 	}
 
-	public String getWordColorCode() {
-		return wordColorCode;
+	public int getWordColor() {
+		return wordColor;
 	}
 
-	public String getBorderColorCode() {
-		return borderColorCode;
+	public Color getWordColorAsColor() {
+		if (cachedWordColor == null) {
+			cachedWordColor = ColorManager.decodeFromInt(getWordColor());
+		}
+		return cachedWordColor;
 	}
 
-	public Color getWordColor() {
-		return Color.web(wordColorCode);
+	public int getBorderColor() {
+		return borderColor;
 	}
 
-	public Color getBorder() {
-		return Color.web(borderColorCode);
+	public Color getBorderColorAsColor() {
+		if (cachedBorderColor == null) {
+			cachedBorderColor = ColorManager.decodeFromInt(getBorderColor());
+		}
+		return cachedBorderColor;
 	}
 
 	public boolean isPlaySound() {
@@ -95,8 +104,8 @@ public class HighlightString {
 	}
 
 	public Builder buildCopy() {
-		return new Builder().withUuid(uuid).withPattern(pattern).withWordColorCode(wordColorCode)
-				.withBorderColorCode(borderColorCode).withSoundPath(soundPath).withSoundVolume(soundVolume)
+		return new Builder().withUuid(uuid).withPattern(pattern).withWordColor(wordColor)
+				.withBorderColor(borderColor).withSoundPath(soundPath).withSoundVolume(soundVolume)
 				.withEnabled(enabled);
 	}
 
@@ -111,8 +120,8 @@ public class HighlightString {
 
 		private UUID uuid;
 		private String pattern;
-		private String wordColorCode;
-		private String borderColorCode;
+		private int wordColor;
+		private int borderColor;
 		private String soundPath;
 		private AudioVolume soundVolume;
 		private boolean enabled;
@@ -127,13 +136,13 @@ public class HighlightString {
 			return this;
 		}
 
-		public Builder withWordColorCode(String wordColorCode) {
-			this.wordColorCode = wordColorCode;
+		public Builder withWordColor(int wordColor) {
+			this.wordColor = wordColor;
 			return this;
 		}
 
-		public Builder withBorderColorCode(String borderColorCode) {
-			this.borderColorCode = borderColorCode;
+		public Builder withBorderColor(int borderColor) {
+			this.borderColor = borderColor;
 			return this;
 		}
 
@@ -160,12 +169,12 @@ public class HighlightString {
 			return pattern;
 		}
 
-		public String getWordColorCode() {
-			return wordColorCode;
+		public int getWordColor() {
+			return wordColor;
 		}
 
-		public String getBorderColorCode() {
-			return borderColorCode;
+		public int getBorderColor() {
+			return borderColor;
 		}
 
 		public String getSoundPath() {
@@ -181,7 +190,7 @@ public class HighlightString {
 		}
 
 		public HighlightString build() {
-			return new HighlightString(uuid, pattern, wordColorCode, borderColorCode, soundPath, soundVolume, enabled);
+			return new HighlightString(uuid, pattern, wordColor, borderColor, soundPath, soundVolume, enabled);
 		}
 	}
 }

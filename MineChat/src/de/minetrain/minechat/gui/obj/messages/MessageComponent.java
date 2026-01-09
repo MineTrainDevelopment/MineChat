@@ -89,24 +89,24 @@ public class MessageComponent extends StackPane {
 
 	private void applyHighlighting(ChatMessage message, HighlightString highlight) {
 		if (Settings.highlightUserFirstMessages.isActive() && message.getMessageType() == ChatMessage.MessageType.FIRST_MESSAGE) {
-			content.setStyle("-fx-background-color: " + Settings.highlightUserFirstMessages.getColorCode() + ";");
-			applyBorderColor(Settings.highlightUserFirstMessages.getColorCode());
+			content.setStyle(ColorManager.encode(Settings.highlightUserFirstMessages.getColor(), "-fx-background-color: ", ";"));
+			applyBorderColor(Settings.highlightUserFirstMessages.getColor());
 			titleFlow.appendString("  -  First MSG");
 		} else {
 			if (message.getMessageType() == ChatMessage.MessageType.HIGHLIGHTED && Settings.displayTwitchHighlighted.isActive()) {
-				content.setStyle("-fx-background-color: " + Settings.displayTwitchHighlighted.getColorCode() + ";");
+				content.setStyle(ColorManager.encode(Settings.displayTwitchHighlighted.getColor(), "-fx-background-color: ", ";"));
 			}
 
 			if (message.isFirstSessionMessage() && Settings.highlightUserFirstMessages.isActive()) {
-				applyBorderColor(Settings.highlightUserFirstMessages.getColorCode());
+				applyBorderColor(Settings.highlightUserFirstMessages.getColor());
 			} else if (highlight != null) {
-				applyBorderColor(highlight.getBorderColorCode());
+				applyBorderColor(highlight.getBorderColor());
 			}
 		}
 	}
 
-	private void applyBorderColor(String colorCode) {
-		border.setStyle("-fx-border-color: " + colorCode + ";");
+	private void applyBorderColor(int color) {
+		border.setStyle(ColorManager.encode(color, "-fx-border-color: ", ";"));
 	}
 
 	private Button createReplyButton() {

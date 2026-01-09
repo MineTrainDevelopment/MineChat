@@ -20,34 +20,23 @@ public class ColorManager {
 	private String TODO_Against_settings = "";
 	public static final Color FONT_DEFAULT = Color.WHITE;
 	public static final Color FONT_HYPERTEXT = decode("#1000FF");
-	public static final Color GUI_BORDER_DEFAULT = colorOf(14, 14, 1);
-	public static final Color GUI_BACKGROUND_DEFAULT = colorOf(40, 40, 40);
-	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = colorOf(80, 80, 80);
-	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = colorOf(30, 30, 30);
+	public static final Color GUI_BORDER_DEFAULT = Color.rgb(14, 14, 1);
+	public static final Color GUI_BACKGROUND_DEFAULT = Color.rgb(40, 40, 40);
+	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = Color.rgb(80, 80, 80);
+	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = Color.rgb(30, 30, 30);
 	public static final Color GUI_ACCENT_DEFAULT = Color.GREEN;
 
 	public static final Color CHAT_UNIMPORTANT_DEFAULT = Color.GRAY;
 	public static final Color CHAT_MODERATION_DEFAULT = Color.CYAN;
-	public static final Color CHAT_SPENDING_SMALL_DEFAULT = colorOf(180, 80, 0);
+	public static final Color CHAT_SPENDING_SMALL_DEFAULT = Color.rgb(180, 80, 0);
 	public static final Color CHAT_SPENDING_BIG_DEFAULT = Color.YELLOW;
 	public static final Color CHAT_ANNOUNCEMENT_DEFAULT = Color.GREEN;
 	public static final Color CHAT_USER_REWARD_DEFAULT = Color.BLUE;
-	public static final Color CHAT_TWITCH_HIGHLIGHTED_DEFAULT = colorOf(120, 86, 188);
-	public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = colorOf(255, 40, 40);
-	public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = colorOf(125, 0, 255);
+	public static final Color CHAT_TWITCH_HIGHLIGHTED_DEFAULT = Color.rgb(120, 86, 188);
+	public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = Color.rgb(255, 40, 40);
+	public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = Color.rgb(125, 0, 255);
 
 	private static final HexFormat RGBA_HEX_FORMAT = HexFormat.of().withUpperCase();
-
-	/**
-	 *
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @return
-	 */
-	private static final Color colorOf(int red, int green, int blue) {
-		return new Color(red / 255d, green / 255d, blue / 255d, 1);
-	}
 
 	/**
 	 * (14, 14, 14)
@@ -108,6 +97,22 @@ public class ColorManager {
 		});
 	}
 
+	public static int encodeToInt(Color color) {
+		int r = (int) (color.getRed() * 255);
+		int g = (int) (color.getGreen() * 255);
+		int b = (int) (color.getBlue() * 255);
+		int a = (int) (color.getOpacity() * 255);
+		return (r << 24) | (g << 16) | (b << 8) | a;
+	}
+
+	public static Color decodeFromInt(int colorInt) {
+		int r = (colorInt >> 24) & 0xFF;
+		int g = (colorInt >> 16) & 0xFF;
+		int b = (colorInt >> 8) & 0xFF;
+		int a = colorInt & 0xFF;
+		return Color.rgb(r, g, b, a / 255.0);
+	}
+
 	public static String encode(Color color) {
 		StringBuilder sb = new StringBuilder(9);
 		appendEncode(color, sb);
@@ -121,31 +126,42 @@ public class ColorManager {
 		return sb.append(suffix).toString();
 	}
 
+	public static String encode(int color) {
+		StringBuilder sb = new StringBuilder(9);
+		rgbaToHex(rgbaFromInt(color), sb);
+		return sb.toString();
+	}
+
+	public static String encode(int color, String prefix, String suffix) {
+		StringBuilder sb = new StringBuilder(9 + prefix.length() + suffix.length())
+			.append(prefix);
+		rgbaToHex(rgbaFromInt(color), sb);
+		return sb.append(suffix).toString();
+	}
+
 	public static void encode(Color color, StringBuilder stringBuilder) {
 		stringBuilder.ensureCapacity(stringBuilder.length() + 9);
 		appendEncode(color, stringBuilder);
 	}
 
 	private static void appendEncode(Color color, StringBuilder stringBuilder) {
+		rgbaToHex(new byte[] { (byte) (color.getRed() * 255), (byte) (color.getGreen() * 255), (byte) (color.getBlue() * 255), (byte) (color.getOpacity() * 255) }, stringBuilder);
+	}
+
+	private static void rgbaToHex(byte[] rgba, StringBuilder stringBuilder) {
 		stringBuilder.append('#');
-		RGBA_HEX_FORMAT.formatHex(stringBuilder, new byte[] {
-			(byte) (color.getRed() * 255),
-			(byte) (color.getGreen() * 255),
-			(byte) (color.getBlue() * 255),
-			(byte) (color.getOpacity() * 255)
-		});
+		RGBA_HEX_FORMAT.formatHex(stringBuilder, rgba);
+	}
+
+	private static byte[] rgbaFromInt(int colorInt) {
+		byte r = (byte) ((colorInt >> 24) & 0xFF);
+		byte g = (byte) ((colorInt >> 16) & 0xFF);
+		byte b = (byte) ((colorInt >> 8) & 0xFF);
+		byte a = (byte) (colorInt & 0xFF);
+		return new byte[] { r, g, b, a };
 	}
 
 	public static YamlManager getSettingsConfig() {
 		return settings;
 	}
-
-	public static double[] hexToRGB(String hexCode) {
-		hexCode = hexCode.replace("#", "");
-		int red = Integer.valueOf(hexCode.substring(0, 2), 16);
-		int green = Integer.valueOf(hexCode.substring(2, 4), 16);
-		int blue = Integer.valueOf(hexCode.substring(4, 6), 16);
-		return new double[] { red / 255d, green / 255d, blue / 255d };
-	}
-
 }

@@ -1,28 +1,32 @@
 package de.minetrain.minechat.features.messagehighlight;
 
-import java.awt.Color;
-
-import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.config.Settings;
+import de.minetrain.minechat.config.YamlManager;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import javafx.scene.paint.Color;
 
 public class HighlightDefault {
 	private final String configPath;
-	private String borderColorCode;
+	private int borderColor;
 	private boolean active;
-	
+
+	private transient Color cachedColor;
+
 	public HighlightDefault(YamlManager settings, String path) {
-		this.borderColorCode = settings.getString(path+".Color");
-		this.active = settings.getBoolean(path+".Active");
+		this.borderColor = ColorManager.encodeToInt(Color.web(settings.getColor(path + ".Color")));
+		this.active = settings.getBoolean(path + ".Active");
 		this.configPath = path;
 	}
 
-	public String getColorCode() {
-		return borderColorCode;
+	public int getColor() {
+		return borderColor;
 	}
-	
-	public Color getColor() {
-		return ColorManager.decode(borderColorCode);
+
+	public Color getColorAsColor() {
+		if(cachedColor == null) {
+			cachedColor = ColorManager.decodeFromInt(borderColor);
+		}
+		return cachedColor;
 	}
 
 	public String getConfigPath() {
@@ -32,19 +36,18 @@ public class HighlightDefault {
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	public void save(){
 		Settings.settings.setBoolean(configPath+".Active", active);
-		Settings.settings.setString(configPath+".Color", borderColorCode);
+		Settings.settings.setString(configPath+".Color", ColorManager.encode(getColor()));
 		Settings.settings.saveConfigToFile();
 	}
-	
+
 	public void setActive(boolean active){
 		this.active = active;
 	}
-	
-	public void setColorCode(String newColorCode) {
-		borderColorCode = newColorCode;
+
+	public void setColor(int newColor) {
+		borderColor = newColor;
 	}
-	
 }

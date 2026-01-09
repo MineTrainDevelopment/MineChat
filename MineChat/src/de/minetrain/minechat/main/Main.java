@@ -80,7 +80,7 @@ public class Main extends Application {
 			TwitchManager.init(oAuth2Token).registerListener(new TwitchListener(new AutoReplyManager()));
 			loadingProgressLogging(10, "Prepare message highlight strings.");
 			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
-				String color = ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
+				int color = ColorManager.encodeToInt(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
 				EclipseStoreKeeper.root().userSettings().addHighlightString(new HighlightString(TwitchHelper.generateNameRegex(TwitchHelper.getSelfUser().getDisplayName()), color, color));
 			}
 			loadingProgressLogging(11, "Validate public badges and emotes.");

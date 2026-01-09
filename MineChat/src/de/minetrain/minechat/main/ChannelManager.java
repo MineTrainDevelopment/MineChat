@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.AutoReplies;
+import de.minetrain.minechat.data.objectdata.AutoReply;
 import de.minetrain.minechat.data.objectdata.AutoReply.Builder;
 import de.minetrain.minechat.data.objectdata.Channel;
 import de.minetrain.minechat.data.objectdata.Channels;
@@ -182,7 +183,7 @@ public class ChannelManager {
 	}
 
 	public Optional<AutoReplyViewModel> createAutoReply() {
-		Builder builder = de.minetrain.minechat.data.objectdata.AutoReply.builder()
+		Builder builder = AutoReply.builder()
 			.withUuid(UUID.randomUUID())
 			.withDelay(0)
 			.withMessagesPerMinute(1);

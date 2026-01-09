@@ -205,7 +205,7 @@ public class MineTextFlow extends TextFlow {
 					.filter(hs -> hs.getCompiledPattern().matcher(token.getText()).matches())
 					.findFirst();
 				if (hightlight.isPresent()) {
-					appendString(token.getText(), hightlight.get().getWordColor());
+					appendString(token.getText(), hightlight.get().getWordColorAsColor());
 					return hightlight.get();
 				} else {
 					appendString(token.getText());

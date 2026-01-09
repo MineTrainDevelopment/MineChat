@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,7 +142,7 @@ public class MessageManager {
 	/// @return An optional containing the created highlight string, or empty if creation was cancelled.
 	/// @see [HighlightEditDialog]
 	public static Optional<HighlightString> createHighlightString() {
-		return new HighlightEditDialog(HighlightString.builder()).showAndWait().map(editedHighlight -> {
+		return new HighlightEditDialog(HighlightString.builder().withUuid(UUID.randomUUID())).showAndWait().map(editedHighlight -> {
 			EclipseStoreKeeper.root().userSettings().addHighlightString(editedHighlight);
 			return editedHighlight;
 		});

@@ -155,8 +155,8 @@ public class YamlManager extends HashMap<String, Object>{
      * @param path Path to the string value in the configuration file.
      * @return The string value.
      */
-	public final String getString(String path) {
-		return getString(path, ">null<");
+	public final String getColor(String path) {
+		return getString(path, "#00000000");
 	}
 
 	/**

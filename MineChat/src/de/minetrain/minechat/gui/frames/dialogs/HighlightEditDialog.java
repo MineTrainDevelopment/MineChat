@@ -3,6 +3,8 @@ package de.minetrain.minechat.gui.frames.dialogs;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import javafx.beans.binding.Bindings;
@@ -39,27 +41,30 @@ public class HighlightEditDialog extends MineDialog<HighlightString> {
 		Label wordColorLabel = new Label("Fill:");
 		contentRoot.add(wordColorLabel, 0, 1);
 		wordColorPicker = new ColorPicker();
-		Color wordColor = highlight.getWordColorCode() != null ? Color.web(highlight.getWordColorCode()) : null;
+		Color wordColor = ColorManager.decodeFromInt(highlight.getWordColor());
 		wordColorPicker.setValue(wordColor);
 		contentRoot.add(wordColorPicker, 1, 1);
 
 		Label borderColorLabel = new Label("Border:");
 		contentRoot.add(borderColorLabel, 2, 1);
 		borderColorPicker = new ColorPicker();
-		Color borderColor = highlight.getBorderColorCode() != null ? Color.web(highlight.getBorderColorCode()) : null;
+		Color borderColor = ColorManager.decodeFromInt(highlight.getBorderColor());
 		borderColorPicker.setValue(borderColor);
 		contentRoot.add(borderColorPicker, 3, 1);
 
 		getDialogPane().setContent(contentRoot);
 		getDialogPane().lookupButton(ButtonType.OK).disableProperty()
-			.bind(patternField.textProperty().isEmpty().or(Bindings.createBooleanBinding(() -> {
+			.bind(Bindings.createBooleanBinding(() -> {
+				if (StringUtils.isBlank(patternField.getText())) {
+					return true;
+				}
 				try {
 					Pattern.compile(patternField.getText());
 					return false;
 				} catch (PatternSyntaxException _) {
 					return true;
 				}
-			}, patternField.textProperty())));
+			}, patternField.textProperty()));
 	}
 
 	@Override
@@ -68,8 +73,8 @@ public class HighlightEditDialog extends MineDialog<HighlightString> {
 		Color borderColor = borderColorPicker.getValue();
 		return highlightBuilder
 			.withPattern(patternField.getText())
-			.withWordColorCode(wordColor != null ? ColorManager.encode(wordColor) : null)
-			.withBorderColorCode(borderColor != null ? ColorManager.encode(borderColor) : null)
+			.withWordColor(wordColor != null ? ColorManager.encodeToInt(wordColor) : 0)
+			.withBorderColor(borderColor != null ? ColorManager.encodeToInt(borderColor) : 0)
 			.build();
 	}
 

@@ -32,8 +32,7 @@ public class HSLColor {
 	 * @param rgb the RGB Color object
 	 */
 	public HSLColor(String hexCode) {
-		double[] rgb = ColorManager.hexToRGB(hexCode);
-		hsl = fromRGB(rgb[0], rgb[1], rgb[2]);
+		this(Color.web(hexCode));
 	}
 
 	/**
@@ -104,7 +103,7 @@ public class HSLColor {
 		hsl = new double[] {checkBounds(hue, 0, 360), hsl[1], hsl[2]};
 		return this;
 	}
-	
+
 	/**
 	 * Create a RGB Color object based on this HSLColor with a different Saturation
 	 * value. The percent specified is an absolute value.
@@ -116,7 +115,7 @@ public class HSLColor {
 		hsl = new double[] {hsl[0], checkBounds(saturation, 0, 100), hsl[2]};
 		return this;
 	}
-	
+
 	/**
 	 * Create a RGB Color object based on this HSLColor with a different Luminance
 	 * value. The percent specified is an absolute value.
@@ -158,18 +157,18 @@ public class HSLColor {
 		setLuminance(luminance);
 		return this;
 	}
-	
+
 	public HSLColor adjustForBackground(HSLColor background){
         // This is used to stop colors from getting darker as they should, as long as its not intended.
         boolean isOver25 = getLuminance() >= 25;
-        
+
         double backgroundLuminance = background.getLuminance();
         backgroundLuminance = backgroundLuminance == 100 ? backgroundLuminance = 99 : backgroundLuminance;
 		double toneAjustmint = Math.abs(backgroundLuminance == 50 ? 0 : backgroundLuminance-50);
 
         if(backgroundLuminance < 50){
-        	
-        	//If the color is in the deep blue range, and the background is on the darker side, take out our increase contrast. 
+
+        	//If the color is in the deep blue range, and the background is on the darker side, take out our increase contrast.
         	//Disabled the contrast increasing due to a to high color difference and unreadability.
         	if(getHue() <= 260 && getHue() >= 220){
 //        		if(getHue() - 20 >= 220){
@@ -186,7 +185,7 @@ public class HSLColor {
         if(backgroundLuminance > 50){
         	adjustShade(toneAjustmint);
         }
-        
+
         if(isOver25 && getLuminance() <= 25){
     		setLuminance(25);
     	}
@@ -206,7 +205,7 @@ public class HSLColor {
 	 * Create a RGB Color object that is the complementary color of this HSLColor.
 	 * This is a convenience method. The complementary color is determined by adding
 	 * 180 degrees to the Hue value.
-	 * 
+	 *
 	 * @return the RGB Color object
 	 */
 	public Color getComplementary() {
@@ -266,6 +265,7 @@ public class HSLColor {
 		return toHex(hsl[0], hsl[1], hsl[2]);
 	}
 
+	@Override
 	public String toString() {
 		return "HSLColor[h=" + hsl[0] + ",s=" + hsl[1] + ",l=" + hsl[2] + ",opacity=" + opacity + "]";
 	}
@@ -280,20 +280,9 @@ public class HSLColor {
 		double r = color.getRed();
 		double g = color.getGreen();
 		double b = color.getBlue();
-		
+
 		return fromRGB(r, g, b);
 	}
-
-	/**
-	 * Convert a hexcode to it corresponding HSL values.
-	 *
-	 * @return an array containing the 3 HSL values.
-	 */
-	public static double[] fromHex(String hexCode) {
-		double[] rgb = ColorManager.hexToRGB(hexCode);
-		return fromRGB(rgb[0], rgb[1], rgb[2]);
-	}
-	
 
 	/**
 	 * Convert a RGB Color to it corresponding HSL values.
@@ -308,14 +297,15 @@ public class HSLColor {
 		// Calculate the Hue
 		double h = 0;
 
-		if (max == min)
+		if (max == min) {
 			h = 0;
-		else if (max == r)
+		} else if (max == r) {
 			h = ((60 * (g - b) / (max - min)) + 360) % 360;
-		else if (max == g)
+		} else if (max == g) {
 			h = (60 * (b - r) / (max - min)) + 120;
-		else if (max == b)
+		} else if (max == b) {
 			h = (60 * (r - g) / (max - min)) + 240;
+		}
 
 		// Calculate the Luminance
 
@@ -325,12 +315,13 @@ public class HSLColor {
 		// Calculate the Saturation
 		double s = 0;
 
-		if (max == min)
+		if (max == min) {
 			s = 0;
-		else if (l <= .5f)
+		} else if (l <= .5f) {
 			s = (max - min) / (max + min);
-		else
+		} else {
 			s = (max - min) / (2 - max - min);
+		}
 		return new double[] { h, s * 100, l * 100 };
 	}
 
@@ -410,10 +401,11 @@ public class HSLColor {
 
 		double q = 0;
 
-		if (l < 0.5)
+		if (l < 0.5) {
 			q = l * (1 + s);
-		else
+		} else {
 			q = (l + s) - (s * l);
+		}
 
 		double p = 2 * l - q;
 
@@ -429,11 +421,13 @@ public class HSLColor {
 	}
 
 	private static double HueToRGB(double p, double q, double h) {
-		if (h < 0)
+		if (h < 0) {
 			h += 1;
+		}
 
-		if (h > 1)
+		if (h > 1) {
 			h -= 1;
+		}
 
 		if (6 * h < 1) {
 			return p + ((q - p) * 6 * h);
@@ -449,7 +443,7 @@ public class HSLColor {
 
 		return p;
 	}
-	
+
 	/**
 	 * Convert HSL to hexcode.
 	 * @param hue
@@ -499,7 +493,7 @@ public class HSLColor {
 
 	    return String.format("#%02X%02X%02X", red, green, blue);
 	}
-	
+
 
 	/**
 	 * Check if a userinput is within required bounds.

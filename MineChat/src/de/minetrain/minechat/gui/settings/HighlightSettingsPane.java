@@ -15,6 +15,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.paint.Color;
 
 public class HighlightSettingsPane extends SettingsContentPane {
 
@@ -101,9 +102,10 @@ public class HighlightSettingsPane extends SettingsContentPane {
 				} else {
 					HighlightString rowItem = getTableRow().getItem();
 					setText(item);
-					setTextFill(rowItem.getWordColor());
+					Color color = rowItem.getWordColorAsColor();
+					setTextFill(color);
 					StringBuilder tooltip = new StringBuilder(item).append(' ').append('[');
-					ColorManager.encode(rowItem.getWordColor(), tooltip);
+					ColorManager.encode(color, tooltip);
 					setTooltip(new Tooltip(tooltip.append(']').toString()));
 				}
 			}
