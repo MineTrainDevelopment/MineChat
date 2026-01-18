@@ -10,7 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.features.messagehighlight.HighlightType;
 import de.minetrain.minechat.gui.utils.ColorManager;
+import de.minetrain.minechat.gui.viewmodel.HighlightViewModel;
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.utils.MineTextFlow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -88,25 +91,23 @@ public class MessageComponent extends StackPane {
 	}
 
 	private void applyHighlighting(ChatMessage message, HighlightString highlight) {
-		if (Settings.highlightUserFirstMessages.isActive() && message.getMessageType() == ChatMessage.MessageType.FIRST_MESSAGE) {
-			content.setStyle(ColorManager.encode(Settings.highlightUserFirstMessages.getColor(), "-fx-background-color: ", ";"));
-			applyBorderColor(Settings.highlightUserFirstMessages.getColor());
+		HighlightViewModel firstMessageHighlight = Main.getSettingsViewModel().getHighlightViewModel(HighlightType.FIRST_MESSAGE);
+		if (message.getMessageType() == ChatMessage.MessageType.FIRST_MESSAGE && firstMessageHighlight.isActive()) {
+			content.setStyle(firstMessageHighlight.getBackgroundStyle());
+			border.setStyle(firstMessageHighlight.getBorderStyle());
 			titleFlow.appendString("  -  First MSG");
 		} else {
-			if (message.getMessageType() == ChatMessage.MessageType.HIGHLIGHTED && Settings.displayTwitchHighlighted.isActive()) {
-				content.setStyle(ColorManager.encode(Settings.displayTwitchHighlighted.getColor(), "-fx-background-color: ", ";"));
+			HighlightViewModel userHighlighted = Main.getSettingsViewModel().getHighlightViewModel(HighlightType.HIGHLIGHT);
+			if (message.getMessageType() == ChatMessage.MessageType.HIGHLIGHTED && userHighlighted.isActive()) {
+				content.setStyle(userHighlighted.getBackgroundStyle());
 			}
 
-			if (message.isFirstSessionMessage() && Settings.highlightUserFirstMessages.isActive()) {
-				applyBorderColor(Settings.highlightUserFirstMessages.getColor());
+			if (message.isFirstSessionMessage() && firstMessageHighlight.isActive()) {
+				border.setStyle(firstMessageHighlight.getBorderStyle());
 			} else if (highlight != null) {
-				applyBorderColor(highlight.getBorderColor());
+				border.setStyle(highlight.getBorderStyle());
 			}
 		}
-	}
-
-	private void applyBorderColor(int color) {
-		border.setStyle(ColorManager.encode(color, "-fx-border-color: ", ";"));
 	}
 
 	private Button createReplyButton() {

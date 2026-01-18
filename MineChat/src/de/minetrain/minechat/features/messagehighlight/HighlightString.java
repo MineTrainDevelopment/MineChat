@@ -22,6 +22,7 @@ public class HighlightString {
 	private transient Pattern compiledPattern;
 	private transient Color cachedWordColor;
 	private transient Color cachedBorderColor;
+	private transient String cachedBorderStyle;
 
 	public static Builder builder() {
 		return new Builder();
@@ -93,6 +94,13 @@ public class HighlightString {
 			cachedBorderColor = ColorManager.decodeFromInt(getBorderColor());
 		}
 		return cachedBorderColor;
+	}
+
+	public String getBorderStyle() {
+		if (cachedBorderStyle == null) {
+			cachedBorderStyle = ColorManager.encode(getBorderColor(), "-fx-border-color: ", ";");
+		}
+		return cachedBorderStyle;
 	}
 
 	public boolean isPlaySound() {

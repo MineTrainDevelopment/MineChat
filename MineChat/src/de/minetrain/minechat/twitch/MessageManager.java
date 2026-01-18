@@ -24,6 +24,7 @@ import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
 import de.minetrain.minechat.gui.frames.dialogs.HighlightEditDialog;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
+import de.minetrain.minechat.gui.viewmodel.HighlightViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
@@ -45,6 +46,7 @@ public class MessageManager {
 
 	private AsyncMessageHandler messageHandler;
 	private Map<String, IVariable> variables;
+	private Runnable highlightChangeListener;
 
 	/// Sends a message to the specified channel, splitting it into multiple
 	/// messages if it exceeds the maximum length.
@@ -177,6 +179,27 @@ public class MessageManager {
 	/// @return A collection of all highlight strings.
 	public static Collection<HighlightString> getAllHighlightStrings() {
 		return EclipseStoreKeeper.root().userSettings().getAllHighlightStrings();
+	}
+
+	/// Updates a highlight setting in the store.
+	///
+	/// @param highlightViewModel The highlight view model containing the updated highlight settings.
+	public static void updateHighlight(HighlightViewModel highlightViewModel) {
+		EclipseStoreKeeper.root().userSettings().setHighlight(highlightViewModel.toHighlight());
+		instance().notifyHighlightChangeListener();
+	}
+
+	/// Sets a listener to be called when highlight settings change.
+	///
+	/// @param listener The listener to be called on highlight changes.
+	public static void setHighlightChangeListener(Runnable listener) {
+		instance().highlightChangeListener = listener;
+	}
+
+	private void notifyHighlightChangeListener() {
+		if (highlightChangeListener != null) {
+			highlightChangeListener.run();
+		}
 	}
 
 	private String processMessageString(String rawMessage, ChannelViewModel channelViewModel) {

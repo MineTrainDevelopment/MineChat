@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.enums.AutoReplyState;
 import de.minetrain.minechat.config.enums.ReplyType;
 import de.minetrain.minechat.config.enums.UndoVariation;
-import de.minetrain.minechat.features.messagehighlight.HighlightDefault;
-import de.minetrain.minechat.features.messagehighlight.HighlightGiftSubs;
 import de.minetrain.minechat.gui.utils.ColorManager;
 
 public class Settings{
@@ -26,22 +24,9 @@ public class Settings{
 	public static String dayFormat; //
 	/**keyWord, obj*/
 
-	public static HighlightDefault highlightUserFirstMessages; //
-	public static HighlightDefault highlightUserGoodbyeMessages;
-	public static HighlightDefault highlightUserReturnMessages;
 	public static long highlightUserReturnThreshold;
 	public static boolean highlightKeywords;
 	public static boolean displayEmoteOnly;
-
-	public static HighlightDefault displayModActions; //
-	public static HighlightDefault displayFollows; //
-	public static HighlightDefault displaySubs; //
-	public static HighlightGiftSubs displayGiftedSubs; //
-	public static HighlightDefault displayIndividualGiftedSubs; //
-	public static HighlightDefault displayBitsCheerd; //
-	public static HighlightDefault displayAnnouncement; //
-	public static HighlightDefault displayUserRewards; //
-	public static HighlightDefault displayTwitchHighlighted; //
 
 	public static int MAX_MESSAGE_DISPLAYING;
 	public static ReplyType GREETING_TYPE; //
@@ -75,21 +60,8 @@ public class Settings{
 		dateFormat = settings.getString("Variables.DateFormat", "dd:MM:yyyy");
 		dayFormat = settings.getString("Variables.DayFormat", "eeee");
 
-		highlightUserFirstMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.FirstMessage");
-		highlightUserGoodbyeMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.GoodByeMessage");
-		highlightUserReturnMessages = new HighlightDefault(settings, "Highlights.MessageHighlights.ReturnMessage");
 		highlightUserReturnThreshold = settings.getLong("Highlights.MessageHighlights.ReturnMessage.ThresholdSeconds", 3600);
 		highlightKeywords = settings.getBoolean("Highlights.MessageHighlights.KeyWods.Active");
-
-		displayModActions = new HighlightDefault(settings, "Highlights.EventHighlights.Moderaion");
-		displaySubs = new HighlightDefault(settings, "Highlights.EventHighlights.Subs");
-		displayFollows = new HighlightDefault(settings, "Highlights.EventHighlights.Follows");
-		displayGiftedSubs = new HighlightGiftSubs(settings, "Highlights.EventHighlights.GiftSubs");
-		displayIndividualGiftedSubs = new HighlightDefault(settings, "Highlights.EventHighlights.IndividualGiftSubs");
-		displayBitsCheerd = new HighlightDefault(settings, "Highlights.EventHighlights.BitsCheerd");
-		displayAnnouncement = new HighlightDefault(settings, "Highlights.EventHighlights.ModAnnouncement");
-		displayUserRewards = new HighlightDefault(settings, "Highlights.EventHighlights.UserRewards");
-		displayTwitchHighlighted = new HighlightDefault(settings, "Highlights.EventHighlights.TwitchHighlighted");
 
 		MAX_MESSAGE_DISPLAYING = settings.getInt("Chatting.MaxMessageDisplaying", 500);
 		GREETING_TYPE = ReplyType.get(settings.getString("Chatting.GreetingType", "MESSAGE"));

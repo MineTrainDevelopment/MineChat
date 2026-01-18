@@ -49,8 +49,7 @@ public class SettingsDialog extends MineDialog<Settings> {
 		contentPane = new StackPane();
 		contentPane.getStyleClass().add("content");
 		dialogRoot.setCenter(contentPane);
-
-		selectedTabProperty().set(chatTabButton);
+		chatTabButton.fire();
 	}
 
 	protected ObjectProperty<TabButton> selectedTabProperty() {

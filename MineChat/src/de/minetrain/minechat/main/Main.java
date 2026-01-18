@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
+import de.minetrain.minechat.features.messagehighlight.Highlight;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.gui.emotes.EmoteManager;
 import de.minetrain.minechat.gui.panes.ChannelPane;
@@ -22,6 +24,9 @@ import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
+import de.minetrain.minechat.gui.viewmodel.HighlightViewModel;
+import de.minetrain.minechat.gui.viewmodel.SettingsViewModel;
+import de.minetrain.minechat.twitch.MessageManager;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.TwitchListener;
 import de.minetrain.minechat.twitch.TwitchManager;
@@ -46,6 +51,7 @@ public class Main extends Application {
 	public static PluginManager pluginManager;
 	private static ChannelManager channelManager;
 	private static EmoteManager emoteManager;
+	private static SettingsViewModel settingsViewModel;
 	private static final int loadingSteps = 13;
 	public static boolean isGuiOpen = false;
 
@@ -54,6 +60,7 @@ public class Main extends Application {
 		EclipseStoreKeeper.init();
 
 		loadingProgressLogging(3, "Initialising user settings");
+		settingsViewModel = loadSettings();
 		new Settings();
 
 		loadingProgressLogging(4, "Preparing emotes");
@@ -103,6 +110,16 @@ public class Main extends Application {
 		});
 	}
 
+	private static SettingsViewModel loadSettings() {
+		SettingsViewModel settingsViewModel = new SettingsViewModel();
+		Collection<Highlight> storedHighlights = EclipseStoreKeeper.root().userSettings().getAllHighlights().values();
+		for (Highlight highlight : storedHighlights) {
+			HighlightViewModel highlightViewModel = settingsViewModel.getHighlightViewModel(highlight.getType());
+			highlightViewModel.apply(highlight);
+		}
+		return settingsViewModel;
+	}
+
 	// TODO Do we need to refresh periodically?
 	private static String aquireOAuth2Token() throws IOException {
 		String oAuth2Token = EclipseStoreKeeper.root().credentials().getOAuth2Token();
@@ -140,6 +157,7 @@ public class Main extends Application {
 		titleBar = new TitleBarPane();
 
 		channelPane = new ChannelPane();
+		MessageManager.setHighlightChangeListener(channelPane::refreshMessageWidgets);
 
 		BorderPane mainContentPane = new BorderPane();
 		mainContentPane.setId("main-pane");
@@ -206,6 +224,10 @@ public class Main extends Application {
 
 	public static EmoteManager getEmoteManager() {
 		return emoteManager;
+	}
+
+	public static SettingsViewModel getSettingsViewModel() {
+		return settingsViewModel;
 	}
 
 	/**

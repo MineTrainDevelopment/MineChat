@@ -63,6 +63,10 @@ public class ChannelPane extends VBox {
 		return marcoPanelPane;
 	}
 
+	public void refreshMessageWidgets() {
+		messageVirtualFlow.visibleCells().forEach(MessageCell::refreshItem);
+	}
+
 	private void handleChangedMessageSet(ObservableValue<?> obs, NotifiableObservableListWrapper<ChatMessage> oldMessages, NotifiableObservableListWrapper<ChatMessage> newMessages) {
 		if (listChangeListener != null && oldMessages != null) {
 			oldMessages.removeListener(listChangeListener);

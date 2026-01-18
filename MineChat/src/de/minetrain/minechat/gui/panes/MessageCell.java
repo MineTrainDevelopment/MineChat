@@ -8,6 +8,7 @@ import de.minetrain.minechat.gui.obj.messages.MessageComponent;
 public class MessageCell implements Cell<ChatMessage, MessageComponent> {
 
 	private final MessageComponent messageComponent;
+	private ChatMessage currentItem;
 
 	public MessageCell(ChatMessage initialItem) {
 		messageComponent = new MessageComponent();
@@ -20,10 +21,17 @@ public class MessageCell implements Cell<ChatMessage, MessageComponent> {
 
 	@Override
 	public void updateItem(ChatMessage item) {
+		currentItem = item;
 		if (item == null) {
 			messageComponent.clearMessage();
 		} else {
 			messageComponent.applyMessage(item);
+		}
+	}
+
+	public void refreshItem() {
+		if (currentItem != null) {
+			messageComponent.applyMessage(currentItem);
 		}
 	}
 
