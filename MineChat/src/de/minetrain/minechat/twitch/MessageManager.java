@@ -201,22 +201,19 @@ public class MessageManager {
 
 	/// Resets all highlights in the store to their default settings.
 	public static void setDefaultHighlightSettings() {
-		int greetingDefault = ColorManager.encodeToInt(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT);
-		int unimportantDefault = ColorManager.encodeToInt(ColorManager.CHAT_UNIMPORTANT_DEFAULT);
-		int spendingSmallDefault = ColorManager.encodeToInt(ColorManager.CHAT_SPENDING_SMALL_DEFAULT);
-		setHighlight(HighlightType.FIRST_MESSAGE, true, greetingDefault);
-		setHighlight(HighlightType.GOODBYE_MESSAGE, false, greetingDefault);
-		setHighlight(HighlightType.RETURN_MESSAGE, false, greetingDefault);
-		setHighlight(HighlightType.MODERATION, true, ColorManager.encodeToInt(ColorManager.CHAT_MODERATION_DEFAULT));
-		setHighlight(HighlightType.SUB, true, unimportantDefault);
-		setHighlight(HighlightType.GIFT_SUB_SMALL, true, spendingSmallDefault);
-		setHighlight(HighlightType.GIFT_SUB_LARGE, true, ColorManager.encodeToInt(ColorManager.CHAT_SPENDING_BIG_DEFAULT));
-		setHighlight(HighlightType.INDIVIDUAL_GIFT_SUB, true, unimportantDefault);
-		setHighlight(HighlightType.FOLLOW, true, unimportantDefault);
-		setHighlight(HighlightType.CHEER, true, spendingSmallDefault);
-		setHighlight(HighlightType.MOD_ANNOUNCEMENT, true, ColorManager.encodeToInt(ColorManager.CHAT_ANNOUNCEMENT_DEFAULT));
-		setHighlight(HighlightType.USER_REWARD, true, ColorManager.encodeToInt(ColorManager.CHAT_USER_REWARD_DEFAULT));
-		setHighlight(HighlightType.HIGHLIGHT, true, ColorManager.encodeToInt(ColorManager.CHAT_TWITCH_HIGHLIGHTED_DEFAULT));
+		setHighlight(HighlightType.FIRST_MESSAGE, true, ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT);
+		setHighlight(HighlightType.GOODBYE_MESSAGE, false, ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT);
+		setHighlight(HighlightType.RETURN_MESSAGE, false, ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT);
+		setHighlight(HighlightType.MODERATION, true,ColorManager.CHAT_MODERATION_DEFAULT);
+		setHighlight(HighlightType.SUB, true, ColorManager.CHAT_UNIMPORTANT_DEFAULT);
+		setHighlight(HighlightType.GIFT_SUB_SMALL, true, ColorManager.CHAT_SPENDING_SMALL_DEFAULT);
+		setHighlight(HighlightType.GIFT_SUB_LARGE, true, ColorManager.CHAT_SPENDING_BIG_DEFAULT);
+		setHighlight(HighlightType.INDIVIDUAL_GIFT_SUB, true, ColorManager.CHAT_UNIMPORTANT_DEFAULT);
+		setHighlight(HighlightType.FOLLOW, true, ColorManager.CHAT_UNIMPORTANT_DEFAULT);
+		setHighlight(HighlightType.CHEER, true, ColorManager.CHAT_SPENDING_SMALL_DEFAULT);
+		setHighlight(HighlightType.MOD_ANNOUNCEMENT, true, ColorManager.CHAT_ANNOUNCEMENT_DEFAULT);
+		setHighlight(HighlightType.USER_REWARD, true, ColorManager.CHAT_USER_REWARD_DEFAULT);
+		setHighlight(HighlightType.HIGHLIGHT, true, ColorManager.CHAT_TWITCH_HIGHLIGHTED_DEFAULT);
 		instance().notifyHighlightChangeListener();
 	}
 

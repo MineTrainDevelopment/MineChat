@@ -26,15 +26,15 @@ public class ColorManager {
 	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = Color.rgb(30, 30, 30);
 	public static final Color GUI_ACCENT_DEFAULT = Color.GREEN;
 
-	public static final Color CHAT_UNIMPORTANT_DEFAULT = Color.GRAY;
-	public static final Color CHAT_MODERATION_DEFAULT = Color.CYAN;
-	public static final Color CHAT_SPENDING_SMALL_DEFAULT = Color.rgb(180, 80, 0);
-	public static final Color CHAT_SPENDING_BIG_DEFAULT = Color.YELLOW;
-	public static final Color CHAT_ANNOUNCEMENT_DEFAULT = Color.GREEN;
-	public static final Color CHAT_USER_REWARD_DEFAULT = Color.BLUE;
-	public static final Color CHAT_TWITCH_HIGHLIGHTED_DEFAULT = Color.rgb(120, 86, 188);
-	public static final Color CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = Color.rgb(255, 40, 40);
-	public static final Color CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = Color.rgb(125, 0, 255);
+	public static final int CHAT_UNIMPORTANT_DEFAULT = 0x808080ff;
+	public static final int CHAT_MODERATION_DEFAULT = 0x00ffffff;
+	public static final int CHAT_SPENDING_SMALL_DEFAULT = 0xb45000ff;
+	public static final int CHAT_SPENDING_BIG_DEFAULT = 0xffff00ff;
+	public static final int CHAT_ANNOUNCEMENT_DEFAULT = 0x008000ff;
+	public static final int CHAT_USER_REWARD_DEFAULT = 0x0000ffff;
+	public static final int CHAT_TWITCH_HIGHLIGHTED_DEFAULT = 0x7856bcff;
+	public static final int CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT = 0xff2828ff;
+	public static final int CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT = 0x7d00ffff;
 
 	private static final HexFormat RGBA_HEX_FORMAT = HexFormat.of().withUpperCase();
 
@@ -58,7 +58,7 @@ public class ColorManager {
 	 */
 	public static Color GUI_BUTTON_BACKGROUND = GUI_BUTTON_BACKGROUND_DEFAULT;
 
-	public static Color CHAT_MESSAGE_KEY_HIGHLIGHT = CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
+	public static int CHAT_MESSAGE_KEY_HIGHLIGHT = CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
 	public static Color FONT = Color.WHITE;
 
 	public ColorManager(YamlManager setting) {
@@ -72,7 +72,7 @@ public class ColorManager {
 		GUI_BACKGROUND_LIGHT = decode(settings.getString("Colors.GUI.BackgroundLight", encode(GUI_BACKGROUND_LIGHT_DEFAULT)));
 		GUI_BORDER = decode(settings.getString("Colors.GUI.Border", encode(GUI_BORDER_DEFAULT)));
 		GUI_BUTTON_BACKGROUND = decode(settings.getString("Colors.GUI.ButtonBackground", encode(GUI_BUTTON_BACKGROUND_DEFAULT)));
-		CHAT_MESSAGE_KEY_HIGHLIGHT = decode(settings.getString("Colors.GUI.DefaultKeyHighlight", encode(CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT)));
+		CHAT_MESSAGE_KEY_HIGHLIGHT = encodeToInt(Color.web(settings.getString("Colors.GUI.DefaultKeyHighlight", encode(CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT))));
 	}
 
 	public static Color decode(String hexCode) {

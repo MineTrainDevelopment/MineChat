@@ -129,56 +129,13 @@ public class Settings{
 		settings.setString("Colors.GUI.ButtonBackground", ColorManager.encode(ColorManager.GUI_BUTTON_BACKGROUND_DEFAULT));
 		settings.setString("Colors.GUI.DefaultKeyHighlight", ColorManager.encode(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT));
 
-
 		settings.setBoolean("Highlights.MessageHighlights.KeyWods.Active", true);
 		settings.setStringList("Highlights.MessageHighlights.KeyWods.List", new ArrayList<>(), false);
-
-		settings.setBoolean("Highlights.MessageHighlights.FirstMessage.Active", true);
-		settings.setString("Highlights.MessageHighlights.FirstMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
-
-		settings.setBoolean("Highlights.MessageHighlights.GoodByeMessage.Active", false);
-		settings.setString("Highlights.MessageHighlights.GoodByeMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
-
-		settings.setBoolean("Highlights.MessageHighlights.ReturnMessage.Active", false);
-		settings.setString("Highlights.MessageHighlights.ReturnMessage.Color", ColorManager.encode(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT));
-		settings.setNumber("Highlights.MessageHighlights.ReturnMessage.ThresholdSeconds", 3600);
-
-		settings.setBoolean("Highlights.EventHighlights.Moderaion.Active", true);
-		settings.setString("Highlights.EventHighlights.Moderaion.Color", ColorManager.encode(ColorManager.CHAT_MODERATION_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.Subs.Active", true);
-		settings.setString("Highlights.EventHighlights.Subs.Color", ColorManager.encode(ColorManager.CHAT_UNIMPORTANT_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.GiftSubs.Active", true);
-		settings.setString("Highlights.EventHighlights.GiftSubs.ColorSmall", ColorManager.encode(ColorManager.CHAT_SPENDING_SMALL_DEFAULT));
-		settings.setString("Highlights.EventHighlights.GiftSubs.ColorBig", ColorManager.encode(ColorManager.CHAT_SPENDING_BIG_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.IndividualGiftSubs.Active", true);
-		settings.setString("Highlights.EventHighlights.IndividualGiftSubs.Color", ColorManager.encode(ColorManager.CHAT_UNIMPORTANT_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.Follows.Active", true);
-		settings.setString("Highlights.EventHighlights.Follows.Color", ColorManager.encode(ColorManager.CHAT_UNIMPORTANT_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.BitsCheerd.Active", true);
-		settings.setString("Highlights.EventHighlights.BitsCheerd.Color", ColorManager.encode(ColorManager.CHAT_SPENDING_SMALL_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.ModAnnouncement.Active", true);
-		settings.setString("Highlights.EventHighlights.ModAnnouncement.Color", ColorManager.encode(ColorManager.CHAT_ANNOUNCEMENT_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.UserRewards.Active", true);
-		settings.setString("Highlights.EventHighlights.UserRewards.Color", ColorManager.encode(ColorManager.CHAT_USER_REWARD_DEFAULT));
-
-		settings.setBoolean("Highlights.EventHighlights.TwitchHighlighted.Active", true);
-		settings.setString("Highlights.EventHighlights.TwitchHighlighted.Color", ColorManager.encode(ColorManager.CHAT_TWITCH_HIGHLIGHTED_DEFAULT));
-
-
 
 		settings.setString("Variables.MessageTime", "HH:mm");
 		settings.setString("Variables.TimeFormat", "HH:mm");
 		settings.setString("Variables.DateFormat", "dd.MM.yyyy");
 		settings.setString("Variables.DayFormat", "eeee");
-
-
 
 		settings.setNumber("Chatting.MaxMessageDisplaying", 500);
 		settings.setString("Chatting.GreetingType", ReplyType.MESSAGE.name());
@@ -189,8 +146,6 @@ public class Settings{
 		settings.setBoolean("Chatting.HoltToSendMessages", true);
 		settings.setBoolean("Chatting.emoteBlendinOnDisplaying", false);
 		settings.setBoolean("Chatting.DisplayEmoteOnly", true);
-
-
 
 		settings.setString("Font.Name", "Arial Unicode MS");
 		settings.setNumber("Font.Style", 1);
