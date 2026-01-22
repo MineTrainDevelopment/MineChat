@@ -29,7 +29,7 @@ public class MessageCell implements Cell<ChatMessage, MessageComponent> {
 		}
 	}
 
-	public void refreshItem() {
+	public void refreshItemDisplay() {
 		if (currentItem != null) {
 			messageComponent.applyMessage(currentItem);
 		}

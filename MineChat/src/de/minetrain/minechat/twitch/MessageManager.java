@@ -21,12 +21,15 @@ import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.CountVariable;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.features.messagehighlight.HighlightType;
 import de.minetrain.minechat.gui.frames.dialogs.CountVariableEditDialog;
 import de.minetrain.minechat.gui.frames.dialogs.HighlightEditDialog;
+import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.HighlightViewModel;
 import de.minetrain.minechat.gui.viewmodel.MacroViewModel;
 import de.minetrain.minechat.gui.viewmodel.StreamInfoViewModel;
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.AsyncMessageHandler;
 import de.minetrain.minechat.utils.OutboundChatMessage;
 import javafx.beans.property.IntegerProperty;
@@ -144,10 +147,12 @@ public class MessageManager {
 	/// @return An optional containing the created highlight string, or empty if creation was cancelled.
 	/// @see [HighlightEditDialog]
 	public static Optional<HighlightString> createHighlightString() {
-		return new HighlightEditDialog(HighlightString.builder().withUuid(UUID.randomUUID())).showAndWait().map(editedHighlight -> {
+		Optional<HighlightString> result = new HighlightEditDialog(HighlightString.builder().withUuid(UUID.randomUUID())).showAndWait().map(editedHighlight -> {
 			EclipseStoreKeeper.root().userSettings().addHighlightString(editedHighlight);
 			return editedHighlight;
 		});
+		result.ifPresent(_ -> instance().notifyHighlightChangeListener());
+		return result;
 	}
 
 	/// Edits an existing highlight string through a dialog and updates it in the store.
@@ -156,14 +161,17 @@ public class MessageManager {
 	/// @return An optional containing the edited highlight string, or empty if editing was cancelled.
 	/// @see [HighlightEditDialog]
 	public static Optional<HighlightString> editHighlightString(HighlightString highlightString) {
-		return new HighlightEditDialog(highlightString.buildCopy()).showAndWait().map(editedHighlight -> {
+		Optional<HighlightString> result = new HighlightEditDialog(highlightString.buildCopy()).showAndWait().map(editedHighlight -> {
 			EclipseStoreKeeper.root().userSettings().addHighlightString(editedHighlight);
 			return editedHighlight;
 		});
+		result.ifPresent(_ -> instance().notifyHighlightChangeListener());
+		return result;
 	}
 
 	public static void updateHighlightString(HighlightString highlightString) {
 		EclipseStoreKeeper.root().userSettings().addHighlightString(highlightString);
+		instance().notifyHighlightChangeListener();
 	}
 
 	/// Deletes a highlight string from the store.
@@ -171,7 +179,9 @@ public class MessageManager {
 	/// @param highlightString The highlight string to be deleted.
 	/// @return True if the highlight string was successfully deleted, false otherwise.
 	public static boolean deleteHighlightString(HighlightString highlightString) {
-		return EclipseStoreKeeper.root().userSettings().removeHighlightString(highlightString.getUuid()) != null;
+		boolean result = EclipseStoreKeeper.root().userSettings().removeHighlightString(highlightString.getUuid()) != null;
+		instance().notifyHighlightChangeListener();
+		return result;
 	}
 
 	/// Retrieves all highlight strings from the store.
@@ -187,6 +197,34 @@ public class MessageManager {
 	public static void updateHighlight(HighlightViewModel highlightViewModel) {
 		EclipseStoreKeeper.root().userSettings().setHighlight(highlightViewModel.toHighlight());
 		instance().notifyHighlightChangeListener();
+	}
+
+	/// Resets all highlights in the store to their default settings.
+	public static void setDefaultHighlightSettings() {
+		int greetingDefault = ColorManager.encodeToInt(ColorManager.CHAT_MESSAGE_GREETING_HIGHLIGHT_DEFAULT);
+		int unimportantDefault = ColorManager.encodeToInt(ColorManager.CHAT_UNIMPORTANT_DEFAULT);
+		int spendingSmallDefault = ColorManager.encodeToInt(ColorManager.CHAT_SPENDING_SMALL_DEFAULT);
+		setHighlight(HighlightType.FIRST_MESSAGE, true, greetingDefault);
+		setHighlight(HighlightType.GOODBYE_MESSAGE, false, greetingDefault);
+		setHighlight(HighlightType.RETURN_MESSAGE, false, greetingDefault);
+		setHighlight(HighlightType.MODERATION, true, ColorManager.encodeToInt(ColorManager.CHAT_MODERATION_DEFAULT));
+		setHighlight(HighlightType.SUB, true, unimportantDefault);
+		setHighlight(HighlightType.GIFT_SUB_SMALL, true, spendingSmallDefault);
+		setHighlight(HighlightType.GIFT_SUB_LARGE, true, ColorManager.encodeToInt(ColorManager.CHAT_SPENDING_BIG_DEFAULT));
+		setHighlight(HighlightType.INDIVIDUAL_GIFT_SUB, true, unimportantDefault);
+		setHighlight(HighlightType.FOLLOW, true, unimportantDefault);
+		setHighlight(HighlightType.CHEER, true, spendingSmallDefault);
+		setHighlight(HighlightType.MOD_ANNOUNCEMENT, true, ColorManager.encodeToInt(ColorManager.CHAT_ANNOUNCEMENT_DEFAULT));
+		setHighlight(HighlightType.USER_REWARD, true, ColorManager.encodeToInt(ColorManager.CHAT_USER_REWARD_DEFAULT));
+		setHighlight(HighlightType.HIGHLIGHT, true, ColorManager.encodeToInt(ColorManager.CHAT_TWITCH_HIGHLIGHTED_DEFAULT));
+		instance().notifyHighlightChangeListener();
+	}
+
+	private static void setHighlight(HighlightType type, boolean active, int color) {
+		HighlightViewModel highlightViewModel = Main.getSettingsViewModel().getHighlightViewModel(type);
+		highlightViewModel.setActive(active);
+		highlightViewModel.setColor(color);
+		EclipseStoreKeeper.root().userSettings().setHighlight(highlightViewModel.toHighlight());
 	}
 
 	/// Sets a listener to be called when highlight settings change.

@@ -89,6 +89,8 @@ public class Main extends Application {
 			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
 				int color = ColorManager.encodeToInt(ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT);
 				EclipseStoreKeeper.root().userSettings().addHighlightString(new HighlightString(TwitchHelper.generateNameRegex(TwitchHelper.getSelfUser().getDisplayName()), color, color));
+				MessageManager.setDefaultHighlightSettings();
+				EclipseStoreKeeper.root().userSettings().setInitialized();
 			}
 			loadingProgressLogging(11, "Validate public badges and emotes.");
 			TextureManager.downloadPublicData();

@@ -64,7 +64,7 @@ public class ChannelPane extends VBox {
 	}
 
 	public void refreshMessageWidgets() {
-		messageVirtualFlow.visibleCells().forEach(MessageCell::refreshItem);
+		messageVirtualFlow.visibleCells().forEach(MessageCell::refreshItemDisplay);
 	}
 
 	private void handleChangedMessageSet(ObservableValue<?> obs, NotifiableObservableListWrapper<ChatMessage> oldMessages, NotifiableObservableListWrapper<ChatMessage> newMessages) {
