@@ -1,5 +1,9 @@
 .root {
-	-fx-base: #191919;
+	-config-base: #191919;
+	-config-accent: #9146ff;
+	-config-border: black;
+
+	-fx-base: -config-base;
 
 	-fx-background: transparent;
 	-fx-background-base: derive(-fx-base, 11%);
@@ -11,14 +15,14 @@
 	-fx-shadow-highlight-color: transparent;
 	-fx-body-color: -fx-color;
 
-	-fx-accent: #9146ff;
-	-fx-default-button: #9146ff;
+	-fx-accent: -config-accent;
+	-fx-default-button: -config-accent;
 
-	-fx-focus-color: #9146ff;
+	-fx-focus-color: -config-accent;
 	-fx-faint-focus-color: #9146ff22;
 
-	-fx-outer-border: black;
-	-fx-inner-border: black;
+	-fx-outer-border: -config-border;
+	-fx-inner-border: -config-border;
 
 	-fx-selection-bar-non-focused: derive(-fx-accent, -30%);
 
@@ -31,18 +35,18 @@
 
 	/* Custom colors */
 	-fx-selected-base: ladder(
-        -fx-base,
-        derive(-fx-base,40%) 20%,
-        derive(-fx-base,60%) 35%,
-        derive(-fx-base,80%) 50%
-     );
+		-fx-base,
+		derive(-fx-base,40%) 20%,
+		derive(-fx-base,60%) 35%,
+		derive(-fx-base,80%) 50%
+	 );
 
 	-fx-hover-accent: ladder(
-        -fx-accent,
-        derive(-fx-accent,20%) 20%,
-        derive(-fx-accent,30%) 35%,
-        derive(-fx-accent,40%) 50%
-     );
+		-fx-accent,
+		derive(-fx-accent,20%) 20%,
+		derive(-fx-accent,30%) 35%,
+		derive(-fx-accent,40%) 50%
+	 );
 }
 
 .button,
@@ -54,9 +58,9 @@
 .color-picker.split-button > .color-picker-label,
 .combo-box-base,
 .combo-box-base:editable > .arrow-button {
-    -fx-background-color: -fx-body-color;
-    -fx-background-insets: 2px;
-    -fx-background-radius: 8px;
+	-fx-background-color: -fx-body-color;
+	-fx-background-insets: 2px;
+	-fx-background-radius: 8px;
 
 	-fx-border-color: -fx-outer-border;
 	-fx-border-radius: 8px;
@@ -79,7 +83,7 @@
 .spinner .increment-arrow-button:pressed,
 .spinner .decrement-arrow-button:pressed,
 .tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:pressed {
-    -fx-scale-y: 0.97;
+	-fx-scale-y: 0.97;
 	-fx-scale-x: 0.97;
 }
 
@@ -94,21 +98,21 @@
 .table-view,
 .tree-table-view,
 .html-editor {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
 	-fx-background-radius: 8px;
 	-fx-padding: 0;
 }
 
 .table-view,
 .tree-table-view {
-    -fx-table-cell-border-color: transparent;
+	-fx-table-cell-border-color: transparent;
 }
 
 .table-view .column-header-background,
 .tree-table-view > .column-header-background {
-    -fx-background-color: -fx-body-color;
-    -fx-background-insets: 0;
+	-fx-background-color: -fx-body-color;
+	-fx-background-insets: 0;
 	-fx-background-radius: 8px 8px 0 0;
 }
 
@@ -120,14 +124,14 @@
 .tree-table-view > .column-header-background > .show-hide-columns-button,
 .table-view:constrained-resize .filler,
 .tree-table-view:constrained-resize .filler {
-    -fx-background-color: -fx-body-color;
-    -fx-background-insets: 0;
+	-fx-background-color: -fx-body-color;
+	-fx-background-insets: 0;
 	-fx-background-radius: 8px 8px 0 0;
 }
 
 .table-view .column-header .label,
 .tree-table-view .column-header .label {
-    -fx-alignment: center-left;
+	-fx-alignment: center-left;
 	-fx-padding: 0 0 0 5px;
 }
 
@@ -137,8 +141,8 @@
 .tree-table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:focused,
 .table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused,
 .tree-table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell > .tree-table-cell:focused {
-    -fx-background-color: -fx-background;
-    -fx-background-insets: 0;
+	-fx-background-color: -fx-background;
+	-fx-background-insets: 0;
 }
 
 /* Selected rows */
@@ -148,11 +152,11 @@
 .tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled:selected,
 .table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell .table-cell:selected,
 .tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell .tree-table-cell:selected {
-    -fx-table-cell-border-color: transparent;
+	-fx-table-cell-border-color: transparent;
 }
 
 .table-row-cell:filled:hover {
-    -fx-background-color: -fx-hover-accent;
+	-fx-background-color: -fx-hover-accent;
 }
 
 /* Selected when control is not focused */
@@ -162,36 +166,36 @@
 .tree-table-row-cell:filled:selected,
 .table-row-cell:filled > .table-cell:selected,
 .tree-table-row-cell:filled > .tree-table-cell:selected {
-    -fx-table-cell-border-color: transparent;
+	-fx-table-cell-border-color: transparent;
 }
 
 .table-cell {
-    -fx-padding: 0.166667em 0.166667em 0.166667em 5px;
+	-fx-padding: 0.166667em 0.166667em 0.166667em 5px;
 }
 
 .combo-box-popup > .list-view {
-    -fx-background-color: -fx-control-inner-background;
-    -fx-background-insets: 0;
+	-fx-background-color: -fx-control-inner-background;
+	-fx-background-insets: 0;
 	-fx-background-radius: 8px;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2) , 12, 0.0 , 0 , 8 );
+	-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2) , 12, 0.0 , 0 , 8 );
 }
 
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
 	-fx-padding: 5px 0 5px 10px;
-    -fx-background-insets: 2px;
+	-fx-background-insets: 2px;
 	-fx-background-radius: 8px;
 }
 
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
-    -fx-background: -fx-accent;
-    -fx-background-color: -fx-hover-accent;
+	-fx-background: -fx-accent;
+	-fx-background-color: -fx-hover-accent;
 
 }
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
-    -fx-background: -fx-accent;
-    -fx-background-color: -fx-background;
-    -fx-background-insets: 2px;
+	-fx-background: -fx-accent;
+	-fx-background-color: -fx-background;
+	-fx-background-insets: 2px;
 }
 
 .scroll-bar {
@@ -242,14 +246,14 @@
 
 .titled-pane > .title > .arrow-button > .arrow {
 	-fx-background-color: -fx-mark-color;
-    -fx-background-insets: 0;
+	-fx-background-insets: 0;
 	-fx-effect: null;
 }
 
 .titled-pane:focused > .title > .arrow-button > .arrow {
-    -fx-background-color: -fx-mark-color;
-    -fx-background-insets: 0;
-    -fx-effect: null;
+	-fx-background-color: -fx-mark-color;
+	-fx-background-insets: 0;
+	-fx-effect: null;
 }
 
 .styled-text-area {
@@ -392,8 +396,8 @@
 
 .input-pane .button {
 	-fx-color: -fx-control-inner-background;
-    -fx-background-insets: 1px;
-    -fx-background-radius: 5px;
+	-fx-background-insets: 1px;
+	-fx-background-radius: 5px;
 
 	-fx-border-radius: 5px;
 	-fx-border-width: 2px;
@@ -437,7 +441,7 @@
 }
 
 .settings-content .table-view {
-    -fx-background-color: -fx-control-inner-background;
+	-fx-background-color: -fx-control-inner-background;
 }
 
 .chat-input-field {

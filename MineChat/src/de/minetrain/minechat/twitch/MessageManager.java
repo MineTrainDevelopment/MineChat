@@ -3,7 +3,6 @@ package de.minetrain.minechat.twitch;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.CountVariable;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
@@ -334,9 +332,9 @@ public class MessageManager {
 
 		variables = new HashMap<>();
 		registerVariable(new ClipboardVariable());
-		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.timeFormat)), "TIME"));
-		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.dateFormat)), "DATE"));
-		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(DateTimeFormatter.ofPattern(Settings.dayFormat)), "DAY"));
+		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(Main.getSettingsViewModel().getTimeFormatter()), "TIME"));
+		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(Main.getSettingsViewModel().getDateFormatter()), "DATE"));
+		registerVariable(new SimpleDateTimeVariable(dateTime -> dateTime.format(Main.getSettingsViewModel().getDayFormatter()), "DAY"));
 		registerVariable(new SimpleChannelVariable(cvm -> "@" + cvm.getChannelName(), "STREAMER", "CHANNEL"));
 		registerVariable(new SimpleChannelVariable(_ -> "@" + TwitchHelper.getSelfUser().getDisplayName(), "MYSELF", "ME", "SELF"));
 		registerVariable(new StreamInfoVariable(StreamInfoViewModel::getGameId, "GAME_ID"));

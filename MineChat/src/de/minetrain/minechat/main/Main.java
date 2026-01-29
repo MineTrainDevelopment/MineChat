@@ -7,14 +7,15 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
+import de.minetrain.minechat.data.objectdata.UserSettings;
 import de.minetrain.minechat.features.autoreply.AutoReplyManager;
 import de.minetrain.minechat.features.messagehighlight.Highlight;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
@@ -32,8 +33,6 @@ import de.minetrain.minechat.twitch.TwitchListener;
 import de.minetrain.minechat.twitch.TwitchManager;
 import de.minetrain.minechat.twitch.TwitchPollingService;
 import de.minetrain.minechat.utils.audio.AudioManager;
-import de.minetrain.minechat.utils.events.EventManager;
-import de.minetrain.minechat.utils.plugins.PluginManager;
 import javafx.application.Application;
 import javafx.collections.MapChangeListener.Change;
 import javafx.scene.Scene;
@@ -47,8 +46,6 @@ public class Main extends Application {
 	public static final String VERSION = "V0.9";
 	// TODO resolve statics...
 	public static AudioManager audioManager;
-	public static EventManager eventManager;
-	public static PluginManager pluginManager;
 	private static ChannelManager channelManager;
 	private static EmoteManager emoteManager;
 	private static SettingsViewModel settingsViewModel;
@@ -61,19 +58,12 @@ public class Main extends Application {
 
 		loadingProgressLogging(3, "Initialising user settings");
 		settingsViewModel = loadSettings();
-		new Settings();
 
 		loadingProgressLogging(4, "Preparing emotes");
 		emoteManager = new EmoteManager();
 
 		loadingProgressLogging(5, "Fetching audio fiels.");
 		audioManager = new AudioManager();
-
-		loadingProgressLogging(6, "Preparing MineChat events.");
-		eventManager = new EventManager();
-
-		loadingProgressLogging(7, "Loading custom plugins.");
-		pluginManager = new PluginManager();
 
 		loadingProgressLogging(8, "Login in...");
 
@@ -87,7 +77,7 @@ public class Main extends Application {
 			TwitchManager.init(oAuth2Token).registerListener(new TwitchListener(new AutoReplyManager()));
 			loadingProgressLogging(10, "Prepare message highlight strings.");
 			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
-				int color = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT;
+				int color = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
 				EclipseStoreKeeper.root().userSettings().addHighlightString(new HighlightString(TwitchHelper.generateNameRegex(TwitchHelper.getSelfUser().getDisplayName()), color, color));
 				MessageManager.setDefaultHighlightSettings();
 				EclipseStoreKeeper.root().userSettings().setInitialized();
@@ -114,11 +104,26 @@ public class Main extends Application {
 
 	private static SettingsViewModel loadSettings() {
 		SettingsViewModel settingsViewModel = new SettingsViewModel();
-		Collection<Highlight> storedHighlights = EclipseStoreKeeper.root().userSettings().getAllHighlights().values();
+		UserSettings userSettings = EclipseStoreKeeper.root().userSettings();
+		Collection<Highlight> storedHighlights = userSettings.getAllHighlights().values();
 		for (Highlight highlight : storedHighlights) {
 			HighlightViewModel highlightViewModel = settingsViewModel.getHighlightViewModel(highlight.getType());
 			highlightViewModel.apply(highlight);
 		}
+		settingsViewModel.setAutoReplyOnlyInActiveTab(userSettings.isAutoReplyOnlyInActiveTab());
+		settingsViewModel.setUndoSteps(userSettings.getUndoSteps());
+		settingsViewModel.setUndoLetterMode(userSettings.isUndoLetterMode());
+		settingsViewModel.setReplyType(userSettings.getReplyType());
+		settingsViewModel.setGreetingType(userSettings.getGreetingType());
+		settingsViewModel.setShowEmoteOnlyMessages(userSettings.isShowEmoteOnlyMessages());
+		settingsViewModel.setUserAwayThreshold(Duration.ofMillis(userSettings.getUserAwayThreshold()));
+		settingsViewModel.setMessageTimeFormat(userSettings.getMessageTimeFormat());
+		settingsViewModel.setTimeFormat(userSettings.getTimeFormat());
+		settingsViewModel.setDateFormat(userSettings.getDateFormat());
+		settingsViewModel.setDayFormat(userSettings.getDayFormat());
+		settingsViewModel.setBaseColor(userSettings.getBaseColor());
+		settingsViewModel.setAccentColor(userSettings.getAccentColor());
+		settingsViewModel.setBorderColor(userSettings.getBorderColor());
 		return settingsViewModel;
 	}
 
@@ -171,6 +176,10 @@ public class Main extends Application {
 		scene.setFill(Color.TRANSPARENT);
 //		scene.getStylesheets().add("style.css");
 		scene.getStylesheets().add("style_v2.css");
+		mainContentPane.setStyle(getSettingsViewModel().getRootStyle());
+		getSettingsViewModel().rootStyleProperty().addListener((_, _, newStyle) -> {
+			mainContentPane.setStyle(newStyle);
+		});
 
 		//TODO: Keep multiframe in mind.
 		//TODO: Keep multiframe in mind.
@@ -218,10 +227,6 @@ public class Main extends Application {
 
 	public static AudioManager getAudioManager() {
 		return audioManager;
-	}
-
-	public static EventManager getEventManager() {
-		return eventManager;
 	}
 
 	public static EmoteManager getEmoteManager() {

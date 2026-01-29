@@ -1,13 +1,11 @@
 package de.minetrain.minechat.gui.obj.messages;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.commons.lang3.StringUtils;
-
-import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.data.objectdata.ChatMessage;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
 import de.minetrain.minechat.features.messagehighlight.HighlightType;
@@ -54,22 +52,17 @@ public class MessageComponent extends StackPane {
 	public void applyMessage(ChatMessage message) {
 		clearMessage();
 
-		if (message.isEmoteOnly() && !Settings.displayEmoteOnly) {
+		if (message.isEmoteOnly() && !Main.getSettingsViewModel().isShowEmoteOnlyMessages()) {
 			setVisible(false);
 			return;
 		}
 
-		String color = message.getSenderColor();
-		if (StringUtils.isBlank(color)) {
-			color = "#ffffff";
-		}
-
 		message.getBadgeIds().forEach(badgeId -> titleFlow.appendSpace().appendBadge(message.getChannelId(), badgeId));
-		titleFlow.appendSpace().appendString(message.getSenderName(), ColorManager.decode(color, ColorManager.encode(ColorManager.GUI_BACKGROUND))).appendString(": ", 20, Color.WHITE);
+		titleFlow.appendSpace().appendString(message.getSenderName(), ColorManager.getAdjustedColor(message.getSenderColor())).appendString(": ", 20, Color.WHITE);
 
 		Instant messageCreated = message.getTimestamp();
 		DateTimeFormatter selectDateTimeFormatter = selectDateTimeFormatter(messageCreated);
-		messageFlow.appendString("[" + selectDateTimeFormatter.format(messageCreated.atZone(ZoneId.systemDefault())) + "] ");
+		messageFlow.appendString("[" + selectDateTimeFormatter.format(LocalDateTime.ofInstant(messageCreated, ZoneId.systemDefault())) + "] ");
 
 		HighlightString highlight = null;
 		for (var token : message.getTokens()) {
@@ -128,14 +121,13 @@ public class MessageComponent extends StackPane {
 	private static DateTimeFormatter selectDateTimeFormatter(Instant instant) {
 		Instant now = Instant.now();
 		if (!instant.isBefore(now.minus(Period.ofDays(1)))) {
-			return DateTimeFormatter.ofPattern(Settings.messageTimeFormat);
+			return Main.getSettingsViewModel().getMessageTimeFormatter();
 		}
 
 		if (!instant.isBefore(now.minus(Period.ofDays(7)))) {
-			String pattern = Settings.dayFormat + " | " + Settings.messageTimeFormat;
-			return DateTimeFormatter.ofPattern(pattern);
+			return Main.getSettingsViewModel().getDayTimeFormatter();
 		}
 
-		return DateTimeFormatter.ofPattern(Settings.dateFormat + " | " + Settings.messageTimeFormat);
+		return Main.getSettingsViewModel().getDateTimeFormatter();
 	}
 }

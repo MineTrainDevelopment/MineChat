@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import de.minetrain.minechat.config.Settings;
 import de.minetrain.minechat.gui.panes.TabButton;
 import de.minetrain.minechat.gui.settings.AppearanceSettingsPane;
 import de.minetrain.minechat.gui.settings.AutoReplySettingsPane;
@@ -19,7 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class SettingsDialog extends MineDialog<Settings> {
+public class SettingsDialog extends MineDialog<Void> {
 
 	private ObjectProperty<TabButton> selectedTabProperty;
 	private StackPane contentPane;
@@ -60,7 +59,7 @@ public class SettingsDialog extends MineDialog<Settings> {
 	}
 
 	@Override
-	protected Settings yieldResultOnSuccess() {
+	protected Void yieldResultOnSuccess() {
 		return null;
 	}
 

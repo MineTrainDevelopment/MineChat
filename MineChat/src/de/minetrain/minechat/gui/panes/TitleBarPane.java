@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Set;
 
 import de.minetrain.minechat.gui.obj.buttons.ChannelTabButton;
-import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -70,7 +69,7 @@ public class TitleBarPane extends BorderPane {
 			}
 		});
 
-		Rectangle verticalStrut = new Rectangle(5, 26, ColorManager.decode("#0E0E0E"));
+		Rectangle verticalStrut = new Rectangle(5, 26, Color.web("#0E0E0E"));
 		verticalStrut.setTranslateY(2);
 
 		setLeft(settingsButtonContainer);

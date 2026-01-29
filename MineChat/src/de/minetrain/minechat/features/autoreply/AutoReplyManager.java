@@ -3,8 +3,6 @@ package de.minetrain.minechat.features.autoreply;
 import java.time.Instant;
 import java.util.Objects;
 
-import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.config.enums.AutoReplyState;
 import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.main.Main;
@@ -13,7 +11,7 @@ import de.minetrain.minechat.twitch.MessageManager;
 public class AutoReplyManager {
 
 	public void handleMessage(String channelId, String messageId, String message, Instant timestamp) {
-		if (Settings.autoReplyState == AutoReplyState.CURRENT_TAB && !Objects.equals(Main.getChannelManager().getActiveChanneldId(), channelId)) {
+		if (Main.getSettingsViewModel().isAutoReplyOnlyInActiveTab() && !Objects.equals(Main.getChannelManager().getActiveChanneldId(), channelId)) {
 			return;
 		}
 

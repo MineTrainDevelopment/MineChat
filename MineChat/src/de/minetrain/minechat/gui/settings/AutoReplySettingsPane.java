@@ -3,8 +3,7 @@ package de.minetrain.minechat.gui.settings;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
-import de.minetrain.minechat.config.Settings;
-import de.minetrain.minechat.config.enums.AutoReplyState;
+import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.gui.panes.TooltipTableCell;
 import de.minetrain.minechat.gui.viewmodel.AutoReplyViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
@@ -29,8 +28,11 @@ public class AutoReplySettingsPane extends SettingsContentPane {
 		setCenter(autoReplyTable);
 
 		CheckBox onlyObserveActiveChannel = new CheckBox("Only observe active channel");
-		onlyObserveActiveChannel.setSelected(Settings.autoReplyState == AutoReplyState.CURRENT_TAB);
-		onlyObserveActiveChannel.selectedProperty().addListener((_, _, newVal) -> Settings.setAutoReplyState(newVal.booleanValue() ? AutoReplyState.CURRENT_TAB : AutoReplyState.ALL));
+		onlyObserveActiveChannel.setSelected(Main.getSettingsViewModel().isAutoReplyOnlyInActiveTab());
+		onlyObserveActiveChannel.selectedProperty().addListener((_, _, newVal) -> {
+			Main.getSettingsViewModel().setAutoReplyOnlyInActiveTab(newVal);
+			EclipseStoreKeeper.root().userSettings().setAutoReplyOnlyInActiveTab(newVal);
+		});
 		addAddtionalSettingsPane(onlyObserveActiveChannel);
 
 		Button addAutoReplyButton = new Button("Add");

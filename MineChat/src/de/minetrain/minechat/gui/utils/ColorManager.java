@@ -2,29 +2,39 @@ package de.minetrain.minechat.gui.utils;
 
 import java.util.HashMap;
 import java.util.HexFormat;
+import java.util.Map;
 
-import org.slf4j.LoggerFactory;
+import javax.cache.Cache;
+import javax.cache.Caching;
+import javax.cache.configuration.Factory;
+import javax.cache.configuration.FactoryBuilder;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.AccessedExpiryPolicy;
+import javax.cache.expiry.Duration;
+import javax.cache.integration.CacheLoader;
+import javax.cache.integration.CacheLoaderException;
 
-import de.minetrain.minechat.config.YamlManager;
+import org.apache.commons.lang3.StringUtils;
+
 import javafx.scene.paint.Color;
 
-//import javax.swing.JColorChooser;
-
 public class ColorManager {
-	/** hexcode, adjustedColor */
-	public static final HashMap<String, Color> adjustedColors = new HashMap<>();
-	/** hexcode, adjustedHexcode */
-	public static final HashMap<String, String> adjustedHexcodes = new HashMap<>();
 
-	public static YamlManager settings;
-	private String TODO_Against_settings = "";
-	public static final Color FONT_DEFAULT = Color.WHITE;
-	public static final Color FONT_HYPERTEXT = decode("#1000FF");
-	public static final Color GUI_BORDER_DEFAULT = Color.rgb(14, 14, 1);
-	public static final Color GUI_BACKGROUND_DEFAULT = Color.rgb(40, 40, 40);
-	public static final Color GUI_BACKGROUND_LIGHT_DEFAULT = Color.rgb(80, 80, 80);
-	public static final Color GUI_BUTTON_BACKGROUND_DEFAULT = Color.rgb(30, 30, 30);
-	public static final Color GUI_ACCENT_DEFAULT = Color.GREEN;
+	private static final Cache<String, Color> adjustedColorCache = Caching.getCachingProvider().getCacheManager()
+			.createCache("adjustedColorCache",
+					new MutableConfiguration<String, Color>()
+						.setStoreByValue(false)
+						.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.THIRTY_MINUTES))
+						.setCacheLoaderFactory(cacheLoader())
+						.setReadThrough(true));
+
+	public static final int FONT_DEFAULT = 0xffffffff;
+	public static final int FONT_HYPERTEXT =  0x1000ffff;
+	public static final int GUI_BORDER_DEFAULT = 0x000000ff;
+	public static final int GUI_BACKGROUND_DEFAULT = 0x282828ff;
+	public static final int GUI_BACKGROUND_LIGHT_DEFAULT = 0x505050ff;
+	public static final int GUI_BUTTON_BACKGROUND_DEFAULT = 0x1e1e1eff;
+	public static final int GUI_ACCENT_DEFAULT = 0x008000ff;
 
 	public static final int CHAT_UNIMPORTANT_DEFAULT = 0x808080ff;
 	public static final int CHAT_MODERATION_DEFAULT = 0x00ffffff;
@@ -38,63 +48,12 @@ public class ColorManager {
 
 	private static final HexFormat RGBA_HEX_FORMAT = HexFormat.of().withUpperCase();
 
-	/**
-	 * (14, 14, 14)
-	 */
-	public static Color GUI_BORDER = GUI_BORDER_DEFAULT;
-
-	/**
-	 * (40, 40, 40)
-	 */
-	public static Color GUI_BACKGROUND = GUI_BACKGROUND_DEFAULT;
-
-	/**
-	 * (80, 80, 80)
-	 */
-	public static Color GUI_BACKGROUND_LIGHT = GUI_BACKGROUND_LIGHT_DEFAULT;
-
-	/**
-	 * (25, 25, 25)
-	 */
-	public static Color GUI_BUTTON_BACKGROUND = GUI_BUTTON_BACKGROUND_DEFAULT;
-
-	public static int CHAT_MESSAGE_KEY_HIGHLIGHT = CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
-	public static Color FONT = Color.WHITE;
-
-	public ColorManager(YamlManager setting) {
-		settings = setting;
-		loadSettings();
+	private ColorManager() {
+		// Prevent instantiation
 	}
 
-	public static void loadSettings() {
-		FONT = decode(settings.getString("Colors.GUI.Font", encode(FONT_DEFAULT)));
-		GUI_BACKGROUND = decode(settings.getString("Colors.GUI.Background", encode(GUI_BACKGROUND_DEFAULT)));
-		GUI_BACKGROUND_LIGHT = decode(settings.getString("Colors.GUI.BackgroundLight", encode(GUI_BACKGROUND_LIGHT_DEFAULT)));
-		GUI_BORDER = decode(settings.getString("Colors.GUI.Border", encode(GUI_BORDER_DEFAULT)));
-		GUI_BUTTON_BACKGROUND = decode(settings.getString("Colors.GUI.ButtonBackground", encode(GUI_BUTTON_BACKGROUND_DEFAULT)));
-		CHAT_MESSAGE_KEY_HIGHLIGHT = encodeToInt(Color.web(settings.getString("Colors.GUI.DefaultKeyHighlight", encode(CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT))));
-	}
-
-	public static Color decode(String hexCode) {
-		hexCode = hexCode.startsWith("#") ? hexCode : "#" + hexCode;
-		try {
-			return Color.valueOf(hexCode);
-		} catch (NumberFormatException ex) {
-			LoggerFactory.getLogger(ColorManager.class).warn("Can´t decode color with following hexCode --> " + hexCode);
-			return Color.WHITE;
-		}
-	}
-
-	public static Color decode(String hexCode, String backgroundAdjustmentHexCode) {
-		return adjustedColors.computeIfAbsent(hexCode + backgroundAdjustmentHexCode, key -> {
-			return new HSLColor(hexCode).adjustForBackground(new HSLColor(backgroundAdjustmentHexCode)).getColor();
-		});
-	}
-
-	public static String adjustHexcode(String hexCode, String backgroundAdjustmentHexCode) {
-		return adjustedHexcodes.computeIfAbsent(hexCode + backgroundAdjustmentHexCode, key -> {
-			return new HSLColor(hexCode).adjustForBackground(new HSLColor(backgroundAdjustmentHexCode)).getHex();
-		});
+	public static Color getAdjustedColor(String color) {
+		return adjustedColorCache.get(StringUtils.isBlank(color) ? "ffffffff" : color);
 	}
 
 	public static int encodeToInt(Color color) {
@@ -144,6 +103,11 @@ public class ColorManager {
 		appendEncode(color, stringBuilder);
 	}
 
+	public static void encode(int color, StringBuilder stringBuilder) {
+		stringBuilder.ensureCapacity(stringBuilder.length() + 9);
+		rgbaToHex(rgbaFromInt(color), stringBuilder);
+	}
+
 	private static void appendEncode(Color color, StringBuilder stringBuilder) {
 		rgbaToHex(new byte[] { (byte) (color.getRed() * 255), (byte) (color.getGreen() * 255), (byte) (color.getBlue() * 255), (byte) (color.getOpacity() * 255) }, stringBuilder);
 	}
@@ -161,7 +125,120 @@ public class ColorManager {
 		return new byte[] { r, g, b, a };
 	}
 
-	public static YamlManager getSettingsConfig() {
-		return settings;
+	private static double[] hslFromInt(int colorInt) {
+		return hslFromRgb((colorInt >> 24 & 0xFF) / 255.0, (colorInt >> 16 & 0xFF) / 255.0, (colorInt >> 8 & 0xFF) / 255.0);
+	}
+
+	private static double[] hslFromRgb(double r, double g, double b) {
+		double max = Math.max(r, Math.max(g, b));
+		double min = Math.min(r, Math.min(g, b));
+		double[] hsl = new double[] {0.0 ,0.0 , (max + min) / 2.0};
+
+		if (max != min) {
+			double d = max - min;
+			hsl[1] = hsl[2] > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+
+			if (max == r) {
+				hsl[0] = (g - b) / d + (g < b ? 6.0 : 0.0);
+			} else if (max == g) {
+				hsl[0] = (b - r) / d + 2.0;
+			} else {
+				hsl[0] = (r - g) / d + 4.0;
+			}
+			hsl[0] /= 6.0;
+		}
+		return hsl;
+	}
+
+	private static double[] rgbFromHsl(double h, double s, double l) {
+		double[] rgb = new double[] {l, l, l};
+		if (s != 0.0) {
+			double q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
+			double p = 2.0 * l - q;
+			rgb[0] = hueToRgb(p, q, h + 1.0 / 3.0);
+			rgb[1] = hueToRgb(p, q, h);
+			rgb[2] = hueToRgb(p, q, h - 1.0 / 3.0);
+		}
+		return rgb;
+	}
+
+	private static double hueToRgb(double p, double q, double t) {
+		if (t < 0.0) {
+			t += 1.0;
+		}
+		if (t > 1.0) {
+			t -= 1.0;
+		}
+		if (t < 1.0 / 6.0) {
+			return p + (q - p) * 6.0 * t;
+		}
+		if (t < 1.0 / 2.0) {
+			return q;
+		}
+		if (t < 2.0 / 3.0) {
+			return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+		}
+		return p;
+	}
+
+	private static double adjustShade(double brightness, double percent) {
+		double multiplier = (1.0f - Math.clamp(percent, 0.0, 1.0));
+		return Math.max(0.0f, brightness * multiplier);
+	}
+
+	private static double adjustTone(double brightness, double percent) {
+		double multiplier = (1.0f + Math.clamp(percent, 0.0, 1.0));
+		return Math.min(1.0f, brightness * multiplier);
+	}
+
+	private static Color createColorForBackground(Color color, int backgroundColor) {
+		double[] hsl = hslFromRgb(color.getRed(), color.getGreen(), color.getBlue());
+		double[] bgHsl = hslFromInt(backgroundColor);
+
+		double initialLuminance = hsl[2];
+
+		double backgroundLuminance = Math.min(0.99, bgHsl[2]);
+		double toneAdjustment = Math.abs(backgroundLuminance == 0.5 ? 0.0 : (backgroundLuminance - 0.5));
+
+		if (backgroundLuminance < 0.5) {
+			if (hsl[0] <= 260.0 && hsl[0] >= 220.0) {
+				hsl[2] = adjustTone(hsl[2], toneAdjustment);
+				hsl[0] = 210.0;
+			} else if (hsl[2] <= 0.3) {
+				hsl[2] = adjustTone(hsl[2], toneAdjustment);
+			}
+		}
+
+		if (backgroundLuminance > 0.5) {
+			hsl[2] = adjustShade(hsl[2], toneAdjustment);
+		}
+
+		if (initialLuminance > 0.25 && hsl[2] <= 0.25) {
+			hsl[2] = 0.25;
+		}
+
+		double[] rgba = rgbFromHsl(hsl[0], hsl[1], hsl[2]);
+		return new Color(rgba[0], rgba[1], rgba[2], color.getOpacity());
+	}
+
+	private static Factory<CacheLoader<String, Color>> cacheLoader() {
+		return new FactoryBuilder.SingletonFactory<>(new CacheLoader<>() {
+			@Override
+			public Color load(String key) throws CacheLoaderException {
+				return createColorForBackground(Color.web(key), GUI_BACKGROUND_DEFAULT);
+			}
+
+			@Override
+			public Map<String, Color> loadAll(Iterable<? extends String> keys) throws CacheLoaderException {
+				HashMap<String, Color> map = new HashMap<>();
+				for (String string : keys) {
+					Color value = load(string);
+					if(value != null){
+						map.put(string, value);
+					}
+				}
+				return map;
+			}
+		});
 	}
 }

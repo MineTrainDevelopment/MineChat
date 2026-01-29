@@ -15,8 +15,8 @@ public class HighlightViewModel {
 	private HighlightType type;
 	private BooleanProperty activeProperty;
 	private IntegerProperty colorProperty;
-	private ObservableStringValue backgroundProperty;
-	private ObservableStringValue borderProperty;
+	private ObservableStringValue backgroundStyleProperty;
+	private ObservableStringValue borderStyleProperty;
 
 	public HighlightViewModel(HighlightType type) {
 		this.type = type;
@@ -70,17 +70,17 @@ public class HighlightViewModel {
 	}
 
 	public ObservableStringValue backgroundStyleProperty() {
-		if (backgroundProperty == null) {
-			backgroundProperty = Bindings.createStringBinding(() -> ColorManager.encode(colorProperty().get(), "-fx-background-color: ", ";"), colorProperty());
+		if (backgroundStyleProperty == null) {
+			backgroundStyleProperty = Bindings.createStringBinding(() -> ColorManager.encode(colorProperty().get(), "-fx-background-color: ", ";"), colorProperty());
 		}
-		return backgroundProperty;
+		return backgroundStyleProperty;
 	}
 
 	public ObservableStringValue borderStyleProperty() {
-		if (borderProperty == null) {
-			borderProperty = Bindings.createStringBinding(() -> ColorManager.encode(colorProperty().get(), "-fx-border-color: ", ";"), colorProperty());
+		if (borderStyleProperty == null) {
+			borderStyleProperty = Bindings.createStringBinding(() -> ColorManager.encode(colorProperty().get(), "-fx-border-color: ", ";"), colorProperty());
 		}
-		return borderProperty;
+		return borderStyleProperty;
 	}
 
 	public Highlight toHighlight() {
