@@ -4,12 +4,10 @@ public class EmoteViewModel implements IEmoteViewModel {
 
 	private final String emoteId;
 	private final String name;
-	private final boolean animated;
 
-	public EmoteViewModel(String emoteId, String name, boolean animated) {
+	public EmoteViewModel(String emoteId, String name) {
 		this.emoteId = emoteId;
 		this.name = name;
-		this.animated = animated;
 	}
 
 	@Override
@@ -20,10 +18,5 @@ public class EmoteViewModel implements IEmoteViewModel {
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	public boolean isAnimated() {
-		return animated;
 	}
 }

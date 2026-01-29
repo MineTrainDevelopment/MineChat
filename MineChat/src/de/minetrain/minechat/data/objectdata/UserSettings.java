@@ -79,7 +79,7 @@ public class UserSettings extends LockScope {
 	}
 
 	public boolean isInitialized() {
-		return read(() -> !isInitialized);
+		return read(() -> isInitialized);
 	}
 
 	public void setInitialized() {

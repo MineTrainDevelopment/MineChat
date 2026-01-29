@@ -5,6 +5,4 @@ public interface IEmoteViewModel {
 	String getEmoteId();
 
 	String getName();
-
-	boolean isAnimated();
 }

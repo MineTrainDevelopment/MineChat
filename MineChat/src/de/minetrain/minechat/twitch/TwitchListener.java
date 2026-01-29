@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
-import com.github.twitch4j.eventsub.domain.chat.Emote.Format;
 import com.github.twitch4j.eventsub.domain.chat.Fragment;
 import com.github.twitch4j.eventsub.domain.chat.Reply;
 import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
@@ -101,7 +100,7 @@ public class TwitchListener {
 
 	private static void createChatMessageToken(String channelId, Fragment fragment, List<ChatMessageToken> tokenList) {
 		switch (fragment.getType()) {
-			case EMOTE -> tokenList.add(ChatMessageToken.createEmoteToken(fragment.getEmote().getId(), fragment.getEmote().getFormat().contains(Format.ANIMATED), fragment.getText()));
+			case EMOTE -> tokenList.add(ChatMessageToken.createEmoteToken(fragment.getEmote().getId(), fragment.getText()));
 			case MENTION -> tokenList.add(ChatMessageToken.createMentionToken(fragment.getText()));
 			default ->  tokenizeText(channelId, fragment.getText(), tokenList);
 		}
@@ -120,7 +119,7 @@ public class TwitchListener {
 				}
 				Emote emote = Main.getEmoteManager().getBttvEmoteByName(channelId, word);
 				if (emote != null) {
-					tokenList.add(ChatMessageToken.createEmoteToken(emote.getEmoteId(), emote.isAnimated(), word));
+					tokenList.add(ChatMessageToken.createEmoteToken(emote.getEmoteId(), word));
 					continue;
 				}
 			}

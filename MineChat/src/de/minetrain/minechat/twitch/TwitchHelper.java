@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.ChatSettings;
 import com.github.twitch4j.helix.domain.Emote;
+import com.github.twitch4j.helix.domain.EmoteList;
 import com.github.twitch4j.helix.domain.ModeratedChannel;
 import com.github.twitch4j.helix.domain.SentChatMessage;
 import com.github.twitch4j.helix.domain.Stream;
@@ -51,11 +52,11 @@ public final class TwitchHelper {
 		return TwitchManager.instance().requestGlobalBadges();
 	}
 
-	public static CompletableFuture<List<Emote>> requestChannelEmotes(String channelId) {
+	public static CompletableFuture<EmoteList> requestChannelEmotes(String channelId) {
 		return TwitchManager.instance().requestChannelEmotes(channelId);
 	}
 
-	public static CompletableFuture<List<Emote>> requestGlobalEmotes() {
+	public static CompletableFuture<EmoteList> requestGlobalEmotes() {
 		return TwitchManager.instance().requestGlobalEmotes();
 	}
 

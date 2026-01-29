@@ -17,7 +17,6 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.twitch4j.helix.domain.Emote.Format;
 import com.github.twitch4j.helix.domain.ModeratedChannel;
 import com.github.twitch4j.helix.domain.Stream;
 
@@ -140,7 +139,7 @@ public class TwitchPollingService {
 	private void pollAvailableEmotes(String channelId) {
 		try {
 			Map<String, EmoteViewModel> emotes = TwitchHelper.requestAvailableUserEmotes(channelId).get().stream()
-				.map(emote -> new EmoteViewModel(emote.getId(), emote.getName(), emote.getFormat().contains(Format.ANIMATED)))
+				.map(emote -> new EmoteViewModel(emote.getId(), emote.getName()))
 				.collect(toMap(EmoteViewModel::getName, Function.identity(), (e1, _) -> e1));
 
 			Main.getEmoteManager().cacheAvailableEmotesByName(channelId, emotes);

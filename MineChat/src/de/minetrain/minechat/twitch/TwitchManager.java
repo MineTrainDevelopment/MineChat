@@ -141,17 +141,15 @@ public class TwitchManager {
 		});
 	}
 
-	public CompletableFuture<List<Emote>> requestChannelEmotes(String userId) {
+	public CompletableFuture<EmoteList> requestChannelEmotes(String userId) {
 		return CompletableFuture.supplyAsync(() -> {
-			EmoteList emotes = twitch.getHelix().getChannelEmotes(null, userId).execute();
-			return emotes != null ? emotes.getEmotes() : List.of();
+			return twitch.getHelix().getChannelEmotes(null, userId).execute();
 		});
 	}
 
-	public CompletableFuture<List<Emote>> requestGlobalEmotes() {
+	public CompletableFuture<EmoteList> requestGlobalEmotes() {
 		return CompletableFuture.supplyAsync(() -> {
-			EmoteList emotes = twitch.getHelix().getGlobalEmotes(null).execute();
-			return emotes != null ? emotes.getEmotes() : List.of();
+			return twitch.getHelix().getGlobalEmotes(null).execute();
 		});
 	}
 

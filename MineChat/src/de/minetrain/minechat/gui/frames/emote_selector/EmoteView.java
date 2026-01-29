@@ -41,7 +41,7 @@ public class EmoteView extends StackPane {
 			}
 			if (newEmote != null) {
 				CompletableFuture.runAsync(() -> {
-					Image image = Main.getEmoteManager().getEmoteImage1x(newEmote.getEmoteId(), newEmote.isAnimated());
+					Image image = Main.getEmoteManager().getEmoteImage1x(newEmote.getEmoteId());
 					Platform.runLater(() -> imageView.setImage(image));
 				}, IMAGE_LOADER);
 			}

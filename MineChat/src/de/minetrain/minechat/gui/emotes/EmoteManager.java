@@ -29,7 +29,7 @@ public class EmoteManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EmoteManager.class);
 
-	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/{}/dark/1.0"; // id, format(static, animated)
+	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/default/dark/1.0";
 
 	private final Cache<String, Image> emoteImage1xCache;
 
@@ -88,12 +88,11 @@ public class EmoteManager {
 	/// Get emote image from cache or download it if not cached yet.
 	///
 	/// @param emoteId The ID of the emote.
-	/// @param animated Whether the emote is animated, only relevant when not locally available.
-	public Image getEmoteImage1x(String emoteId, boolean animated) {
+	public Image getEmoteImage1x(String emoteId) {
 		Image image = emoteImage1xCache.get(emoteId);
 		if (image == null) {
 			LOG.info("Downloading not cached emote image for id: {}", emoteId);
-			String url = MessageFormatter.basicArrayFormat(TWITCH_EMOTE_URL, new Object[] { emoteId, animated ? "animated" : "static" });
+			String url = MessageFormatter.basicArrayFormat(TWITCH_EMOTE_URL, new Object[] { emoteId });
 			image = new Image(url, true);
 			emoteImage1xCache.put(emoteId, image);
 		}

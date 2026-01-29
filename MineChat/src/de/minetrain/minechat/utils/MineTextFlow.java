@@ -4,11 +4,8 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +13,9 @@ import org.slf4j.LoggerFactory;
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.ChatMessageToken;
-import de.minetrain.minechat.data.objectdata.Emote;
 import de.minetrain.minechat.features.messagehighlight.HighlightString;
+import de.minetrain.minechat.gui.frames.emote_selector.EmoteView;
+import de.minetrain.minechat.gui.viewmodel.EmoteViewModel;
 import de.minetrain.minechat.main.Main;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Hyperlink;
@@ -39,8 +37,6 @@ import javafx.scene.text.TextFlow;
 public class MineTextFlow extends TextFlow {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MineTextFlow.class);
-
-	private static final Map<Integer, Image> imageCache = new ConcurrentHashMap<>();
 
 	private String defaultFontFamily;
 	private double defaultFontSize;
@@ -130,10 +126,11 @@ public class MineTextFlow extends TextFlow {
 	public MineTextFlow appendHyperLink(String url) {
 		Hyperlink hyperlink = new Hyperlink(Main.extractDomain(url));
 		hyperlink.setTooltip(new Tooltip(url));
-		hyperlink.setOnAction(event -> {
+		hyperlink.setOnAction(_ -> {
 			try {
 				Desktop.getDesktop().browse(new URI(url));
 			} catch (IOException | URISyntaxException e) {
+				LOG.error("Failed to open link: {}", url, e);
 			}
 		});
 
@@ -160,25 +157,11 @@ public class MineTextFlow extends TextFlow {
 		return this;
 	}
 
-	/**
-	 * Emotes are centert to the text.
-	 *
-	 * @param emote
-	 * @param size
-	 * @return
-	 */
-	public MineTextFlow appendEmote(Emote emote) {
-		ImageView imageView = createAlignedImageView(Main.getEmoteManager().getEmoteImage1x(emote.getEmoteId(), emote.isAnimated()));
-//		imageView.setTranslateY(-((DEFAULT_FONT_SIZE - size.getSize()) / 2));
-		appendImage(imageView);
-		return this;
-	}
-
 	public MineTextFlow appendBadge(String channelId, BadgeId badgeId) {
 		Image badgeImage = Main.getEmoteManager().getBadgeImage1x(channelId, badgeId);
 		if (badgeImage != null) {
 			ImageView imageView = createAlignedImageView(badgeImage);
-			appendImage(imageView);
+			getChildren().add(imageView);
 		} else {
 			LOG.warn("Badge image not found for badge ID: {}", badgeId);
 		}
@@ -187,16 +170,7 @@ public class MineTextFlow extends TextFlow {
 
 	public HighlightString appendToken(ChatMessageToken token) {
 		switch (token.getType()) {
-			case EMOTE -> {
-				Image image = Main.getEmoteManager().getEmoteImage1x(token.getEmoteId(), token.isAnimated());
-				if (image != null) {
-					ImageView imageView = createAlignedImageView(image);
-					appendImage(imageView);
-				} else {
-					LOG.warn("Emote image not found for emote ID: {}", token.getEmoteId());
-					appendString(token.getText());
-				}
-			}
+			case EMOTE -> appendEmote(token.getEmoteId(), token.getText());
 			case LINK -> appendHyperLink(token.getText());
 			case MENTION -> appendString(token.getText(), HTMLColors.MAROON);
 			case SPACE -> appendString(token.getText());
@@ -215,6 +189,12 @@ public class MineTextFlow extends TextFlow {
 		return null;
 	}
 
+	private void appendEmote(String emoteId, String name) {
+		EmoteView emoteView = new EmoteView(true);
+		emoteView.setEmote(new EmoteViewModel(emoteId, name));
+		getChildren().add(emoteView);
+	}
+
 	private ImageView createAlignedImageView(Image image) {
 		return new ImageView(image) {
 
@@ -223,16 +203,6 @@ public class MineTextFlow extends TextFlow {
 				return getImage().getHeight() * 0.75;
 			}
 		};
-	}
-
-	public MineTextFlow appendImage(Path imagePath) {
-		appendImage(new ImageView( imageCache.computeIfAbsent(imagePath.hashCode(), hash -> new Image(imagePath.toUri().toString()))));
-		return this;
-	}
-
-	public MineTextFlow appendImage(ImageView image) {
-		getChildren().add(image);
-		return this;
 	}
 
 	/**

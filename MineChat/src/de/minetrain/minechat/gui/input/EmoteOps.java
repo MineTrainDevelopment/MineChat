@@ -8,7 +8,7 @@ import de.minetrain.minechat.gui.viewmodel.IEmoteViewModel;
 public class EmoteOps<S> extends NodeSegmentOpsBase<IEmoteViewModel, S> {
 
 	public EmoteOps() {
-		super(new EmoteViewModel("", "", false));
+		super(new EmoteViewModel("", ""));
 	}
 
 	@Override

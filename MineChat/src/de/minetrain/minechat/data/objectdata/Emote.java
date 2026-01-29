@@ -15,7 +15,6 @@ public class Emote implements IEmoteViewModel {
 	private final EmoteType emoteType;
 	private final boolean favorite;
 	private final boolean animated;
-	private final String fileFormat;
 
 	private final Lazy<byte[]> image1x;
 	private final Lazy<byte[]> image2x;
@@ -25,27 +24,25 @@ public class Emote implements IEmoteViewModel {
 		return new Builder();
 	}
 
-	public Emote(String emoteId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, String fileFormat, byte[] image1x, byte[] image2x, byte[] image4x) {
+	public Emote(String emoteId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, byte[] image1x, byte[] image2x, byte[] image4x) {
 		this.emoteId = emoteId;
 		this.channelId = channelId;
 		this.name = name;
 		this.emoteType = emoteType;
 		this.favorite = favorite;
 		this.animated = animated;
-		this.fileFormat = fileFormat;
 		this.image1x = Lazy.Reference(image1x);
 		this.image2x = Lazy.Reference(image2x);
 		this.image4x = Lazy.Reference(image4x);
 	}
 
-	public Emote(String emoteId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, String fileFormat, Lazy<byte[]> image1x, Lazy<byte[]> image2x, Lazy<byte[]> image4x) {
+	public Emote(String emoteId, String channelId, String name, EmoteType emoteType, boolean favorite, boolean animated, Lazy<byte[]> image1x, Lazy<byte[]> image2x, Lazy<byte[]> image4x) {
 		this.emoteId = emoteId;
 		this.channelId = channelId;
 		this.name = name;
 		this.emoteType = emoteType;
 		this.favorite = favorite;
 		this.animated = animated;
-		this.fileFormat = fileFormat;
 		this.image1x = image1x;
 		this.image2x = image2x;
 		this.image4x = image4x;
@@ -73,13 +70,8 @@ public class Emote implements IEmoteViewModel {
 		return favorite;
 	}
 
-	@Override
 	public boolean isAnimated() {
 		return animated;
-	}
-
-	public String getFileFormat() {
-		return fileFormat;
 	}
 
 	public byte[] getImage1x() {
@@ -122,7 +114,6 @@ public class Emote implements IEmoteViewModel {
 			.withEmoteType(emoteType)
 			.withFavorite(favorite)
 			.withAnimated(animated)
-			.withFileFormat(fileFormat)
 			.withImage1x(image1x)
 			.withImage2x(image2x)
 			.withImage4x(image4x);
@@ -136,7 +127,6 @@ public class Emote implements IEmoteViewModel {
 		private EmoteType emoteType;
 		private boolean favorite;
 		private boolean animated;
-		private String fileFormat;
 		private Lazy<byte[]> image1x;
 		private Lazy<byte[]> image2x;
 		private Lazy<byte[]> image4x;
@@ -168,11 +158,6 @@ public class Emote implements IEmoteViewModel {
 
 		public Builder withAnimated(boolean animated) {
 			this.animated = animated;
-			return this;
-		}
-
-		public Builder withFileFormat(String fileFormat) {
-			this.fileFormat = fileFormat;
 			return this;
 		}
 
@@ -214,7 +199,6 @@ public class Emote implements IEmoteViewModel {
 				emoteType,
 				favorite,
 				animated,
-				fileFormat,
 				image1x,
 				image2x,
 				image4x
