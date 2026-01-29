@@ -38,9 +38,6 @@ public class TwitchListener {
 
 	private AutoReplyManager autoReplyManager;
 
-	public static int messagesTEMP = 0;
-//	private LiveNotification liveNotification = new LiveNotification();
-
 	public TwitchListener(AutoReplyManager autoReplyManager) {
 		this.autoReplyManager = autoReplyManager;
 	}
@@ -107,7 +104,7 @@ public class TwitchListener {
 			case EMOTE -> tokenList.add(ChatMessageToken.createEmoteToken(fragment.getEmote().getId(), fragment.getEmote().getFormat().contains(Format.ANIMATED), fragment.getText()));
 			case MENTION -> tokenList.add(ChatMessageToken.createMentionToken(fragment.getText()));
 			default ->  tokenizeText(channelId, fragment.getText(), tokenList);
-		};
+		}
 	}
 
 	private static void tokenizeText(String channelId, String text, List<ChatMessageToken> tokenList) {
