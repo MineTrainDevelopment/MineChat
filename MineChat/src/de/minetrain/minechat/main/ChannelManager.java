@@ -301,7 +301,8 @@ public class ChannelManager {
 		Map<MacroType, List<Macro>> macrosByType = getMacros().computeByChannelId(channel.getChannelId(), macros -> macros.sorted(Comparator.comparing(Macro::getIndex)).collect(groupingBy(Macro::getMacroType)));
 		cvm.getMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.TEXT, MACROS_PER_CHANNEL));
 		cvm.getEmoteMacros().addAll(createMacroViewModels(cvm, macrosByType, MacroType.EMOTE, EMOTE_MACROS_PER_CHANNEL));
-		cvm.getAutoReplies().addAll(getAutoReplies().computeByChannelId(channel.getChannelId(), autoReplies -> autoReplies.map(autoReply -> AutoReplyViewModel.of(autoReply, cvm)).toList()));
+		List<AutoReplyViewModel> autoRepliesViewModels = getAutoReplies().computeByChannelId(channel.getChannelId(), autoReplies -> autoReplies.map(autoReply -> AutoReplyViewModel.of(autoReply, cvm)).toList());
+		cvm.getAutoReplies().addAll(autoRepliesViewModels);
 
 		cvm.initMessages();
 		cvm.selectedProperty().bind(activeChannelProperty().isEqualTo(cvm));
