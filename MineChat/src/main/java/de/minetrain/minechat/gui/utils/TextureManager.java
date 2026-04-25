@@ -27,13 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.twitch4j.helix.domain.ChatBadge;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.Emote.Format;
 import com.github.twitch4j.helix.domain.Emote.Scale;
 import com.github.twitch4j.helix.domain.Emote.Theme;
 import com.github.twitch4j.helix.domain.EmoteList;
-import com.google.gson.Gson;
 
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.Badge;
@@ -54,6 +55,9 @@ public final class TextureManager {
 	public static final String BTTV_EMOTE_URL = "https://cdn.betterttv.net/emote/{}/{}x"; // id, scale (1, 2, 3)
 
 	private static final Logger LOG = LoggerFactory.getLogger(TextureManager.class);
+
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 	private TextureManager() {
 		// Private constructor to prevent instantiation
@@ -104,7 +108,7 @@ public final class TextureManager {
 					.header("user-agent", "MineChat Client")
 					.GET()
 					.build();
-				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 				if (response.statusCode() == 404) {
 					LOG.warn("No BTTV emotes found for user ID: {}", userId);
 					return List.<BttvEmote>of();
@@ -112,8 +116,7 @@ public final class TextureManager {
 				if (response.statusCode() != 200) {
 					throw new IllegalStateException("Failed to fetch BTTV emotes, status code: " + response.statusCode());
 				}
-				Gson gson = new Gson();
-				BttvUser user = gson.fromJson(response.body(), BttvUser.class);
+				BttvUser user = OBJECT_MAPPER.readValue(response.body(), BttvUser.class);
 				if (user.getMessage() != null) {
 					throw new IllegalStateException("Failed to fetch BTTV emotes: " + user.getMessage());
 				}

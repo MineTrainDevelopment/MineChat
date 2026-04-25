@@ -6,7 +6,6 @@ import java.time.Instant;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.twitch4j.helix.domain.User;
-import com.google.gson.JsonObject;
 
 import de.minetrain.minechat.twitch.TwitchManager.LiveMetaData;
 
@@ -28,21 +27,6 @@ public class TwitchUserObj {
 	private Instant streamStartTimeStamp = Instant.ofEpochSecond(0);
 	private int streamViewer = 0;
 	private String[] streamTags = new String[]{""};
-
-	public TwitchUserObj(JsonObject data) {
-		String offlineImageUrl = data.get("offline_image_url").getAsString().replace("\"", "");
-		dummy = false;
-
-		this.userId = data.get("id").getAsString().replace("\"", "");
-		this.loginName = data.get("login").getAsString().replace("\"", "");
-		this.displayName = data.get("display_name").getAsString().replace("\"", "");
-		this.userType = TwitchUserType.fromString(data.get("type")+"");
-		this.broadcasterType = TwitchBroadcasterType.fromString(data.get("broadcaster_type")+"");
-		this.channelDescription = data.get("description").getAsString().replace("\"", "");
-		this.profileImageUrl = data.get("profile_image_url").getAsString().replace("\"", "");
-		this.offlineImageUrl = (offlineImageUrl.length()>0) ? offlineImageUrl : profileImageUrl;
-		this.userAge = data.get("created_at").getAsString().replace("\"", "");
-	}
 
 	public TwitchUserObj(User user) {
 		dummy = false;

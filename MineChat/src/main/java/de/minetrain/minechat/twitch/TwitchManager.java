@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.ITwitchClient;
@@ -42,7 +45,6 @@ import com.github.twitch4j.helix.domain.ModeratedChannelList;
 import com.github.twitch4j.helix.domain.SentChatMessage;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -282,13 +284,19 @@ public class TwitchManager {
 				.header("Authorization", "OAuth " + oAuth2Token)
 				.GET()
 				.build();
-			return httpClient.sendAsync(request, BodyHandlers.ofString())
+			return httpClient.sendAsync(request, BodyHandlers.ofInputStream())
 				.thenApply(response -> {
 					if (response.statusCode() != 200) {
 						LOG.warn("Failed to validate OAuth2 token! Status code: {}", response.statusCode());
 						return null;
 					}
-					return new Gson().fromJson(response.body(), TokenValidateResponse.class);
+					try {
+						ObjectMapper objectMapper = new ObjectMapper()
+								.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+						return objectMapper.readValue(response.body(), TokenValidateResponse.class);
+					} catch (IOException e) {
+						throw new CompletionException(e);
+					}
 				}).handle((tvr, e) -> {
 					if (e != null) {
 						LOG.error("Failed to validate OAuth2 token!", e);
