@@ -26,6 +26,11 @@
 				<directory>res</directory>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>test_res</directory>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

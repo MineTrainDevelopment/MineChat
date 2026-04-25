@@ -1,5 +1,6 @@
 package de.minetrain.minechat.gui.utils;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,16 +10,23 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
-import com.fmsware.gif.GifDecoder;
-import com.fmsware.gif.GifEncoder;
 import com.github.twitch4j.helix.domain.ChatBadge;
 import com.github.twitch4j.helix.domain.ChatBadgeSet;
 import com.github.twitch4j.helix.domain.Emote.Format;
@@ -37,8 +45,11 @@ import de.minetrain.minechat.gui.emotes.EmoteType;
 import de.minetrain.minechat.twitch.TwitchHelper;
 import de.minetrain.minechat.twitch.obj.BttvEmote;
 import de.minetrain.minechat.twitch.obj.BttvUser;
+import javafx.scene.image.Image;
 
 public final class TextureManager {
+
+	private static final byte[] NETSCAPE2_0 = "NETSCAPE2.0".getBytes();
 
 	public static final String BTTV_EMOTE_URL = "https://cdn.betterttv.net/emote/{}/{}x"; // id, scale (1, 2, 3)
 
@@ -189,9 +200,9 @@ public final class TextureManager {
 				byte[] image3x = downloadImageData(emotes.getPopulatedTemplateUrl(twitchEmote.getId(), Format.DEFAULT, Theme.DARK, Scale.LARGE));
 
 				if (animated) {
-					image1x = reformatGif(image1x);
-					image2x = reformatGif(image2x);
-					image3x = reformatGif(image3x);
+					image1x = validate(image1x);
+					image2x = validate(image2x);
+					image3x = validate(image3x);
 				}
 
 				Emote emote = new Emote(twitchEmote.getId(), channelId, twitchEmote.getName(), type, false, animated,
@@ -214,7 +225,10 @@ public final class TextureManager {
 				byte[][] images = new byte[3][];
 				for (int scale = 1; scale <= 3; scale++) {
 					String imageUrl = MessageFormatter.basicArrayFormat(BTTV_EMOTE_URL, new Object[] { bttvEmote.getId(), scale });
-					images[scale - 1] = bttvEmote.isAnimated() ? reformatGif(downloadImageData(imageUrl)) : downloadImageData(imageUrl);
+					images[scale - 1] = downloadImageData(imageUrl);
+					if (bttvEmote.isAnimated()) {
+						images[scale - 1] = validate(images[scale - 1]);
+					}
 				}
 
 				Emote emote = new Emote(bttvEmote.getId(), channelId, bttvEmote.getCode(), EmoteType.BTTV, false,
@@ -235,27 +249,103 @@ public final class TextureManager {
 		}
 	}
 
-	/// Re-encodes the GIF to ensure infinite looping and proper transparency handling.
+	/// Enables looping for the given GIF image data.
+	/// The modification is done in-place.
 	///
-	/// @param imageData The original GIF image data.
-	/// @return The reformatted GIF image data.
-	private static byte[] reformatGif(byte[] imageData) {
-		GifDecoder decoder = new GifDecoder();
-		decoder.read(new ByteArrayInputStream(imageData));
+	/// @param imageData The image data of the GIF.
+	public static void enableLoop(byte[] imageData) {
+		int offset = 13 + ((imageData[10] & 0b10000000) != 0 ? (2 << (imageData[10] & 0b00000111)) * 3 : 0);
+		for (int i = offset; i < imageData.length; i++) {
+			if (imageData[i] == (byte) 0x21 && imageData[i + 1] == (byte) 0xFF) {
+				byte size = imageData[i + 2];
+				if (size == NETSCAPE2_0.length && Arrays.equals(NETSCAPE2_0, 0, size, imageData, i + 3, i + 3 + size)) {
+					int pos = i + 3 + size;
+					if (imageData[pos] != 3 || imageData[pos + 1] != 1) {
+						LOG.warn("Invalid Netscape extension format, cannot enable looping");
+						return;
+					}
+					if (imageData[pos + 2] != 0) {
+						LOG.info("Enabling looping for GIF image");
+						imageData[pos + 2] = 0;
+					}
+					return;
+				}
+			}
+		}
+		LOG.warn("No Netscape extension found in GIF, cannot enable looping");
+	}
 
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		GifEncoder encoder = new GifEncoder();
-		encoder.setRepeat(true);
-		encoder.setTransparent();
-		encoder.setQuality(1);
-		encoder.start(outputStream);
+	private final record FrameData(BufferedImage image, IIOMetadata metadata) {}
 
-		encoder.setSize(decoder.getFrameSize());
-		for (int i = 0; i < decoder.getFrameCount(); i++) {
-			encoder.addFrame(decoder.getFrame(i), decoder.getDelay(i));
+	/// Validates the given GIF image data by attempting to decode its frames and re-encoding them.
+	/// If the image data is valid, it is returned unchanged. If it is invalid but
+	/// frames can be decoded, a new valid GIF image data is returned. If no frames can be decoded, the original data is returned.
+	/// This is a workaround for some invalid GIFs that can be decoded by Java's ImageIO but not displayed correctly in JavaFX.
+	/// The method also enables looping for the image if a Netscape extension is found, as some invalid GIFs are missing the looping flag in the extension.
+	///
+	/// @param imageData The image data of the GIF to validate.
+	/// @return The validated (and possibly modified) image data.
+	/// @see #enableLoop(byte[])
+	public static byte[] validate(byte[] imageData) {
+		byte[] finalData = imageData;
+		Image image = new Image(new ByteArrayInputStream(imageData));
+		if (image.isError()) {
+			LOG.warn("Image data is invalid, attempting to re-encode it");
+
+			ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+			try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(new ByteArrayInputStream(imageData))) {
+				reader.setInput(imageInputStream, false, false);
+				List<FrameData> frames = readGifFrames(reader);
+
+				if (!frames.isEmpty()) {
+					IIOMetadata streamMeta = reader.getStreamMetadata();
+					finalData = writeNewGifData(imageData, frames, streamMeta);
+					LOG.info("Image re-encoded successfully ({} frame(s))", frames.size());
+				} else {
+					LOG.error("No frames could be decoded – returning original data");
+				}
+			} catch (IOException e) {
+				LOG.error("Error while re-encoding image data", e);
+			} finally {
+				reader.dispose();
+			}
 		}
 
-		encoder.finish();
-		return outputStream.toByteArray();
+		enableLoop(finalData);
+		return finalData;
+	}
+
+	private static byte[] writeNewGifData(byte[] imageData, List<FrameData> frames, IIOMetadata streamMeta)
+			throws IOException {
+		byte[] finalData;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(imageData.length);
+		ImageWriter writer = ImageIO.getImageWritersByFormatName("gif").next();
+		try (ImageOutputStream ios = ImageIO.createImageOutputStream(baos)) {
+			writer.setOutput(ios);
+			writer.prepareWriteSequence(streamMeta);
+			for (FrameData frameData : frames) {
+				writer.writeToSequence(new IIOImage(frameData.image(), null, frameData.metadata()), null);
+			}
+			writer.endWriteSequence();
+		} finally {
+			writer.dispose();
+		}
+		finalData = baos.toByteArray();
+		return finalData;
+	}
+
+	private static List<FrameData> readGifFrames(ImageReader reader) throws IOException {
+		int numFrames = reader.getNumImages(true);
+		List<FrameData> frames = new ArrayList<>(numFrames);
+		for (int i = 0; i < numFrames; i++) {
+			try {
+				frames.add(new FrameData(reader.read(i), reader.getImageMetadata(i)));
+			} catch (IOException e) {
+				LOG.warn("Could not decode frame {}, stopping at {} frame(s)", i, frames.size());
+				LOG.debug("Error details: ", e);
+				break;
+			}
+		}
+		return frames;
 	}
 }
