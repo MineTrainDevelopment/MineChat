@@ -11,10 +11,6 @@ import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import javax.cache.spi.CachingProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
-
 import de.minetrain.minechat.data.eclipsestore.EclipseStoreKeeper;
 import de.minetrain.minechat.data.objectdata.BadgeId;
 import de.minetrain.minechat.data.objectdata.Emote;
@@ -26,10 +22,6 @@ import javafx.util.Pair;
 public class EmoteManager {
 
 	public static final String PUBLIC_EMOTE_CHANNEL_ID = "ID_PUBLIC";
-
-	private static final Logger LOG = LoggerFactory.getLogger(EmoteManager.class);
-
-	private static final String TWITCH_EMOTE_URL = "https://static-cdn.jtvnw.net/emoticons/v2/{}/default/dark/1.0";
 
 	private final Cache<String, Image> emoteImage1xCache;
 
@@ -49,7 +41,7 @@ public class EmoteManager {
 		MutableConfiguration<String,Image> image1xConfig = new MutableConfiguration<String, Image>()
 			.setStoreByValue(false)
 			.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.THIRTY_MINUTES))
-			.setCacheLoaderFactory(EmoteExtractorCacheLoader.factoryOf(emote -> new Image(new ByteArrayInputStream(emote.getImage1x()))))
+			.setCacheLoaderFactory(EmoteExtractorCacheLoader.imageFactoryWithUrlFallback(emote -> new Image(new ByteArrayInputStream(emote.getImage1x()))))
 			.setReadThrough(true);
 		emoteImage1xCache = cacheManager.createCache("emoteImageCacheSmall", image1xConfig);
 
@@ -89,14 +81,7 @@ public class EmoteManager {
 	///
 	/// @param emoteId The ID of the emote.
 	public Image getEmoteImage1x(String emoteId) {
-		Image image = emoteImage1xCache.get(emoteId);
-		if (image == null) {
-			LOG.info("Downloading not cached emote image for id: {}", emoteId);
-			String url = MessageFormatter.basicArrayFormat(TWITCH_EMOTE_URL, new Object[] { emoteId });
-			image = new Image(url, true);
-			emoteImage1xCache.put(emoteId, image);
-		}
-		return image;
+		return emoteImage1xCache.get(emoteId);
 	}
 
 	public Map<String, Emote> getChannelBttvNameToEmoteMap(String channelId) {

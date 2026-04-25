@@ -240,13 +240,33 @@ public final class TextureManager {
 		}
 	}
 
-	private static byte[] downloadImageData(String url) throws IOException {
+	/// Downloads the raw image data from the given URL.
+	///
+	/// @param url The URL of the image to download.
+	/// @return The raw image data as a byte array.
+	/// @throws IOException If an error occurs while downloading the image.
+	public static byte[] downloadImageData(String url) throws IOException {
 		LOG.debug("Downloading image from URL: {}", url);
 		try (InputStream in = URI.create(url).toURL().openStream()) {
 			byte[] imageData = in.readAllBytes();
 			LOG.debug("Image downloaded");
 			return imageData;
 		}
+	}
+
+	/// Checks if the given image data represents a GIF image by verifying the header bytes.
+	/// This is a simple check and does not guarantee that the image data is a valid GIF, but it is sufficient for our use case since we only need to identify GIFs to apply specific handling for them.
+	///
+	/// @param imageData The image data to check.
+	/// @return true if the image data is likely a GIF, false otherwise.
+	public static boolean isGif(byte[] imageData) {
+		return imageData.length >= 6
+			&& imageData[0] == 'G'
+			&& imageData[1] == 'I'
+			&& imageData[2] == 'F'
+			&& imageData[3] == '8'
+			&& (imageData[4] == '7' || imageData[4] == '9')
+			&& imageData[5] == 'a';
 	}
 
 	/// Enables looping for the given GIF image data.
