@@ -124,7 +124,7 @@ public class MineTextFlow extends TextFlow {
 	}
 
 	public MineTextFlow appendHyperLink(String url) {
-		Hyperlink hyperlink = new Hyperlink(Main.extractDomain(url));
+		Hyperlink hyperlink = new Hyperlink(WebUtils.extractDomain(url));
 		hyperlink.setTooltip(new Tooltip(url));
 		hyperlink.setOnAction(_ -> {
 			try {

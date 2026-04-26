@@ -2,10 +2,6 @@ package de.minetrain.minechat.main;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.Collection;
@@ -236,50 +232,6 @@ public class Main extends Application {
 	public static SettingsViewModel getSettingsViewModel() {
 		return settingsViewModel;
 	}
-
-	/**
-	 * Extracts the domain from a given URL.
-	 *
-	 * @param input The input URL to extract the domain from.
-	 * @return The extracted domain or the original input if the domain can´t be extracted.
-	 */
-	// TODO Can´t extract the domain from -> instagram.com/die.doni
-	public static String extractDomain(String input) {
-        try {
-        	if(!isValidURL(input)){throw new MalformedURLException("Invalid URL.");}
-
-        	String url = input.replace("https://", "");
-	        String host = url.substring(0, url.contains("/") ? url.indexOf("/") : url.length());
-	        String[] split = host.split("\\.");
-	        String domain = split[split.length - 2] + "." + split[split.length - 1];
-	        return domain;
-		} catch (Exception ex) {
-			logger.warn("Can´t extract the domain from -> "+input);
-			return input;
-		}
-	}
-
-	public static boolean isValidURL(String input){
-		try {
-			new URL(input).toURI();
-			return true;
-		} catch (MalformedURLException | URISyntaxException e) {
-			return false;
-		}
-	}
-
-	public static boolean isValidImageURL(String imageUrl) {
-        try {
-            URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("HEAD");
-            int responseCode = connection.getResponseCode();
-            return (responseCode >= 200 && responseCode < 400);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
 
 	private static void loadingProgressLogging(int stage, String message) {
 		logger.info("Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
