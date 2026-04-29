@@ -1,6 +1,5 @@
 package de.minetrain.minechat.gui.panes;
 
-import de.minetrain.minechat.gui.frames.dialogs.SettingsDialog;
 import de.minetrain.minechat.gui.obj.buttons.MacroButton;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.twitch.MessageManager;
@@ -125,7 +124,8 @@ public class MacroPanelPane extends GridPane {
 
 		Button statisticsButton = new Button("Statistics");
 		statisticsButton.setFocusTraversable(false);
-		statisticsButton.setOnAction(_ -> new SettingsDialog().showAndWait());
+		// TODO: Add statistics dialog
+//		statisticsButton.setOnAction(_ -> new SettingsDialog().showAndWait());
 		statisticsButton.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		add(statisticsButton, 1, 2, 2, 1);
 	}
