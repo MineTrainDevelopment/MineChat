@@ -444,6 +444,26 @@
 	-fx-background-color: -fx-control-inner-background;
 }
 
+.info-app-icon {
+	-fx-pref-width: 64px;
+	-fx-pref-height: 64px;
+	-fx-min-width: 64px;
+	-fx-min-height: 64px;
+	-fx-max-width: 64px;
+	-fx-max-height: 64px;
+	-fx-background-color: -fx-accent;
+	-fx-shape: "M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm0-2h14V7H5zm2-7v-2h10v2zm0 4v-2h6v2z";
+	-fx-scale-shape: true;
+}
+
+.info-app-name {
+	-fx-font-size: 22px;
+}
+
+.info-version {
+	-fx-font-size: 11px;
+}
+
 .chat-input-field {
 	-fx-min-height: 35px;
 	-fx-max-height: 200px;
@@ -491,7 +511,7 @@
 #settings-button {
 	-fx-min-width: 35px;
 	-fx-min-height: 35px;
-	-fx-max-width: 35x;
+	-fx-max-width: 35px;
 	-fx-max-height: 35px;
 	-fx-padding: 0;
 }

@@ -1,10 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>MineChat</groupId>
-	<artifactId>MineChat</artifactId>
+	<groupId>de.minetrain.development</groupId>
+	<artifactId>minechat</artifactId>
 	<version>0.0.9-SNAPSHOT</version>
+	<name>MineChat</name>
+	<url>https://github.com/MineTrainDevelopment/MineChat</url>
 	<description>Chat tool for twitch IRC.</description>
+	<organization>
+		<name>MineTrain &amp; ZockiRR</name>
+		<url>https://github.com/MineTrainDevelopment</url>
+	</organization>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,6 +20,7 @@
 		<slf4j.version>2.0.17</slf4j.version>
 		<twitch4j.version>1.26.0</twitch4j.version>
 		<eclipse.store.version>4.0.1</eclipse.store.version>
+		<copyright.start>2024</copyright.start>
 	</properties>
 
 	<build>
@@ -26,6 +33,9 @@
 				<plugin>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>3.5.0</version>
+					<configuration>
+						<propertiesEncoding>UTF-8</propertiesEncoding>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -43,6 +53,24 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<version>9.0.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includeOnlyProperties>
+						<includeOnlyProperty>git.commit.id.full</includeOnlyProperty>
+						<includeOnlyProperty>git.branch</includeOnlyProperty>
+					</includeOnlyProperties>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 			<plugin>
@@ -54,6 +82,12 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 
 	<dependencies>

@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import de.minetrain.minechat.gui.panes.ChannelPane;
 import de.minetrain.minechat.gui.panes.TitleBarPane;
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.gui.utils.TextureManager;
+import de.minetrain.minechat.gui.viewmodel.AppInfoViewModel;
 import de.minetrain.minechat.gui.viewmodel.ChannelViewModel;
 import de.minetrain.minechat.gui.viewmodel.HighlightViewModel;
 import de.minetrain.minechat.gui.viewmodel.SettingsViewModel;
@@ -38,13 +42,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class Main extends Application {
-	private static final Logger logger = LoggerFactory.getLogger(Main.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 	public static final String VERSION = "V0.9";
 	// TODO resolve statics...
 	public static AudioManager audioManager;
 	private static ChannelManager channelManager;
 	private static EmoteManager emoteManager;
 	private static SettingsViewModel settingsViewModel;
+	private static AppInfoViewModel appInfoViewModel;
 	private static final int loadingSteps = 13;
 	public static boolean isGuiOpen = false;
 
@@ -66,7 +71,7 @@ public class Main extends Application {
 		try {
 			String oAuth2Token = aquireOAuth2Token();
 			if (oAuth2Token == null) {
-				logger.error("Unable to acquire OAuth2 token. Exiting...");
+				LOG.error("Unable to acquire OAuth2 token. Exiting...");
 				System.exit(0);
 			}
 			loadingProgressLogging(9, "Connecting to Twitch Helix.");
@@ -81,7 +86,7 @@ public class Main extends Application {
 			loadingProgressLogging(11, "Validate public badges and emotes.");
 			TextureManager.downloadPublicData();
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			LOG.error(ex.getMessage(), ex);
 			System.exit(0);
 		}
 
@@ -132,12 +137,12 @@ public class Main extends Application {
 		if (oAuth2Token == null || StringUtils.isBlank(oAuth2Token)) {
 			try (InputStream is = Main.class.getResourceAsStream("/client.id")) {
 				if (is == null) {
-					logger.error("Twitch Client ID resource not found. Exiting...");
+					LOG.error("Twitch Client ID resource not found. Exiting...");
 					return null;
 				}
 				String twitchClientId = new String(is.readAllBytes());
 				if (StringUtils.isBlank(twitchClientId) || twitchClientId.contains("<client_id>")) {
-					logger.error("Twitch Client ID is not properly set. Exiting...");
+					LOG.error("Twitch Client ID is not properly set. Exiting...");
 					return null;
 				}
 				oAuth2Token = TwitchManager.requestOAuthToken(twitchClientId).join();
@@ -170,12 +175,9 @@ public class Main extends Application {
 		// Set up the scene
 		Scene scene = new Scene(mainContentPane, 500, 700);
 		scene.setFill(Color.TRANSPARENT);
-//		scene.getStylesheets().add("style.css");
 		scene.getStylesheets().add("style_v2.css");
 		mainContentPane.setStyle(getSettingsViewModel().getRootStyle());
-		getSettingsViewModel().rootStyleProperty().addListener((_, _, newStyle) -> {
-			mainContentPane.setStyle(newStyle);
-		});
+		getSettingsViewModel().rootStyleProperty().addListener((_, _, newStyle) -> mainContentPane.setStyle(newStyle));
 
 		//TODO: Keep multiframe in mind.
 		//TODO: Keep multiframe in mind.
@@ -233,12 +235,61 @@ public class Main extends Application {
 		return settingsViewModel;
 	}
 
+	public static AppInfoViewModel getAppInfoViewModel() {
+		if (appInfoViewModel == null) {
+			appInfoViewModel = loadAppInfo();
+		}
+		return appInfoViewModel;
+	}
+
+	private static AppInfoViewModel loadAppInfo() {
+		Properties properties = loadResourceProperties("/version.properties");
+		return new AppInfoViewModel(
+			properties.getProperty("app.name", "MineChat"),
+			properties.getProperty("app.version", "?"),
+			parseIsoTimestamp(properties.getProperty("build.timestamp")),
+			System.getProperty("java.version"),
+			System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ")",
+			properties.getProperty("git.commit", "?"),
+			properties.getProperty("git.branch", "?"),
+			properties.getProperty("project.url", ""),
+			properties.getProperty("copyright.start", "?"),
+			properties.getProperty("copyright.holders", "?")
+		);
+	}
+
+	private static Instant parseIsoTimestamp(String timestamp) {
+		if (timestamp == null) {
+			return null;
+		}
+		try {
+			return Instant.parse(timestamp);
+		} catch (DateTimeParseException e) {
+			LOG.warn("Could not parse ISO timestamp: {}", timestamp);
+			LOG.debug("Exception details:", e);
+			return null;
+		}
+	}
+
+	private static Properties loadResourceProperties(String resourcePath) {
+		Properties properties = new Properties();
+		try (InputStream is = Main.class.getResourceAsStream(resourcePath)) {
+			if (is != null) {
+				properties.load(is);
+			} else {
+				LOG.warn("Resource not found: {}", resourcePath);
+			}
+		} catch (IOException e) {
+			LOG.error("Error loading properties from resource: {}", resourcePath, e);
+		}
+		return properties;
+	}
+
 	private static void loadingProgressLogging(int stage, String message) {
-		logger.info("Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
+		LOG.info("Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
 	}
 
 	private static void loadingAsyncProgressLogging(int stage, String message) {
-		logger.info("[Async] Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
+		LOG.info("[Async] Loading... "+new DecimalFormat("0").format(Math.round(((double) stage / loadingSteps) * 100)) + "%"+" - "+message);
 	}
-
 }

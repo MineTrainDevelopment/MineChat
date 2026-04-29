@@ -10,6 +10,7 @@ import de.minetrain.minechat.gui.settings.AutoReplySettingsPane;
 import de.minetrain.minechat.gui.settings.ChatSettingsPane;
 import de.minetrain.minechat.gui.settings.CountVariablesSettingsPane;
 import de.minetrain.minechat.gui.settings.HighlightSettingsPane;
+import de.minetrain.minechat.gui.settings.InfoSettingsPane;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -41,7 +42,8 @@ public class SettingsDialog extends MineDialog<Void> {
 		TabButton highlightsTabButton = createTabButton("Highlights", HighlightSettingsPane::new);
 		TabButton autoReplyTabButton = createTabButton("Auto Reply", AutoReplySettingsPane::new);
 		TabButton countVariablesTabButton = createTabButton("Count Variables", CountVariablesSettingsPane::new);
-		tabs.getChildren().addAll(chatTabButton, appearanceTabButton, highlightsTabButton, autoReplyTabButton, countVariablesTabButton);
+		TabButton infoTabButton = createTabButton("Info", InfoSettingsPane::new);
+		tabs.getChildren().addAll(chatTabButton, appearanceTabButton, highlightsTabButton, autoReplyTabButton, countVariablesTabButton, infoTabButton);
 
 		dialogRoot.setLeft(tabs);
 
