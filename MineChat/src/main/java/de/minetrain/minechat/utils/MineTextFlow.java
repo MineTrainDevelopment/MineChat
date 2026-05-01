@@ -1,9 +1,5 @@
 package de.minetrain.minechat.utils;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -126,13 +122,7 @@ public class MineTextFlow extends TextFlow {
 	public MineTextFlow appendHyperLink(String url) {
 		Hyperlink hyperlink = new Hyperlink(WebUtils.extractDomain(url));
 		hyperlink.setTooltip(new Tooltip(url));
-		hyperlink.setOnAction(_ -> {
-			try {
-				Desktop.getDesktop().browse(new URI(url));
-			} catch (IOException | URISyntaxException e) {
-				LOG.error("Failed to open link: {}", url, e);
-			}
-		});
+		hyperlink.setOnAction(_ -> Main.getApplication().getHostServices().showDocument(url));
 
 		hyperlink.setFocusTraversable(false);
 		hyperlink.setFont(Font.font(defaultFontFamily, defaultFontWeight, defaultFontPosture, defaultFontSize));

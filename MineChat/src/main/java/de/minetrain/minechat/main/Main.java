@@ -155,9 +155,11 @@ public class Main extends Application {
 	public static TitleBarPane titleBar;
 	public static ChannelPane channelPane;
 	public static Stage primaryStage;
+	private static Application instance;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		instance = this;
 		Main.primaryStage = primaryStage;
 		primaryStage.setTitle("MineChat - JavaFX rework");
 		primaryStage.initStyle(StageStyle.UNIFIED);
@@ -240,6 +242,10 @@ public class Main extends Application {
 			appInfoViewModel = loadAppInfo();
 		}
 		return appInfoViewModel;
+	}
+
+	public static Application getApplication() {
+		return instance;
 	}
 
 	private static AppInfoViewModel loadAppInfo() {

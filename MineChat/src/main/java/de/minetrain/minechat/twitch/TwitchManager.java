@@ -1,6 +1,5 @@
 package de.minetrain.minechat.twitch;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -48,6 +47,7 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import de.minetrain.minechat.main.Main;
 import de.minetrain.minechat.twitch.obj.TokenValidateResponse;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj;
 import de.minetrain.minechat.twitch.obj.TwitchUserObj.TwitchApiCallType;
@@ -350,13 +350,7 @@ public class TwitchManager {
 			return futureToken;
 		}
 
-		try {
-			Desktop.getDesktop().browse(URI.create(requestUrl));
-		} catch (IOException e) {
-			futureToken.completeExceptionally(e);
-			httpServer.stop(0);
-			LOG.error("Failed to request OAuth token!", e);
-		}
+		Main.getApplication().getHostServices().showDocument(requestUrl);
 		return futureToken;
 	}
 

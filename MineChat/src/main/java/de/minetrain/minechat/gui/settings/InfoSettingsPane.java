@@ -1,8 +1,5 @@
 package de.minetrain.minechat.gui.settings;
 
-import java.awt.Desktop;
-import java.net.URI;
-
 import de.minetrain.minechat.gui.viewmodel.AppInfoViewModel;
 import de.minetrain.minechat.main.Main;
 import javafx.geometry.HPos;
@@ -58,13 +55,7 @@ public class InfoSettingsPane extends SettingsContentPane {
 
 		String repoUrl = info.getRepoUrl();
 		Hyperlink githubLink = new Hyperlink(repoUrl);
-		githubLink.setOnAction(_ -> {
-			try {
-				Desktop.getDesktop().browse(new URI(repoUrl));
-			} catch (Exception _) {
-				// ignore
-			}
-		});
+		githubLink.setOnAction(_ -> Main.getApplication().getHostServices().showDocument(repoUrl));
 		GridPane.setColumnSpan(githubLink, 2);
 		GridPane.setHalignment(githubLink, HPos.CENTER);
 		details.add(githubLink, 0, 7);
