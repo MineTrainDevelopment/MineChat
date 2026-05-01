@@ -54,43 +54,6 @@ public class Main extends Application {
 	public static boolean isGuiOpen = false;
 
 	public static void test(String[] args) throws Exception {
-		loadingProgressLogging(2, "Prepare eclipse store.");
-		EclipseStoreKeeper.init();
-
-		loadingProgressLogging(3, "Initialising user settings");
-		settingsViewModel = loadSettings();
-
-		loadingProgressLogging(4, "Preparing emotes");
-		emoteManager = new EmoteManager();
-
-		loadingProgressLogging(5, "Fetching audio fiels.");
-		audioManager = new AudioManager();
-
-		loadingProgressLogging(8, "Login in...");
-
-		try {
-			String oAuth2Token = aquireOAuth2Token();
-			if (oAuth2Token == null) {
-				LOG.error("Unable to acquire OAuth2 token. Exiting...");
-				System.exit(0);
-			}
-			loadingProgressLogging(9, "Connecting to Twitch Helix.");
-			TwitchManager.init(oAuth2Token).registerListener(new TwitchListener(new AutoReplyManager()));
-			loadingProgressLogging(10, "Prepare message highlight strings.");
-			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
-				int color = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
-				EclipseStoreKeeper.root().userSettings().addHighlightString(new HighlightString(TwitchHelper.generateNameRegex(TwitchHelper.getSelfUser().getDisplayName()), color, color));
-				MessageManager.setDefaultHighlightSettings();
-				EclipseStoreKeeper.root().userSettings().setInitialized();
-			}
-			loadingProgressLogging(11, "Validate public badges and emotes.");
-			TextureManager.downloadPublicData();
-		} catch (Exception ex) {
-			LOG.error(ex.getMessage(), ex);
-			System.exit(0);
-		}
-
-		loadingProgressLogging(12, "Building main frame.");
 		launch(args);
 
         //First open the frame, then load all channels and add them live into frame.
@@ -163,6 +126,44 @@ public class Main extends Application {
 		Main.primaryStage = primaryStage;
 		primaryStage.setTitle("MineChat - JavaFX rework");
 		primaryStage.initStyle(StageStyle.UNIFIED);
+
+		loadingProgressLogging(2, "Prepare eclipse store.");
+		EclipseStoreKeeper.init();
+
+		loadingProgressLogging(3, "Initialising user settings");
+		settingsViewModel = loadSettings();
+
+		loadingProgressLogging(4, "Preparing emotes");
+		emoteManager = new EmoteManager();
+
+		loadingProgressLogging(5, "Fetching audio fiels.");
+		audioManager = new AudioManager();
+
+		loadingProgressLogging(8, "Login in...");
+
+		try {
+			String oAuth2Token = aquireOAuth2Token();
+			if (oAuth2Token == null) {
+				LOG.error("Unable to acquire OAuth2 token. Exiting...");
+				System.exit(0);
+			}
+			loadingProgressLogging(9, "Connecting to Twitch Helix.");
+			TwitchManager.init(oAuth2Token).registerListener(new TwitchListener(new AutoReplyManager()));
+			loadingProgressLogging(10, "Prepare message highlight strings.");
+			if (!EclipseStoreKeeper.root().userSettings().isInitialized()) {
+				int color = ColorManager.CHAT_MESSAGE_KEY_HIGHLIGHT_DEFAULT;
+				EclipseStoreKeeper.root().userSettings().addHighlightString(new HighlightString(TwitchHelper.generateNameRegex(TwitchHelper.getSelfUser().getDisplayName()), color, color));
+				MessageManager.setDefaultHighlightSettings();
+				EclipseStoreKeeper.root().userSettings().setInitialized();
+			}
+			loadingProgressLogging(11, "Validate public badges and emotes.");
+			TextureManager.downloadPublicData();
+		} catch (Exception ex) {
+			LOG.error(ex.getMessage(), ex);
+			System.exit(0);
+		}
+
+		loadingProgressLogging(12, "Building main frame.");
 
 		titleBar = new TitleBarPane();
 

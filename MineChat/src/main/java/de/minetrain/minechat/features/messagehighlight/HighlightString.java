@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import de.minetrain.minechat.gui.utils.ColorManager;
 import de.minetrain.minechat.main.Main;
-import de.minetrain.minechat.utils.audio.AudioManager;
 import de.minetrain.minechat.utils.audio.AudioVolume;
 import javafx.scene.paint.Color;
 
@@ -15,7 +14,7 @@ public class HighlightString {
 	private final String pattern;
 	private final int wordColor;
 	private final int borderColor;
-	private final String soundPath;
+	private final String soundUri;
 	private final AudioVolume soundVolume;
 	private final boolean enabled;
 
@@ -33,37 +32,29 @@ public class HighlightString {
 		this.pattern = pattern;
 		this.wordColor = wordColor;
 		this.borderColor = borderColor;
-		this.soundPath = null;
+		this.soundUri = null;
 		this.soundVolume = null;
 		this.enabled = true;
 	}
 
-	public HighlightString(UUID id, String pattern, int wordColor, int borderColor, String soundPath, AudioVolume soundVolume, boolean enabled) {
+	public HighlightString(UUID id, String pattern, int wordColor, int borderColor, String soundUri, AudioVolume soundVolume, boolean enabled) {
 		this.uuid = id;
 		this.pattern = pattern;
 		this.wordColor = wordColor;
 		this.borderColor = borderColor;
-		this.soundPath = soundPath;
+		this.soundUri = soundUri;
 		this.soundVolume = soundVolume;
 		this.enabled = enabled;
 	}
 
 	public void playSound() {
-		if (isPlaySound()) {
+		if (getSoundUri() != null) {
 			Main.getAudioManager().playAudioClip(getSoundUri(), soundVolume);
 		}
 	}
 
 	public AudioVolume getSoundVolume() {
 		return soundVolume;
-	}
-
-	public String getSoundPath() {
-		return AudioManager.RAW_AUDIO_PATH.replace("/", "\\") + soundPath;
-	}
-
-	public String getSoundUri() {
-		return AudioManager.createUri(soundPath);
 	}
 
 	public UUID getUuid() {
@@ -103,8 +94,8 @@ public class HighlightString {
 		return cachedBorderStyle;
 	}
 
-	public boolean isPlaySound() {
-		return soundPath != null;
+	public String getSoundUri() {
+		return soundUri;
 	}
 
 	public boolean isEnabled() {
@@ -113,7 +104,7 @@ public class HighlightString {
 
 	public Builder buildCopy() {
 		return new Builder().withUuid(uuid).withPattern(pattern).withWordColor(wordColor)
-				.withBorderColor(borderColor).withSoundPath(soundPath).withSoundVolume(soundVolume)
+				.withBorderColor(borderColor).withSoundUri(soundUri).withSoundVolume(soundVolume)
 				.withEnabled(enabled);
 	}
 
@@ -130,7 +121,7 @@ public class HighlightString {
 		private String pattern;
 		private int wordColor;
 		private int borderColor;
-		private String soundPath;
+		private String soundUri;
 		private AudioVolume soundVolume;
 		private boolean enabled;
 
@@ -154,8 +145,8 @@ public class HighlightString {
 			return this;
 		}
 
-		public Builder withSoundPath(String soundPath) {
-			this.soundPath = soundPath;
+		public Builder withSoundUri(String soundUri) {
+			this.soundUri = soundUri;
 			return this;
 		}
 
@@ -185,8 +176,8 @@ public class HighlightString {
 			return borderColor;
 		}
 
-		public String getSoundPath() {
-			return soundPath;
+		public String getSoundUri() {
+			return soundUri;
 		}
 
 		public AudioVolume getSoundVolume() {
@@ -198,7 +189,7 @@ public class HighlightString {
 		}
 
 		public HighlightString build() {
-			return new HighlightString(uuid, pattern, wordColor, borderColor, soundPath, soundVolume, enabled);
+			return new HighlightString(uuid, pattern, wordColor, borderColor, soundUri, soundVolume, enabled);
 		}
 	}
 }

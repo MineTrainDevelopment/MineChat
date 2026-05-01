@@ -1,11 +1,11 @@
 package de.minetrain.minechat.data.eclipsestore;
 
-import java.nio.file.Path;
-
 import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.minetrain.minechat.utils.FileUtils;
 
 public class EclipseStoreKeeper {
 
@@ -30,7 +30,7 @@ public class EclipseStoreKeeper {
 	}
 
 	private EclipseStoreKeeper() {
-		storageManager = EmbeddedStorage.start(Path.of("data", "database", "eclipse_store"));
+		storageManager = EmbeddedStorage.start(FileUtils.getOsSpecificDataDirectory().resolve("MineChat", "data"));
 
 		root = (EclipseStoreRoot) storageManager.root();
 

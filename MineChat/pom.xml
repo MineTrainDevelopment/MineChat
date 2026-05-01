@@ -64,6 +64,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<commitIdGenerationMode>full</commitIdGenerationMode>
 					<includeOnlyProperties>
 						<includeOnlyProperty>git.commit.id.full</includeOnlyProperty>
 						<includeOnlyProperty>git.branch</includeOnlyProperty>
@@ -85,7 +86,17 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>*.properties</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<includes>
+					<include>*.properties</include>
+				</includes>
 			</resource>
 		</resources>
 	</build>

@@ -1,13 +1,6 @@
 package de.minetrain.minechat.utils.audio;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,105 +8,71 @@ import org.slf4j.LoggerFactory;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.MediaException;
 
-/**
- * @author MineTrain/Justin, ZockiRR
- */
+/// Manages audio clips for the application, providing caching and error handling. Audio clips can be played with specified volume levels and will be loaded from the resources or from custom URIs.
+///
+/// @author MineTrain
 public class AudioManager {
-	private static final Logger logger = LoggerFactory.getLogger(AudioManager.class);
-	public static final String RAW_AUDIO_PATH = "data/sounds/";
-	public static final Path AUDIO_PATH = Path.of("data", "sounds");
-	
-	/**Path {@link URI#toString()} --> {@link AudioClip}*/
-	private HashMap<String, AudioClip> audioCach = new HashMap<String, AudioClip>();
-	
-	public AudioManager() {
-		Collection<Path> audioFiles = scrapeAudioFiles();
-		logger.info("Scraped \""+audioFiles.size()+ "\" custom audio files.");
+
+	private static final Logger LOG = LoggerFactory.getLogger(AudioManager.class);
+
+	private HashMap<String, AudioClip> audioCache = new HashMap<>();
+
+	/// Plays the audio clip with the given volume. If the volume is null, it will
+	/// be played with 100% volume.
+	public void playAudioClip(AudioClip clip, AudioVolume volume) {
+		clip.setVolume(volume != null ? volume.getValue() : AudioVolume.VOLUME_100.getValue());
+		clip.play();
 	}
 
-	public static Collection<Path> scrapeAudioFiles() {
-		try{
-			return Files.walk(AUDIO_PATH)
-				.filter(Files::isRegularFile)
-				.collect(Collectors.toList());
-		} catch (IOException ex) {
-			logger.error("Can´t read all files from sound folder."+ex);
-		}
-		
-		return new ArrayList<Path>();
+	/// Plays the audio file with the given volume. If the volume is null, it will
+	/// be played with 100% volume.
+	public AudioClip playAudioClip(DefaultAudioFiles audioFile, AudioVolume volume) {
+		AudioClip clip = getAudioClip(audioFile);
+		playAudioClip(clip, volume);
+		return clip;
 	}
-	
-	
-	/**
-	 * 
-	 * @param filePath path, to, your, file.mp3
-	 * @return
-	 */
-	public static String createUri(String... filePath){
-		Path audioPath = Path.of(AUDIO_PATH.toUri());
-		for(String path : filePath){
-			audioPath = audioPath.resolve(path);
-		}
-		return audioPath.toUri().toString();
+
+	/// Plays the audio file with the given volume. If the volume is null, it will
+	/// be played with 100% volume.
+	public AudioClip playAudioClip(String uri, AudioVolume volume) {
+		AudioClip clip = getAudioClip(uri);
+		playAudioClip(clip, volume);
+		return clip;
 	}
-	
-	/**
-	 * Play a audio clip for a given path.
-	 * @param AudioClip
-	 */
-	public AudioClip playAudioClip(AudioClip clip, AudioVolume volume){
-		try {
-			clip.setVolume(volume != null ? volume.getValue() : AudioVolume.VOLUME_100.getValue());
-			clip.play();
-			return clip;
-		} catch (MediaException | NullPointerException ex) {
-			logger.warn(ex.getMessage());
-			return null;
-		}
-	}
-	
-	/**
-	 * Play a audio clip for a given path.
-	 * @param audioFile {@link DefaultAudioFiles}
-	 */
-	public AudioClip playAudioClip(DefaultAudioFiles audioFile, AudioVolume volume){
-		return playAudioClip(getAudioClip(audioFile.getUri()), volume);
-	}
-	
-	/**
-	 * Play a audio clip for a given path.
-	 * @param uri NOTE: This has to be a {@link URI#toString()}
-	 */
-	public AudioClip playAudioClip(String uri, AudioVolume volume){
-		return playAudioClip(getAudioClip(uri), volume);
-	}
-	
-	public static void stopAudioClip(AudioClip clip){
-		if(clip != null && clip.isPlaying()){
+
+	/// Stops the audio clip if it is currently playing.
+	public static void stopAudioClip(AudioClip clip) {
+		if (clip.isPlaying()) {
 			clip.stop();
 		}
 	}
-	
-	/**
-	 * Get a audio clip for a given path.
-	 * @param uri NOTE: This has to be a {@link URI#toString()}
-	 * @return a cached or new {@link AudioClip}
-	 */
-	public AudioClip getAudioClip(String uri){
+
+	/// Gets the audio clip for the given Uri. The clip will be cached, so
+	/// subsequent calls with the same Uri will return the same clip instance. If the
+	/// audio file cannot be loaded, null will be returned.
+	public AudioClip getAudioClip(String uri) {
 		try {
-			return audioCach.computeIfAbsent(uri, AudioClip::new);
-		} catch (MediaException ex) {
-			logger.warn("Can´t find audio file -> "+uri+"\n"+ex.getMessage());
+			return audioCache.computeIfAbsent(uri, AudioClip::new);
+		} catch (MediaException e) {
+			LOG.error("Audio file could not be loaded from uri '{}':", uri, e);
 			return null;
 		}
 	}
 
-	/**
-	 * Get a audio clip for a file given path.
-	 * @param audioFile {@link DefaultAudioFiles}
-	 * @return a cached or new {@link AudioClip}
-	 */
-	public AudioClip getAudioClip(DefaultAudioFiles audioFile){
-		return getAudioClip(audioFile.getUri());
+	/// Gets the audio clip for the given DefaultAudioFiles. The clip will be
+	/// cached, so subsequent calls with the same DefaultAudioFiles will return the
+	/// same clip instance. If the audio file cannot be loaded, null will
+	/// be returned.
+	public AudioClip getAudioClip(DefaultAudioFiles audioFile) {
+		return getAudioClip(getResourceUri(audioFile.getResourceName()));
+	}
+
+	private static String getResourceUri(String resourceName) {
+		try {
+			return AudioManager.class.getResource("/sounds/" + resourceName).toString();
+		} catch (NullPointerException _) {
+			LOG.warn("Audio resource not found: {}", resourceName);
+			return null;
+		}
 	}
 }

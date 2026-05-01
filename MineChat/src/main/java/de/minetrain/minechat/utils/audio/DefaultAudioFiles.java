@@ -1,7 +1,5 @@
 package de.minetrain.minechat.utils.audio;
 
-import java.nio.file.Path;
-
 public enum DefaultAudioFiles {
 	MESSAGE_0("message0.mp3"),
 	MESSAGE_1("message1.mp3"),
@@ -18,25 +16,17 @@ public enum DefaultAudioFiles {
 	PING_2("ping2.mp3"),
 	PING_3("ping3.mp3"),
 	PING_4("ping4.mp3"),
-	
+
 	LIVE_0("live0.mp3"),
 	LIVE_1("live1.mp3");
-	
-	
-	private String filePath;
-	public Path getFilePath(){
-		return AudioManager.AUDIO_PATH.resolve("default").resolve(filePath);
+
+	private String resourceName;
+
+	public String getResourceName(){
+		return resourceName;
 	}
-	
-	public String getUri(){
-		return getFilePath().toUri().toString();
-	}
-	
-	private DefaultAudioFiles(String filePath) {
-		this.filePath = filePath;
-	}
-	
-	public static Path getFilePath(DefaultAudioFiles file){
-		return file.getFilePath();
+
+	private DefaultAudioFiles(String resourceName) {
+		this.resourceName = resourceName;
 	}
 }
