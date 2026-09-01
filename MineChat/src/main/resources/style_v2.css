@@ -1,0 +1,536 @@
+.root {
+	-config-base: #191919;
+	-config-accent: #9146ff;
+	-config-border: black;
+
+	-fx-base: -config-base;
+
+	-fx-background: transparent;
+	-fx-background-base: derive(-fx-base, 11%);
+	-fx-background-secondary: derive(-fx-base, -50%);
+	-fx-background-tertiary: derive(-fx-base, 45%);
+
+	-fx-control-inner-background: derive(-fx-base, 30%);
+
+	-fx-shadow-highlight-color: transparent;
+	-fx-body-color: -fx-color;
+
+	-fx-accent: -config-accent;
+	-fx-default-button: -config-accent;
+
+	-fx-focus-color: -config-accent;
+	-fx-faint-focus-color: #9146ff22;
+
+	-fx-outer-border: -config-border;
+	-fx-inner-border: -config-border;
+
+	-fx-selection-bar-non-focused: derive(-fx-accent, -30%);
+
+	-fx-font-family: "Inter";
+	-fx-font-style: normal;
+	-fx-font-weight: bold;
+	-fx-font-size: 13px;
+
+	-fx-background-color: -fx-background-base;
+
+	/* Custom colors */
+	-fx-selected-base: ladder(
+		-fx-base,
+		derive(-fx-base,40%) 20%,
+		derive(-fx-base,60%) 35%,
+		derive(-fx-base,80%) 50%
+	 );
+
+	-fx-hover-accent: ladder(
+		-fx-accent,
+		derive(-fx-accent,20%) 20%,
+		derive(-fx-accent,30%) 35%,
+		derive(-fx-accent,40%) 50%
+	 );
+}
+
+.button,
+.toggle-button,
+.radio-button > .radio,
+.check-box > .box,
+.menu-button,
+.choice-box,
+.color-picker.split-button > .color-picker-label,
+.combo-box-base,
+.combo-box-base:editable > .arrow-button {
+	-fx-background-color: -fx-body-color;
+	-fx-background-insets: 2px;
+	-fx-background-radius: 8px;
+
+	-fx-border-color: -fx-outer-border;
+	-fx-border-radius: 8px;
+	-fx-border-width: 3px;
+}
+
+.button:armed,
+.toggle-button:armed,
+.radio-button:armed > .radio,
+.check-box:armed .box,
+.menu-button:armed,
+.split-menu-button:armed > .label,
+.split-menu-button > .arrow-button:pressed,
+.split-menu-button:showing > .arrow-button,
+.slider .thumb:pressed,
+.scroll-bar > .thumb:pressed,
+.scroll-bar > .increment-button:pressed,
+.scroll-bar > .decrement-button:pressed,
+.choice-box:showing,
+.spinner .increment-arrow-button:pressed,
+.spinner .decrement-arrow-button:pressed,
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:pressed {
+	-fx-scale-y: 0.97;
+	-fx-scale-x: 0.97;
+}
+
+.button:default {
+	-fx-border-color: transparent;
+}
+
+.scroll-pane,
+.split-pane,
+.list-view,
+.tree-view,
+.table-view,
+.tree-table-view,
+.html-editor {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-background-radius: 8px;
+	-fx-padding: 0;
+}
+
+.table-view,
+.tree-table-view {
+	-fx-table-cell-border-color: transparent;
+}
+
+.table-view .column-header-background,
+.tree-table-view > .column-header-background {
+	-fx-background-color: -fx-body-color;
+	-fx-background-insets: 0;
+	-fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header,
+.tree-table-view .column-header,
+.table-view .filler,
+.tree-table-view .filler,
+.table-view > .column-header-background > .show-hide-columns-button,
+.tree-table-view > .column-header-background > .show-hide-columns-button,
+.table-view:constrained-resize .filler,
+.tree-table-view:constrained-resize .filler {
+	-fx-background-color: -fx-body-color;
+	-fx-background-insets: 0;
+	-fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header .label,
+.tree-table-view .column-header .label {
+	-fx-alignment: center-left;
+	-fx-padding: 0 0 0 5px;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:focused,
+.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
+.tree-table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:focused,
+.table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused,
+.tree-table-view:focused:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell > .tree-table-cell:focused {
+	-fx-background-color: -fx-background;
+	-fx-background-insets: 0;
+}
+
+/* Selected rows */
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected,
+.tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled:selected,
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell .table-cell:selected,
+.tree-table-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell .tree-table-cell:selected {
+	-fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:filled:hover {
+	-fx-background-color: -fx-hover-accent;
+}
+
+/* Selected when control is not focused */
+.list-cell:filled:selected,
+.tree-cell:filled:selected,
+.table-row-cell:filled:selected,
+.tree-table-row-cell:filled:selected,
+.table-row-cell:filled > .table-cell:selected,
+.tree-table-row-cell:filled > .tree-table-cell:selected {
+	-fx-table-cell-border-color: transparent;
+}
+
+.table-cell {
+	-fx-padding: 0.166667em 0.166667em 0.166667em 5px;
+}
+
+.combo-box-popup > .list-view {
+	-fx-background-color: -fx-control-inner-background;
+	-fx-background-insets: 0;
+	-fx-background-radius: 8px;
+	-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2) , 12, 0.0 , 0 , 8 );
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+	-fx-padding: 5px 0 5px 10px;
+	-fx-background-insets: 2px;
+	-fx-background-radius: 8px;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+	-fx-background: -fx-accent;
+	-fx-background-color: -fx-hover-accent;
+
+}
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+	-fx-background: -fx-accent;
+	-fx-background-color: -fx-background;
+	-fx-background-insets: 2px;
+}
+
+.scroll-bar {
+	-fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+	-fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+	-fx-background-radius: 5px;
+	-fx-background-color: -fx-background-tertiary;
+}
+
+.scroll-bar .thumb:hover {
+	-fx-color: -fx-hover-base;
+}
+
+.scroll-bar .thumb:pressed {
+	-fx-color: -fx-pressed-base;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+	-fx-background-color: transparent;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+	-fx-background-color: transparent;
+}
+
+.titled-pane > *.content {
+	-fx-border-color: transparent;
+}
+
+.titled-pane > .title {
+	-fx-background-color: -fx-body-color;
+	-fx-background-radius: 5px 5px 0px 0px;
+	-fx-border-style: hidden hidden solid hidden;
+	-fx-border-width: 3px;
+	-fx-border-color: -fx-outer-border;
+	
+	-fx-alignment: center-left;
+	-fx-padding: 0 0 0 5px;
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+	-fx-background-color: -fx-mark-color;
+	-fx-background-insets: 0;
+	-fx-effect: null;
+}
+
+.titled-pane:focused > .title > .arrow-button > .arrow {
+	-fx-background-color: -fx-mark-color;
+	-fx-background-insets: 0;
+	-fx-effect: null;
+}
+
+.styled-text-area {
+	-fx-border-radius: 5px;
+	-fx-border-width: 2px;
+	-fx-border-color: -fx-outer-border;
+	-fx-background-color: -fx-control-inner-background;
+	-fx-background-radius: 5px;
+	-fx-background-insets: 1;
+
+	-fx-font-size: 18px;
+}
+
+/* Does not work...?! */
+.styled-text-area .paragraph-text .text {
+	-fx-fill: white;
+	-fx-alignment: center-left;
+}
+
+/* Custom style classes */
+
+.channel-pane {
+	-fx-background-color: -fx-background-base;
+	-fx-background-radius: 5px;
+}
+
+.macro-pane {
+	-fx-vgap: 5px;
+	-fx-hgap: 10px;
+	-fx-padding: 5px;
+
+	-fx-border-color: -fx-outer-border;
+	-fx-border-width: 0 0 5px 0;
+}
+
+.emote-view {
+	-fx-min-width: 24px;
+	-fx-min-height: 24px;
+}
+
+.macro-button {
+	-fx-min-width: 87px;
+	-fx-max-width: 113.5px;
+	-fx-min-height: 35px;
+	-fx-pref-width: 113.5px;
+	-fx-padding: 0 0 0 3px;
+
+	-fx-alignment: center-left;
+}
+
+.macro-button:emote {
+	-fx-min-width: 35px;
+	-fx-max-width: 35px;
+	-fx-pref-width: 35px;
+	-fx-alignment: center;
+	-fx-content-display: graphic-only;
+	-fx-padding: 0;
+}
+
+.emote-button {
+	-fx-background-radius: 5px;
+	-fx-background-insets: 1px;
+
+	-fx-border-radius: 5px;
+	-fx-border-width: 2px;
+	-fx-content-display: graphic-only;
+
+	-fx-padding: 2px;
+}
+
+.emote-button:tier2 {
+	-fx-border-color: #9a9a00;
+}
+
+.emote-button:tier3 {
+	-fx-border-color: #9a0000;
+}
+
+.emote-button:bits {
+	-fx-border-color: #a400ff;
+}
+
+.emote-button:follow {
+	-fx-border-color: #0054de;
+}
+
+.tab-button {
+	-fx-background-radius: 5px;
+	-fx-background-insets: 0;
+	-fx-border-width: 0;
+	-fx-alignment: center-left;
+
+	-fx-font-size: 15px;
+}
+
+.tab-button:armed {
+	-fx-scale-y: 1;
+	-fx-scale-x: 1;	
+}
+
+.tab-button:selected {
+	-fx-color: -fx-selected-base;
+}
+
+.channel-tab-button:live {
+	-fx-base: #8B0000;
+}
+
+.channel-tab-button:live:selected {
+	-fx-color: #EB0400;
+}
+
+.message-component .border {
+	-fx-border-insets: 16px 5px 0 5px;
+	-fx-border-color: -fx-background-tertiary;
+	-fx-border-width: 2px;
+}
+
+.message-component .content {
+	-fx-padding: 30px 12px 7px 12px;
+	-fx-background-color: -fx-background-tertiary;
+	-fx-background-insets: 30px 12px 7px 12px;
+}
+
+.message-component .title {
+	-fx-background-color: -fx-background-base;
+	-fx-background-insets: 0 12px 0 12px;
+	-fx-padding: 0 12px 0 12px;
+}
+
+.message-component .button {
+	-fx-padding: 0;
+	-fx-min-width: 28px;
+	-fx-min-height: 28px;
+}
+
+.input-pane {
+	-fx-padding: 10px;
+}
+
+.input-pane .button {
+	-fx-color: -fx-control-inner-background;
+	-fx-background-insets: 1px;
+	-fx-background-radius: 5px;
+
+	-fx-border-radius: 5px;
+	-fx-border-width: 2px;
+}
+
+.input-pane .button:hover {
+	-fx-color: -fx-hover-base;
+}
+
+.settings-dialog .tab-button {
+	-fx-color: -fx-background-base;
+	-fx-pref-width: 150px;
+}
+
+.settings-dialog .tab-button:hover {
+	-fx-color: -fx-hover-base;
+}
+
+.settings-dialog .tab-button:selected {
+	-fx-color: -fx-background-tertiary;
+}
+
+.settings-dialog > .content {
+	-fx-background-color: -fx-background-tertiary;
+	-fx-background-radius: 5px;
+	-fx-padding: 10px;
+}
+
+.settings-content > .title {
+	-fx-font-size: 18px;
+	-fx-padding: 0 0 5px 0;
+}
+
+.settings-content > .functions-bar {
+	-fx-spacing: 5px;
+	-fx-padding: 0 0 0 5px;
+}
+
+.settings-content > .additional-settings {
+	-fx-padding: 5px 0 0 0;
+}
+
+.settings-content .table-view {
+	-fx-background-color: -fx-control-inner-background;
+}
+
+.info-app-icon {
+	-fx-pref-width: 64px;
+	-fx-pref-height: 64px;
+	-fx-min-width: 64px;
+	-fx-min-height: 64px;
+	-fx-max-width: 64px;
+	-fx-max-height: 64px;
+	-fx-background-color: -fx-accent;
+	-fx-shape: "M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm0-2h14V7H5zm2-7v-2h10v2zm0 4v-2h6v2z";
+	-fx-scale-shape: true;
+}
+
+.info-app-name {
+	-fx-font-size: 22px;
+}
+
+.info-version {
+	-fx-font-size: 11px;
+}
+
+.chat-input-field {
+	-fx-min-height: 35px;
+	-fx-max-height: 200px;
+	-fx-pref-height: 35px;
+}
+
+.channel-button {
+	-fx-padding: 2px;
+
+	-fx-alignment: center;
+	-fx-content-display: graphic-only;
+}
+
+.channel-button .image-wrapper {
+	-fx-min-width: 28px;
+	-fx-min-height: 28px;
+}
+
+.channel-button:selected {
+	-fx-color: green;
+}
+
+.title-bar {
+	-fx-padding: 3px;
+}
+
+/* Id styles */
+
+#main-pane {
+	-fx-border-width: 5px;
+	-fx-border-radius: 5px;
+	-fx-border-color: -fx-outer-border;
+	-fx-background-radius: 5px;
+	-fx-background-insets: 2px;
+	-fx-background-color: -fx-background-secondary;
+}
+
+#send-button {
+	-fx-min-width: 70px;
+	-fx-min-height: 35px;
+	-fx-max-width: 70px;
+	-fx-max-height: 35px;
+}
+
+#settings-button {
+	-fx-min-width: 35px;
+	-fx-min-height: 35px;
+	-fx-max-width: 35px;
+	-fx-max-height: 35px;
+	-fx-padding: 0;
+}
+
+#settings-button > * {
+	-fx-fill: white;
+}
+
+#message-info-field {
+	-fx-min-height: 35px;
+	-fx-max-height: 105px;
+	-fx-max-width: infinity;
+
+	-fx-background-color: -fx-body-color;
+	-fx-background-radius: 10px;
+	-fx-background-insets: 2px;
+
+	-fx-border-radius: 10px;
+	-fx-border-width: 3px;
+	-fx-border-color: -fx-outer-border;
+	-fx-padding: 5px;
+}
